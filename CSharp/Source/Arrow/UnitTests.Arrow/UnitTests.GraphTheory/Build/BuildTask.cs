@@ -4,7 +4,7 @@ using System.Text;
 
 using Arrow.GraphTheory.Build;
 
-namespace UnitTests.Echo.GraphTheory.Build
+namespace UnitTests.Arrow.GraphTheory.Build
 {
 	class BuildTask : IBuildDescription<string>
 	{

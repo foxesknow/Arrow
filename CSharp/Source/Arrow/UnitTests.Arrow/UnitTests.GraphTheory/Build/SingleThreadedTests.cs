@@ -7,7 +7,7 @@ using Arrow.GraphTheory.Build;
 using NUnit.Framework;
 
 
-namespace UnitTests.Echo.GraphTheory.Build
+namespace UnitTests.Arrow.GraphTheory.Build
 {
 	[TestFixture]
 	public class SingleThreadedTests
