@@ -1,0 +1,18 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+    <m:Declare name="data"></m:Declare>
+    <m:LoadXml name="data" uri="res://UnitTests.Arrow/UnitTests/Arrow/Resources/People.xml" />
+
+    <details>
+        <m:InjectXml name="data" />
+    </details>
+
+    <John>
+        <m:InjectXml name="data" select="People/Hunter"/>
+    </John>
+
+    <MoreJohn>
+        <m:InjectXml name="data" selectSingle="People/Hunter"/>
+    </MoreJohn>
+
+</root>

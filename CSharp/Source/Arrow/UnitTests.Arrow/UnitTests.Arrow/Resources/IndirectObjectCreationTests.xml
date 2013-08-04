@@ -1,0 +1,9 @@
+﻿<IndirectObjectCreationTests xmlns:obj="urn:arrow.xml.objectcreation">
+	<Admin obj:uri="res://UnitTests.Arrow/UnitTests.Arrow.Resources.Jack.xml"/>
+
+	<!-- The secondary lookup is actually a double lookup -->
+	<PersonBank obj:type="UnitTests.Arrow.Support.PersonBank,UnitTests.Arrow">
+		<Primary obj:uri="res://UnitTests.Arrow/UnitTests.Arrow.Resources.People.xml" obj:select="People/Hunter"/>
+		<Secondary obj:uri="res://UnitTests.Arrow/UnitTests.Arrow.Resources.People.xml" obj:select="People/Leader"/>
+	</PersonBank>
+</IndirectObjectCreationTests>

@@ -1,0 +1,5 @@
+﻿<Person obj:type="UnitTests.Arrow.Support.Person,UnitTests.Arrow" xmlns:obj="urn:arrow.xml.objectcreation">
+    <Name>Kate</Name>
+    <Age>29</Age>
+</Person>
+

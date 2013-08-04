@@ -1,0 +1,9 @@
+﻿<Test xmlns:obj="urn:arrow.xml.objectcreation"
+	  xmlns:z="clr-namespace:UnitTests.Arrow.Support;assembly=UnitTests.Arrow">
+
+	<Doctor obj:type="z:Person">
+		<Name>Jack</Name>
+		<Age obj:type="System.Int32">23</Age>
+	</Doctor>
+	
+</Test>

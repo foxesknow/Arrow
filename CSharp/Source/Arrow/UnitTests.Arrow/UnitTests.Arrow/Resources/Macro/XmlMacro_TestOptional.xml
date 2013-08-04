@@ -1,0 +1,8 @@
+<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+    <m:Declare name="user">Kate</m:Declare>
+
+	<Supervisor>@{user}</Supervisor>
+	<Admin>@[admin]</Admin>
+	
+</root>

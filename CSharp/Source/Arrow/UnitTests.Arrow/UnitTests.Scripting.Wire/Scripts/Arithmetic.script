@@ -1,0 +1,31 @@
+﻿# Returns a single value
+5,		5
+
+# Addition
+10,		2+8
+20,		4+6+10
+
+# Subtraction
+20,		30-10
+15,		30-10-5
+
+# Division
+16,		64/4
+8,		64/4/2
+
+# Multiplication
+28,		4*7
+120,	4*5*6
+
+
+# Precedence
+14,		2+3*4
+14,		3*4+2
+70,		80-50/5
+9,		50/5-1
+
+# Parenthesis to alter precedence
+20,		(2+3)*4
+18,		3*(4+2)
+6,		(80-50)/5
+12,		50/(5-1)

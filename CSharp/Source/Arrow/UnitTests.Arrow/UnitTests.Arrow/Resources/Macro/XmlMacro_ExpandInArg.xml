@@ -1,0 +1,19 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+    <m:Define name="Leader">
+        <Leader>
+            <m:InjectXml name="who" select="*"/>
+        </Leader>
+    </m:Define>
+
+    <m:Define name="Person">
+        <Person>
+            <Name>@{name}</Name>
+        </Person>
+    </m:Define>
+
+    <x:Leader>
+        <m:Arg name="who">
+            <x:Person name="Ben"/>
+        </m:Arg>
+    </x:Leader>
+</root>

@@ -1,0 +1,133 @@
+﻿<GeneralObjectCreationTests xmlns:obj="urn:arrow.xml.objectcreation">
+	<BasicPerson obj:type="UnitTests.Arrow.Support.Person,UnitTests.Arrow"/>
+
+	<NormalPerson obj:type="UnitTests.Arrow.Support.Person,UnitTests.Arrow">
+		<Name>Sean</Name>
+		<Age>35</Age>
+	</NormalPerson>
+
+	<NormalPersonConversion obj:type="UnitTests.Arrow.Support.Person,UnitTests.Arrow">
+		<Name>Sean</Name>
+		<Age obj:type="System.Int64">35</Age>
+	</NormalPersonConversion>
+
+	<NormalPersonCall obj:type="UnitTests.Arrow.Support.Person,UnitTests.Arrow">
+		<Name>Sean</Name>
+		<Age>35</Age>
+		<InitializeAge>
+			<Age obj:type="System.Int32">42</Age>
+		</InitializeAge>
+	</NormalPersonCall>
+
+	<!-- Simple enum with one value -->
+	<FileModeRead obj:type="UnitTests.Arrow.Support.Mode,UnitTests.Arrow">
+		Read
+	</FileModeRead>
+
+	<!-- A bitwise flag enum -->
+	<FileModeFlags obj:type="UnitTests.Arrow.Support.Mode,UnitTests.Arrow">
+		Read|Execute
+	</FileModeFlags>
+
+	<!-- Large object with various different type of construct -->
+	<Foo obj:type="UnitTests.Arrow.Support.Foo,UnitTests.Arrow">
+		<obj:Ctor>
+			<Username>Sean</Username>
+			<Enabled obj:type="bool">true</Enabled>
+		</obj:Ctor>
+		<Offset>3</Offset>
+		<Allow>
+			<obj:null/>
+		</Allow>
+		<Basic obj:type="UnitTests.Arrow.Support.BasicBar,UnitTests.Arrow"/>
+		<When>8/8/2008</When>
+		<Numbers>
+			<Number obj:type="byte">4</Number>
+			<Number obj:type="long">8</Number>
+			<Number obj:type="double">15</Number>
+			<Number>16</Number>
+			<Number>23</Number>
+			<Number>42</Number>
+		</Numbers>
+
+		<Basics>
+			<Basic key="bar">
+				<Value obj:type="UnitTests.Arrow.Support.BasicBar,UnitTests.Arrow"/>
+			</Basic>
+			<Basic key="foo">
+				<Value obj:type="UnitTests.Arrow.Support.BasicFoo,UnitTests.Arrow"/>
+			</Basic>
+		</Basics>
+
+		<Ages>
+			<Age key="Sean" value="35"/>
+			<Age>
+				<Key>Fred</Key>
+				<Value obj:type="byte">46</Value>
+			</Age>
+		</Ages>
+		
+	</Foo>
+
+	<!-- Tests CreateList-->
+	<Names>
+		<Name>Sean</Name>
+		<Name>Jon</Name>
+		<Name>Robert</Name>
+		<Name>Richard</Name>
+	</Names>
+
+	<InitTest obj:type="UnitTests.Arrow.Support.InitializeTester,UnitTests.Arrow">
+		<Age>35</Age>
+	</InitTest>
+
+	<XmlAssignment>
+		<Age>31</Age>
+		<Config>
+			<Jack/>
+			<Locke/>
+		</Config>
+	</XmlAssignment>
+
+	<Ages>
+		<Sean>35</Sean>
+		<Jon>34</Jon>
+        <Rob>27</Rob>
+	</Ages>
+
+	<Scores>
+		<Sean>8</Sean>
+		<Sean>10</Sean>
+		<Jack>1</Jack>
+		<Jack>2</Jack>
+		<Jack>13</Jack>
+	</Scores>
+
+	<NamedBag>
+		<Number obj:type="int">42</Number>
+		<Text obj:type="string">hello</Text>
+	</NamedBag>
+
+    <FromAttribute age="10"/>
+
+    <ElementPerson name="Sun" Age="41" />
+
+    <NoExpandPerson>
+        <Name obj:expand="false">${DateTime:Now}</Name>
+        <Age>10</Age>
+    </NoExpandPerson>
+
+    <VariableLookupPerson>
+        <Name>${default-name}</Name>
+        <Age>${default-age}</Age>
+    </VariableLookupPerson>
+
+	<Codes>
+		<Item key="A" value="1" />
+		<Item key="B" value="2" />
+		<Item key="C" value="3" />
+		<Item key="D" value="4" />
+		<Item key="E" value="5" />
+	</Codes>
+	
+</GeneralObjectCreationTests>

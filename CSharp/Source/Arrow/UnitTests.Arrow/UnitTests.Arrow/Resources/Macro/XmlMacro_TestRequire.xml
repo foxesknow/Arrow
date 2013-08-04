@@ -1,0 +1,11 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+    <m:Define name="User">
+        <m:Require name="username"/>
+
+        <User>
+            <Name>@{username}</Name>
+        </User>
+    </m:Define>
+
+    <x:User username="Sawyer"/>
+</root>

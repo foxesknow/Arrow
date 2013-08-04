@@ -1,0 +1,9 @@
+﻿# Static fields
+58,				PropertyAndField.sNumber
+HelloWorld,		PropertyAndField.sText
+e,				PropertyAndField.sText[1]
+
+# Static properties
+101,			PropertyAndField.StaticNumber
+3,				PropertyAndField.StaticNames.Count
+m,				PropertyAndField.StaticNames[0][2]

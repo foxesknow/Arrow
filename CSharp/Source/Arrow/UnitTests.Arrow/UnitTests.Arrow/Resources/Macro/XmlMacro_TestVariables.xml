@@ -1,0 +1,32 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+    <m:Declare name="mode">read</m:Declare>
+    <m:Declare name="filename">foo.txt</m:Declare>
+    <m:Declare name="share" type="System.IO.FileShare">write</m:Declare>
+    <m:Declare name="when" type="System.DateTime">25/12/2008</m:Declare>
+
+	<File Mode="@{mode}">
+		<Filename>@{filename}</Filename>
+	</File>
+
+	<Mode1>@{mode}</Mode1>
+
+	<Block>
+		<!-- This declaration is local to Block and hides the outer decleration-->
+        <m:Declare name="mode">execute</m:Declare>
+		<Mode>@{mode}</Mode>
+	</Block>
+
+	<Mode2>@{mode}</Mode2>
+
+	<Share>@{share}</Share>
+
+	<When>@{when||ddMMMyyyy}</When>
+
+    <m:Define name="no-substitute">
+        <NoSub>@{usermode}</NoSub>
+    </m:Define>
+
+    <x:no-substitute x:usermode="share"/>
+	
+</root>

@@ -1,0 +1,59 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+	<!-- Create a simple macro -->
+	<m:Define name="Person">
+		<Person>
+			<Name>@{name}</Name>
+			<Age>@{age}</Age>
+		</Person>
+	</m:Define>
+
+	<x:Person name="Sean" age="35" />
+	
+	<!-- Try a macro expansion within a macro -->
+	<m:Define name="Superuser">
+		<Superuser>
+			<x:Person name="@{name}" age="@{age}"/>
+		</Superuser>
+	</m:Define>
+
+	<x:Superuser name="Bob" age="58" />
+
+	<!-- Test defaults -->
+	<m:Define name="Setting">
+        <m:TryDeclare name="enabled">false</m:TryDeclare>
+		<Setting name="@{name}" enabled="@{enabled}" />
+	</m:Define>
+
+	<Settings>
+		<x:Setting name="read"/>
+		<x:Setting name="write"/>
+		<x:Setting name="execute" enabled="true"/>
+	</Settings>
+
+    <!-- Test injection of expanding xml -->
+    <m:Define name="Insert">
+        <Insert>
+            <m:InjectXml name="expandingNode" select="*"/>
+        </Insert>
+    </m:Define>
+
+    <x:Insert>
+        <Foo/>
+        <Bar/>
+    </x:Insert>
+
+    <!-- This macro uses an xml argument -->
+    <m:Define name="NodeArgs">
+        <Node>
+            <m:InjectXml name="what" select="*"/>
+        </Node>
+    </m:Define>
+
+    <x:NodeArgs>
+        <m:Arg name="what">
+            <User>John</User>
+        </m:Arg>
+    </x:NodeArgs>
+
+</root>

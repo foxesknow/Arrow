@@ -1,0 +1,5 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+	<Level1>
+		<m:Include uri="XmlMacro_TestInclude_2.xml" />
+	</Level1>
+</root>

@@ -1,0 +1,39 @@
+﻿<root>
+    <Weak>
+        <Name>Charles</Name>
+        <Value type="System.Collections.Hashtable">
+            <Item key="Numbers">
+                <Value type="System.Collections.ArrayList">
+                    <Item type="int">4</Item>
+                    <Item type="int">8</Item>
+                    <Item type="int">15</Item>
+                    <Item type="int">16</Item>
+                    <Item type="int">23</Item>
+                    <Item type="int">42</Item>
+                    <Capacity>20</Capacity>
+                </Value>
+            </Item>
+            <Item>
+                <Key>Business</Key>
+                <Value type="System.Collections.ArrayList">
+                    <Item>Construction</Item>
+                </Value>
+            </Item>
+        </Value>
+    </Weak>
+
+    <Strong>
+        <Name>Ben</Name>
+        <Employers>
+            <Company>Dharma</Company>
+            <Item>Others</Item>
+        </Employers>
+        <Employers.Capacity>20</Employers.Capacity>
+        
+        <EmployeeAges>
+            <Item key="Juliet" value="39"/>
+            <Person key="Tom" value="52"/>
+        </EmployeeAges>
+    </Strong>
+
+</root>

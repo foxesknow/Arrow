@@ -1,0 +1,11 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+	<m:Define name="UserDetails">
+		<UserDetails>
+			<Username>@{env:username}</Username>
+			<Dept>@{dept}</Dept>
+			<OS>@{env:os||tolower}</OS>
+		</UserDetails>
+	</m:Define>
+
+	<x:UserDetails dept="IRP" />
+</root>

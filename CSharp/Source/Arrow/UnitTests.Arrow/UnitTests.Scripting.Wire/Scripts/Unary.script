@@ -1,0 +1,9 @@
+﻿# not
+true,	not false
+false,	not true
+
+# unary plus
+10,		+10
+-10,	+(-10)
+8,		10+-2
+8,		10+-(1+1)

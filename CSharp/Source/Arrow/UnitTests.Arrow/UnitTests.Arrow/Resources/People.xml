@@ -1,0 +1,15 @@
+﻿<People xmlns:obj="urn:arrow.xml.objectcreation">
+
+	<Fisherman>
+		<Name>Sun</Name>
+		<Age>41</Age>
+	</Fisherman>
+
+	<Hunter obj:type="UnitTests.Arrow.Support.Person,UnitTests.Arrow">
+		<Name>Locke</Name>
+		<Age>52</Age>
+	</Hunter>
+
+	<Leader obj:uri="res://UnitTests.Arrow/UnitTests.Arrow.Resources.Jack.xml" />
+
+</People>

@@ -1,0 +1,13 @@
+﻿<Tests xmlns:obj="urn:arrow.xml.objectcreation"
+	   xmlns:s="clr-namespace:System"
+	   xmlns:t="clr-namespace:UnitTests.Arrow.Support;assembly=UnitTests.Arrow">
+
+
+	<Person obj:type="t:Person">
+		<Name>Sean</Name>
+		<Age obj:type="s:int32">35</Age>
+	</Person>
+
+	<Passenger obj:uri="res://UnitTests.Arrow/UnitTests.Arrow.Resources.NamespaceTypeInclude.xml" obj:select="Test/Doctor"/>
+	
+</Tests>

@@ -1,0 +1,15 @@
+﻿true,		10>1
+false,		10>10
+false,		10>30
+
+true,		8>=8
+true,		8>=7
+false,		20>=30
+
+true,		10<20
+false,		10<10
+false,		50<30
+
+true,		91<=100
+true,		91<=91
+false,		91<=7

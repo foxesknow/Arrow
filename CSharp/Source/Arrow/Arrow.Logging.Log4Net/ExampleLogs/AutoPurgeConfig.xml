@@ -1,0 +1,19 @@
+<log4net>
+    <appender name="FileAppender" type="CS.Echo.Logging.Log4Net.FileAppender, CS.Echo.Logging.Log4Net">
+        <param name="Threshold" value="DEBUG" />
+        <file value="logs\Jackanory-$(app:database)-$(DateTime:Now||yyyyMMdd).log" />
+		<appendToFile value="true" />
+		<purgeMask value="logs\Jackanory-$(app:database)-*.log" />
+		<purgeDays value="7" />
+        <layout type="log4net.Layout.PatternLayout">
+            <param name="Header" value="--- START Logging Session ---&#13;&#10;" />
+            <conversionPattern value="%d{yyyyMMdd-HH:mm:ss.fff} %-5p [%thread] %-90m%n" />
+        </layout>
+    </appender>
+ 
+    <root>
+        <appender-ref ref="FileAppender" />
+    </root>
+
+</log4net>
+

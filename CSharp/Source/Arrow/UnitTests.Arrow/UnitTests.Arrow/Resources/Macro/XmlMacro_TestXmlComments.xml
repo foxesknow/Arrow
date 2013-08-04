@@ -1,0 +1,19 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+	<!-- This @{should} work-->
+
+	<!-- Here we'll make sure that injection works with comments present -->
+	<m:Define name="Person">
+		<Person>
+			<m:InjectXml name="body" select="node()"/>
+		</Person>
+	</m:Define>
+
+	<x:Person>
+		<m:Arg name="body">
+			<HelloThere/>
+			hi <!-- @{oops} --> there
+			<!-- @{foo} -->
+		</m:Arg>
+	</x:Person>
+</root>

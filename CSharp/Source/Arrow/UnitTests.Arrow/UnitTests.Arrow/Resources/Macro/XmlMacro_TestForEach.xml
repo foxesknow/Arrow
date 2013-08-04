@@ -1,0 +1,16 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+	<!-- Simple list of numbers -->
+	<Numbers>
+		<m:ForEach name="number" values="1,2,3,4">
+			<Number>@{number}</Number>
+		</m:ForEach>
+	</Numbers>
+
+	<Pairs>
+        <m:ForEach name="key,value" values="a,1,b,2,c,4,d,8">
+			<Pair key="@{key}" value="@{value}"/>
+		</m:ForEach>
+	</Pairs>
+
+</root>

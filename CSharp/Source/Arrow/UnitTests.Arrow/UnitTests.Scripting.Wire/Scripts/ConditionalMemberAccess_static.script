@@ -1,0 +1,8 @@
+﻿3,	paf.Leader.Length
+3,	paf?.Leader.Length
+3,	paf?.Leader?.Length
+
+null,	PropertyAndField.NullString
+0,		PropertyAndField.NullString?.Length
+
+3,		paf.Leader.Length?.ToString()

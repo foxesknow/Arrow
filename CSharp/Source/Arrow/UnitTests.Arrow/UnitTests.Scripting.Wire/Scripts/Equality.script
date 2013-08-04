@@ -1,0 +1,27 @@
+﻿# Regular equality with no case awareness
+true,		10==10
+true,		"hello"=="hello"
+false,		14==15
+false,		"hello"=="world"
+false,		"hello"=="HELLO"
+true,		10+20==1+29
+true,		"he"+"llo"=="h"+"ello"
+
+true,		58!=59
+true,		"hello"!="HELLO"
+false,		1!=1
+false,		"hello"!="hello"
+
+# Equality with case awareness
+true,		10===10
+true,		"hello"==="hello"
+false,		14===15
+false,		"hello"==="world"
+true,		"hello"==="HELLO"
+
+true,		58!==59
+false,		"hello"!=="HELLO"
+false,		1!==1
+true,		"hello"!=="hi"
+true,		10+20===1+29
+true,		"he"+"llo"==="H"+"ello"

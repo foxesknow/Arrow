@@ -1,0 +1,121 @@
+The static and the dynamic expression compilers support the following keywords and operators:
+
+Operators 				Description
+-----------------------------------
+?: 						Ternary
+?? 						null coalesce
+or 						logical or
+and 					logical and
+==, !=, ===, !==, ~= 	equals, not-equals, equals(ignore case), not-equals(ignore case), regular expression
+<, <=, >, >= 			less than, less than or equal, greater than, greater than or equal
+in, ~in, between 		in, in(ignore case), between
++, - 					binary addition and subtraction
+*, /, % 				multiplication, division, modulo
++, -, not 				unary plus, unary minus, boolean negation
+cast, is, as, iif 		type conversion and testing, immediate-if
+., ?., (), [] 			function call, array access
+
+All keywords and operators work the same as their C# counterparts with the following exceptions:
+and, or
+
+These are the equivilant of && and || in C#. Textual names have been chosen to simplify embedding expressions into XML.
+
+===================================================================
+
+~=
+
+Does a regular expression evaluation, treating the right hand side as a regex pattern. For example:
+
+"hello world" ~= "..llo.*"
+
+===================================================================
+
+=== and !==
+
+These operators perform a case insensitive test of their operands if both operands are strings, otherwise there perform a regular test. For example:
+
+"hello"=="HELLO"
+
+is false, whilst:
+
+"hello"==="HELLO"
+
+is true.
+
+===================================================================
+
+in and ~in
+
+The in keyword searches for a value within a list of values. For example:
+
+10 in (4, 6, 8, 10, 12)
+
+Each value in the list is only evaluated at the point of comparison as the expression if expanded out to the following:
+
+10==4 || 10==6  || 10==8 || 10==10 || 10==12
+
+The values in the list can also be expressions:
+
+10 in (8, Math.Abs(x), 12)
+
+Note that the value being search for is only evaluated once. So if you do this:
+
+person.Username in ("fred", "bob", "jack")
+
+Then person.Username is only called once and its return value used to perform the search.
+
+The ~in keyword performs a case-insensitive comparison if the values are strings, otherwise it performs a regular comparison.
+
+===================================================================
+
+Between
+
+Between checks if a number is within a certain range:
+
+10 between x and y
+
+This is expanded out to:
+
+x>=10 and 10<y
+
+It is important to note that the upperbound test is not "less than or equal". Also, the value to be checked is only evaluated once, so:
+
+person.Age between 20 and 29
+
+Will only cause person.Age to be called once.
+
+===================================================================
+
+cast, as, is
+
+A standardized approach to type checking has been adopted. All the operators have the following form:
+
+operator<TYPE>(expression)
+
+For example:
+
+cast<long>(Math.Abs(x))
+is<int>(y)
+as<string>(z)
+
+===================================================================
+
+iif
+
+The immediate-if operator is the same as the ternary operator but provides a more functional syntax. It has the form:
+
+iif(condition, ifTrue, ifFalse)
+
+Only one of ifTrue or ifFalse will be evaluated, depending on the value of condition. For example:
+
+iif(department=="HR",rate*0.8, rate*0.9)
+
+===================================================================
+
+?.
+
+The conditional member access operator behaviour varies depending on whether the expressin is static or dynamic. If will only evaluate the right hand side if the left hand side is not null. If it is null then it simply returns null for dynamic expressions, or the default value for the property type for static expressions. For example:
+
+person?.Age
+
+Here, is Age is an integer propert then this would return 0 for a static expression if person is null, or null if this is a dynamic expression.

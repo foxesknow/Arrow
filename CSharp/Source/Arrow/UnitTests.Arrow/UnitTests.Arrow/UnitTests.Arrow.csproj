@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{28DCBB06-F869-44CF-8785-29A5B340157E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UnitTests.Arrow</RootNamespace>
+    <AssemblyName>UnitTests.Arrow</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\bin\Arrow\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\..\bin\Arrow\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Arrow, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\bin\Arrow\Arrow.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.1.12217, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\nunit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Application\CommandLineSwitchTests.cs" />
+    <Compile Include="Calendar\ClockTests.cs" />
+    <Compile Include="Collections\AlertableEventQueueTests.cs" />
+    <Compile Include="Collections\HeapTests.cs" />
+    <Compile Include="Collections\IgnoreCaseComparerTests.cs" />
+    <Compile Include="Collections\IgnoreCaseEqualityComparerTests.cs" />
+    <Compile Include="Collections\MemorizerTests.cs" />
+    <Compile Include="Collections\MultiDictionaryTests.cs" />
+    <Compile Include="Collections\PoolTests.cs" />
+    <Compile Include="Collections\PriorityQueueTests.cs" />
+    <Compile Include="Collections\PriorityQueueTestsBase.cs" />
+    <Compile Include="Collections\RollingQueueTests.cs" />
+    <Compile Include="Collections\SequenceTests.cs" />
+    <Compile Include="Collections\StablePriorityQueueTests.cs" />
+    <Compile Include="Configuration\AppConfigTests.cs" />
+    <Compile Include="DI\DefaultContainerTests.cs" />
+    <Compile Include="DI\IUserLookup.cs" />
+    <Compile Include="Execution\MethodCallTests.cs" />
+    <Compile Include="Execution\ServiceBusTests.cs" />
+    <Compile Include="ObjectAccess\ObjectLocatorTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceLoader.cs" />
+    <Compile Include="Settings\DefaultSettingsTests.cs" />
+    <Compile Include="Settings\DirectXmlSettingsTests.cs" />
+    <Compile Include="Settings\EnvironmentSettingsTests.cs" />
+    <Compile Include="Settings\SettingsManagerTests.cs" />
+    <Compile Include="Storage\AccessorTests.cs" />
+    <Compile Include="Storage\FileAccessorTests.cs" />
+    <Compile Include="Storage\ResourceAccessorTests.cs" />
+    <Compile Include="Storage\StorageManagerTests.cs" />
+    <Compile Include="Storage\XmlStorageResolverTests.cs" />
+    <Compile Include="Support\Foo.cs" />
+    <Compile Include="Support\HashSetData.cs" />
+    <Compile Include="Support\IBasic.cs" />
+    <Compile Include="Support\InitializeTester.cs" />
+    <Compile Include="Support\Mode.cs" />
+    <Compile Include="Support\Person.cs" />
+    <Compile Include="Support\PersonBank.cs" />
+    <Compile Include="Support\TheOthers.cs" />
+    <Compile Include="Support\Tuple.cs" />
+    <Compile Include="Support\XmlAssignment.cs" />
+    <Compile Include="Text\TokenExpanderTests.cs" />
+    <Compile Include="Threading\ActionWorkQueueTests.cs" />
+    <Compile Include="Threading\Collections\SwapDictionaryTests.cs" />
+    <Compile Include="Threading\Collections\SwapListTests.cs" />
+    <Compile Include="Threading\InterlockedExTests.cs" />
+    <Compile Include="Threading\MonitorQueueTests.cs" />
+    <Compile Include="Threading\OutstandingEventTests.cs" />
+    <Compile Include="Xml\Macro\XmlMacroExpanderTests.cs" />
+    <Compile Include="Xml\ObjectCreation\GeneralObjectCreationTests.cs" />
+    <Compile Include="Xml\ObjectCreation\ICollectionTests.cs" />
+    <Compile Include="Xml\ObjectCreation\ImplicitCollectionTests.cs" />
+    <Compile Include="Xml\ObjectCreation\IndirectObjectCreationTests.cs" />
+    <Compile Include="Xml\ObjectCreation\NamespaceTypeTests.cs" />
+    <Compile Include="Xml\ObjectCreation\NestedPropertiesTest.cs" />
+    <Compile Include="Xml\ObjectCreation\ObjectCreationTests.cs" />
+    <Compile Include="Xml\ObjectCreation\ICustomXmlInitializationTests.cs" />
+    <Compile Include="Xml\ObjectCreation\RelativeObjectTests.cs" />
+    <Compile Include="Xml\ObjectCreation\UriCreationTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\StorageStylesheet.xml" />
+    <EmbeddedResource Include="Resources\StorageStylesheetInclude.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Jack.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\People.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ObjectCreationTests.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\HashCollection.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ImplicitCollections.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\IndirectObjectCreationTests.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\PeopleList.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\NamespaceTypeInclude.xml" />
+    <EmbeddedResource Include="Resources\NamespaceTypeTests.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\NestedProperties.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CustomXmlInitialization.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\RelativeObjectCreation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MorePeople\Ben.xml" />
+    <EmbeddedResource Include="Resources\MorePeople\Kate.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\GeneralObjectCreationTests.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_ExpandInArg.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_MetaData.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestComment.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestDefine.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestForEach.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude_1.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude_2.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestInsertSetting.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestLoadXml.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestOptional.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestRequire.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestRequireFail.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestTryDeclare.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestTryInclude.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestVariables.xml" />
+    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestXmlComments.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Macro\SubDir\XmlMacro_TestInclude_3.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AppConfigTest_Storage.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AppConfigInclude.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

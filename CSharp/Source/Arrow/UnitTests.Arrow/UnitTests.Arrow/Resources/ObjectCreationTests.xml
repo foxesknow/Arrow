@@ -1,0 +1,45 @@
+﻿<root xmlns:obj="urn:arrow.xml.objectcreation" 
+	  xmlns:generic="clr-namespace:System.Collections.Generic"
+	  xmlns:arrowtests="clr-namespace:UnitTests.Arrow;assembly=UnitTests.Arrow">
+	
+	<List type="generic:List`1">
+		<obj:Generics>
+			<obj:Generic type="int"/>
+		</obj:Generics>
+	</List>
+
+	<Tuple obj:type="arrowtests:Support.Tuple`2">
+		<obj:Generics>
+			<obj:Generic type="string"/>
+			<obj:Generic type="int" />
+		</obj:Generics>
+
+		<First>Hurley</First>
+		<Second>39</Second>		
+	</Tuple>
+
+	<Nested obj:type="generic:Dictionary`2">
+		<obj:Generics>
+			<obj:Generic type="int" />
+			<obj:Generic type="arrowtests:Support.Tuple`2">
+				<obj:Generic type="string"/>
+				<obj:Generic type="System.Nullable`1">
+					<obj:Generic type="int"/>
+				</obj:Generic>
+			</obj:Generic>
+		</obj:Generics>
+	</Nested>
+
+	<NotEnough obj:type="arrowtests:Support.Tuple`2">
+		<obj:Generics>
+			<obj:Generic type="string"/>
+		</obj:Generics>
+	</NotEnough>
+
+	<Ages>
+		<Sean>35</Sean>
+		<Jon>34</Jon>
+		<Rob>27</Rob>
+	</Ages>
+
+</root>

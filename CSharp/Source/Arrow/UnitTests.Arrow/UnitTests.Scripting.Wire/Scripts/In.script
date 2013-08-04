@@ -1,0 +1,33 @@
+﻿# An empty list should always evaluate to false
+false,	10 in ()
+false,	"hello" in ()
+
+# A single item
+true,	10 in (10)
+true,	"hello" in ("hello")
+
+# Boundary cases
+true,	10 in (5,10)
+true,	10 in (10,5)
+true,	10 in (5,10,15)
+
+false,	10 in (3,6,9)
+false,	10 in (3,6,9,12)
+
+# Where the value to find is an expression
+true,	3+7 in (5,10)
+true,	12-2 in (10,5)
+true,	80/8 in (5,10,15)
+
+# Where the list contains expressions
+true,	10 in (3,2*5)
+true,	10 in (80/8,5)
+true,	10 in (5,200/5/4,15)
+false,	10 in (200/10)
+
+# In, case insensitive
+true,	10 ~in (3,2*5)
+true,	"Sawyer" in ("Kate","Ben","Sawyer","Jack")
+false,	"sawyer" in ("Kate","Ben","Sawyer","Jack")
+true,	"sawyer" ~in ("Kate","Ben","Sawyer","Jack")
+false,	"bob" ~in ("Kate","Ben","Sawyer","Jack")

@@ -1,0 +1,16 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+	<details>
+		<m:Comment>
+            <m:TryDeclare name="user">Jack</m:TryDeclare>
+			<m:TryDeclare name="app">Firefox</m:TryDeclare>
+
+			<username>@{user}</username>
+			<app>@{app}</app>
+		</m:Comment>
+
+		<Name>Locke</Name>
+		
+	</details>
+
+</root>

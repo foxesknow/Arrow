@@ -1,0 +1,6 @@
+﻿hello,		paf.counter==42 ? "hello" : "world"
+world,		paf.counter!=42 ? "hello" : "world"
+
+
+hello,		iif(paf.counter==42,"hello","world")
+world,		iif(paf.counter!=42,"hello","world")

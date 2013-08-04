@@ -1,0 +1,13 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+    <!-- This one will go after expansion -->
+    <m:Meta name="island">
+        <Island>Tropical</Island>
+    </m:Meta>
+
+    <!-- This one will be copied to the output -->
+    <m:Meta name="castle" copy="true">
+        <Castle>Windsor</Castle>
+    </m:Meta>
+
+</root>

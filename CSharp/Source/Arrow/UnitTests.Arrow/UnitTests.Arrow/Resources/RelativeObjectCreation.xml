@@ -1,0 +1,16 @@
+﻿<root xmlns:obj="urn:arrow.xml.objectcreation"
+      xmlns:test="clr-namespace:UnitTests.Arrow;assembly=UnitTests.Arrow">
+    
+    <User obj:type="test:Support.Person" obj:uri="Jack.xml">
+    </User>
+
+    <!-- For this test the code won't specify a base location, so creation fail-->
+    <WontWork obj:type="test:Support.Person" obj:uri="Jack.xml">
+    </WontWork>
+
+    <People>
+        <Person obj:uri="Jack.xml"/>
+        <Person obj:uri="MorePeople/Ben.xml"/>
+        <Person obj:uri="MorePeople/Kate.xml"/>
+    </People>
+</root>

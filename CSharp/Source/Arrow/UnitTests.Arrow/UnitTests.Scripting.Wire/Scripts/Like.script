@@ -1,0 +1,17 @@
+﻿true,	"hello" like "hello"
+true,	"hello" ~like "HELLo"
+
+false,	"hello" like "goodbye"
+false,	"hello" ~like "WORLD"
+
+true,	"hello" like "h%"
+false,	"hello" like "H%"
+true,	"hello" ~like "h%"
+false,	"hello" like "a%"
+
+true,	"hello"+"there" like "%lot%"
+false,	"hello"+"there" like "%lol%"
+true,	"hello"+"there" ~like "%LOT%"
+
+true,	"hello" like "he"+"llo"
+true,	"hello" ~like "HEL"+"Lo"

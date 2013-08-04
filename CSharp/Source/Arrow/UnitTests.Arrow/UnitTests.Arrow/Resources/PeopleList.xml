@@ -1,0 +1,5 @@
+﻿<PeopleList xmlns:obj="urn:arrow.xml.objectcreation">
+  <Person obj:uri="res://UnitTests.Arrow/UnitTests.Arrow.Resources.People.xml" obj:select="People/Fisherman" />
+  <Person obj:uri="res://UnitTests.Arrow/UnitTests.Arrow.Resources.People.xml" obj:select="People/Hunter" />
+  <Person obj:uri="res://UnitTests.Arrow/UnitTests.Arrow.Resources.People.xml" obj:select="People/Leader"/>
+</PeopleList>

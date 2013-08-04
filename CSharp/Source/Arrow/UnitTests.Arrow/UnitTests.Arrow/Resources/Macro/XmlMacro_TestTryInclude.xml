@@ -1,0 +1,9 @@
+﻿<root xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+
+	<m:TryInclude>
+		<m:Include name="foo.xml" />
+        <m:Include name="bar.xml" />
+        <m:Include name="XmlMacro_TestInclude_1.xml" />
+	</m:TryInclude>
+
+</root>

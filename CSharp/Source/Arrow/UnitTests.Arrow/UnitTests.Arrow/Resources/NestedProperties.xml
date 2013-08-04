@@ -1,0 +1,13 @@
+﻿<NestedProperties xmlns:obj="urn:arrow.xml.objectcreation" xmlns:t="clr-namespace:UnitTests.Arrow.Support;assembly=UnitTests.Arrow">
+    <TheOthers obj:type="t:TheOthers">
+        <!-- Here we alter the existing object-->
+        <Leader.Name>Ben</Leader.Name>
+        <Leader.Age>46</Leader.Age>
+
+        <!-- Here we create a new object -->
+        <Medic>
+            <Name>Juliet</Name>
+            <Age>32</Age>    
+        </Medic>
+    </TheOthers>
+</NestedProperties>

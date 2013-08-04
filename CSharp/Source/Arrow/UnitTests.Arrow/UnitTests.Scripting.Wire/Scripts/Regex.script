@@ -1,0 +1,4 @@
+﻿true,	"Hello, world" ~= ".*ll.*"
+true,	"Hello, world" ~= "..ll.*"
+false,	"Hello, world" ~= ".*lll.*"
+true,	"Hello, world" ~= "Hello, world"
