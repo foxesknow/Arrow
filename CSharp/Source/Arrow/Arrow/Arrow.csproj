@@ -84,6 +84,8 @@
     <Compile Include="Collections\ReferenceCountedResource.cs" />
     <Compile Include="Collections\RollingQueue.cs" />
     <Compile Include="Collections\Sequence.cs" />
+    <Compile Include="Collections\Slice.cs" />
+    <Compile Include="Collections\SliceExtensions.cs" />
     <Compile Include="Collections\StablePriorityQueue.cs" />
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\AppDomainConfigFile.cs" />

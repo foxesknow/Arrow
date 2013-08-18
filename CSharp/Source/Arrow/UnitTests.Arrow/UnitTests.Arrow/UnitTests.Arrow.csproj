@@ -60,6 +60,7 @@
     <Compile Include="Collections\PriorityQueueTestsBase.cs" />
     <Compile Include="Collections\RollingQueueTests.cs" />
     <Compile Include="Collections\SequenceTests.cs" />
+    <Compile Include="Collections\SliceTests.cs" />
     <Compile Include="Collections\StablePriorityQueueTests.cs" />
     <Compile Include="Configuration\AppConfigTests.cs" />
     <Compile Include="DI\DefaultContainerTests.cs" />
