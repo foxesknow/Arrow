@@ -69,6 +69,18 @@
     <Compile Include="Calendar\Reminders.cs" />
     <Compile Include="Calendar\SystemClock.cs" />
     <Compile Include="Collections\AlertableEventQueue.cs" />
+    <Compile Include="Collections\Caching\AtEvictionPolicy.cs" />
+    <Compile Include="Collections\Caching\CacheEventArgs.cs" />
+    <Compile Include="Collections\Caching\CacheFactory.cs" />
+    <Compile Include="Collections\Caching\CacheImpl.cs" />
+    <Compile Include="Collections\Caching\CacheItem.cs" />
+    <Compile Include="Collections\Caching\EvictionPolicy.cs" />
+    <Compile Include="Collections\Caching\AutoCreateCache.cs" />
+    <Compile Include="Collections\Caching\ICache.cs" />
+    <Compile Include="Collections\Caching\LiveForeverEvictionPolicy.cs" />
+    <Compile Include="Collections\Caching\ManualCache.cs" />
+    <Compile Include="Collections\Caching\PurgeMode.cs" />
+    <Compile Include="Collections\Caching\UsageCountEvictionPolicy.cs" />
     <Compile Include="Collections\CheckInOutcome.cs" />
     <Compile Include="Collections\Extensions\DictionaryExtensions.cs" />
     <Compile Include="Collections\Heap.cs" />
@@ -112,6 +124,7 @@
     <Compile Include="DI\Lifetime.cs" />
     <Compile Include="Execution\Disposer.cs" />
     <Compile Include="Execution\ExecutionTimer.cs" />
+    <Compile Include="Execution\ExtensionPoint.cs" />
     <Compile Include="Execution\MethodCall.cs" />
     <Compile Include="Execution\ServiceBus.cs" />
     <Compile Include="Execution\TimerMode.cs" />

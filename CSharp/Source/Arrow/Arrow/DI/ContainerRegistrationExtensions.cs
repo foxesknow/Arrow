@@ -19,6 +19,7 @@ namespace Arrow.DI
 		public static void RegisterInstance<T>(this IContainerRegistration container, T item) where T:class
 		{
 			if(container==null) throw new ArgumentNullException("container");
+			if(item==null) throw new ArgumentNullException("item");
 
 			Type[] exposedTypes={typeof(T)};
 			container.RegisterInstance(exposedTypes,item);
@@ -64,9 +65,11 @@ namespace Arrow.DI
 		public static void Register(this IContainerRegistration container, Type exposedType, Type contreteType, Lifetime lifetime)
 		{
 			if(container==null) throw new ArgumentNullException("container");
+			if(exposedType==null) throw new ArgumentNullException("exposedType");
+			if(contreteType==null) throw new ArgumentNullException("contreteType");
 
 			Type[] exposedTypes={exposedType};
-			container.Register(exposedTypes,contreteType,Lifetime.Transient);
+			container.Register(exposedTypes,contreteType,lifetime);
 		}
 	}
 }
