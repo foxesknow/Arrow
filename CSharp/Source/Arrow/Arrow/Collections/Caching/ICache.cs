@@ -74,5 +74,12 @@ namespace Arrow.Collections.Caching
 		/// </summary>
 		void TouchAll();
 
+		/// <summary>
+		/// Evicts an item from the cache
+		/// </summary>
+		/// <param name="key">The key of the item to evict</param>
+		/// <returns>true if the item was found and evicted, otherwise false</returns>
+		bool Evict(K key);
+
 	}
 }

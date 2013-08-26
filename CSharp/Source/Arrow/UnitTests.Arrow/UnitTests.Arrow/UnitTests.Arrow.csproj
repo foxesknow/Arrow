@@ -50,6 +50,10 @@
     <Compile Include="Application\CommandLineSwitchTests.cs" />
     <Compile Include="Calendar\ClockTests.cs" />
     <Compile Include="Collections\AlertableEventQueueTests.cs" />
+    <Compile Include="Collections\Caching\FactoryTests.cs" />
+    <Compile Include="Collections\Caching\ManagedCacheTests.cs" />
+    <Compile Include="Collections\Caching\NoFactoryTests.cs" />
+    <Compile Include="Collections\Caching\UnmanagedCacheTests.cs" />
     <Compile Include="Collections\HeapTests.cs" />
     <Compile Include="Collections\IgnoreCaseComparerTests.cs" />
     <Compile Include="Collections\IgnoreCaseEqualityComparerTests.cs" />
