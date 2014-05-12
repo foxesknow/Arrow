@@ -12,6 +12,14 @@ namespace UnitTests.Scripting.Wire.TestClasses
 		public static readonly int sNumber=58;
 		public static readonly string sText="HelloWorld";
 
+		private readonly Dictionary<string,string> m_UserDepartments=new Dictionary<string,string>();
+
+		public PropertyAndField()
+		{
+			m_UserDepartments["Jack"]="HR";
+			m_UserDepartments["Lock"]="IT";
+		}
+
 		public static int StaticNumber
 		{
 			get{return 101;}
@@ -33,6 +41,11 @@ namespace UnitTests.Scripting.Wire.TestClasses
 		}
 
 		public static string NullString
+		{
+			get{return null;}
+		}
+
+		public string NullInstance
 		{
 			get{return null;}
 		}
