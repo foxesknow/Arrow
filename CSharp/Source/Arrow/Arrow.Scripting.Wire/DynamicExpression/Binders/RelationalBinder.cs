@@ -10,27 +10,23 @@ using Arrow.Scripting;
 
 namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 {
-	class RelationalBinder : BinderBase
+	class RelationalBinder : BinaryOperationBinder
 	{
 		private readonly Func<Expression,Expression,Expression> m_Factory;
 
-		public RelationalBinder(Func<Expression,Expression,Expression> factory)
+		public RelationalBinder(Func<Expression,Expression,Expression> factory, ExpressionType expressionType) : base(expressionType)
 		{
 			m_Factory=factory;
 		}
 
-		public override Type ReturnType
-		{
-			get{return typeof(bool);}
-		}
 
-		public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
+		public override DynamicMetaObject FallbackBinaryOperation(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
 		{
 			var restrictions=BindingRestrictions.Empty;
 			Expression expression=null;
 
 			var lhs=target.GetLimitedExpression();
-			var rhs=args[0].GetLimitedExpression();
+			var rhs=arg.GetLimitedExpression();
 
 			if(TypeCoercion.NormalizeBinaryExpression(ref lhs, ref rhs))
 			{
@@ -41,7 +37,11 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 				expression=this.ThrowException("RelationalBinder: could not normalize expressions");
 			}
 
-			restrictions=restrictions.ForAll(target,args);			
+			// We need to convert it to an object, as thats what BinaryOperationBinder returns
+			expression=expression.ConvertTo<object>();
+
+			restrictions=restrictions.AndLimitType(target).AndLimitType(arg);			
+
 			return new DynamicMetaObject(expression,restrictions);
 		}
 	}

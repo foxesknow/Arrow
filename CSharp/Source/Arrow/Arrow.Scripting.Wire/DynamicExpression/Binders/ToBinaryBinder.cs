@@ -24,14 +24,20 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 
 			Expression expression=value;
 
-			if(value.Type!=typeof(bool) && value.Type.IsValueType==false)
+			if(value.Type!=typeof(bool))
 			{
-				// For reference types do a test for null
-				expression=Expression.Equal(value,Expression.Constant(null));
-			}
-			else
-			{
-				expression=this.ThrowException("ToBinaryBinder: could not convert expression to boolean");
+				Type actualType=target.LimitType;
+				var toBoolean=typeof(Convert).GetMethod("ToBoolean",new Type[]{actualType});
+
+				if(toBoolean!=null)
+				{
+					// For reference types do a test for null
+					expression=Expression.Call(toBoolean,value.ConvertTo<object>());
+				}
+				else
+				{
+					expression=this.ThrowException("ToBinaryBinder: could not convert expression to boolean");
+				}
 			}
 
 			return new DynamicMetaObject(expression,restrictions);

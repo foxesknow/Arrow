@@ -60,22 +60,22 @@ namespace Arrow.Scripting.Wire.DynamicExpression
 
 		public override Expression GreaterThan(Expression lhs, Expression rhs)
 		{
-			return Binder.Relational(Expression.GreaterThan,lhs,rhs);
+			return Binder.Relational(Expression.GreaterThan,ExpressionType.GreaterThan,lhs,rhs);
 		}
 
 		public override Expression GreaterThanOrEqual(Expression lhs, Expression rhs)
 		{
-			return Binder.Relational(Expression.GreaterThanOrEqual,lhs,rhs);
+			return Binder.Relational(Expression.GreaterThanOrEqual,ExpressionType.GreaterThanOrEqual,lhs,rhs);
 		}
 
 		public override Expression LessThan(Expression lhs, Expression rhs)
 		{
-			return Binder.Relational(Expression.LessThan,lhs,rhs);
+			return Binder.Relational(Expression.LessThan,ExpressionType.LessThan,lhs,rhs);
 		}
 
 		public override Expression LessThanOrEqual(Expression lhs, Expression rhs)
 		{
-			return Binder.Relational(Expression.LessThanOrEqual,lhs,rhs);
+			return Binder.Relational(Expression.LessThanOrEqual,ExpressionType.LessThanOrEqual,lhs,rhs);
 		}
 
 		public override Expression Add(Expression lhs, Expression rhs)

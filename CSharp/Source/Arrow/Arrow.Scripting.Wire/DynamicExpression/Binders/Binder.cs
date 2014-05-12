@@ -47,9 +47,9 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			return Expression.Dynamic(binder,binder.ReturnType,lhs,pattern);
 		}
 
-		public static Expression Relational(Func<Expression,Expression,Expression> factory, Expression lhs, Expression rhs)
+		public static Expression Relational(Func<Expression,Expression,Expression> factory, ExpressionType expressionType, Expression lhs, Expression rhs)
 		{
-			var binder=new RelationalBinder(factory);
+			var binder=new RelationalBinder(factory,expressionType);
 			return Expression.Dynamic(binder,binder.ReturnType,lhs,rhs);
 		}
 
