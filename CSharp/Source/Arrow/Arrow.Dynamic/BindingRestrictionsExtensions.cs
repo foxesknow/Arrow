@@ -69,7 +69,7 @@ namespace Arrow.Dynamic
 		/// <returns>A new restriction</returns>
 		public static BindingRestrictions ForAll(this BindingRestrictions restrictions, DynamicMetaObject target, DynamicMetaObject[] args)
 		{
-			restrictions=restrictions.AndType(target.Expression,target.LimitType);
+			restrictions=restrictions.AndLimitType(target);
 
 			foreach(var arg in args)
 			{

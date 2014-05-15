@@ -10,24 +10,29 @@ using Arrow.Scripting;
 
 namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 {
-	class EqualityBinder : BinaryOperationBinder
+	class EqualityBinder : BinderBase
 	{
 		private readonly CaseMode m_CaseMode;
 		private readonly ExpressionType m_ExpressionType;
 
-		public EqualityBinder(ExpressionType expressionType, CaseMode caseMode) : base(expressionType)
+		public EqualityBinder(ExpressionType expressionType, CaseMode caseMode)// : base(expressionType)
 		{
 			m_ExpressionType=expressionType;
 			m_CaseMode=caseMode;
 		}
 
-		public override DynamicMetaObject FallbackBinaryOperation(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
+		public override Type ReturnType
+		{
+			get{return typeof(bool);}
+		}
+
+		public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)//, DynamicMetaObject errorSuggestion)
 		{
 			var restrictions=BindingRestrictions.Empty;
 			Expression expression=null;
 
 			var lhs=target.GetLimitedExpression();
-			var rhs=arg.GetLimitedExpression();
+			var rhs=args[0].GetLimitedExpression();
 
 			if(lhs.IsOfType<string>() && rhs.IsOfType<string>())
 			{
@@ -45,10 +50,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 				}
 			}
 
-			// We need to convert it to an object, as thats what BinaryOperationBinder returns
-			expression=expression.ConvertTo<Object>();
-
-			restrictions=restrictions.AndLimitType(target).AndLimitType(arg);
+			restrictions=restrictions.AndLimitType(target).AndLimitType(args[0]);			
 			
 			return new DynamicMetaObject(expression,restrictions);
 		}
