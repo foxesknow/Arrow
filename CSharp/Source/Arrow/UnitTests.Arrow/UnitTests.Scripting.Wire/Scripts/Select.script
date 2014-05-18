@@ -1,0 +1,14 @@
+﻿true,			"foo" == select(paf.Counter, 4=>"Rod", 6=>"Jane", 10=>"Freddy", 42=>"foo", default=>"Unknown")
+true,			"Unknown" == select(paf.Counter, 4=>"Rod", 6=>"Jane", 10=>"Freddy", 44=>"foo", default=>"Unknown")
+true,			10 == select(paf.Counter, default=>10)
+
+# No default clause should cause a compilation error
+@nocompile,		"foo" == select(paf.Counter, 4=>"Rod", 6=>"Jane", 10=>"Freddy", 42=>"foo")
+
+# The default can do anywhere
+
+true,			"foo" == select(paf.Counter, 4=>"Rod", 6=>"Jane", 10=>"Freddy", 42=>"foo", default=>"Unknown")
+true,			"foo" == select(paf.Counter, default=>"Unknown", 4=>"Rod", 6=>"Jane", 10=>"Freddy", 42=>"foo")
+true,			"foo" == select(paf.Counter, 4=>"Rod", default=>"Unknown", 6=>"Jane", 10=>"Freddy", 42=>"foo")
+true,			"foo" == select(paf.Counter, 4=>"Rod", 6=>"Jane", default=>"Unknown", 10=>"Freddy", 42=>"foo")
+true,			"foo" == select(paf.Counter, 4=>"Rod", 6=>"Jane", 10=>"Freddy", default=>"Unknown", 42=>"foo")

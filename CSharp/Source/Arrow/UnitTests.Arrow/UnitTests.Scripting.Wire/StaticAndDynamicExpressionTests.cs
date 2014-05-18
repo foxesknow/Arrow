@@ -181,6 +181,18 @@ namespace UnitTests.Scripting.Wire
 			ScriptRunner.RunStaticExpressions("ConditionalMemberAccess_static.script",s_StaticContext,s_StaticArguments);
 		}
 
+		[Test]
+		public void StaticSelect()
+		{
+			ScriptRunner.RunStaticExpressions("Select.script",s_StaticContext,s_StaticArguments);
+		}
+		
+		[Test]
+		public void DynamicSelect()
+		{
+			ScriptRunner.RunDynamicExpressions("Select.script",s_DynamicContext,s_DynamicScope);
+		}
+
 
 		private static StaticParseContext CreateStaticContext()
 		{

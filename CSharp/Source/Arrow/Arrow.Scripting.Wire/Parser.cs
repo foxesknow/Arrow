@@ -349,6 +349,10 @@ namespace Arrow.Scripting.Wire
 			{
 				expression=IIf();
 			}
+			else if(m_Tokenizer.TryAccept(TokenID.Select))
+			{
+				expression=Select();
+			}
 			else if(m_Tokenizer.TryAcceptOneOf(out tempToken,TokenID.Cast,TokenID.Is,TokenID.As))
 			{
 				expression=Cast(tempToken.ID);
@@ -407,6 +411,76 @@ namespace Arrow.Scripting.Wire
 			m_Tokenizer.Expect(TokenID.RightParen);
 
 			return m_ExpressionFactory.Ternary(condition,ifTrue,ifFalse);
+		}
+
+		private Expression Select()
+		{
+			m_Tokenizer.Expect(TokenID.LeftParen);
+			var selectValue=ParseExpression();
+
+			// We need to make sure we only evaluate the value once, so store it in a variable
+			var localTarget=Expression.Variable(selectValue.Type);
+			var assignment=Expression.Assign(localTarget,selectValue);
+
+			var caseExpressions=new List<Tuple<Expression,Expression>>();
+			Expression defaultCondition=null;
+
+			while(m_Tokenizer.TryAccept(TokenID.Comma))
+			{
+				if(m_Tokenizer.TryAccept(TokenID.Default))
+				{
+					if(defaultCondition!=null) ThrowException("multiple default conditions detected in select expression");
+					
+					m_Tokenizer.Expect(TokenID.LeadsTo);
+					defaultCondition=ParseExpression();
+				}
+				else
+				{
+					var caseExpression=ParseExpression();
+					m_Tokenizer.Expect(TokenID.LeadsTo);
+					var valueExpression=ParseExpression();
+
+					caseExpressions.Add(Tuple.Create(caseExpression,valueExpression));
+				}
+			}
+
+			m_Tokenizer.Expect(TokenID.RightParen);
+			if(defaultCondition==null) ThrowException("you must specify a  default condition in a select expression");
+
+			Expression selectEvaluation=null;
+
+			if(caseExpressions.Count==0)
+			{
+				// Easy, there's just a default, so that's the outcome.
+				// Strictly speaking we don't need to evaluate the "select value" as we're always going to
+				// return the default value. However, to be consistent with the case where there are
+				// conditions we'll do the evaluation
+				selectEvaluation=defaultCondition;
+			}
+			else
+			{
+				// We need to create a series of if/else statements. We can do this with the ternary expression
+				selectEvaluation=defaultCondition;
+
+				for(int i=caseExpressions.Count-1; i>=0; i--)
+				{
+					var @case=caseExpressions[i];
+					var value=@case.Item1;
+					var result=@case.Item2;
+
+					var condition=m_ExpressionFactory.Equal(CaseMode.Sensitive,localTarget,value);
+					selectEvaluation=m_ExpressionFactory.Ternary(condition,result,selectEvaluation);
+				}
+			}
+
+			var block=Expression.Block
+			(
+				Sequence.Single(localTarget),
+				assignment,
+				selectEvaluation	
+			);
+
+			return block;
 		}
 
 		protected Expression Cast(int id)

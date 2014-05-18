@@ -11,6 +11,7 @@ using Arrow.Scripting.Wire.StaticExpression;
 using Arrow.Scripting.Wire.DynamicExpression;
 
 using NUnit.Framework;
+using System.Linq.Expressions;
 
 namespace UnitTests.Scripting.Wire
 {
@@ -36,7 +37,26 @@ namespace UnitTests.Scripting.Wire
 					Console.WriteLine(expression);
 
 					var generator=new StaticCodeGenerator();
-					var lambda=generator.CreateLambda(expression,parseContext);
+					LambdaExpression lambda=null;
+					
+					try
+					{
+						lambda=generator.CreateLambda(expression,parseContext);
+					}
+					catch(Exception e)
+					{
+						if(result=="@nocompile")
+						{
+							// It was suppose to fail
+							Console.WriteLine("script successfully failed to compile: {0}",e.Message);
+							continue;
+						}
+						else
+						{
+							throw;
+						}
+					}
+
 					var func=lambda.Compile();
 					object dynamicResult=func.DynamicInvoke(parameters);
 
@@ -85,7 +105,26 @@ namespace UnitTests.Scripting.Wire
 					Console.WriteLine(expression);
 
 					var generator=new DynamicCodeGenerator();
-					var lambda=generator.CreateLambda(expression,parseContext);
+					LambdaExpression lambda=null;
+					
+					try
+					{
+						lambda=generator.CreateLambda(expression,parseContext);
+					}
+					catch(Exception e)
+					{
+						if(result=="@nocompile")
+						{
+							// It was suppose to fail
+							Console.WriteLine("script successfully failed to compile: {0}",e.Message);
+							continue;
+						}
+						else
+						{
+							throw;
+						}
+					}
+
 					var func=lambda.Compile();
 					object dynamicResult=func.DynamicInvoke(variableRead);
 

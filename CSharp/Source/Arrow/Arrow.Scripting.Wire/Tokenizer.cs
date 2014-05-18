@@ -61,7 +61,11 @@ namespace Arrow.Scripting.Wire
 			s_Keywords["iif"]=TokenID.IIf;
 			
 			s_Keywords["like"]=TokenID.Like;
-			s_Operators["~like"]=TokenID.LikeNoCase;			
+			s_Operators["~like"]=TokenID.LikeNoCase;
+
+			s_Keywords["select"]=TokenID.Select;
+			s_Keywords["default"]=TokenID.Default;
+			s_Operators["=>"]=TokenID.LeadsTo;
 		}
 
 		public Tokenizer(TextReader reader, string filename) : base(reader,filename)

@@ -13,6 +13,7 @@ in, ~in, between 		in, in(ignore case), between
 *, /, % 				multiplication, division, modulo
 +, -, not 				unary plus, unary minus, boolean negation
 cast, is, as, iif 		type conversion and testing, immediate-if
+select					picks a value from a series of conditions
 ., ?., (), [] 			function call, array access
 
 All keywords and operators work the same as their C# counterparts with the following exceptions:
@@ -109,6 +110,14 @@ iif(condition, ifTrue, ifFalse)
 Only one of ifTrue or ifFalse will be evaluated, depending on the value of condition. For example:
 
 iif(department=="HR",rate*0.8, rate*0.9)
+
+===================================================================
+
+select
+
+The select operator takes a value and a series of (case,outcome) tuples. A case of default is the default value.
+
+select(department, "HR"=>1, "IT"=>2, "Sales"=>3, default=>0)
 
 ===================================================================
 

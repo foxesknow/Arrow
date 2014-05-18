@@ -57,5 +57,9 @@ namespace Arrow.Scripting.Wire
 
 		public const int Like=193;
 		public const int LikeNoCase=194;
+
+		public const int Select=195;
+		public const int Default=196;
+		public const int LeadsTo=197;
 	}
 }
