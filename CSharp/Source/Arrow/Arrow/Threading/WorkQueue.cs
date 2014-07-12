@@ -191,7 +191,7 @@ namespace Arrow.Threading
 		}
 		
 		/// <summary>
-		/// Waits for any outstanding work to be processed
+		/// Waits for any outstanding work to be processed and shuts the queue down
 		/// </summary>
 		public void Close()
 		{

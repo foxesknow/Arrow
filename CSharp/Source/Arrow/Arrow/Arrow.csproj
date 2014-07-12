@@ -175,6 +175,7 @@
     <Compile Include="Storage\UriExtensions.cs" />
     <Compile Include="Storage\XmlStorageResolver.cs" />
     <Compile Include="Text\TokenExpander.cs" />
+    <Compile Include="Threading\ActionMultiConsumerWorkQueue.cs" />
     <Compile Include="Threading\ActionWorkQueue.cs" />
     <Compile Include="Threading\Collections\SwapDictionary.cs" />
     <Compile Include="Threading\Collections\SwapList.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Threading\IWorkDispatcher.cs" />
     <Compile Include="Threading\IWorkQueue.cs" />
     <Compile Include="Threading\MonitorQueue.cs" />
+    <Compile Include="Threading\MultiConsumerWorkQueue.cs" />
     <Compile Include="Threading\OutstandingEvent.cs" />
     <Compile Include="Threading\ThreadPoolWorkDispatcher.cs" />
     <Compile Include="Threading\UnsafeThreadPoolWorkDispatcher.cs" />
