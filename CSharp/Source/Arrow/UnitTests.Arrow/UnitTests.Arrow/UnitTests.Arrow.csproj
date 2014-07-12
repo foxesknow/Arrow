@@ -94,6 +94,7 @@
     <Compile Include="Support\Tuple.cs" />
     <Compile Include="Support\XmlAssignment.cs" />
     <Compile Include="Text\TokenExpanderTests.cs" />
+    <Compile Include="Threading\ActionMultiConsumerWorkQueueTests.cs" />
     <Compile Include="Threading\ActionWorkQueueTests.cs" />
     <Compile Include="Threading\Collections\SwapDictionaryTests.cs" />
     <Compile Include="Threading\Collections\SwapListTests.cs" />

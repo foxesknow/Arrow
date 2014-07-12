@@ -36,10 +36,18 @@ namespace Arrow.Threading
 		}
 
 		/// <summary>
+		/// Initializes the instance using the default work item dispatcher
+		/// <param name="numberOfConsumers">The number of consumer threads for the work</param>
+		/// </summary>
+		protected MultiConsumerWorkQueue(int numberOfConsumers) : this(null,numberOfConsumers)
+		{
+		}
+
+		/// <summary>
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
-		/// <param name="numberOfConsumers">The number of work consumers</param>
+		/// <param name="numberOfConsumers">The number of consumer threads for the work</param>
 		protected MultiConsumerWorkQueue(IWorkDispatcher dispatcher, int numberOfConsumers)
 		{
 			if(numberOfConsumers<=0) throw new ArgumentOutOfRangeException("numberOfConsumers");
@@ -79,6 +87,20 @@ namespace Arrow.Threading
 		}
 
 		/// <summary>
+		/// Returns the number of items queued for processing
+		/// </summary>
+		public int Count
+		{
+			get
+			{
+				lock(m_SyncRoot)
+				{
+					return m_Queue.Count;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Waits for any outstanding work to be processed and shuts the queue down
 		/// </summary>
 		public void Close()
@@ -111,6 +133,8 @@ namespace Arrow.Threading
 
 		private void StartConsumers()
 		{
+			m_ActiveConsumers=m_NumberOfConsumers;
+
 			for(int i=0; i<m_NumberOfConsumers; i++)
 			{
 				m_Dispatcher.QueueUserWorkItem(ProcessQueue);
@@ -139,7 +163,7 @@ namespace Arrow.Threading
 				{
 					Monitor.Wait(m_SyncRoot);
 
-					// We've been woken up, but if may be because we need to stop
+					// We've been woken up, but it may be because we need to stop
 					if(m_StopProcessing && m_Queue.Count==0)
 					{
 						data=default(T);
@@ -158,11 +182,6 @@ namespace Arrow.Threading
 		/// <param name="state">Not used</param>
 		private void ProcessQueue(object state)
 		{
-			lock(m_ActiveConsumerSyncRoot)
-			{
-				m_ActiveConsumers++;
-			}
-
 			while(true)
 			{
 				T data;

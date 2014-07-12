@@ -18,6 +18,14 @@ namespace Arrow.Threading
 		}
 
 		/// <summary>
+		/// Initializes the instance using the default work item dispatcher
+		/// <param name="numberOfConsumers">The number of consumer threads for the work</param>
+		/// </summary>
+		public ActionMultiConsumerWorkQueue(int numberOfConsumers) : base(numberOfConsumers)
+		{
+		}
+
+		/// <summary>
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
