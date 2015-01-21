@@ -108,6 +108,9 @@ namespace Arrow.Threading
 			Dispose();
 		}
 
+		/// <summary>
+		/// Disposes of the queue. Any pending work is processed first
+		/// </summary>
 		public void Dispose()
 		{
 			lock(m_SyncRoot)

@@ -34,9 +34,9 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
 			
 			object obj=XmlCreation.Create<object>(tupleNode);
 			Assert.IsNotNull(obj);
-			Assert.That(obj,Is.TypeOf(typeof(Tuple<string,int>)));
+			Assert.That(obj,Is.TypeOf(typeof(TestTuple<string,int>)));
 			
-			Tuple<string,int> t=(Tuple<string,int>)obj;
+			var t=(TestTuple<string,int>)obj;
 			
 			Assert.That(t.First,Is.EqualTo("Hurley"));
 			Assert.That(t.Second,Is.EqualTo(39));
@@ -50,7 +50,7 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
 			
 			object obj=XmlCreation.Create<object>(nestedNode);
 			Assert.IsNotNull(obj);
-			Assert.That(obj,Is.TypeOf(typeof(Dictionary<int,Tuple<string,int?>>)));			
+			Assert.That(obj,Is.TypeOf(typeof(Dictionary<int,TestTuple<string,int?>>)));			
 		}
 		
 		[Test]

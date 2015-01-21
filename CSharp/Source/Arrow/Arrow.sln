@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow", "Arrow\Arrow.csproj", "{04660B82-1C99-406C-809D-06AF5839F648}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Logging.Log4Net", "Arrow.Logging.Log4Net\Arrow.Logging.Log4Net.csproj", "{5641A6C2-56F3-4C53-B8D6-F70517D2700B}"
