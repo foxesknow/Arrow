@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Scripting.Wire", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.GraphTheory", "UnitTests.GraphTheory\UnitTests.GraphTheory.csproj", "{715BCBAC-8DBA-42FF-8DC2-C37C7A80449E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Messaging", "UnitTests.Messaging\UnitTests.Messaging.csproj", "{53DF4B7C-0868-499B-8D9A-9139F2D68B84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Messaging.Memory", "UnitTests.Messaging.Memory\UnitTests.Messaging.Memory.csproj", "{639F1B3E-DDE2-476E-A448-47080F184E06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{715BCBAC-8DBA-42FF-8DC2-C37C7A80449E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{715BCBAC-8DBA-42FF-8DC2-C37C7A80449E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{715BCBAC-8DBA-42FF-8DC2-C37C7A80449E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53DF4B7C-0868-499B-8D9A-9139F2D68B84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53DF4B7C-0868-499B-8D9A-9139F2D68B84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53DF4B7C-0868-499B-8D9A-9139F2D68B84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53DF4B7C-0868-499B-8D9A-9139F2D68B84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{639F1B3E-DDE2-476E-A448-47080F184E06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{639F1B3E-DDE2-476E-A448-47080F184E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{639F1B3E-DDE2-476E-A448-47080F184E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{639F1B3E-DDE2-476E-A448-47080F184E06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.GraphTheory", "Arrow.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Messaging", "Arrow.Messaging\Arrow.Messaging.csproj", "{89B5751A-DAD3-44AC-B65E-FA1BFFE6A476}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Messaging.Memory", "Arrow.Messaging.Memory\Arrow.Messaging.Memory.csproj", "{EDF14C78-C19B-4469-9F49-78FC7E3833B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{89B5751A-DAD3-44AC-B65E-FA1BFFE6A476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89B5751A-DAD3-44AC-B65E-FA1BFFE6A476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89B5751A-DAD3-44AC-B65E-FA1BFFE6A476}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDF14C78-C19B-4469-9F49-78FC7E3833B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDF14C78-C19B-4469-9F49-78FC7E3833B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDF14C78-C19B-4469-9F49-78FC7E3833B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDF14C78-C19B-4469-9F49-78FC7E3833B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

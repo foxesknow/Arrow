@@ -33,7 +33,7 @@ namespace Arrow.Messaging
 				if(bool.TryParse(node.InnerText,out value)) loadDefaults=value;
 			}
 			
-			if(loadDefaults)RegisteredTypeInstaller.LoadTypes("Arrow.Messaging.EMS");
+			if(loadDefaults) RegisteredTypeInstaller.LoadTypes("Arrow.Messaging.EMS");
 			
 			var systemsNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Messaging/Assemblies");
 			if(systemsNode!=null)
