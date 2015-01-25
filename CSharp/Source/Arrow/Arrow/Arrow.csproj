@@ -129,6 +129,11 @@
     <Compile Include="Execution\MethodCall.cs" />
     <Compile Include="Execution\ServiceBus.cs" />
     <Compile Include="Execution\TimerMode.cs" />
+    <Compile Include="Factory\RegisteredTypeAttribute.cs" />
+    <Compile Include="Factory\RegisteredTypeInstaller.cs" />
+    <Compile Include="Factory\RegisteredTypeInstallerConfiguration.cs" />
+    <Compile Include="Factory\RegisteredTypeInstallerSectionHandler.cs" />
+    <Compile Include="Factory\SimpleFactory.cs" />
     <Compile Include="IO\ResourceLoader.cs" />
     <Compile Include="Logging\Async\AsyncLogWriter.cs" />
     <Compile Include="Logging\Async\ILogData.cs" />
