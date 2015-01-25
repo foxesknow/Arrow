@@ -104,6 +104,7 @@
     <Compile Include="Threading\InterlockedExTests.cs" />
     <Compile Include="Threading\MonitorQueueTests.cs" />
     <Compile Include="Threading\OutstandingEventTests.cs" />
+    <Compile Include="Threading\TaskWorkQueueTests.cs" />
     <Compile Include="Xml\Macro\XmlMacroExpanderTests.cs" />
     <Compile Include="Xml\ObjectCreation\GeneralObjectCreationTests.cs" />
     <Compile Include="Xml\ObjectCreation\ICollectionTests.cs" />

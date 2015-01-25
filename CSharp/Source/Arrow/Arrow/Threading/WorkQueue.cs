@@ -189,6 +189,35 @@ namespace Arrow.Threading
 				m_Data.Clear();
 			}
 		}
+
+		/// <summary>
+		/// Returns any items of work that are schedule for processing
+		/// </summary>
+		/// <returns>A list of work</returns>
+		internal IList<T> GetPendingWork()
+		{
+			IList<T> data=null;
+
+			bool lockTaken=false;
+			
+			try
+			{
+				Monitor.TryEnter(m_SyncRoot,ref lockTaken);
+				if(lockTaken)
+				{
+					data=new List<T>(m_Data);
+				}
+			}
+			finally
+			{
+				if(lockTaken)
+				{
+					Monitor.Exit(m_SyncRoot);
+				}
+			}
+
+			return data;
+		}
 		
 		/// <summary>
 		/// Waits for any outstanding work to be processed and shuts the queue down
