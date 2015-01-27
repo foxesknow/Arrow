@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
+using System.Linq.Expressions;
 
 namespace Arrow.Factory
 {
@@ -15,14 +16,14 @@ namespace Arrow.Factory
 	{
 		private readonly object m_SyncRoot=new object();
 		
-		private Dictionary<string,Type> m_Types;
+		private Dictionary<string,TypeInfo> m_Types;
 		
 		/// <summary>
 		/// Initializes the instance
 		/// </summary>
 		public SimpleFactory()
 		{
-			m_Types=new Dictionary<string,Type>();
+			m_Types=new Dictionary<string,TypeInfo>();
 		}
 		
 		/// <summary>
@@ -31,7 +32,7 @@ namespace Arrow.Factory
 		/// <param name="comparer">The comparer to use for resolving names</param>
 		public SimpleFactory(IEqualityComparer<string> comparer)
 		{
-			m_Types=new Dictionary<string,Type>(comparer);
+			m_Types=new Dictionary<string,TypeInfo>(comparer);
 		}
 	
 		/// <summary>
@@ -50,10 +51,12 @@ namespace Arrow.Factory
 			{
 				throw new InvalidOperationException(name+" is not assignable to "+typeof(T).ToString());
 			}
+
+			var factory=Compile(name,type);
 			
 			lock(this.SyncRoot)
 			{
-				m_Types[name]=type;
+				m_Types[name]=new TypeInfo(){Type=type,Factory=factory};
 			}
 		}
 		
@@ -66,22 +69,19 @@ namespace Arrow.Factory
 		{
 			if(name==null) throw new ArgumentNullException("name");
 			
-			Type type=null;
+			TypeInfo typeInfo=null;
 			
 			lock(this.SyncRoot)
 			{
-				m_Types.TryGetValue(name,out type);
+				m_Types.TryGetValue(name,out typeInfo);
 			}
 			
-			if(type==null)
+			if(typeInfo==null)
 			{
 				throw new ArrowException(name+" is not a registered type");
 			}
-			
-			ConstructorInfo ctor=type.GetConstructor(Type.EmptyTypes);
-			if(ctor==null) throw new ArrowException(name+" does not have a default constructor");
-			
-			return (T)ctor.Invoke(null);
+
+			return (T)typeInfo.Factory();
 		}
 		
 		/// <summary>
@@ -94,19 +94,16 @@ namespace Arrow.Factory
 		{
 			if(name==null)  throw new ArgumentNullException("name");;
 			
-			Type type=null;
+			TypeInfo typeInfo=null;
 			
 			lock(this)
 			{
-				m_Types.TryGetValue(name,out type);
+				m_Types.TryGetValue(name,out typeInfo);
 			}
 			
-			if(type==null) return default(T);
+			if(typeInfo==null) return default(T);
 			
-			ConstructorInfo ctor=type.GetConstructor(Type.EmptyTypes);
-			if(ctor==null) return default(T);
-			
-			return (T)ctor.Invoke(null);
+			return (T)typeInfo.Factory();
 		}
 		
 		/// <summary>
@@ -117,10 +114,16 @@ namespace Arrow.Factory
 		/// <returns>true if the type is found, otherwise false</returns>
 		public bool TryGetType(string name, out Type type)
 		{
+			TypeInfo typeInfo=null;
+
 			lock(this.SyncRoot)
 			{
-				return m_Types.TryGetValue(name,out type);
+				
+				m_Types.TryGetValue(name,out typeInfo);
 			}
+
+			type=(typeInfo==null ? null : typeInfo.Type);
+			return typeInfo!=null;
 		}
 		
 		/// <summary>
@@ -145,6 +148,38 @@ namespace Arrow.Factory
 		public object SyncRoot
 		{
 			get{return m_SyncRoot;}
+		}
+
+		/// <summary>
+		/// Creates a function that will create an instance of the specified type.
+		/// This is to avoid a reflectio call to the constructor for each invocation.
+		/// </summary>
+		private Func<object> Compile(string name, Type type)
+		{
+			ConstructorInfo ctor=type.GetConstructor(Type.EmptyTypes);
+			if(ctor==null) throw new ArrowException(name+" does not have a default constructor");
+
+			var newExpression=Expression.New(ctor);
+			
+			Expression<Func<object>> function=null;
+
+			if(type.IsValueType)
+			{
+				// We'll need to box it
+				function=Expression.Lambda<Func<object>>(Expression.Convert(newExpression,typeof(object)));
+			}
+			else
+			{
+				function=Expression.Lambda<Func<object>>(newExpression);
+			}
+
+			return function.Compile();
+		}
+
+		class TypeInfo
+		{
+			public Type Type;
+			public Func<object> Factory;
 		}
 	}
 }
