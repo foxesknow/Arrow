@@ -17,10 +17,9 @@ namespace Arrow.Threading
 		private readonly EventWaitHandle m_StopEvent=new AutoResetEvent(false);
 		
 		/// <summary>
-		/// A list is used instead of a queue as it 
-		/// performs better is our swap/process usage model
+		/// A list is used instead of a queue as it performs better is our swap/process usage model
 		/// </summary>
-		private List<T> m_Data;
+		private List<T> m_PendingWork;
 		
 		// Although it's slightly faster to allocate a new list in the ProcessQueue
 		// method it's better from a GC perspective to keep the list around
@@ -65,7 +64,7 @@ namespace Arrow.Threading
 			m_Dispatcher=dispatcher;
 			m_InitialCapacity=initialCapacity;
 			
-			m_Data=new List<T>(initialCapacity);
+			m_PendingWork=new List<T>(initialCapacity);
 			m_SwapData=new List<T>(initialCapacity);
 		}
 		
@@ -125,7 +124,7 @@ namespace Arrow.Threading
 		{
 			if(m_Disposed) throw new ObjectDisposedException("WorkDispatchQueue");
 				
-			m_Data.Add(item);
+			m_PendingWork.Add(item);
 				
 			if(m_ThreadActive==false)
 			{
@@ -151,7 +150,7 @@ namespace Arrow.Threading
 			{
 				lock(m_SyncRoot)
 				{
-					return m_Data.Count;
+					return m_PendingWork.Count;
 				}
 			}
 		}
@@ -186,37 +185,8 @@ namespace Arrow.Threading
 		{
 			lock(m_SyncRoot)
 			{
-				m_Data.Clear();
+				m_PendingWork.Clear();
 			}
-		}
-
-		/// <summary>
-		/// Returns any items of work that are schedule for processing
-		/// </summary>
-		/// <returns>A list of work</returns>
-		internal IList<T> GetPendingWork()
-		{
-			IList<T> data=null;
-
-			bool lockTaken=false;
-			
-			try
-			{
-				Monitor.TryEnter(m_SyncRoot,ref lockTaken);
-				if(lockTaken)
-				{
-					data=new List<T>(m_Data);
-				}
-			}
-			finally
-			{
-				if(lockTaken)
-				{
-					Monitor.Exit(m_SyncRoot);
-				}
-			}
-
-			return data;
 		}
 		
 		/// <summary>
@@ -228,6 +198,19 @@ namespace Arrow.Threading
 		}
 		
 		/// <summary>
+		/// Switches the pending work queue with an empty queue
+		/// </summary>
+		/// <returns>The work that should be run next</returns>
+		private List<T> SwitchData()
+		{
+			var workToProcess=m_PendingWork;
+			m_PendingWork=m_SwapData;
+			m_SwapData=workToProcess;
+
+			return workToProcess;
+		}
+
+		/// <summary>
 		/// Processes all the items in the queue
 		/// </summary>
 		/// <param name="state">Not used</param>
@@ -237,24 +220,21 @@ namespace Arrow.Threading
 			{
 				try
 				{
-					while(m_Data.Count!=0 && m_StopProcessing==false)
+					while(m_PendingWork.Count!=0 && m_StopProcessing==false)
 					{
-						// Swap the queues. m_SwapData will always be empty here
-						var temp=m_Data;
-						m_Data=m_SwapData;
-						m_SwapData=temp;
+						var workToProcess=SwitchData();
 					
 						// We can release the lock here
 						Monitor.Exit(m_SyncRoot);
 						
 						try
 						{
-							ProcessItems(m_SwapData);
+							ProcessItems(workToProcess);
 						}
 						finally
 						{					
 							// We need to remove the data from the swap
-							m_SwapData.Clear();							
+							workToProcess.Clear();							
 							
 							// And re-acquire it here before we loop back around
 							// We do it in a finally block to remain consistent
@@ -272,7 +252,7 @@ namespace Arrow.Threading
 					if(m_StopProcessing) 
 					{
 						// Process anything that's left
-						ProcessItems(m_Data);
+						ProcessItems(m_PendingWork);
 						
 						m_StopEvent.Set();
 					}
