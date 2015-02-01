@@ -193,6 +193,7 @@
     <Compile Include="Threading\InterlockedEx.Transform.cs" />
     <Compile Include="Threading\IWorkDispatcher.cs" />
     <Compile Include="Threading\IWorkQueue.cs" />
+    <Compile Include="Threading\LaunchThreadWorkDispatcher.cs" />
     <Compile Include="Threading\MonitorQueue.cs" />
     <Compile Include="Threading\MultiConsumerWorkQueue.cs" />
     <Compile Include="Threading\OutstandingEvent.cs" />

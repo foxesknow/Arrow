@@ -11,7 +11,7 @@ namespace Arrow.Threading
 	/// It contains a handle which is set when nothing is outstanding and 
 	/// a handle that is set when something is outstanding.
 	/// </summary>
-	public class OutstandingEvent : IDisposable
+	public sealed class OutstandingEvent : IDisposable
 	{
 		private readonly object m_Sync=new object();
 		
