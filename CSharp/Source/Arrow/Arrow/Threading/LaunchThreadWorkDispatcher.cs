@@ -12,7 +12,15 @@ namespace Arrow.Threading
 	/// </summary>
 	public class LaunchThreadWorkDispatcher : IWorkDispatcher, IDisposable
 	{
+		private static long s_Instance;
+
 		private readonly OutstandingEvent m_OutstandingEvent=new OutstandingEvent();
+		private readonly long m_Instance;
+
+		public LaunchThreadWorkDispatcher()
+		{
+			m_Instance=Interlocked.Increment(ref s_Instance);
+		}
 
 		/// <summary>
 		/// Returns the number of threads currently active
@@ -20,6 +28,15 @@ namespace Arrow.Threading
 		public int ActiveThreads
 		{
 			get{return m_OutstandingEvent.Count;}
+		}
+
+		/// <summary>
+		/// Returns the instance id for the dispatcher.
+		/// The id will be incorporated into the names of any threads launched by the dispatcher
+		/// </summary>
+		public long Instance
+		{
+			get{return m_Instance;}
 		}
 
 		/// <summary>
@@ -65,6 +82,8 @@ namespace Arrow.Threading
 			// NOTE: We increase the count here as the thread may not start as soon
 			// as we call Thread.Start() but we need to record the work item
 			m_OutstandingEvent.Increase();
+			
+			thread.Name=string.Format("LaunchThreadWorkDispatcher-{0}",m_Instance);
 			thread.Start();
 
 			return true;
