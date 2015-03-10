@@ -142,6 +142,9 @@
     <Compile Include="Logging\Loggers\ConsoleLog.cs" />
     <Compile Include="Logging\Loggers\NullLog.cs" />
     <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Net\FixedHeaderSocketProcessor.cs" />
+    <Compile Include="Net\SocketProcessor.cs" />
+    <Compile Include="Net\SocketProcessorResult.cs" />
     <Compile Include="ObjectAccess\ObjectLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\AttributeExtensions.cs" />
