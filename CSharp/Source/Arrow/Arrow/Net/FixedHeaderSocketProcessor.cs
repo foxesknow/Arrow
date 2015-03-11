@@ -10,40 +10,91 @@ using Arrow.Execution;
 
 namespace Arrow.Net
 {
-	public abstract class FixedHeaderSocketProcessor<THeader,TBody> : SocketProcessor, IDisposable
+	public class FixedHeaderSocketProcessor<THeader,TBody> : SocketProcessor, IDisposable
 	{
 		private Socket m_Socket;
 		private NetworkStream m_Stream;
 
+		private readonly IMessageFactory<THeader,TBody> m_MessageFactory;
+		private readonly IMessageProcessor<THeader,TBody> m_MessageProcessor;
+
 		private long m_Disposed;		
 
-		public FixedHeaderSocketProcessor(Socket socket)
+		public FixedHeaderSocketProcessor(Socket socket, IMessageFactory<THeader,TBody> messageFactory, IMessageProcessor<THeader,TBody> messageProcessor)
 		{
 			if(socket==null) throw new ArgumentNullException("socket");
+			if(messageFactory==null) throw new ArgumentNullException("messageFactory");
+			if(messageProcessor==null) throw new ArgumentNullException("messageProcessor");
 
 			m_Socket=socket;
+			m_MessageFactory=messageFactory;
+			m_MessageProcessor=messageProcessor;
+
 			m_Stream=new NetworkStream(socket);
 		}
 
-		protected abstract int HeaderSize{get;}
-
-		protected abstract THeader CreateHeader(byte[] buffer);
-		protected abstract TBody CreateBody(THeader header, byte[] buffer);
-		protected abstract int GetBodySize(THeader header);
-
-		public void Start(Action<SocketProcessor,SocketProcessorResult<THeader,TBody>> handler)
+		/// <summary>
+		/// Starts the asynchronous read loop
+		/// </summary>
+		public void Start()
 		{
-			Read(handler);
+			Read();
 		}
 
-		private void Read(Action<SocketProcessor,SocketProcessorResult<THeader,TBody>> handler)
+		public override Task<SocketProcessor> Write(byte[] buffer, int offset, int size)
+		{
+			if(buffer==null) throw new ArgumentNullException("buffer");
+
+			var completionSource=new TaskCompletionSource<SocketProcessor>();
+
+			bool success=HandleNetworkCall(()=>
+			{
+				m_Stream.BeginWrite(buffer,offset,size,ar=>EndWrite(ar,completionSource),null);
+			});
+
+			if(success==false)
+			{
+				completionSource.SetException(new OperationCanceledException("write failed"));
+			}
+
+			return completionSource.Task;
+		}
+
+		private void EndWrite(IAsyncResult result, TaskCompletionSource<SocketProcessor> completionSource)
+		{
+			bool success=HandleNetworkCall(()=>
+			{
+				m_Stream.EndWrite(result);
+				completionSource.SetResult(this);
+				success=true;
+			});
+
+			if(success==false)
+			{
+				completionSource.SetException(new OperationCanceledException("write failed"));
+			}
+		}
+
+		public override void Close()
+		{
+			if(m_Socket!=null)
+			{
+				Interlocked.Exchange(ref m_Disposed,1);
+
+				MethodCall.AllowFail(()=>m_Stream.Close());
+				MethodCall.AllowFail(()=>m_Socket.Close());
+
+				m_Socket=null;
+			}
+		}
+
+		private void Read()
 		{
 			while(this.KeepReading)
 			{
 				State state=new State();
-				state.Handler=handler;
 
-				int headerSize=this.HeaderSize;
+				int headerSize=m_MessageFactory.HeaderSize;
 				state.HeaderBuffer=new byte[headerSize];
 				state.HeaderOffset=0;
 
@@ -69,14 +120,14 @@ namespace Arrow.Net
 				{
 					state.HeaderOffset+=bytesRead;
 
-					if(state.HeaderOffset!=this.HeaderSize)
+					if(state.HeaderOffset!=m_MessageFactory.HeaderSize)
 					{
 						BeginReadHeader(state);
 					}
 					else
 					{
-						state.Header=CreateHeader(state.HeaderBuffer);
-						int bodySize=GetBodySize(state.Header);
+						state.Header=m_MessageFactory.CreateHeader(state.HeaderBuffer);
+						int bodySize=m_MessageFactory.GetBodySize(state.Header);
 						state.BodyBuffer=new byte[bodySize];
 						BeginReadBody(state);
 					}
@@ -108,49 +159,50 @@ namespace Arrow.Net
 					}
 					else
 					{
-						state.Body=CreateBody(state.Header,state.BodyBuffer);
-						state.Handler(this,new SocketProcessorResult<THeader,TBody>(state.Header,state.Body));
+						state.Body=m_MessageFactory.CreateBody(state.Header,state.BodyBuffer);
+						var readMode=m_MessageProcessor.Process(this,state.Header,state.Body);
 
-						Read(state.Handler);
+						if(readMode==ReadMode.KeepReading)
+						{
+							Read();
+						}
 					}
 				}
 			});
 		}
 
-		private void HandleNetworkCall(Action action)
+		private bool HandleNetworkCall(Action action)
 		{
 			// TODO: Move to base
 
 			try
 			{
 				action();
+				return true;
 			}
 			catch
 			{
 				if(Interlocked.Read(ref m_Disposed)!=1)
 				{
-					OnNetworkFault(EventArgs.Empty);
+					m_MessageProcessor.HandleNetworkFault(this);
 				}
 			}
+
+			return false;
 		}
+
+		protected override void OnDisconnected()
+		{
+			m_MessageProcessor.HandleDisconnect(this);
+		}		
 
 		public void Dispose()
 		{
-			if(m_Socket!=null)
-			{
-				Interlocked.Exchange(ref m_Disposed,1);
-
-				MethodCall.AllowFail(()=>m_Stream.Close());
-				MethodCall.AllowFail(()=>m_Socket.Close());
-
-				m_Socket=null;
-			}
+			Close();
 		}
 
 		class State
 		{
-			public Action<SocketProcessor,SocketProcessorResult<THeader,TBody>> Handler;
-
 			public byte[] HeaderBuffer;
 			public int HeaderOffset;
 			public THeader Header;

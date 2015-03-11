@@ -142,7 +142,10 @@
     <Compile Include="Logging\Loggers\ConsoleLog.cs" />
     <Compile Include="Logging\Loggers\NullLog.cs" />
     <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Net\ReadMode.cs" />
     <Compile Include="Net\FixedHeaderSocketProcessor.cs" />
+    <Compile Include="Net\IMessageFactory.cs" />
+    <Compile Include="Net\IMessageProcessor.cs" />
     <Compile Include="Net\SocketProcessor.cs" />
     <Compile Include="Net\SocketProcessorResult.cs" />
     <Compile Include="ObjectAccess\ObjectLocator.cs" />

@@ -9,9 +9,6 @@ namespace Arrow.Net
 {
 	public abstract class SocketProcessor
 	{
-		public event EventHandler<EventArgs> Disconnected;
-		public event EventHandler<EventArgs> NetworkFault;
-
 		private long m_KeepReading=1;
 
 		public bool KeepReading
@@ -27,7 +24,7 @@ namespace Arrow.Net
 		{
 			if(bytesRead==0)
 			{
-				OnDisconnected(EventArgs.Empty);
+				OnDisconnected();
 				return false;
 			}
 			else
@@ -36,17 +33,24 @@ namespace Arrow.Net
 			}
 		}
 
+		/// <summary>
+		/// Called when a network disconnect is detected
+		/// </summary>
+		protected abstract void OnDisconnected();
 
-		protected void OnDisconnected(EventArgs args)
-		{
-			var handler=this.Disconnected;
-			if(handler!=null) handler(this,args);
-		}
+		/// <summary>
+		/// Closes the socket processor
+		/// </summary>
+		public abstract void Close();
 
-		protected void OnNetworkFault(EventArgs args)
-		{
-			var handler=this.NetworkFault;
-			if(handler!=null) handler(this,args);
-		}
+		/// <summary>
+		/// Writes data to the socket
+		/// </summary>
+		/// <param name="buffer">The data to write</param>
+		/// <param name="offset">The start of the data within the buffer</param>
+		/// <param name="size">How much data to write</param>
+		/// <returns>A task that will be signalled when the write completes</returns>
+		public abstract Task<SocketProcessor> Write(byte[] buffer, int offset, int size);
+
 	}
 }
