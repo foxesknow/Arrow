@@ -51,6 +51,11 @@ namespace Arrow.Net.Message
 			Interlocked.Exchange(ref m_Closed,1);
 		}
 
+		protected bool IsClosed()
+		{
+			return Interlocked.Read(ref m_Closed)==1;
+		}
+
 		/// <summary>
 		/// Executes a piece of network code and deals with any errors
 		/// </summary>

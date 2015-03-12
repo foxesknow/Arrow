@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Arrow.Execution;
 using System.IO;
+
+using Arrow.Execution;
 
 namespace Arrow.Net.Message
 {
@@ -18,8 +19,7 @@ namespace Arrow.Net.Message
 	/// <typeparam name="TBody">The type of the body</typeparam>
 	public class FixedHeaderSocketProcessor<THeader,TBody> : SocketProcessor, IDisposable
 	{
-		private Socket m_Socket;
-		private NetworkStream m_Stream;
+		private readonly Socket m_Socket;
 
 		private readonly IMessageFactory<THeader,TBody> m_MessageFactory;
 		private readonly IMessageProcessor<THeader,TBody> m_MessageProcessor;		
@@ -40,7 +40,7 @@ namespace Arrow.Net.Message
 			m_MessageFactory=messageFactory;
 			m_MessageProcessor=messageProcessor;
 
-			m_Stream=new NetworkStream(socket);
+			//m_Stream=new NetworkStream(socket);
 		}
 
 		/// <summary>
@@ -48,7 +48,10 @@ namespace Arrow.Net.Message
 		/// </summary>
 		public override void Start()
 		{
-			Read();
+			int headerSize=m_MessageFactory.HeaderSize;
+			State state=new State(headerSize);
+
+			BeginReadHeader(state);
 		}
 
 		public override void Write(byte[] buffer, int offset, int size)
@@ -57,7 +60,7 @@ namespace Arrow.Net.Message
 
 			bool success=HandleNetworkCall(()=>
 			{
-				m_Stream.Write(buffer,offset,size);
+				m_Socket.Send(buffer,offset,size,SocketFlags.None);
 			});
 
 			if(success==false) throw new IOException("write failed");
@@ -71,7 +74,7 @@ namespace Arrow.Net.Message
 
 			bool success=HandleNetworkCall(()=>
 			{
-				m_Stream.BeginWrite(buffer,offset,size,ar=>EndWrite(ar,completionSource),null);
+				m_Socket.BeginSend(buffer,offset,size,SocketFlags.None,ar=>EndWrite(ar,completionSource),null);
 			});
 
 			if(success==false)
@@ -86,7 +89,7 @@ namespace Arrow.Net.Message
 		{
 			bool success=HandleNetworkCall(()=>
 			{
-				m_Stream.EndWrite(result);
+				m_Socket.EndSend(result);
 				completionSource.SetResult(this);
 				success=true;
 			});
@@ -99,7 +102,7 @@ namespace Arrow.Net.Message
 
 		public override void Close()
 		{
-			if(m_Socket!=null)
+			if(IsClosed()==false)
 			{
 				/*
 				 * We're going to start closing the stream and the socket.
@@ -109,29 +112,23 @@ namespace Arrow.Net.Message
 				 */
 				FlagAsClosed();
 
-				MethodCall.AllowFail(()=>m_Stream.Close());
-				MethodCall.AllowFail(()=>m_Socket.Close());
-
-				m_Socket=null;
+				MethodCall.AllowFail(()=>m_Socket.Dispose());
 			}
-		}
-
-		private void Read()
-		{
-			State state=new State();
-
-			int headerSize=m_MessageFactory.HeaderSize;
-			state.HeaderBuffer=new byte[headerSize];
-			state.HeaderOffset=0;
-
-			BeginReadHeader(state);
 		}
 
 		private void BeginReadHeader(State state)
 		{
 			HandleNetworkCall(()=>
 			{
-				m_Stream.BeginRead(state.HeaderBuffer,state.HeaderOffset,state.HeaderBuffer.Length-state.HeaderOffset,ar=>EndReadHeader(ar,state),null);
+				m_Socket.BeginReceive
+				(
+					state.HeaderBuffer,
+					state.HeaderOffset,
+					state.HeaderBuffer.Length-state.HeaderOffset,
+					SocketFlags.None,
+					ar=>EndReadHeader(ar,state),
+					null
+				);
 			});
 		}
 
@@ -139,7 +136,7 @@ namespace Arrow.Net.Message
 		{
 			HandleNetworkCall(()=>
 			{
-				int bytesRead=m_Stream.EndRead(result);
+				int bytesRead=m_Socket.EndReceive(result);
 
 				if(CanProcessBytesRead(bytesRead))
 				{
@@ -155,9 +152,6 @@ namespace Arrow.Net.Message
 						int bodySize=m_MessageFactory.GetBodySize(state.Header);
 						state.BodyBuffer=new byte[bodySize];
 						
-						// We don't need the header buffer any more, so it's safe to discard it
-						state.HeaderBuffer=null;
-						
 						BeginReadBody(state);
 					}
 				}
@@ -168,7 +162,15 @@ namespace Arrow.Net.Message
 		{
 			HandleNetworkCall(()=>
 			{
-				m_Stream.BeginRead(state.BodyBuffer,state.BodyOffset,state.BodyBuffer.Length-state.BodyOffset,ar=>EndReadBody(ar,state),null);
+				m_Socket.BeginReceive
+				(
+					state.BodyBuffer,
+					state.BodyOffset,
+					state.BodyBuffer.Length-state.BodyOffset,
+					SocketFlags.None,
+					ar=>EndReadBody(ar,state),
+					null
+				);
 			});
 		}
 
@@ -176,7 +178,7 @@ namespace Arrow.Net.Message
 		{
 			HandleNetworkCall(()=>
 			{
-				int bytesRead=m_Stream.EndRead(result);
+				int bytesRead=m_Socket.EndReceive(result);
 
 				if(CanProcessBytesRead(bytesRead))
 				{
@@ -198,7 +200,8 @@ namespace Arrow.Net.Message
 
 						if(readMode==ReadMode.KeepReading)
 						{
-							Read();
+							state.Reset();
+							BeginReadHeader(state);
 						}
 					}
 				}
@@ -217,13 +220,30 @@ namespace Arrow.Net.Message
 
 		class State
 		{
-			public byte[] HeaderBuffer;
+			public readonly byte[] HeaderBuffer;
 			public int HeaderOffset;
 			public THeader Header;
 
 			public byte[] BodyBuffer;
 			public int BodyOffset;
 			public TBody Body;
+
+			public State(int headerSize)
+			{
+				this.HeaderBuffer=new byte[headerSize];
+			}
+
+			public void Reset()
+			{
+				// We can keep the header buffer as its size won't change
+				// but we need to reset the rest
+				this.HeaderOffset=0;
+				this.Header=default(THeader);
+
+				this.BodyBuffer=null;
+				this.BodyOffset=0;
+				this.Body=default(TBody);
+			}
 		}
 	}
 }
