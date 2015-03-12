@@ -7,20 +7,30 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Arrow.Execution;
+using System.IO;
 
-namespace Arrow.Net
+namespace Arrow.Net.Message
 {
+	/// <summary>
+	/// A socket processor that reads a fixes sized header and an arbitary body
+	/// </summary>
+	/// <typeparam name="THeader">The type of the header</typeparam>
+	/// <typeparam name="TBody">The type of the body</typeparam>
 	public class FixedHeaderSocketProcessor<THeader,TBody> : SocketProcessor, IDisposable
 	{
 		private Socket m_Socket;
 		private NetworkStream m_Stream;
 
 		private readonly IMessageFactory<THeader,TBody> m_MessageFactory;
-		private readonly IMessageProcessor<THeader,TBody> m_MessageProcessor;
+		private readonly IMessageProcessor<THeader,TBody> m_MessageProcessor;		
 
-		private long m_Disposed;		
-
-		public FixedHeaderSocketProcessor(Socket socket, IMessageFactory<THeader,TBody> messageFactory, IMessageProcessor<THeader,TBody> messageProcessor)
+		/// <summary>
+		/// Initializes the instance
+		/// </summary>
+		/// <param name="socket">The socket to process</param>
+		/// <param name="messageFactory">The message factory class that will create the header and bodies</param>
+		/// <param name="messageProcessor">The message processor that will handle the messages</param>
+		public FixedHeaderSocketProcessor(Socket socket, IMessageFactory<THeader,TBody> messageFactory, IMessageProcessor<THeader,TBody> messageProcessor) : base(messageProcessor)
 		{
 			if(socket==null) throw new ArgumentNullException("socket");
 			if(messageFactory==null) throw new ArgumentNullException("messageFactory");
@@ -36,12 +46,24 @@ namespace Arrow.Net
 		/// <summary>
 		/// Starts the asynchronous read loop
 		/// </summary>
-		public void Start()
+		public override void Start()
 		{
 			Read();
 		}
 
-		public override Task<SocketProcessor> Write(byte[] buffer, int offset, int size)
+		public override void Write(byte[] buffer, int offset, int size)
+		{
+			if(buffer==null) throw new ArgumentNullException("buffer");
+
+			bool success=HandleNetworkCall(()=>
+			{
+				m_Stream.Write(buffer,offset,size);
+			});
+
+			if(success==false) throw new IOException("write failed");
+		}
+
+		public override Task<SocketProcessor> WriteAsync(byte[] buffer, int offset, int size)
 		{
 			if(buffer==null) throw new ArgumentNullException("buffer");
 
@@ -54,7 +76,7 @@ namespace Arrow.Net
 
 			if(success==false)
 			{
-				completionSource.SetException(new OperationCanceledException("write failed"));
+				completionSource.SetException(new IOException("write failed"));
 			}
 
 			return completionSource.Task;
@@ -71,7 +93,7 @@ namespace Arrow.Net
 
 			if(success==false)
 			{
-				completionSource.SetException(new OperationCanceledException("write failed"));
+				completionSource.SetException(new IOException("write failed"));
 			}
 		}
 
@@ -79,7 +101,13 @@ namespace Arrow.Net
 		{
 			if(m_Socket!=null)
 			{
-				Interlocked.Exchange(ref m_Disposed,1);
+				/*
+				 * We're going to start closing the stream and the socket.
+				 * However, they may have pending read/writes on them, so we need to 
+				 * make sure we know we're closing to handle any exceptions we get
+				 * from their Read/Write methods
+				 */
+				FlagAsClosed();
 
 				MethodCall.AllowFail(()=>m_Stream.Close());
 				MethodCall.AllowFail(()=>m_Socket.Close());
@@ -90,16 +118,13 @@ namespace Arrow.Net
 
 		private void Read()
 		{
-			while(this.KeepReading)
-			{
-				State state=new State();
+			State state=new State();
 
-				int headerSize=m_MessageFactory.HeaderSize;
-				state.HeaderBuffer=new byte[headerSize];
-				state.HeaderOffset=0;
+			int headerSize=m_MessageFactory.HeaderSize;
+			state.HeaderBuffer=new byte[headerSize];
+			state.HeaderOffset=0;
 
-				BeginReadHeader(state);
-			}
+			BeginReadHeader(state);
 		}
 
 		private void BeginReadHeader(State state)
@@ -129,6 +154,10 @@ namespace Arrow.Net
 						state.Header=m_MessageFactory.CreateHeader(state.HeaderBuffer);
 						int bodySize=m_MessageFactory.GetBodySize(state.Header);
 						state.BodyBuffer=new byte[bodySize];
+						
+						// We don't need the header buffer any more, so it's safe to discard it
+						state.HeaderBuffer=null;
+						
 						BeginReadBody(state);
 					}
 				}
@@ -160,6 +189,11 @@ namespace Arrow.Net
 					else
 					{
 						state.Body=m_MessageFactory.CreateBody(state.Header,state.BodyBuffer);
+
+						// We don't need the body buffer any more so discard it...
+						state.BodyBuffer=null;
+
+						// ...and now process the actual message
 						var readMode=m_MessageProcessor.Process(this,state.Header,state.Body);
 
 						if(readMode==ReadMode.KeepReading)
@@ -169,26 +203,6 @@ namespace Arrow.Net
 					}
 				}
 			});
-		}
-
-		private bool HandleNetworkCall(Action action)
-		{
-			// TODO: Move to base
-
-			try
-			{
-				action();
-				return true;
-			}
-			catch
-			{
-				if(Interlocked.Read(ref m_Disposed)!=1)
-				{
-					m_MessageProcessor.HandleNetworkFault(this);
-				}
-			}
-
-			return false;
 		}
 
 		protected override void OnDisconnected()

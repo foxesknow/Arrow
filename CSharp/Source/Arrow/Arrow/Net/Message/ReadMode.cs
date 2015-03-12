@@ -4,8 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Net
+namespace Arrow.Net.Message
 {
+	/// <summary>
+	/// Specifies what a socket processor should do after letting 
+	/// a message processor handle an new message
+	/// </summary>
 	public enum ReadMode
 	{
 		/// <summary>

@@ -4,8 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Net
+namespace Arrow.Net.Message
 {
+	/// <summary>
+	/// A message factory can create headers and body from binary data
+	/// </summary>
+	/// <typeparam name="THeader"></typeparam>
+	/// <typeparam name="TBody"></typeparam>
 	public interface IMessageFactory<THeader,TBody>
 	{
 		/// <summary>
