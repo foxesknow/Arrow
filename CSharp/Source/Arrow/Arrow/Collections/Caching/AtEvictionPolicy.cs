@@ -44,6 +44,10 @@ namespace Arrow.Collections.Caching
 			// Does nothing
 		}
 
+		/// <summary>
+		/// Renders the policy
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return string.Format("Evicting at {0}",m_WhenUtc);

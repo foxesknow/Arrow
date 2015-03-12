@@ -54,6 +54,12 @@ namespace Arrow.Net.Message
 			BeginReadHeader(state);
 		}
 
+		/// <summary>
+		/// Writes data to the socket
+		/// </summary>
+		/// <param name="buffer">The data to write</param>
+		/// <param name="offset">The start of the data within the buffer</param>
+		/// <param name="size">How much data to write</param>
 		public override void Write(byte[] buffer, int offset, int size)
 		{
 			if(buffer==null) throw new ArgumentNullException("buffer");
@@ -66,6 +72,13 @@ namespace Arrow.Net.Message
 			if(success==false) throw new IOException("write failed");
 		}
 
+		/// <summary>
+		/// Writes data to the socket
+		/// </summary>
+		/// <param name="buffer">The data to write</param>
+		/// <param name="offset">The start of the data within the buffer</param>
+		/// <param name="size">How much data to write</param>
+		/// <returns>A task that will be signalled when the write completes</returns>
 		public override Task<SocketProcessor> WriteAsync(byte[] buffer, int offset, int size)
 		{
 			if(buffer==null) throw new ArgumentNullException("buffer");
@@ -100,6 +113,9 @@ namespace Arrow.Net.Message
 			}
 		}
 
+		/// <summary>
+		/// Closes the socket processor
+		/// </summary>
 		public override void Close()
 		{
 			if(IsClosed()==false)
@@ -208,11 +224,17 @@ namespace Arrow.Net.Message
 			});
 		}
 
+		/// <summary>
+		/// Handles any disconnection notifications
+		/// </summary>
 		protected override void OnDisconnected()
 		{
 			m_MessageProcessor.HandleDisconnect(this);
 		}		
 
+		/// <summary>
+		/// Disposes of the processor
+		/// </summary>
 		public void Dispose()
 		{
 			Close();

@@ -16,6 +16,10 @@ namespace Arrow.Net.Message
 
 		private long m_Closed;
 
+		/// <summary>
+		/// Initializes the instance
+		/// </summary>
+		/// <param name="messageProcessor">The message processor to use</param>
 		protected SocketProcessor(IMessageProcessor messageProcessor)
 		{
 			if(messageProcessor==null) throw new ArgumentNullException("messageProcessor");
@@ -51,6 +55,10 @@ namespace Arrow.Net.Message
 			Interlocked.Exchange(ref m_Closed,1);
 		}
 
+		/// <summary>
+		/// Checks to see if the socket processor is closed
+		/// </summary>
+		/// <returns></returns>
 		protected bool IsClosed()
 		{
 			return Interlocked.Read(ref m_Closed)==1;

@@ -17,6 +17,9 @@ namespace Arrow.Threading
 		private readonly OutstandingEvent m_OutstandingEvent=new OutstandingEvent();
 		private readonly long m_Instance;
 
+		/// <summary>
+		/// Initializes the instance
+		/// </summary>
 		public LaunchThreadWorkDispatcher()
 		{
 			m_Instance=Interlocked.Increment(ref s_Instance);
