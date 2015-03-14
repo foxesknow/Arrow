@@ -87,7 +87,7 @@ namespace Arrow.Net.Message
 
 			bool success=HandleNetworkCall(()=>
 			{
-				m_Socket.BeginSend(buffer,offset,size,SocketFlags.None,ar=>EndWrite(ar,completionSource),null);
+				m_Socket.BeginSend(buffer,offset,size,SocketFlags.None,EndWrite,completionSource);
 			});
 
 			if(success==false)
@@ -98,8 +98,10 @@ namespace Arrow.Net.Message
 			return completionSource.Task;
 		}
 
-		private void EndWrite(IAsyncResult result, TaskCompletionSource<SocketProcessor> completionSource)
+		private void EndWrite(IAsyncResult result)
 		{
+			var completionSource=(TaskCompletionSource<SocketProcessor>)result.AsyncState;
+
 			bool success=HandleNetworkCall(()=>
 			{
 				m_Socket.EndSend(result);
@@ -142,14 +144,16 @@ namespace Arrow.Net.Message
 					state.HeaderOffset,
 					state.HeaderBuffer.Length-state.HeaderOffset,
 					SocketFlags.None,
-					ar=>EndReadHeader(ar,state),
-					null
+					EndReadHeader,
+					state
 				);
 			});
 		}
 
-		private void EndReadHeader(IAsyncResult result, State state)
+		private void EndReadHeader(IAsyncResult result)
 		{
+			State state=(State)result.AsyncState;
+
 			HandleNetworkCall(()=>
 			{
 				int bytesRead=m_Socket.EndReceive(result);
@@ -184,14 +188,16 @@ namespace Arrow.Net.Message
 					state.BodyOffset,
 					state.BodyBuffer.Length-state.BodyOffset,
 					SocketFlags.None,
-					ar=>EndReadBody(ar,state),
-					null
+					EndReadBody,
+					state
 				);
 			});
 		}
 
-		private void EndReadBody(IAsyncResult result, State state)
+		private void EndReadBody(IAsyncResult result)
 		{
+			State state=(State)result.AsyncState;
+
 			HandleNetworkCall(()=>
 			{
 				int bytesRead=m_Socket.EndReceive(result);
