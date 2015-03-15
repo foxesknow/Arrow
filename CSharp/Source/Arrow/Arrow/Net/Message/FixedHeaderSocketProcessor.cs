@@ -53,9 +53,9 @@ namespace Arrow.Net.Message
 			{
 				this.Socket.BeginReceive
 				(
-					state.HeaderBuffer,
-					state.HeaderOffset,
-					state.HeaderBuffer.Length-state.HeaderOffset,
+					localState.HeaderBuffer,
+					localState.HeaderOffset,
+					localState.HeaderBuffer.Length-state.HeaderOffset,
 					SocketFlags.None,
 					EndReadHeader,
 					localState
@@ -96,9 +96,9 @@ namespace Arrow.Net.Message
 			{
 				this.Socket.BeginReceive
 				(
-					state.BodyBuffer,
-					state.BodyOffset,
-					state.BodyBuffer.Length-state.BodyOffset,
+					localState.BodyBuffer,
+					localState.BodyOffset,
+					localState.BodyBuffer.Length-state.BodyOffset,
 					SocketFlags.None,
 					EndReadBody,
 					localState
