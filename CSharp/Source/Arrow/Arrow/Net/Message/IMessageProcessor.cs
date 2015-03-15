@@ -38,6 +38,6 @@ namespace Arrow.Net.Message
 		/// <param name="header">The message header</param>
 		/// <param name="body">The message body</param>
 		/// <returns>What the processor should do next</returns>
-		ReadMode Process(SocketProcessor socketProcessor, THeader header, TBody body);
+		ReadMode ProcessMessage(SocketProcessor socketProcessor, THeader header, TBody body);
 	}
 }

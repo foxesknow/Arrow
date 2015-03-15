@@ -129,7 +129,7 @@ namespace Arrow.Net.Message
 						state.BodyBuffer=null;
 
 						// ...and now process the actual message
-						var readMode=m_MessageProcessor.Process(this,state.Header,state.Body);
+						var readMode=m_MessageProcessor.ProcessMessage(this,state.Header,state.Body);
 
 						if(readMode==ReadMode.KeepReading)
 						{
