@@ -143,16 +143,38 @@ namespace Arrow.Net.Message
 		/// <param name="buffer">The data to write</param>
 		/// <param name="offset">The start of the data within the buffer</param>
 		/// <param name="size">How much data to write</param>
-		public  void Write(byte[] buffer, int offset, int size)
+		/// <returns>The number of bytes written</returns>
+		public int Write(byte[] buffer, int offset, int size)
 		{
 			if(buffer==null) throw new ArgumentNullException("buffer");
 
+			int bytesWritten=0;
 			bool success=HandleNetworkCall(()=>
 			{
-				this.Socket.Send(buffer,offset,size,SocketFlags.None);
+				bytesWritten=this.Socket.Send(buffer,offset,size,SocketFlags.None);
 			});
 
-			if(success==false) throw new IOException("write failed");
+			if(success==false) throw new IOException("Write failed");
+			return bytesWritten;
+		}
+
+		/// <summary>
+		/// Writes a series of buffers to the socket
+		/// </summary>
+		/// <param name="buffers">The buffers to write</param>
+		/// <returns>The number of bytes written</returns>
+		public int Write(IList<ArraySegment<byte>> buffers)
+		{
+			if(buffers==null) throw new ArgumentNullException("buffers");
+
+			int bytesWritten=0;			
+			bool success=HandleNetworkCall(buffers,b=>
+			{
+				bytesWritten=this.Socket.Send(buffers);
+			});
+
+			if(success==false) throw new IOException("Write failed");			
+			return bytesWritten;
 		}
 
 
@@ -163,11 +185,11 @@ namespace Arrow.Net.Message
 		/// <param name="offset">The start of the data within the buffer</param>
 		/// <param name="size">How much data to write</param>
 		/// <returns>A task that will be signalled when the write completes</returns>
-		public Task<SocketProcessor> WriteAsync(byte[] buffer, int offset, int size)
+		public Task<WriteResults> WriteAsync(byte[] buffer, int offset, int size)
 		{
 			if(buffer==null) throw new ArgumentNullException("buffer");
 
-			var completionSource=new TaskCompletionSource<SocketProcessor>();
+			var completionSource=new TaskCompletionSource<WriteResults>();
 
 			bool success=HandleNetworkCall(()=>
 			{
@@ -176,7 +198,31 @@ namespace Arrow.Net.Message
 
 			if(success==false)
 			{
-				completionSource.SetException(new IOException("write failed"));
+				completionSource.SetException(new IOException("WriteAysnc failed"));
+			}
+
+			return completionSource.Task;
+		}
+
+		/// <summary>
+		/// Asynchronously writes a series of buffer to the socket
+		/// </summary>
+		/// <param name="buffers">The buffers to write</param>
+		/// <returns>A task that will be signalled when the write completes</returns>
+		public Task<WriteResults> WriteAysnc(IList<ArraySegment<byte>> buffers)
+		{
+			if(buffers==null) throw new ArgumentNullException("buffers");
+
+			var completionSource=new TaskCompletionSource<WriteResults>();
+
+			bool success=HandleNetworkCall(()=>
+			{
+				this.Socket.BeginSend(buffers,SocketFlags.None,EndWrite,completionSource);
+			});
+
+			if(success==false)
+			{
+				completionSource.SetException(new IOException("WriteAysnc failed"));
 			}
 
 			return completionSource.Task;
@@ -186,17 +232,17 @@ namespace Arrow.Net.Message
 		{
 			bool success=HandleNetworkCall(result,(ar)=>
 			{
-				var completionSource=(TaskCompletionSource<SocketProcessor>)ar.AsyncState;
+				var completionSource=(TaskCompletionSource<WriteResults>)ar.AsyncState;
 
-				this.Socket.EndSend(ar);
-				completionSource.SetResult(this);
+				int bytesWritten=this.Socket.EndSend(ar);
+				completionSource.SetResult(new WriteResults(this,bytesWritten));
 				success=true;
 			});
 
 			if(success==false)
 			{
-				var completionSource=(TaskCompletionSource<SocketProcessor>)result.AsyncState;
-				completionSource.SetException(new IOException("write failed"));
+				var completionSource=(TaskCompletionSource<WriteResults>)result.AsyncState;
+				completionSource.SetException(new IOException("WriteAysnc failed"));
 			}
 		}	
 
