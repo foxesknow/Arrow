@@ -8,8 +8,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 
-using Arrow.Execution;
-
 namespace Arrow.Net.Message
 {
 	/// <summary>
@@ -17,10 +15,8 @@ namespace Arrow.Net.Message
 	/// </summary>
 	/// <typeparam name="THeader">The type of the header</typeparam>
 	/// <typeparam name="TBody">The type of the body</typeparam>
-	public class FixedHeaderSocketProcessor<THeader,TBody> : SocketProcessor, IDisposable
+	public class FixedHeaderSocketProcessor<THeader,TBody> : SocketProcessor
 	{
-		private readonly Socket m_Socket;
-
 		private readonly IMessageFactory<THeader,TBody> m_MessageFactory;
 		private readonly IMessageProcessor<THeader,TBody> m_MessageProcessor;		
 
@@ -30,18 +26,15 @@ namespace Arrow.Net.Message
 		/// <param name="socket">The socket to process</param>
 		/// <param name="messageFactory">The message factory class that will create the header and bodies</param>
 		/// <param name="messageProcessor">The message processor that will handle the messages</param>
-		public FixedHeaderSocketProcessor(Socket socket, IMessageFactory<THeader,TBody> messageFactory, IMessageProcessor<THeader,TBody> messageProcessor) : base(messageProcessor)
+		public FixedHeaderSocketProcessor(Socket socket, IMessageFactory<THeader,TBody> messageFactory, IMessageProcessor<THeader,TBody> messageProcessor) : base(socket,messageProcessor)
 		{
-			if(socket==null) throw new ArgumentNullException("socket");
 			if(messageFactory==null) throw new ArgumentNullException("messageFactory");
 			if(messageProcessor==null) throw new ArgumentNullException("messageProcessor");
 
-			m_Socket=socket;
 			m_MessageFactory=messageFactory;
 			m_MessageProcessor=messageProcessor;
-
-			//m_Stream=new NetworkStream(socket);
 		}
+
 
 		/// <summary>
 		/// Starts the asynchronous read loop
@@ -52,114 +45,33 @@ namespace Arrow.Net.Message
 			State state=new State(headerSize);
 
 			BeginReadHeader(state);
-		}
-
-		/// <summary>
-		/// Writes data to the socket
-		/// </summary>
-		/// <param name="buffer">The data to write</param>
-		/// <param name="offset">The start of the data within the buffer</param>
-		/// <param name="size">How much data to write</param>
-		public override void Write(byte[] buffer, int offset, int size)
-		{
-			if(buffer==null) throw new ArgumentNullException("buffer");
-
-			bool success=HandleNetworkCall(()=>
-			{
-				m_Socket.Send(buffer,offset,size,SocketFlags.None);
-			});
-
-			if(success==false) throw new IOException("write failed");
-		}
-
-		/// <summary>
-		/// Writes data to the socket
-		/// </summary>
-		/// <param name="buffer">The data to write</param>
-		/// <param name="offset">The start of the data within the buffer</param>
-		/// <param name="size">How much data to write</param>
-		/// <returns>A task that will be signalled when the write completes</returns>
-		public override Task<SocketProcessor> WriteAsync(byte[] buffer, int offset, int size)
-		{
-			if(buffer==null) throw new ArgumentNullException("buffer");
-
-			var completionSource=new TaskCompletionSource<SocketProcessor>();
-
-			bool success=HandleNetworkCall(()=>
-			{
-				m_Socket.BeginSend(buffer,offset,size,SocketFlags.None,EndWrite,completionSource);
-			});
-
-			if(success==false)
-			{
-				completionSource.SetException(new IOException("write failed"));
-			}
-
-			return completionSource.Task;
-		}
-
-		private void EndWrite(IAsyncResult result)
-		{
-			var completionSource=(TaskCompletionSource<SocketProcessor>)result.AsyncState;
-
-			bool success=HandleNetworkCall(()=>
-			{
-				m_Socket.EndSend(result);
-				completionSource.SetResult(this);
-				success=true;
-			});
-
-			if(success==false)
-			{
-				completionSource.SetException(new IOException("write failed"));
-			}
-		}
-
-		/// <summary>
-		/// Closes the socket processor
-		/// </summary>
-		public override void Close()
-		{
-			if(IsClosed()==false)
-			{
-				/*
-				 * We're going to start closing the stream and the socket.
-				 * However, they may have pending read/writes on them, so we need to 
-				 * make sure we know we're closing to handle any exceptions we get
-				 * from their Read/Write methods
-				 */
-				FlagAsClosed();
-
-				MethodCall.AllowFail(()=>m_Socket.Dispose());
-			}
-		}
+		}		
 
 		private void BeginReadHeader(State state)
 		{
-			HandleNetworkCall(()=>
+			HandleNetworkCall(state,(localState)=>
 			{
-				m_Socket.BeginReceive
+				this.Socket.BeginReceive
 				(
 					state.HeaderBuffer,
 					state.HeaderOffset,
 					state.HeaderBuffer.Length-state.HeaderOffset,
 					SocketFlags.None,
 					EndReadHeader,
-					state
+					localState
 				);
 			});
 		}
 
 		private void EndReadHeader(IAsyncResult result)
 		{
-			State state=(State)result.AsyncState;
-
-			HandleNetworkCall(()=>
+			HandleNetworkCall(result,(ar)=>
 			{
-				int bytesRead=m_Socket.EndReceive(result);
+				int bytesRead=this.Socket.EndReceive(ar);
 
 				if(CanProcessBytesRead(bytesRead))
 				{
+					State state=(State)ar.AsyncState;
 					state.HeaderOffset+=bytesRead;
 
 					if(state.HeaderOffset!=m_MessageFactory.HeaderSize)
@@ -180,30 +92,29 @@ namespace Arrow.Net.Message
 
 		private void BeginReadBody(State state)
 		{
-			HandleNetworkCall(()=>
+			HandleNetworkCall(state,(localState)=>
 			{
-				m_Socket.BeginReceive
+				this.Socket.BeginReceive
 				(
 					state.BodyBuffer,
 					state.BodyOffset,
 					state.BodyBuffer.Length-state.BodyOffset,
 					SocketFlags.None,
 					EndReadBody,
-					state
+					localState
 				);
 			});
 		}
 
 		private void EndReadBody(IAsyncResult result)
 		{
-			State state=(State)result.AsyncState;
-
-			HandleNetworkCall(()=>
+			HandleNetworkCall(result,(ar)=>
 			{
-				int bytesRead=m_Socket.EndReceive(result);
+				int bytesRead=this.Socket.EndReceive(ar);
 
 				if(CanProcessBytesRead(bytesRead))
 				{
+					State state=(State)ar.AsyncState;
 					state.BodyOffset+=bytesRead;
 
 					if(state.BodyOffset!=state.BodyBuffer.Length)
@@ -236,15 +147,7 @@ namespace Arrow.Net.Message
 		protected override void OnDisconnected()
 		{
 			m_MessageProcessor.HandleDisconnect(this);
-		}		
-
-		/// <summary>
-		/// Disposes of the processor
-		/// </summary>
-		public void Dispose()
-		{
-			Close();
-		}
+		}				
 
 		class State
 		{
