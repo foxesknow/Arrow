@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Net.Sockets;
 using System.IO;
+
 using Arrow.Execution;
 
 namespace Arrow.Net.Message
@@ -15,10 +16,13 @@ namespace Arrow.Net.Message
 	/// </summary>
 	public abstract class SocketProcessor : IDisposable
 	{
+		private static long s_ID=0;
+
 		private readonly Socket m_Socket;
 		private readonly IMessageProcessor m_MessageProcessor;
 
 		private long m_Closed;
+		private readonly long m_ID;
 
 		/// <summary>
 		/// Initializes the instance
@@ -32,6 +36,15 @@ namespace Arrow.Net.Message
 
 			m_Socket=socket;
 			m_MessageProcessor=messageProcessor;
+			m_ID=Interlocked.Increment(ref s_ID);
+		}
+
+		/// <summary>
+		/// Returns a unique id for the connection
+		/// </summary>
+		public long ID
+		{
+			get{return m_ID;}
 		}
 
 		/// <summary>
@@ -261,6 +274,11 @@ namespace Arrow.Net.Message
 				 */
 				FlagAsClosed();
 
+				/*
+				 * The socket class is thread safe, and Dispose may be called multiple times,
+				 * so it's fine for us to call this multiple times from multiple threads
+				 * without having to worry (phew!)
+				 */
 				MethodCall.AllowFail(()=>m_Socket.Dispose());
 			}
 		}
@@ -271,6 +289,15 @@ namespace Arrow.Net.Message
 		public void Dispose()
 		{
 			Close();
+		}
+
+		/// <summary>
+		/// Renders the socket processor as a string
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return string.Format("ID={0}",m_ID);
 		}
 	}
 }

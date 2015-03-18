@@ -14,7 +14,8 @@ namespace Arrow.Net.Message
 	public class EventMessageProcessor<THeader,TBody> : IMessageProcessor<THeader,TBody>
 	{
 		/// <summary>
-		/// Raised when a new message is received
+		/// Raised when a new message is received.
+		/// If no handler is registered then the default behaviour is to keep reading messages
 		/// </summary>
 		public EventHandler<SocketMessageEventArgs<THeader,TBody>> Message;
 		

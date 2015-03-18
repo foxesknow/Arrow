@@ -29,7 +29,7 @@ namespace Arrow.Net.Message
 		/// Creates the body
 		/// </summary>
 		/// <param name="header">The header that belongs with the message</param>
-		/// <param name="buffer">The bytes that make up the body</param>
+		/// <param name="buffer">The bytes that make up the body. The buffer may be larger that the value returned by GetBodySize due to buffer caching</param>
 		/// <returns>A body</returns>
 		TBody CreateBody(THeader header, byte[] buffer);
 		

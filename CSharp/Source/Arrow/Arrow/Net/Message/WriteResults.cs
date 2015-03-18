@@ -9,7 +9,7 @@ namespace Arrow.Net.Message
 	/// <summary>
 	/// Holds the outcome as an async write to a socket processor
 	/// </summary>
-	public struct WriteResults
+	public struct WriteResults : IEquatable<WriteResults>
 	{
 		private readonly SocketProcessor m_SocketProcessor;
 		private readonly int m_BytesWritten;
@@ -39,6 +39,53 @@ namespace Arrow.Net.Message
 		public int BytesWritten
 		{
 			get{return m_BytesWritten;}
+		}
+
+		/// <summary>
+		/// Compares two instances
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool Equals(WriteResults other)
+		{
+			return m_SocketProcessor.ID==other.m_SocketProcessor.ID &&m_BytesWritten==other.m_BytesWritten;
+		}
+
+		/// <summary>
+		/// Compares two instances
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj)
+		{
+			if(obj==null) return false;
+
+			if(obj is WriteResults)
+			{
+				return Equals((WriteResults)obj);
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Generates a hash code
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return (m_SocketProcessor.ID.GetHashCode()*31)+m_BytesWritten;
+		}
+
+		/// <summary>
+		/// Renders the struct as a string
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return string.Format(", BytesWritten={1}",m_SocketProcessor,m_BytesWritten);
 		}
 	}
 }
