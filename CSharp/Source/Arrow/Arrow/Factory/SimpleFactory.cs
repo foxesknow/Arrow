@@ -96,7 +96,7 @@ namespace Arrow.Factory
 			
 			TypeInfo typeInfo=null;
 			
-			lock(this)
+			lock(this.SyncRoot)
 			{
 				m_Types.TryGetValue(name,out typeInfo);
 			}

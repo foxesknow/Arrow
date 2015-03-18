@@ -179,7 +179,7 @@ namespace Arrow.Net.Message
 
 
 		/// <summary>
-		/// Writes data to the socket
+		/// Asynchronously writes data to the socket
 		/// </summary>
 		/// <param name="buffer">The data to write</param>
 		/// <param name="offset">The start of the data within the buffer</param>
