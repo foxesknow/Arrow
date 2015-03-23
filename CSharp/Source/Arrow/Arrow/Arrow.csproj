@@ -143,6 +143,8 @@
     <Compile Include="Logging\Loggers\ConsoleLog.cs" />
     <Compile Include="Logging\Loggers\NullLog.cs" />
     <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Memory\Pools\MemoryPool.cs" />
+    <Compile Include="Memory\Pools\SteppedPool.cs" />
     <Compile Include="Net\Message\EventMessageProcessor.cs" />
     <Compile Include="Net\Message\ReadMode.cs" />
     <Compile Include="Net\Message\FixedHeaderSocketProcessor.cs" />
