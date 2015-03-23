@@ -108,9 +108,7 @@ namespace Arrow.Memory.Pools
 		
 		private int CalculateAllocationSize(int numberOfBytes)
 		{
-			// Round to the nearest multipe of m_StepSize
-			int blocks=(numberOfBytes+(m_StepSize-1))/m_StepSize;
-			return blocks*m_StepSize;
+			return RoundToNearestBlockSize(numberOfBytes,m_StepSize);
 		}
 
 		private int GetSlot(int allocationSize)
