@@ -25,11 +25,22 @@ namespace Arrow.Memory.Pools
 		private readonly int m_NumberOfSteps;
 		private readonly int m_StepSize;
 
+		private readonly PoolMode m_PoolMode;
+
 		/// <summary>
 		/// Initializes the instance using 1K per step
 		/// </summary>
 		/// <param name="numberOfSteps">The number of steps</param>
-		public SteppedPool(int numberOfSteps) : this(numberOfSteps,1)
+		public SteppedPool(int numberOfSteps) : this(numberOfSteps,1,PoolMode.Default)
+		{
+		}
+
+		/// <summary>
+		/// Initializes the instance using 1K per step
+		/// </summary>
+		/// <param name="numberOfSteps">The number of steps</param>
+		/// <param name="poolMode">How the pool should behave</param>
+		public SteppedPool(int numberOfSteps, PoolMode poolMode) : this(numberOfSteps,1,poolMode)
 		{
 		}
 
@@ -38,7 +49,8 @@ namespace Arrow.Memory.Pools
 		/// </summary>
 		/// <param name="numberOfSteps">The number of steps</param>
 		/// <param name="kilobytesPerStep">The number of kilobytes per step</param>
-		public SteppedPool(int numberOfSteps, int kilobytesPerStep)
+		/// <param name="poolMode">How the pool should behave</param>
+		public SteppedPool(int numberOfSteps, int kilobytesPerStep, PoolMode poolMode)
 		{
 			if(numberOfSteps<1) throw new ArgumentException("must have at least one step","numberOfSteps");
 			if(kilobytesPerStep<1) throw new ArgumentException("must have at least 1K per step","kilobytesPerStep");
@@ -46,8 +58,14 @@ namespace Arrow.Memory.Pools
 			// Add 1 to numbers of steps as the first item in the index is for the empty buffer
 			m_NumberOfSteps=numberOfSteps+1;
 			m_StepSize=kilobytesPerStep*Kilobyte;
+			m_PoolMode=poolMode;
 			
 			m_Steps=new byte[m_NumberOfSteps][];
+
+			if(poolMode.IsSet(PoolMode.PreAllocate))
+			{
+				AllocateBuffers();
+			}
 		}
 
 		/// <summary>
@@ -69,7 +87,13 @@ namespace Arrow.Memory.Pools
 			{
 				// Try to swap out a buffer, if one already exists
 				buffer=Interlocked.Exchange(ref m_Steps[i],null);
-				if(buffer!=null) break;
+				
+				if(buffer!=null) 
+				{
+					if(m_PoolMode.IsSet(PoolMode.ClearOnCheckout)) Array.Clear(buffer,0,buffer.Length);
+
+					break;
+				}
 			}
 
 			// If we couldn't find any existing buffers then we'll create a new one
@@ -115,6 +139,17 @@ namespace Arrow.Memory.Pools
 		{
 			int slot=allocationSize/m_StepSize;
 			return slot;
+		}
+
+		private void AllocateBuffers()
+		{
+			for(int i=1; i<m_NumberOfSteps; i++)
+			{
+				int stepSize=i*m_StepSize;
+				byte[] buffer=new byte[stepSize];
+
+				m_Steps[i]=buffer;
+			}
 		}
 	}
 }
