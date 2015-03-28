@@ -54,30 +54,71 @@ namespace Arrow.Memory.Pools
 		}
 
 		/// <summary>
+		/// The size of the buffers that will be pooled
+		/// </summary>
+		public int BufferSize
+		{
+			get{return m_BufferSize;}
+		}
+
+		/// <summary>
+		/// Returns the number of buffers that the pool will manage
+		/// </summary>
+		public int NumberOfBuffers
+		{
+			get{return m_NumberOfBuffers;}
+		}
+
+		/// <summary>
+		/// Returns the number of buffers available
+		/// </summary>
+		public int AvailableBuffers
+		{
+			get
+			{
+				lock(m_SyncRoot)
+				{
+					return m_Buffers.Count;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Checks out at least the number of bytes requested
 		/// </summary>
 		/// <param name="numberOfBytes">The number of bytes required</param>
 		/// <returns>An array of at least the requested number of bytes</returns>
 		public override byte[] Checkout(int numberOfBytes)
 		{
-			if(numberOfBytes>m_BufferSize) throw new ArgumentException("buffers in pool not big enough","numberOfBytes");
+			// If someone asks for too big a buffer then create one but
+			// don't cache it when it's checked back in
+			if(numberOfBytes>m_BufferSize) 
+			{
+				return new byte[numberOfBytes];
+			}
 
+			byte[] buffer=null;
+			bool usedExistingBuffer=false;
+			
 			lock(m_SyncRoot)
 			{
-				byte[] buffer=null;
-				
 				if(m_Buffers.Count!=0)
 				{
 					buffer=m_Buffers.Pop();
-					if(m_PoolMode.IsSet(PoolMode.ClearOnCheckout)) Array.Clear(buffer,0,buffer.Length);
+					usedExistingBuffer=true;
 				}
 				else
 				{
 					buffer=new byte[m_BufferSize];
 				}
-
-				return buffer;
 			}
+
+			if(usedExistingBuffer && m_PoolMode.IsSet(PoolMode.ClearOnCheckout)) 
+			{
+				Array.Clear(buffer,0,buffer.Length);
+			}
+
+			return buffer;
 		}
 
 		/// <summary>
@@ -87,7 +128,13 @@ namespace Arrow.Memory.Pools
 		public override void Checkin(byte[] buffer)
 		{
 			if(buffer==null) throw new ArgumentNullException("buffer");
-			if(buffer.Length!=m_BufferSize) throw new ArgumentException("buffer size incorrect for pool","buffer");
+			
+			if(buffer.Length!=m_BufferSize)
+			{
+				// A request for too big a buffer is allowed, so
+				// ignore any buffers that don't match our buffer size
+				return; // NOTE: Early return
+			}
 
 			lock(m_SyncRoot)
 			{

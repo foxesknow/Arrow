@@ -75,6 +75,9 @@
     <Compile Include="Execution\MethodCallTests.cs" />
     <Compile Include="Execution\ServiceBusTests.cs" />
     <Compile Include="Factory\FactoryTests.cs" />
+    <Compile Include="Memory\Pools\AlwaysAllocatePoolTests.cs" />
+    <Compile Include="Memory\Pools\FixedSizePoolTests.cs" />
+    <Compile Include="Memory\Pools\SteppedPoolTests.cs" />
     <Compile Include="ObjectAccess\ObjectLocatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceLoader.cs" />

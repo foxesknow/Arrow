@@ -39,10 +39,19 @@ namespace Arrow.Memory.Pools
 		/// Initializes the instance using 1K per step
 		/// </summary>
 		/// <param name="numberOfSteps">The number of steps</param>
+		/// <param name="kilobytesPerStep">The number of kilobytes per step</param>
+		public SteppedPool(int numberOfSteps, int kilobytesPerStep) : this(numberOfSteps,kilobytesPerStep,PoolMode.Default)
+		{
+		}
+
+		/// <summary>
+		/// Initializes the instance using 1K per step
+		/// </summary>
+		/// <param name="numberOfSteps">The number of steps</param>
 		/// <param name="poolMode">How the pool should behave</param>
 		public SteppedPool(int numberOfSteps, PoolMode poolMode) : this(numberOfSteps,1,poolMode)
 		{
-		}
+		}		
 
 		/// <summary>
 		/// Initializes the instance
@@ -66,6 +75,42 @@ namespace Arrow.Memory.Pools
 			{
 				AllocateBuffers();
 			}
+		}
+
+		/// <summary>
+		/// Returns the number of steps in the pool
+		/// </summary>
+		public int NumberOfSteps
+		{
+			get{return m_NumberOfSteps-1;}
+		}
+
+		/// <summary>
+		/// Returns the step size.
+		/// Each step is Step*StepSize kilobytes big
+		/// </summary>
+		public int StepSize
+		{
+			get{return m_StepSize;}
+		}
+
+		/// <summary>
+		/// Returns the number of steps that are available (not checked out) within the pool.
+		/// Note that when this class is shared amongst multiple threads the return value
+		/// should be treated as an approximation
+		/// </summary>
+		/// <returns>The number of steps that are available</returns>
+		public int GetAvailableSteps()
+		{
+			int available=0;
+
+			for(int i=1; i<m_NumberOfSteps; i++)
+			{
+				var buffer=Interlocked.CompareExchange(ref m_Steps[i],null,null);
+				if(buffer!=null) available++;
+			}
+
+			return available;
 		}
 
 		/// <summary>
