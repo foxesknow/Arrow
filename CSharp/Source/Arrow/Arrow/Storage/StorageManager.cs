@@ -7,6 +7,7 @@ using System.IO;
 using Arrow.Collections;
 using Arrow.Configuration;
 using Arrow.Xml.ObjectCreation;
+using Arrow.Storage.Vfs;
 
 namespace Arrow.Storage
 {
@@ -25,6 +26,7 @@ namespace Arrow.Storage
 			s_Accessors["file"]=uri=>new FileAccessor(uri);
 			s_Accessors["http"]=uri=>new HttpAccessor(uri);
 			s_Accessors["res"]=uri=>new ResourceAccessor(uri);
+			s_Accessors[GlobalFilespaceAccessor.Scheme]=uri=>new GlobalFilespaceAccessor(uri);
 
 			LoadFromAppConfig();
 		}

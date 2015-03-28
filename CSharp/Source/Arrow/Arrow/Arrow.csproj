@@ -196,6 +196,14 @@
     <Compile Include="Storage\StorageManager.Accessor.cs" />
     <Compile Include="Storage\StorageManager.cs" />
     <Compile Include="Storage\UriExtensions.cs" />
+    <Compile Include="Storage\Vfs\DirectoryNode.cs" />
+    <Compile Include="Storage\Vfs\FileNode.cs" />
+    <Compile Include="Storage\Vfs\Filespace.cs" />
+    <Compile Include="Storage\Vfs\GlobalFilespace.cs" />
+    <Compile Include="Storage\Vfs\GlobalFilespaceAccessor.cs" />
+    <Compile Include="Storage\Vfs\IDirectoryNode.cs" />
+    <Compile Include="Storage\Vfs\IFileNode.cs" />
+    <Compile Include="Storage\Vfs\INode.cs" />
     <Compile Include="Storage\XmlStorageResolver.cs" />
     <Compile Include="Text\TokenExpander.cs" />
     <Compile Include="Threading\ActionMultiConsumerWorkQueue.cs" />
