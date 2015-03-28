@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using Arrow.Memory.Pools;
 
 namespace Arrow.Net.Message
 {
@@ -57,7 +58,9 @@ namespace Arrow.Net.Message
 		public override void Start()
 		{
 			int headerSize=m_MessageFactory.HeaderSize;
-			State state=new State(headerSize);
+			var pool=m_MessageFactory.GetBodyPool();
+
+			State state=new State(headerSize,pool);
 
 			BeginReadHeader(state);
 		}		
@@ -120,7 +123,7 @@ namespace Arrow.Net.Message
 			(
 				state.BodyBuffer,
 				state.BodyOffset,
-				state.BodyBuffer.Length-state.BodyOffset,
+				state.BodyBufferSize-state.BodyOffset,
 				SocketFlags.None,
 				m_EndReadBody,
 				state
@@ -141,23 +144,23 @@ namespace Arrow.Net.Message
 				State state=(State)result.AsyncState;
 				state.BodyOffset+=bytesRead;
 
-				if(state.BodyOffset!=state.BodyBuffer.Length)
+				if(state.BodyOffset!=state.BodyBufferSize)
 				{
 					BeginReadBody(state);
 				}
 				else
 				{
-					state.Body=m_MessageFactory.CreateBody(state.Header,state.BodyBuffer);
-
-					// We don't need the body buffer any more so discard it...
-					state.BodyBuffer=null;
+					// Create the body
+					state.Body=m_MessageFactory.CreateBody(state.Header,state.BodyBuffer,state.BodyBufferSize);
 
 					// ...and now process the actual message
 					var readMode=m_MessageProcessor.ProcessMessage(this,state.Header,state.Body);
 
+					// Always reset so that we tidy up the pools
+					state.Reset();
+
 					if(readMode==ReadMode.KeepReading)
 					{
-						state.Reset();
 						BeginReadHeader(state);
 					}
 				}
@@ -179,16 +182,22 @@ namespace Arrow.Net.Message
 			public THeader Header;
 
 			public byte[] BodyBuffer;
+			public int BodyBufferSize;
 			public int BodyOffset;
 			public TBody Body;
 
-			public State(int headerSize)
+			private readonly MemoryPool m_BodyMemoryPool;
+
+			public State(int headerSize, MemoryPool memoryPool)
 			{
 				this.HeaderBuffer=new byte[headerSize];
+				m_BodyMemoryPool=memoryPool;
 			}
 
 			public void Reset()
 			{
+				if(this.BodyBuffer!=null) m_BodyMemoryPool.Checkin(this.BodyBuffer);
+
 				// We can keep the header buffer as its size won't change
 				// but we need to reset the rest
 				this.HeaderOffset=0;
@@ -201,18 +210,8 @@ namespace Arrow.Net.Message
 
 			public void AllocateBodyBuffer(int size)
 			{
-				this.BodyBuffer=new byte[size];
-
-				/*
-				 * NOTE: We could keep the buffer if the new size is less than the current size.
-				 * However, if a message is huge (say 500MB) and then all subsequent ones are less
-				 * then we'll never release the memory, which will cause problems over time.
-				 * 
-				if(this.BodyBuffer==null || this.BodyBuffer.Length<size)
-				{
-					this.BodyBuffer=new byte[size];
-				}
-				*/
+				this.BodyBuffer=m_BodyMemoryPool.Checkout(size);
+				this.BodyBufferSize=size;
 			}
 		}
 	}
