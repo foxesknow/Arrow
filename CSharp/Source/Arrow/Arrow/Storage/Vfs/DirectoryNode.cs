@@ -173,5 +173,32 @@ namespace Arrow.Storage.Vfs
 				}
 			}
 		}
+
+		public bool TryGetFile(string name, out IFileNode file)
+		{
+			lock(m_SyncRoot)
+			{
+				file=null;
+
+				INode node=null;
+				if(m_Contents.TryGetValue(name,out node))
+				{
+					file=node as IFileNode;
+					return file!=null;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+
+		public bool Delete(string name)
+		{
+			lock(m_SyncRoot)
+			{
+				return m_Contents.Remove(name);
+			}
+		}
 	}
 }

@@ -13,14 +13,18 @@ namespace Arrow.Storage.Vfs
 	/// </summary>
 	public class Filespace
 	{
+		private static readonly char[] UnixSeperator=new char[]{'/'};
+
 		private readonly IDirectoryNode m_Root=new DirectoryNode();
+
+		public static readonly IReadOnlyList<string> Root=new List<string>();
 
 		/// <summary>
 		/// Creates a directory.
 		/// If any parts of the path do not exist they are created as part of the process
 		/// </summary>
 		/// <param name="path">The path to the directory</param>
-		public void CreateDirectory(IList<string> path)
+		public void CreateDirectory(IReadOnlyList<string> path)
 		{
 			if(path==null) throw new ArgumentNullException("path");
 			if(path.Count==0) throw new ArgumentException("path is empty","path");
@@ -38,10 +42,9 @@ namespace Arrow.Storage.Vfs
 		/// </summary>
 		/// <param name="path">The path to get directories from</param>
 		/// <returns>A list of directories at the path, or an empty list if non exist</returns>
-		public IList<string> GetDirectories(IList<string> path)
+		public IList<string> GetDirectories(IReadOnlyList<string> path)
 		{
 			if(path==null) throw new ArgumentNullException("path");
-			if(path.Count==0) throw new ArgumentException("path is empty","path");
 
 			IDirectoryNode node=m_Root;
 
@@ -54,15 +57,35 @@ namespace Arrow.Storage.Vfs
 		}
 
 		/// <summary>
+		/// Checks to see if a directory exists
+		/// </summary>
+		/// <param name="path">The path to the directory</param>
+		/// <returns>true if a directory with the given name exists, otherwise false</returns>
+		public bool DirectoryExists(IReadOnlyList<string> path)
+		{
+			if(path==null) throw new ArgumentNullException("path");
+
+			IDirectoryNode node=m_Root;
+
+			for(int i=0; i<path.Count && node!=null; i++)
+			{
+				string name=path[i];
+
+				node.TryGetDirectory(name,out node);
+			}
+
+			return node!=null;
+		}
+
+		/// <summary>
 		/// Creates a file at the specified path.
 		/// If the file already exists it is overwritten.
 		/// </summary>
 		/// <param name="path">The path of the file. The last part is the filename</param>
 		/// <param name="file">A function that returns the file data</param>
-		public void CreateFile(IList<string> path, Func<Stream> file)
+		public void CreateFile(IReadOnlyList<string> path, Func<Stream> file)
 		{
 			if(path==null) throw new ArgumentNullException("path");
-			if(path.Count==0) throw new ArgumentException("path is empty","path");
 			if(file==null) throw new ArgumentNullException("file");
 
 			string filename=path[path.Count-1];
@@ -82,10 +105,9 @@ namespace Arrow.Storage.Vfs
 		/// </summary>
 		/// <param name="path">The path to get files from</param>
 		/// <returns>A list of files at the path, or an empty list if non exist</returns>
-		public IList<string> GetFiles(IList<string> path)
+		public IList<string> GetFiles(IReadOnlyList<string> path)
 		{
 			if(path==null) throw new ArgumentNullException("path");
-			if(path.Count==0) throw new ArgumentException("path is empty","path");
 
 			IDirectoryNode node=m_Root;
 
@@ -102,21 +124,49 @@ namespace Arrow.Storage.Vfs
 		/// </summary>
 		/// <param name="path">The path to the file</param>
 		/// <returns>A stream to the file at the path</returns>
-		public Stream OpenFile(IList<string> path)
+		public Stream OpenFile(IReadOnlyList<string> path)
 		{
 			if(path==null) throw new ArgumentNullException("path");
 			if(path.Count==0) throw new ArgumentException("path is empty","path");
 
 			string filename=path[path.Count-1];
 
-			IDirectoryNode node=m_Root;
-			for(int i=0; i<path.Count-1; i++)
-			{
-				string name=path[i];
-				node=node.CreateDirectory(name);
-			}
+			IDirectoryNode node=DirectoryForFile(path);
+			if(node==null) throw new IOException("file not found");
 
 			return node.OpenFile(filename);
+		}
+
+		/// <summary>
+		/// Checks to see if a directory exists
+		/// </summary>
+		/// <param name="path">The path to the directory</param>
+		/// <returns>true if a directory with the given name exists, otherwise false</returns>
+		public bool FileExists(IReadOnlyList<string> path)
+		{
+			if(path==null) throw new ArgumentNullException("path");
+			if(path.Count==0) throw new ArgumentException("path is empty","path");
+
+			string filename=path[path.Count-1];
+			IDirectoryNode node=DirectoryForFile(path);
+
+			IFileNode fileNode=null;
+			return node!=null && node.TryGetFile(filename,out fileNode);
+		}
+
+		private IDirectoryNode DirectoryForFile(IReadOnlyList<string> path)
+		{
+			IDirectoryNode node=m_Root;
+
+			// The last part of the path is the filename, so ignore it
+			for(int i=0; i<path.Count-1 && node!=null; i++)
+			{
+				string name=path[i];
+
+				node.TryGetDirectory(name,out node);
+			}
+
+			return node;
 		}
 
 		/// <summary>
@@ -124,9 +174,9 @@ namespace Arrow.Storage.Vfs
 		/// </summary>
 		/// <param name="parts">The parts that make up the path</param>
 		/// <returns>A path list</returns>
-		public static IList<string> MakePath(params string[] parts)
+		public static IReadOnlyList<string> MakePath(params string[] parts)
 		{
-			if(parts.Length==0) throw new ArgumentException("not enough path parts","parts");
+			if(parts.Length==0) return Root;
 
 			List<string> pathParts=new List<string>(parts.Length);
 
@@ -141,6 +191,21 @@ namespace Arrow.Storage.Vfs
 			}
 
 			return pathParts;
+		}
+		
+		/// <summary>
+		/// Creates a path list from a Unix style path (eg /path/to/file)
+		/// </summary>
+		/// <param name="path">The unix path</param>
+		/// <returns>A list representing the path</returns>
+		public static IReadOnlyList<string> FromUnixPath(string path)
+		{
+			if(path==null) throw new ArgumentNullException("path");
+
+			string[] parts=path.Split(UnixSeperator,StringSplitOptions.RemoveEmptyEntries);
+			if(parts.Length==0) return Root;
+
+			return new List<string>(parts);
 		}
 
 		

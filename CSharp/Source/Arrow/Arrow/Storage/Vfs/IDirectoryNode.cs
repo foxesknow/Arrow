@@ -19,5 +19,8 @@ namespace Arrow.Storage.Vfs
 		IDirectoryNode GetDirectory(string name);
 
 		bool TryGetDirectory(string name, out IDirectoryNode directory);
+		bool TryGetFile(string name, out IFileNode file);
+
+		bool Delete(string name);
 	}
 }
