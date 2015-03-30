@@ -111,85 +111,99 @@ namespace Arrow.Storage.Vfs
 
 		public Stream OpenFile(string name)
 		{
+			INode node=null;
+			bool foundFile=false;
+
 			lock(m_SyncRoot)
 			{
-				INode node=null;
-				if(m_Contents.TryGetValue(name,out node))
+				foundFile=m_Contents.TryGetValue(name,out node);
+			}
+
+			if(foundFile)
+			{
+				if(node.IsFile)
 				{
-					if(node.IsFile)
-					{
-						return ((IFileNode)node).Open();
-					}
-					else
-					{
-						throw new IOException("not a file: "+name);
-					}
+					return ((IFileNode)node).Open();
 				}
 				else
 				{
-					throw new IOException("file not found: "+name);
+					throw new IOException("not a file: "+name);
 				}
+			}
+			else
+			{
+				throw new IOException("file not found: "+name);
 			}
 		}
 
 		public IDirectoryNode GetDirectory(string name)
 		{
+			bool foundDirectory=false;
+			INode node=null;
+
 			lock(m_SyncRoot)
 			{
-				INode node=null;
-				if(m_Contents.TryGetValue(name,out node))
+				foundDirectory=m_Contents.TryGetValue(name,out node);
+			}
+
+			if(foundDirectory)
+			{
+				if(node.IsDirectory)
 				{
-					if(node.IsDirectory)
-					{
-						return (IDirectoryNode)node;
-					}
-					else
-					{
-						throw new IOException("not a directory: "+name);
-					}
+					return (IDirectoryNode)node;
 				}
 				else
 				{
-					throw new IOException("directory not found: "+name);
+					throw new IOException("not a directory: "+name);
 				}
+			}
+			else
+			{
+				throw new IOException("directory not found: "+name);
 			}
 		}
 
 		public bool TryGetDirectory(string name, out IDirectoryNode directory)
 		{
+			INode node=null;
+			bool foundDirectory=false;
+
 			lock(m_SyncRoot)
 			{
-				directory=null;
+				foundDirectory=m_Contents.TryGetValue(name,out node);
+			}
 
-				INode node=null;
-				if(m_Contents.TryGetValue(name,out node))
-				{
-					directory=node as IDirectoryNode;
-					return directory!=null;
-				}
-				else
-				{
-					return false;
-				}
+			if(foundDirectory)
+			{
+				directory=node as IDirectoryNode;
+				return directory!=null;
+			}
+			else
+			{
+				directory=null;
+				return false;
 			}
 		}
 
 		public bool TryGetFile(string name, out IFileNode file)
 		{
+			bool foundFile=false;
+			INode node=null;
+
 			lock(m_SyncRoot)
 			{
-				file=null;
+				foundFile=m_Contents.TryGetValue(name,out node);
+			}
 
-				INode node=null;
-				if(m_Contents.TryGetValue(name,out node))
-				{
-					file=node as IFileNode;
-					return file!=null;
-				}
-				else
-				{
-					return false;
-				}
+			if(foundFile)
+			{
+				file=node as IFileNode;
+				return file!=null;
+			}
+			else
+			{
+				file=null;
+				return false;
 			}
 		}
 

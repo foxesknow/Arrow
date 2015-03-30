@@ -14,6 +14,7 @@ namespace Arrow.Storage.Vfs
 	public class Filespace
 	{
 		private static readonly char[] UnixSeperator=new char[]{'/'};
+		private static readonly string[] Empty=new string[0];
 
 		private readonly IDirectoryNode m_Root=new DirectoryNode();
 
@@ -50,7 +51,10 @@ namespace Arrow.Storage.Vfs
 
 			foreach(string name in path)
 			{
-				node=node.GetDirectory(name);
+				if(node.TryGetDirectory(name,out node)==false)
+				{
+					return Empty;
+				}
 			}
 
 			return node.GetDirectories();
@@ -113,7 +117,10 @@ namespace Arrow.Storage.Vfs
 
 			foreach(string name in path)
 			{
-				node=node.GetDirectory(name);
+				if(node.TryGetDirectory(name,out node)==false)
+				{
+					return Empty;
+				}
 			}
 
 			return node.GetFiles();
@@ -238,7 +245,9 @@ namespace Arrow.Storage.Vfs
 		}
 
 		/// <summary>
-		/// Create a binary file
+		/// Create a binary file,
+		/// Note that the returned function holds a reference to the supplied data
+		/// and and change to this will affect the data returned by the buffer
 		/// </summary>
 		/// <param name="data">The data for the file</param>
 		/// <returns>A function that returns a stream to the binary data</returns>

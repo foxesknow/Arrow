@@ -199,6 +199,7 @@
     <Compile Include="Storage\Vfs\DirectoryNode.cs" />
     <Compile Include="Storage\Vfs\FileNode.cs" />
     <Compile Include="Storage\Vfs\Filespace.cs" />
+    <Compile Include="Storage\Vfs\FilespaceExtensions.cs" />
     <Compile Include="Storage\Vfs\GlobalFilespace.cs" />
     <Compile Include="Storage\Vfs\GlobalFilespaceAccessor.cs" />
     <Compile Include="Storage\Vfs\IDirectoryNode.cs" />

@@ -20,15 +20,15 @@ namespace UnitTests.Arrow.Storage.Vfs
 		{
 			var space=new Filespace();
 
-			Assert.That(space.GetDirectories(Filespace.Root).Count,Is.EqualTo(0));
-			Assert.That(space.GetFiles(Filespace.Root).Count,Is.EqualTo(0));
+			Assert.That(space.GetDirectories("/").Count,Is.EqualTo(0));
+			Assert.That(space.GetFiles("/").Count,Is.EqualTo(0));
 		}
 
 		[Test]
 		public void RootExists()
 		{
 			var space=new Filespace();
-			Assert.That(space.DirectoryExists(Filespace.Root),Is.True);
+			Assert.That(space.DirectoryExists("/"),Is.True);
 		}
 
 		[Test]
@@ -36,23 +36,23 @@ namespace UnitTests.Arrow.Storage.Vfs
 		{
 			var space=new Filespace();
 
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("foo")),Is.False);
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("/foo/bar")),Is.False);
+			Assert.That(space.DirectoryExists("foo"),Is.False);
+			Assert.That(space.DirectoryExists("/foo/bar"),Is.False);
 		}
 
 		[Test]
 		public void DirectoryExists()
 		{
 			var space=new Filespace();
-			space.CreateDirectory(Filespace.FromUnixPath("foo"));
-			space.CreateDirectory(Filespace.FromUnixPath("/foo/bar/rod/jane/freddy"));
-			space.CreateDirectory(Filespace.FromUnixPath("/foo/bar/rod/jane"));
+			space.CreateDirectory("foo");
+			space.CreateDirectory("/foo/bar/rod/jane/freddy");
+			space.CreateDirectory("/foo/bar/rod/jane");
 
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("foo")),Is.True);
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("/foo/bar")),Is.True);
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("/foo/bar/rod/jane/freddy")),Is.True);
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("/foo/bar/rod/jane")),Is.True);
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("/foo/bar/rod")),Is.True);
+			Assert.That(space.DirectoryExists("foo"),Is.True);
+			Assert.That(space.DirectoryExists("/foo/bar"),Is.True);
+			Assert.That(space.DirectoryExists("/foo/bar/rod/jane/freddy"),Is.True);
+			Assert.That(space.DirectoryExists("/foo/bar/rod/jane"),Is.True);
+			Assert.That(space.DirectoryExists("/foo/bar/rod"),Is.True);
 		}
 
 		[Test]
@@ -71,9 +71,9 @@ namespace UnitTests.Arrow.Storage.Vfs
 			var file=Filespace.CreateTextFile("hello, world!");
 			space.CreateFile(Filespace.FromUnixPath("/foo/bar/hello.txt"),file);
 
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("foo")),Is.True);
-			Assert.That(space.DirectoryExists(Filespace.FromUnixPath("/foo/bar")),Is.True);
-			Assert.That(space.FileExists(Filespace.FromUnixPath("/foo/bar/hello.txt")),Is.True);
+			Assert.That(space.DirectoryExists("foo"),Is.True);
+			Assert.That(space.DirectoryExists("/foo/bar"),Is.True);
+			Assert.That(space.FileExists("/foo/bar/hello.txt"),Is.True);
 
 		}
 
@@ -81,10 +81,9 @@ namespace UnitTests.Arrow.Storage.Vfs
 		public void OpenFile()
 		{
 			var space=new Filespace();
-			var file=Filespace.CreateTextFile("hello, world!");
-			space.CreateFile(Filespace.FromUnixPath("/foo/bar/hello.txt"),file);
+			space.CreateFile("/foo/bar/hello.txt","hello, world!");
 
-			using(var stream=space.OpenFile(Filespace.FromUnixPath("/foo/bar/hello.txt")))
+			using(var stream=space.OpenFile("/foo/bar/hello.txt"))
 			using(var reader=new StreamReader(stream))
 			{
 				var text=reader.ReadLine();
@@ -93,15 +92,32 @@ namespace UnitTests.Arrow.Storage.Vfs
 		}
 
 		[Test]
+		public void ReplaceExistingFile()
+		{
+			var space=new Filespace();
+			var file=Filespace.CreateTextFile("hello, world!");
+			space.CreateFile("/foo/bar/hello.txt",file);
+
+			space.CreateFile("/foo/bar/hello.txt","Hi there");
+
+			using(var stream=space.OpenFile("/foo/bar/hello.txt"))
+			using(var reader=new StreamReader(stream))
+			{
+				var text=reader.ReadLine();
+				Assert.That(text,Is.EqualTo("Hi there"));
+			}
+		}
+
+		[Test]
 		public void OpenFile_FileNotFound()
 		{
 			var space=new Filespace();
 			var file=Filespace.CreateTextFile("hello, world!");
-			space.CreateFile(Filespace.FromUnixPath("/foo/bar/hello.txt"),file);
+			space.CreateFile("/foo/bar/hello.txt",file);
 
 			Assert.Throws<IOException>(()=>
 			{
-				var stream=space.OpenFile(Filespace.FromUnixPath("/foo/bar/world.txt"));
+				var stream=space.OpenFile("/foo/bar/world.txt");
 			});
 		}
 
@@ -110,12 +126,77 @@ namespace UnitTests.Arrow.Storage.Vfs
 		{
 			var space=new Filespace();
 			var file=Filespace.CreateTextFile("hello, world!");
-			space.CreateFile(Filespace.FromUnixPath("/foo/bar/hello.txt"),file);
+			space.CreateFile("/foo/bar/hello.txt",file);
 
 			Assert.Throws<IOException>(()=>
 			{
-				var stream=space.OpenFile(Filespace.FromUnixPath("/foo/foobar/hello.txt"));
+				var stream=space.OpenFile("/foo/foobar/hello.txt");
 			});
+		}
+
+		[Test]
+		public void GetDirectories()
+		{
+			var space=new Filespace();
+			space.CreateDirectory("/foo/bar");
+			space.CreateDirectory("/foo/baz");
+			space.CreateDirectory("/foo/hello/world");
+			space.CreateDirectory("/good/morning");
+
+			var directories=space.GetDirectories(Filespace.Root);
+			Assert.That(directories,Is.Not.Null);
+			Assert.That(directories.Count,Is.EqualTo(2));
+			Assert.That(directories,Has.Member("foo"));
+			Assert.That(directories,Has.Member("good"));
+
+			directories=space.GetDirectories("/foo");
+			Assert.That(directories,Is.Not.Null);
+			Assert.That(directories.Count,Is.EqualTo(3));
+			Assert.That(directories,Has.Member("bar"));
+			Assert.That(directories,Has.Member("baz"));
+			Assert.That(directories,Has.Member("hello"));
+
+			directories=space.GetDirectories("/good/morning");
+			Assert.That(directories,Is.Not.Null);
+			Assert.That(directories.Count,Is.EqualTo(0));
+		}
+
+		[Test]
+		public void GetDirectories_DoesNotExist()
+		{
+			var space=new Filespace();
+			space.CreateDirectory("/foo/bar");
+			space.CreateDirectory("/foo/baz");
+			space.CreateDirectory("/foo/hello/world");
+			space.CreateDirectory("/good/morning");
+
+			var directories=space.GetDirectories("/a");
+			Assert.That(directories,Is.Not.Null);
+			Assert.That(directories.Count,Is.EqualTo(0));
+			
+			directories=space.GetDirectories("/a/b/c");
+			Assert.That(directories,Is.Not.Null);
+			Assert.That(directories.Count,Is.EqualTo(0));
+		}
+
+		[Test]
+		public void GetFiles()
+		{
+			var space=new Filespace();
+			space.CreateFile("/info","root file");
+			space.CreateFile("/foo/bar1","another file-1");
+			space.CreateFile("/foo/bar2","another file-2");
+
+			var files=space.GetFiles("/");
+			Assert.That(files,Is.Not.Null);
+			Assert.That(files.Count,Is.EqualTo(1));
+			Assert.That(files,Has.Member("info"));
+
+			files=space.GetFiles("/foo");
+			Assert.That(files,Is.Not.Null);
+			Assert.That(files.Count,Is.EqualTo(2));
+			Assert.That(files,Has.Member("bar1"));
+			Assert.That(files,Has.Member("bar2"));
 		}
 
 		[Test]
@@ -167,6 +248,50 @@ namespace UnitTests.Arrow.Storage.Vfs
 			{
 				string text=reader.ReadLine();
 				Assert.That(text,Is.EqualTo("hello, world"));
+			}
+		}
+
+		[Test]
+		public void CreateBinaryFile()
+		{
+			byte[] buffer={1,1,2,3,5,8,13};
+
+			var file=Filespace.CreateBinaryFile(buffer);
+			Assert.That(file,Is.Not.Null);
+
+			var buffer1=new byte[buffer.Length];
+			using(var stream=file())
+			{
+				Assert.That(stream,Is.Not.Null);
+
+				int read=stream.Read(buffer1,0,buffer1.Length);
+				Assert.That(read,Is.EqualTo(buffer.Length));
+
+				CompareArrays(buffer,buffer1);
+			}
+
+			// If we change the original buffer we'll get back the changes
+			buffer[0]=99;
+
+			var buffer2=new byte[buffer.Length];
+			using(var stream=file())
+			{
+				Assert.That(stream,Is.Not.Null);
+
+				int read=stream.Read(buffer2,0,buffer2.Length);
+				Assert.That(read,Is.EqualTo(buffer.Length));
+
+				CompareArrays(buffer,buffer2);
+			}
+		}
+
+		private void CompareArrays(byte[] array1, byte[] array2)
+		{
+			Assert.That(array1.Length,Is.EqualTo(array2.Length));
+
+			for(int i=0; i<array1.Length; i++)
+			{
+				Assert.That(array1[i],Is.EqualTo(array2[i]));
 			}
 		}
 	}
