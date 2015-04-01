@@ -198,13 +198,15 @@
     <Compile Include="Storage\UriExtensions.cs" />
     <Compile Include="Storage\Vfs\DirectoryNode.cs" />
     <Compile Include="Storage\Vfs\FileNode.cs" />
-    <Compile Include="Storage\Vfs\Filespace.cs" />
-    <Compile Include="Storage\Vfs\FilespaceExtensions.cs" />
+    <Compile Include="Storage\Vfs\VirtualFileSystem.cs" />
+    <Compile Include="Storage\Vfs\VirtualFileSystemExtensions.cs" />
     <Compile Include="Storage\Vfs\GlobalFilespace.cs" />
     <Compile Include="Storage\Vfs\GlobalFilespaceAccessor.cs" />
     <Compile Include="Storage\Vfs\IDirectoryNode.cs" />
     <Compile Include="Storage\Vfs\IFileNode.cs" />
+    <Compile Include="Storage\Vfs\IMountPointNode.cs" />
     <Compile Include="Storage\Vfs\INode.cs" />
+    <Compile Include="Storage\Vfs\LookupResult.cs" />
     <Compile Include="Storage\XmlStorageResolver.cs" />
     <Compile Include="Text\TokenExpander.cs" />
     <Compile Include="Threading\ActionMultiConsumerWorkQueue.cs" />

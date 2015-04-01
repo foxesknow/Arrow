@@ -11,13 +11,16 @@ namespace Arrow.Storage.Vfs
 	/// An in-memory filesystem.
 	/// This class is thread safe.
 	/// </summary>
-	public class Filespace
+	public class VirtualFileSystem
 	{
 		private static readonly char[] UnixSeperator=new char[]{'/'};
 		private static readonly string[] Empty=new string[0];
 
 		private readonly IDirectoryNode m_Root=new DirectoryNode();
 
+		/// <summary>
+		/// The root path
+		/// </summary>
 		public static readonly IReadOnlyList<string> Root=new List<string>();
 
 		/// <summary>
@@ -35,6 +38,7 @@ namespace Arrow.Storage.Vfs
 			foreach(string name in path)
 			{
 				node=node.CreateDirectory(name);
+				if(node==null) throw new IOException("could not create "+name);
 			}
 		}
 
@@ -51,7 +55,7 @@ namespace Arrow.Storage.Vfs
 
 			foreach(string name in path)
 			{
-				if(node.TryGetDirectory(name,out node)==false)
+				if(node.TryGetDirectory(name,out node)!=LookupResult.Success)
 				{
 					return Empty;
 				}
@@ -99,9 +103,14 @@ namespace Arrow.Storage.Vfs
 			{
 				string name=path[i];
 				node=node.CreateDirectory(name);
+
+				if(node==null) throw new IOException("could not create "+name);
 			}
 
-			node.CreateFile(filename,file);
+			if(node.CreateFile(filename,file)==null)
+			{
+				throw new IOException("could not create file: "+filename);
+			}
 		}
 
 		/// <summary>
@@ -117,7 +126,7 @@ namespace Arrow.Storage.Vfs
 
 			foreach(string name in path)
 			{
-				if(node.TryGetDirectory(name,out node)==false)
+				if(node.TryGetDirectory(name,out node)!=LookupResult.Success)
 				{
 					return Empty;
 				}
@@ -141,7 +150,10 @@ namespace Arrow.Storage.Vfs
 			IDirectoryNode node=DirectoryForFile(path);
 			if(node==null) throw new IOException("file not found");
 
-			return node.OpenFile(filename);
+			var stream=node.OpenFile(filename);
+			if(stream==null) throw new IOException("could not open "+filename);
+
+			return stream;
 		}
 
 		/// <summary>
@@ -158,7 +170,60 @@ namespace Arrow.Storage.Vfs
 			IDirectoryNode node=DirectoryForFile(path);
 
 			IFileNode fileNode=null;
-			return node!=null && node.TryGetFile(filename,out fileNode);
+			return node!=null && node.TryGetFile(filename,out fileNode)==LookupResult.Success;
+		}
+
+		/// <summary>
+		/// Registers a mount point
+		/// </summary>
+		/// <param name="path">The path to the mount point</param>
+		/// <param name="mountPoint">The mount point to register</param>
+		public void RegisterMount(IReadOnlyList<string> path, IMountPointNode mountPoint)
+		{
+			if(path==null) throw new ArgumentNullException("path");
+			if(path.Count==0) throw new ArgumentException("path is empty","path");
+			if(mountPoint==null) throw new ArgumentNullException("mountPoint");
+
+			string mountName=path[path.Count-1];
+
+			IDirectoryNode node=m_Root;
+			for(int i=0; i<path.Count-1; i++)
+			{
+				string name=path[i];
+				node=node.CreateDirectory(name);
+				
+				if(node==null) throw new IOException("could not create "+name);	
+			}
+
+			node.RegisterMount(mountName,mountPoint);
+		}
+
+		/// <summary>
+		/// Attempts to get a mount point
+		/// </summary>
+		/// <param name="path">The path to the mount point</param>
+		/// <param name="mountPoint">On success the mount point, otherwise null</param>
+		/// <returns>true if the mount point was found, otherwise false</returns>
+		public bool TryGetMountPoint(IReadOnlyList<string> path, out IMountPointNode mountPoint)
+		{
+			if(path==null) throw new ArgumentNullException("path");
+			if(path.Count==0) throw new ArgumentException("path is empty","path");
+
+			mountPoint=null;
+
+			IDirectoryNode node=m_Root;
+			string mountName=path[path.Count-1];
+
+			for(int i=0; i<path.Count-1; i++)
+			{
+				string name=path[i];
+				if(node.TryGetDirectory(name,out node)!=LookupResult.Success)
+				{
+					return false;
+				}
+			}
+
+			return node.TryGetMountPoint(mountName,out mountPoint)==LookupResult.Success;
 		}
 
 		private IDirectoryNode DirectoryForFile(IReadOnlyList<string> path)

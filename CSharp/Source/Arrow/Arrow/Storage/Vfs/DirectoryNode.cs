@@ -8,22 +8,43 @@ using Arrow.Collections;
 
 namespace Arrow.Storage.Vfs
 {
-	class DirectoryNode : IDirectoryNode
+	/// <summary>
+	/// An implementation of a directory node
+	/// </summary>
+	public class DirectoryNode : IDirectoryNode
 	{
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<string,INode> m_Contents=new Dictionary<string,INode>(IgnoreCaseEqualityComparer.Instance);
 
+		/// <summary>
+		/// The lock object to use
+		/// </summary>
+		protected object SyncRoot
+		{
+			get{return m_SyncRoot;}
+		}
+
+		/// <summary>
+		/// Always returns false
+		/// </summary>
 		public bool IsFile
 		{
 			get{return false;}
 		}
 
+		/// <summary>
+		/// Always returns true
+		/// </summary>
 		public bool IsDirectory
 		{
 			get{return true;}
 		}
 
-		public IList<string> GetFiles()
+		/// <summary>
+		/// Returns the files in the directory
+		/// </summary>
+		/// <returns>A list of files</returns>
+		public virtual IList<string> GetFiles()
 		{
 			var files=new List<string>();
 
@@ -38,8 +59,16 @@ namespace Arrow.Storage.Vfs
 			return files;
 		}
 
-		public IDirectoryNode CreateDirectory(string name)
+		/// <summary>
+		/// Creates a directory (if it doesn't already exist)
+		/// </summary>
+		/// <param name="name">The name of the directory to create</param>
+		/// <returns>On success the directory node representing the directory, otherwise false</returns>
+		public virtual IDirectoryNode CreateDirectory(string name)
 		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+
 			lock(m_SyncRoot)
 			{
 				INode node;
@@ -51,7 +80,7 @@ namespace Arrow.Storage.Vfs
 					}
 					else
 					{
-						throw new IOException("item already exists and is not a directory: "+name);
+						return null;
 					}
 				}
 				else
@@ -64,8 +93,18 @@ namespace Arrow.Storage.Vfs
 			}
 		}
 
-		public IFileNode CreateFile(string name, Func<Stream> file)
+		/// <summary>
+		/// Creates or replaces a file in the directory
+		/// </summary>
+		/// <param name="name">The name of the file</param>
+		/// <param name="file">The file</param>
+		/// <returns>On success a file node for the file, otherwise null</returns>
+		public virtual IFileNode CreateFile(string name, Func<Stream> file)
 		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			if(file==null) throw new ArgumentNullException("file");
+
 			lock(m_SyncRoot)
 			{
 				INode node;
@@ -81,7 +120,7 @@ namespace Arrow.Storage.Vfs
 					}
 					else
 					{
-						throw new IOException("item already exists and is not a file: "+name);
+						return null;
 					}
 				}
 				else
@@ -94,7 +133,12 @@ namespace Arrow.Storage.Vfs
 			}
 		}
 
-		public IList<string> GetDirectories()
+		/// <summary>
+		/// Returns a list of directories within the directory.
+		/// Note, this also includes mount points
+		/// </summary>
+		/// <returns>A list of directories</returns>
+		public virtual IList<string> GetDirectories()
 		{
 			var directories=new List<string>();
 
@@ -109,8 +153,16 @@ namespace Arrow.Storage.Vfs
 			return directories;
 		}
 
-		public Stream OpenFile(string name)
+		/// <summary>
+		/// Opens the file with the specified name
+		/// </summary>
+		/// <param name="name">The name of the file to open</param>
+		/// <returns>On success a stream to the file, otherwise null</returns>
+		public virtual Stream OpenFile(string name)
 		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+
 			INode node=null;
 			bool foundFile=false;
 
@@ -127,44 +179,26 @@ namespace Arrow.Storage.Vfs
 				}
 				else
 				{
-					throw new IOException("not a file: "+name);
+					return null;
 				}
 			}
 			else
 			{
-				throw new IOException("file not found: "+name);
+				return null;
 			}
 		}
 
-		public IDirectoryNode GetDirectory(string name)
+		/// <summary>
+		/// Attempts to get the directory with the specified name
+		/// </summary>
+		/// <param name="name">The name of the directory to get</param>
+		/// <param name="directory">On success the directory node representing the name, otherwise null</param>
+		/// <returns>The success of the operation</returns>
+		public virtual LookupResult TryGetDirectory(string name, out IDirectoryNode directory)
 		{
-			bool foundDirectory=false;
-			INode node=null;
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
 
-			lock(m_SyncRoot)
-			{
-				foundDirectory=m_Contents.TryGetValue(name,out node);
-			}
-
-			if(foundDirectory)
-			{
-				if(node.IsDirectory)
-				{
-					return (IDirectoryNode)node;
-				}
-				else
-				{
-					throw new IOException("not a directory: "+name);
-				}
-			}
-			else
-			{
-				throw new IOException("directory not found: "+name);
-			}
-		}
-
-		public bool TryGetDirectory(string name, out IDirectoryNode directory)
-		{
 			INode node=null;
 			bool foundDirectory=false;
 
@@ -176,17 +210,26 @@ namespace Arrow.Storage.Vfs
 			if(foundDirectory)
 			{
 				directory=node as IDirectoryNode;
-				return directory!=null;
+				return directory!=null ? LookupResult.Success : LookupResult.WrongType;
 			}
 			else
 			{
 				directory=null;
-				return false;
+				return LookupResult.NotFound;
 			}
 		}
 
-		public bool TryGetFile(string name, out IFileNode file)
+		/// <summary>
+		/// Attempts to get the file with the specified name
+		/// </summary>
+		/// <param name="name">The name of the file to get</param>
+		/// <param name="file">On success the file node representing the name, otherwise null</param>
+		/// <returns>The success of the operation</returns>
+		public virtual LookupResult TryGetFile(string name, out IFileNode file)
 		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+
 			bool foundFile=false;
 			INode node=null;
 
@@ -198,20 +241,95 @@ namespace Arrow.Storage.Vfs
 			if(foundFile)
 			{
 				file=node as IFileNode;
-				return file!=null;
+				return file!=null ? LookupResult.Success : LookupResult.WrongType;
 			}
 			else
 			{
 				file=null;
-				return false;
+				return LookupResult.NotFound;
 			}
 		}
 
-		public bool Delete(string name)
+		/// <summary>
+		/// Attempts to delete the item with the specified name
+		/// </summary>
+		/// <param name="name">The name of the item to delete</param>
+		/// <returns>true if the item was deleted, false otherwise</returns>
+		public virtual bool Delete(string name)
 		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+
 			lock(m_SyncRoot)
 			{
 				return m_Contents.Remove(name);
+			}
+		}
+
+		/// <summary>
+		/// Registers a mount point in a directory
+		/// </summary>
+		/// <param name="name">The name of the mount point</param>
+		/// <param name="mountPoint">The mount point to register</param>
+		/// <returns>true if the mount point was registered, otherwise false</returns>
+		public virtual bool RegisterMount(string name, IMountPointNode mountPoint)
+		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			if(mountPoint==null) throw new ArgumentNullException("mountPoint");
+
+			if(mountPoint.IsDirectory==false) throw new IOException("mount points must be directories");
+
+			lock(m_SyncRoot)
+			{
+				if(m_Contents.ContainsKey(name))
+				{
+					return false;
+				}
+				else
+				{
+					m_Contents.Add(name,mountPoint);
+					return true;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Attempts to get a mount point with the specified name
+		/// </summary>
+		/// <param name="name">The name of the mount point</param>
+		/// <param name="mountPoint">On success the mount point node, otherwise null</param>
+		/// <returns>The success of the operation</returns>
+		public virtual LookupResult TryGetMountPoint(string name, out IMountPointNode mountPoint)
+		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+
+			INode node;
+			bool found=false;
+
+			lock(m_SyncRoot)
+			{
+				found=m_Contents.TryGetValue(name,out node);
+			}
+
+			if(found)
+			{
+				if(node.IsDirectory)
+				{
+					mountPoint=node as IMountPointNode;
+					return mountPoint!=null ? LookupResult.Success : LookupResult.WrongType;
+				}
+				else
+				{
+					mountPoint=null;
+					return LookupResult.WrongType;
+				}
+			}
+			else
+			{
+				mountPoint=null;
+				return LookupResult.NotFound;
 			}
 		}
 	}

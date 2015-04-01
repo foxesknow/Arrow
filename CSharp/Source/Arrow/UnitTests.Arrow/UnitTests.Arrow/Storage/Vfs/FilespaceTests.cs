@@ -18,7 +18,7 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void EmptyFilespace()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 
 			Assert.That(space.GetDirectories("/").Count,Is.EqualTo(0));
 			Assert.That(space.GetFiles("/").Count,Is.EqualTo(0));
@@ -27,14 +27,14 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void RootExists()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 			Assert.That(space.DirectoryExists("/"),Is.True);
 		}
 
 		[Test]
 		public void DirectoryExists_NotPresent()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 
 			Assert.That(space.DirectoryExists("foo"),Is.False);
 			Assert.That(space.DirectoryExists("/foo/bar"),Is.False);
@@ -43,7 +43,7 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void DirectoryExists()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 			space.CreateDirectory("foo");
 			space.CreateDirectory("/foo/bar/rod/jane/freddy");
 			space.CreateDirectory("/foo/bar/rod/jane");
@@ -58,18 +58,18 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void FileExists_NotPresent()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 
-			Assert.That(space.FileExists(Filespace.FromUnixPath("foo.txt")),Is.False);
-			Assert.That(space.FileExists(Filespace.FromUnixPath("/foo/bar.txt")),Is.False);
+			Assert.That(space.FileExists(VirtualFileSystem.FromUnixPath("foo.txt")),Is.False);
+			Assert.That(space.FileExists(VirtualFileSystem.FromUnixPath("/foo/bar.txt")),Is.False);
 		}
 
 		[Test]
 		public void FileExists()
 		{
-			var space=new Filespace();
-			var file=Filespace.CreateTextFile("hello, world!");
-			space.CreateFile(Filespace.FromUnixPath("/foo/bar/hello.txt"),file);
+			var space=new VirtualFileSystem();
+			var file=VirtualFileSystem.CreateTextFile("hello, world!");
+			space.CreateFile(VirtualFileSystem.FromUnixPath("/foo/bar/hello.txt"),file);
 
 			Assert.That(space.DirectoryExists("foo"),Is.True);
 			Assert.That(space.DirectoryExists("/foo/bar"),Is.True);
@@ -80,7 +80,7 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void OpenFile()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 			space.CreateFile("/foo/bar/hello.txt","hello, world!");
 
 			using(var stream=space.OpenFile("/foo/bar/hello.txt"))
@@ -94,8 +94,8 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void ReplaceExistingFile()
 		{
-			var space=new Filespace();
-			var file=Filespace.CreateTextFile("hello, world!");
+			var space=new VirtualFileSystem();
+			var file=VirtualFileSystem.CreateTextFile("hello, world!");
 			space.CreateFile("/foo/bar/hello.txt",file);
 
 			space.CreateFile("/foo/bar/hello.txt","Hi there");
@@ -111,8 +111,8 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void OpenFile_FileNotFound()
 		{
-			var space=new Filespace();
-			var file=Filespace.CreateTextFile("hello, world!");
+			var space=new VirtualFileSystem();
+			var file=VirtualFileSystem.CreateTextFile("hello, world!");
 			space.CreateFile("/foo/bar/hello.txt",file);
 
 			Assert.Throws<IOException>(()=>
@@ -124,8 +124,8 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void OpenFile_DirectoryNotFound()
 		{
-			var space=new Filespace();
-			var file=Filespace.CreateTextFile("hello, world!");
+			var space=new VirtualFileSystem();
+			var file=VirtualFileSystem.CreateTextFile("hello, world!");
 			space.CreateFile("/foo/bar/hello.txt",file);
 
 			Assert.Throws<IOException>(()=>
@@ -137,13 +137,13 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void GetDirectories()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 			space.CreateDirectory("/foo/bar");
 			space.CreateDirectory("/foo/baz");
 			space.CreateDirectory("/foo/hello/world");
 			space.CreateDirectory("/good/morning");
 
-			var directories=space.GetDirectories(Filespace.Root);
+			var directories=space.GetDirectories(VirtualFileSystem.Root);
 			Assert.That(directories,Is.Not.Null);
 			Assert.That(directories.Count,Is.EqualTo(2));
 			Assert.That(directories,Has.Member("foo"));
@@ -164,7 +164,7 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void GetDirectories_DoesNotExist()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 			space.CreateDirectory("/foo/bar");
 			space.CreateDirectory("/foo/baz");
 			space.CreateDirectory("/foo/hello/world");
@@ -182,7 +182,7 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void GetFiles()
 		{
-			var space=new Filespace();
+			var space=new VirtualFileSystem();
 			space.CreateFile("/info","root file");
 			space.CreateFile("/foo/bar1","another file-1");
 			space.CreateFile("/foo/bar2","another file-2");
@@ -202,9 +202,9 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void MakePath()
 		{
-			Assert.That(Filespace.MakePath(),Is.Empty);
+			Assert.That(VirtualFileSystem.MakePath(),Is.Empty);
 
-			var path=Filespace.MakePath("path","to","file.txt");
+			var path=VirtualFileSystem.MakePath("path","to","file.txt");
 			
 			Assert.That(path,Is.Not.Null);
 			Assert.That(path.Count,Is.EqualTo(3));
@@ -218,18 +218,18 @@ namespace UnitTests.Arrow.Storage.Vfs
 		{
 			Assert.Throws<ArgumentException>(()=>
 			{
-				Filespace.MakePath("path",null,"file.txt");
+				VirtualFileSystem.MakePath("path",null,"file.txt");
 			});
 		}
 
 		[Test]
 		public void FromUnixPath()
 		{
-			var path=Filespace.FromUnixPath("/");
+			var path=VirtualFileSystem.FromUnixPath("/");
 			Assert.That(path,Is.Not.Null);
 			Assert.That(path,Is.Empty);
 
-			path=Filespace.FromUnixPath("/path/to/file.txt");
+			path=VirtualFileSystem.FromUnixPath("/path/to/file.txt");
 
 			Assert.That(path,Is.Not.Null);
 			Assert.That(path.Count,Is.EqualTo(3));
@@ -241,7 +241,7 @@ namespace UnitTests.Arrow.Storage.Vfs
 		[Test]
 		public void CreateTextFile()
 		{
-			var file=Filespace.CreateTextFile("hello, world");
+			var file=VirtualFileSystem.CreateTextFile("hello, world");
 
 			using(var stream=file())
 			using(var reader=new StreamReader(stream))
@@ -256,7 +256,7 @@ namespace UnitTests.Arrow.Storage.Vfs
 		{
 			byte[] buffer={1,1,2,3,5,8,13};
 
-			var file=Filespace.CreateBinaryFile(buffer);
+			var file=VirtualFileSystem.CreateBinaryFile(buffer);
 			Assert.That(file,Is.Not.Null);
 
 			var buffer1=new byte[buffer.Length];

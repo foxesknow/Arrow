@@ -13,14 +13,14 @@ namespace Arrow.Storage.Vfs
 	public static class GlobalFilespace
 	{
 		private static object s_SyncRoot=new object();
-		private static readonly Dictionary<string,Filespace> s_Filespaces=new Dictionary<string,Filespace>(IgnoreCaseEqualityComparer.Instance);
+		private static readonly Dictionary<string,VirtualFileSystem> s_Filespaces=new Dictionary<string,VirtualFileSystem>(IgnoreCaseEqualityComparer.Instance);
 
 		/// <summary>
 		/// Returns an existing filespace, or creates one with the specified name and returns it
 		/// </summary>
 		/// <param name="filespaceName">The name of the filespace</param>
 		/// <returns>The requested filespace</returns>
-		public static Filespace GetOrCreate(string filespaceName)
+		public static VirtualFileSystem GetOrCreate(string filespaceName)
 		{
 			if(filespaceName==null) throw new ArgumentNullException("filespaceName");
 
@@ -29,10 +29,10 @@ namespace Arrow.Storage.Vfs
 
 			lock(s_SyncRoot)
 			{
-				Filespace filespace=null;
+				VirtualFileSystem filespace=null;
 				if(s_Filespaces.TryGetValue(normalizedName,out filespace)==false)
 				{
-					filespace=new Filespace();
+					filespace=new VirtualFileSystem();
 					s_Filespaces.Add(normalizedName,filespace);
 				}
 
@@ -46,7 +46,7 @@ namespace Arrow.Storage.Vfs
 		/// <param name="filespaceName">The name of the file space to fetch</param>
 		/// <param name="filespace">On success the filespace, otherwise null</param>
 		/// <returns>true if the filespace was found, otherwise false</returns>
-		public static bool TryGetFilespace(string filespaceName, out Filespace filespace)
+		public static bool TryGetFilespace(string filespaceName, out VirtualFileSystem filespace)
 		{
 			if(filespaceName==null) throw new ArgumentNullException("filespaceName");
 
