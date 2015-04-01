@@ -201,7 +201,7 @@
     <Compile Include="Storage\Vfs\VirtualFileSystem.cs" />
     <Compile Include="Storage\Vfs\VirtualFileSystemExtensions.cs" />
     <Compile Include="Storage\Vfs\GlobalFilespace.cs" />
-    <Compile Include="Storage\Vfs\GlobalFilespaceAccessor.cs" />
+    <Compile Include="Storage\Vfs\GlobalVirtualFileSystemAccessor.cs" />
     <Compile Include="Storage\Vfs\IDirectoryNode.cs" />
     <Compile Include="Storage\Vfs\IFileNode.cs" />
     <Compile Include="Storage\Vfs\IMountPointNode.cs" />

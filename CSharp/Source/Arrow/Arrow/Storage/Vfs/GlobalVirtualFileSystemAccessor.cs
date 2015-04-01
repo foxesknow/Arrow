@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace Arrow.Storage.Vfs
 {
 	/// <summary>
-	/// Provides accessor access to the global file space
+	/// Provides accessor access to the global virtual file system
 	/// </summary>
-	class GlobalFilespaceAccessor : Accessor
+	class GlobalVirtualFileSystemAccessor : Accessor
 	{
-		public static readonly string Scheme="gfs";
+		public static readonly string Scheme="gvfs";
 		private static readonly char[] pathSeperator=new char[]{'/'};
 
-		public GlobalFilespaceAccessor(Uri uri) : base(uri.StripLogonDetails().StripQuery())
+		public GlobalVirtualFileSystemAccessor(Uri uri) : base(uri.StripLogonDetails().StripQuery())
 		{
 			ValidateScheme(uri,Scheme);
 		}
