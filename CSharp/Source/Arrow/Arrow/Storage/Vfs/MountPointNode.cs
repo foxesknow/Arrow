@@ -9,7 +9,7 @@ namespace Arrow.Storage.Vfs
 	/// <summary>
 	/// A mount point is just a directory node
 	/// </summary>
-	public interface IMountPointNode : IDirectoryNode
+	public abstract class MountPointNode : DirectoryNode
 	{
 	}
 }

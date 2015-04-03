@@ -7,28 +7,31 @@ using System.Threading.Tasks;
 
 namespace Arrow.Storage.Vfs
 {
-	class FileNode : IFileNode
+	/// <summary>
+	/// Base class for files within the virtual file system
+	/// </summary>
+	public abstract class FileNode : INode
 	{
-		private readonly Func<Stream> m_File;
+		/// <summary>
+		/// Returns a stream to the file represented by the node
+		/// </summary>
+		/// <returns>A stream</returns>
+		public abstract Stream Open();
 
-		public FileNode(Func<Stream> file)
-		{
-			m_File=file;
-		}
-
+		/// <summary>
+		/// Always returns true
+		/// </summary>
 		public bool IsFile
 		{
 			get{return true;}
 		}
 
+		/// <summary>
+		/// Always returns false
+		/// </summary>
 		public bool IsDirectory
 		{
 			get{return false;}
-		}
-
-		public Stream Open()
-		{
-			return m_File();
 		}
 	}
 }
