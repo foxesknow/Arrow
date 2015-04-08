@@ -88,7 +88,7 @@ namespace Arrow.Application.Plugins
 			get{return m_PluginName;}
 			set
 			{
-				if(m_PluginName==null) throw new ArgumentNullException("value");
+				if(value==null) throw new ArgumentNullException("value");
 				m_PluginName=value;
 			}
 		}
@@ -214,8 +214,6 @@ namespace Arrow.Application.Plugins
 			}
 		}
 		
-		#region IServiceProvider Members
-
 		/// <summary>
 		/// Gets the service object of the specified type
 		/// </summary>
@@ -227,10 +225,6 @@ namespace Arrow.Application.Plugins
 			
 			return Find(service=>pluginType.IsAssignableFrom(service.GetType()));
 		}
-
-		#endregion
-
-		#region IEnumerable<IService> Members
 
 		/// <summary>
 		/// Reterns an enumerator for the plugins
@@ -249,18 +243,10 @@ namespace Arrow.Application.Plugins
 			return plugins.GetEnumerator();
 		}
 
-		#endregion
-
-		#region IEnumerable Members
-
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
 		}
-
-		#endregion
-
-		#region IDisposable Members
 
 		/// <summary>
 		/// Stops all plugins and calls IDisposable.Dispose on any plugins that implement the interface
@@ -281,8 +267,6 @@ namespace Arrow.Application.Plugins
 			}
 		}
 
-		#endregion
-		
 		/// <summary>
 		/// Returns the systemwide plugin controller
 		/// </summary>
