@@ -92,6 +92,8 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <returns>The success of the operation</returns>
 		public override LookupResult TryGetDirectory(string name, out DirectoryNode directory)
 		{
+			ValidateName(name);
+
 			string fullPath=Path.Combine(m_RootDirectory,name);
 			
 			if(Directory.Exists(fullPath))
@@ -112,6 +114,8 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <returns>The success of the operation</returns>
 		public override LookupResult TryGetFile(string name, out FileNode file)
 		{
+			ValidateName(name);
+
 			string filename=Path.Combine(m_RootDirectory,name);
 
 			if(File.Exists(filename))

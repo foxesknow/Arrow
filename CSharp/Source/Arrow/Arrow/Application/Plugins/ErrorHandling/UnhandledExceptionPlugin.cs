@@ -10,7 +10,7 @@ namespace Arrow.Application.Plugins.ErrorHandling
 	/// <summary>
 	/// Listens out for unhandled exceptions in the current app domain and logs them
 	/// </summary>
-	public class UnhandledExceptionPlugin : IPlugin
+	public class UnhandledExceptionPlugin : Plugin
 	{
 		private ILog m_Log;
 		
@@ -19,18 +19,27 @@ namespace Arrow.Application.Plugins.ErrorHandling
 		/// </summary>
 		public string LogName{get;set;}
 	
-		void IPlugin.Start()
+		/// <summary>
+		/// Starts the plugin
+		/// </summary>
+		protected internal override void Start()
 		{
 			m_Log=LogManager.GetLog(this.LogName);
 			AppDomain.CurrentDomain.UnhandledException+=UnhandledException;
 		}
 
-		void IPlugin.Stop()
+		/// <summary>
+		/// Stops the plugin
+		/// </summary>
+		protected internal override void Stop()
 		{
 			AppDomain.CurrentDomain.UnhandledException-=UnhandledException;
 		}
 
-		string IPlugin.Name
+		/// <summary>
+		/// Returns the name of the plugin
+		/// </summary>
+		public override string Name
 		{
 			get{return "UnhandledExceptionPlugin";}
 		}

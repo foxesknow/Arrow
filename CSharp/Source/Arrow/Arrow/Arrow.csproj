@@ -53,8 +53,8 @@
     <Compile Include="Application\More.cs" />
     <Compile Include="Application\Plugins\AssemblyResolver\AssemblyResolverPlugin.cs" />
     <Compile Include="Application\Plugins\ErrorHandling\UnhandledExceptionPlugin.cs" />
-    <Compile Include="Application\Plugins\IPausablePlugin.cs" />
-    <Compile Include="Application\Plugins\IPlugin.cs" />
+    <Compile Include="Application\Plugins\PausablePlugin.cs" />
+    <Compile Include="Application\Plugins\Plugin.cs" />
     <Compile Include="Application\Plugins\IPluginDiscovery.cs" />
     <Compile Include="Application\Plugins\IPluginInitialize.cs" />
     <Compile Include="Application\Plugins\IPluginPostStart.cs" />

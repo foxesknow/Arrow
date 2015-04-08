@@ -50,8 +50,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>On success the directory node representing the directory, otherwise false</returns>
 		public override DirectoryNode CreateDirectory(string name)
 		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			ValidateName(name);
 
 			lock(m_SyncRoot)
 			{
@@ -85,8 +84,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>On success a file node for the file, otherwise null</returns>
 		public override FileNode CreateFile(string name, Func<Stream> file)
 		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			ValidateName(name);
 			if(file==null) throw new ArgumentNullException("file");
 
 			lock(m_SyncRoot)
@@ -145,8 +143,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>The success of the operation</returns>
 		public override LookupResult TryGetDirectory(string name, out DirectoryNode directory)
 		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			ValidateName(name);
 
 			INode node=null;
 			bool foundDirectory=false;
@@ -176,8 +173,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>The success of the operation</returns>
 		public override LookupResult TryGetFile(string name, out FileNode file)
 		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			ValidateName(name);
 
 			bool foundFile=false;
 			INode node=null;
@@ -206,8 +202,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>true if the item was deleted, false otherwise</returns>
 		public override bool Delete(string name)
 		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			ValidateName(name);
 
 			lock(m_SyncRoot)
 			{
@@ -223,8 +218,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>true if the mount point was registered, otherwise false</returns>
 		public override bool RegisterMount(string name, MountPointNode mountPoint)
 		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			ValidateName(name);
 			if(mountPoint==null) throw new ArgumentNullException("mountPoint");
 
 			lock(m_SyncRoot)
@@ -249,8 +243,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>The success of the operation</returns>
 		public override LookupResult TryGetMountPoint(string name, out MountPointNode mountPoint)
 		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be whitespace","name");
+			ValidateName(name);
 
 			INode node;
 			bool found=false;

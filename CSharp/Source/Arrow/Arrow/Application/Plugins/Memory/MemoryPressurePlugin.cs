@@ -9,7 +9,7 @@ namespace Arrow.Application.Plugins.Memory
 	/// Places additional stress on the garbage collector.
 	/// This is useful for stress testing an application as it will cause more frequent collections
 	/// </summary>
-	public class MemoryPressurePlugin : IPlugin
+	public class MemoryPressurePlugin : Plugin
 	{
 		private volatile bool m_Started;
 	
@@ -21,7 +21,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// Starts the plugin
 		/// </summary>
-		public void Start()
+		protected internal override void Start()
 		{
 			if(m_Started==false)
 			{
@@ -33,7 +33,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// Stops the plugin
 		/// </summary>
-		public void Stop()
+		protected internal override void Stop()
 		{
 			if(m_Started)
 			{
@@ -45,7 +45,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// The name of the plugin
 		/// </summary>
-		public string Name
+		public override string Name
 		{
 			get{return "MemoryPressure";}
 		}

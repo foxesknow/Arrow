@@ -78,6 +78,21 @@ namespace Arrow.Storage.Vfs
 		/// <returns>The success of the operation</returns>
 		public abstract LookupResult TryGetMountPoint(string name, out MountPointNode mountPoint);
 
+		/// <summary>
+		/// Checks that a name is valid and throws an exception if not
+		/// </summary>
+		/// <param name="name">The name to validate</param>
+		protected void ValidateName(string name)
+		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name is whitespace","name");
+
+			if(name.Contains('/')) throw new ArgumentException("name cannot contain /","name");
+
+			var trimmed=name.Trim();
+			if(trimmed=="." || trimmed=="..") throw new ArgumentException("name cannot be . or ..",name);
+		}
+
 
 		bool INode.IsFile
 		{

@@ -15,7 +15,7 @@ namespace Arrow.Application.Plugins.AssemblyResolver
 	/// Resolves assemblies by looking through a series of paths until a match is found
 	/// Paths are searched in the order they are added
 	/// </summary>
-	public class AssemblyResolverPlugin : IPlugin, ICustomXmlInitialization
+	public class AssemblyResolverPlugin : Plugin, ICustomXmlInitialization
 	{
 		private static readonly ILog Log=LogManager.GetLog<AssemblyResolverPlugin>();
 	
@@ -79,7 +79,7 @@ namespace Arrow.Application.Plugins.AssemblyResolver
 		/// <summary>
 		/// Starts the plugin
 		/// </summary>
-		public void Start()
+		protected internal override void Start()
 		{
 			AppDomain.CurrentDomain.AssemblyResolve+=AssemblyResolve;
 		}
@@ -87,7 +87,7 @@ namespace Arrow.Application.Plugins.AssemblyResolver
 		/// <summary>
 		/// Stops the plugin
 		/// </summary>
-		public void Stop()
+		protected internal override void Stop()
 		{
 			AppDomain.CurrentDomain.AssemblyResolve-=AssemblyResolve;
 		}
@@ -95,7 +95,7 @@ namespace Arrow.Application.Plugins.AssemblyResolver
 		/// <summary>
 		/// The name of the plugin
 		/// </summary>
-		public string Name
+		public override string Name
 		{
 			get{return "AssemblyResolver";}
 		}

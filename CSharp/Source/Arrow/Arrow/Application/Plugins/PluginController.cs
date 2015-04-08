@@ -13,11 +13,11 @@ namespace Arrow.Application.Plugins
 	/// <summary>
 	/// Manages a group of plugins
 	/// </summary>
-	public class PluginController : IPluginDiscovery, IPlugin, IEnumerable<IPlugin>, IDisposable, IServiceProvider
+	public class PluginController : IPluginDiscovery, IEnumerable<Plugin>, IDisposable, IServiceProvider
 	{
 		private readonly object m_SyncRoot=new object();
 		
-		private readonly List<IPlugin> m_Plugins=new List<IPlugin>();
+		private readonly List<Plugin> m_Plugins=new List<Plugin>();
 		private string m_PluginName;
 		private volatile bool m_Started;
 		
@@ -97,7 +97,7 @@ namespace Arrow.Application.Plugins
 		/// Adds a new service
 		/// </summary>
 		/// <param name="service">The service to add</param>
-		public void Add(IPlugin service)
+		public void Add(Plugin service)
 		{
 			if(service==null) throw new ArgumentNullException("service");
 			if(m_Started) throw new InvalidOperationException("cannot add to controller once started");
@@ -126,7 +126,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="plugin">The plugin to remove</param>
 		/// <returns>true if a plugin was found and removed, otherwise false</returns>
-		public bool Remove(IPlugin plugin)
+		public bool Remove(Plugin plugin)
 		{
 			if(m_Started) throw new InvalidOperationException("cannot remove once controller has started");
 		
@@ -141,7 +141,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="predicate">The predicate to apply to each plugin</param>
 		/// <returns>The first plugin to match the predicate, or null if no plugin matches</returns>
-		public IPlugin Find(Predicate<IPlugin> predicate)
+		public Plugin Find(Predicate<Plugin> predicate)
 		{
 			if(predicate==null) throw new ArgumentNullException("predicate");
 			
@@ -156,7 +156,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <typeparam name="T">The type the required plugin must implement</typeparam>
 		/// <returns>The first plugin to match, or null if no plugin matches</returns>
-		public T Find<T>() where T:IPlugin
+		public T Find<T>() where T:Plugin
 		{
 			Type type=typeof(T);
 			return (T)GetService(type);
@@ -167,7 +167,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="name">The name of the service to find</param>
 		/// <returns>The first service that matches the name, otherwise null</returns>
-		public IPlugin FindByName(string name)
+		public Plugin FindByName(string name)
 		{
 			if(name==null) throw new ArgumentNullException("name");
 			
@@ -178,11 +178,11 @@ namespace Arrow.Application.Plugins
 		/// Returns all the plugins in a controller
 		/// </summary>
 		/// <returns>A sequence of service</returns>
-		public IEnumerable<IPlugin> AllPlugins()
+		public IEnumerable<Plugin> AllPlugins()
 		{
 			lock(m_SyncRoot)
 			{
-				return new List<IPlugin>(m_Plugins);
+				return new List<Plugin>(m_Plugins);
 			}
 		}
 		
@@ -190,7 +190,7 @@ namespace Arrow.Application.Plugins
 		///  Applies an action to every plugin
 		/// </summary>
 		/// <param name="action">The action to apply</param>
-		public void ForEach(Action<IPlugin> action)
+		public void ForEach(Action<Plugin> action)
 		{
 			if(action==null) throw new ArgumentNullException("action");
 			
@@ -230,14 +230,14 @@ namespace Arrow.Application.Plugins
 		/// Reterns an enumerator for the plugins
 		/// </summary>
 		/// <returns>An enumerator</returns>
-		public IEnumerator<IPlugin> GetEnumerator()
+		public IEnumerator<Plugin> GetEnumerator()
 		{
 			// We need to grab a copy, for thread safety
-			List<IPlugin> plugins;
+			List<Plugin> plugins;
 			
 			lock(m_SyncRoot)
 			{
-				plugins=new List<IPlugin>(m_Plugins);
+				plugins=new List<Plugin>(m_Plugins);
 			}
 			
 			return plugins.GetEnumerator();
@@ -298,6 +298,8 @@ namespace Arrow.Application.Plugins
 							{
 								s_SystemPlugins=new PluginController();
 							}
+
+							s_SystemPlugins.Name="SystemPlugins";
 						}
 					}
 				}
@@ -320,7 +322,7 @@ namespace Arrow.Application.Plugins
 			
 			foreach(XmlNode pluginNode in pluginsRoot.SelectNodes("Plugin"))
 			{
-				var plugin=XmlCreation.Create<IPlugin>(pluginNode);
+				var plugin=XmlCreation.Create<Plugin>(pluginNode);
 				controller.Add(plugin);
 			}
 			

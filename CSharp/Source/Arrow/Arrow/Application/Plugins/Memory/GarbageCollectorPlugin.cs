@@ -9,7 +9,7 @@ namespace Arrow.Application.Plugins.Memory
 	/// <summary>
 	/// Periodically collections garbage within the application
 	/// </summary>
-	public class GarbageCollectorPlugin : IPausablePlugin, IDisposable
+	public class GarbageCollectorPlugin : PausablePlugin, IDisposable
 	{
 		private Timer m_Timer;
 		
@@ -37,7 +37,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// Pauses garbage collection
 		/// </summary>
-		public void Pause()
+		public override void Pause()
 		{
 			if(m_Timer!=null) m_Timer.Enabled=false;
 		}
@@ -45,7 +45,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// Continues garbage collection
 		/// </summary>
-		public void Continue()
+		public override void Continue()
 		{
 			if(m_Timer!=null) m_Timer.Enabled=true;
 		}
@@ -53,7 +53,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// Starts garbage collection
 		/// </summary>
-		public void Start()
+		protected internal override void Start()
 		{
 			if(m_Timer==null)
 			{
@@ -66,7 +66,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// Stops garbage collection
 		/// </summary>
-		public void Stop()
+		protected internal override void Stop()
 		{
 			if(m_Timer!=null)
 			{
@@ -79,7 +79,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// The name of the service
 		/// </summary>
-		public string Name
+		public override string Name
 		{
 			get{return "GarbageCollector";}
 		}

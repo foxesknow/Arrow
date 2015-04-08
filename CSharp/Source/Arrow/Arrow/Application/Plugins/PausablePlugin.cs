@@ -8,16 +8,16 @@ namespace Arrow.Application.Plugins
 	/// <summary>
 	/// Defines a simple abstract plugin that can be paused
 	/// </summary>
-	public interface IPausablePlugin : IPlugin
+	public abstract class PausablePlugin : Plugin
 	{
 		/// <summary>
 		/// Pauses the service
 		/// </summary>
-		void Pause();
+		public abstract void Pause();
 		
 		/// <summary>
 		/// Contines execution
 		/// </summary>
-		void Continue();
+		public abstract void Continue();
 	}
 }
