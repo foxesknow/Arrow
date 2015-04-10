@@ -13,7 +13,7 @@ using NUnit.Framework.Constraints;
 namespace UnitTests.Arrow.Storage.Vfs
 {
 	[TestFixture]
-	public class FilespaceTests
+	public class VirtualFileSystemTests
 	{
 		[Test]
 		public void EmptyFilespace()
