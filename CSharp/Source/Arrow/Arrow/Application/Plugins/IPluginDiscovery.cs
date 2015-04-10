@@ -23,7 +23,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <typeparam name="T">The type the required service must implement</typeparam>
 		/// <returns>The first service to match, or null if no service matches</returns>
-		T Find<T>() where T:Plugin;
+		T Find<T>();
 		
 		/// <summary>
 		/// Searches for a plugin with a given name

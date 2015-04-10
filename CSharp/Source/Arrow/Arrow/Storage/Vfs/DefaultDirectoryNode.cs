@@ -216,7 +216,7 @@ namespace Arrow.Storage.Vfs
 		/// <param name="name">The name of the mount point</param>
 		/// <param name="mountPoint">The mount point to register</param>
 		/// <returns>true if the mount point was registered, otherwise false</returns>
-		public override bool RegisterMount(string name, MountPointNode mountPoint)
+		public override bool RegisterMount(string name, DirectoryNode mountPoint)
 		{
 			ValidateName(name);
 			if(mountPoint==null) throw new ArgumentNullException("mountPoint");
@@ -241,7 +241,7 @@ namespace Arrow.Storage.Vfs
 		/// <param name="name">The name of the mount point</param>
 		/// <param name="mountPoint">On success the mount point node, otherwise null</param>
 		/// <returns>The success of the operation</returns>
-		public override LookupResult TryGetMountPoint(string name, out MountPointNode mountPoint)
+		public override LookupResult TryGetMountPoint(string name, out DirectoryNode mountPoint)
 		{
 			ValidateName(name);
 
@@ -257,7 +257,7 @@ namespace Arrow.Storage.Vfs
 			{
 				if(node.IsDirectory)
 				{
-					mountPoint=node as MountPointNode;
+					mountPoint=node as DirectoryNode;
 					return mountPoint!=null ? LookupResult.Success : LookupResult.WrongType;
 				}
 				else

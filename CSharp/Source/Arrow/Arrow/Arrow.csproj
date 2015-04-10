@@ -200,12 +200,12 @@
     <Compile Include="Storage\Vfs\DefaultDirectoryNode.FileNode.cs" />
     <Compile Include="Storage\Vfs\MountPoints\FileSystemMountPoint.cs" />
     <Compile Include="Storage\Vfs\VirtualFileSystem.cs" />
+    <Compile Include="Storage\Vfs\VirtualFileSystem.DirectoryNode.cs" />
     <Compile Include="Storage\Vfs\VirtualFileSystemExtensions.cs" />
-    <Compile Include="Storage\Vfs\GlobalFilespace.cs" />
+    <Compile Include="Storage\Vfs\GlobalVirtualFileSystem.cs" />
     <Compile Include="Storage\Vfs\GlobalVirtualFileSystemAccessor.cs" />
     <Compile Include="Storage\Vfs\DirectoryNode.cs" />
     <Compile Include="Storage\Vfs\FileNode.cs" />
-    <Compile Include="Storage\Vfs\MountPointNode.cs" />
     <Compile Include="Storage\Vfs\INode.cs" />
     <Compile Include="Storage\Vfs\LookupResult.cs" />
     <Compile Include="Storage\XmlStorageResolver.cs" />

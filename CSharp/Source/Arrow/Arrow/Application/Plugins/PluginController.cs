@@ -156,7 +156,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <typeparam name="T">The type the required plugin must implement</typeparam>
 		/// <returns>The first plugin to match, or null if no plugin matches</returns>
-		public T Find<T>() where T:Plugin
+		public T Find<T>()
 		{
 			Type type=typeof(T);
 			return (T)GetService(type);

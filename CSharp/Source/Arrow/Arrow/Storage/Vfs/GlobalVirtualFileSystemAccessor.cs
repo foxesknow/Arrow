@@ -28,7 +28,7 @@ namespace Arrow.Storage.Vfs
 			string[] path=uri.LocalPath.Split(pathSeperator,StringSplitOptions.RemoveEmptyEntries);
 
 			VirtualFileSystem filespace=null;
-			if(GlobalFilespace.TryGetFilespace(filespaceName,out filespace)==false)
+			if(GlobalVirtualFileSystem.TryGetFilesystem(filespaceName,out filespace)==false)
 			{
 				throw new IOException("Filespace not registered in global file space: "+filespaceName);
 				

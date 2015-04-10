@@ -11,7 +11,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 	/// A mount point that redirects to a directory in the file system.
 	/// The file system is mounted as read only
 	/// </summary>
-	public class FileSystemMountPoint : MountPointNode
+	public class FileSystemMountPoint : DirectoryNode
 	{
 		private readonly string m_RootDirectory;
 
@@ -146,7 +146,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <param name="name">The name of the mount point</param>
 		/// <param name="mountPoint">The mount point to register</param>
 		/// <returns>true if the mount point was registered, otherwise false</returns>
-		public override bool RegisterMount(string name, MountPointNode mountPoint)
+		public override bool RegisterMount(string name, DirectoryNode mountPoint)
 		{
 			throw new NotImplementedException();
 		}
@@ -157,7 +157,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <param name="name">The name of the mount point</param>
 		/// <param name="mountPoint">On success the mount point node, otherwise null</param>
 		/// <returns>The success of the operation</returns>
-		public override LookupResult TryGetMountPoint(string name, out MountPointNode mountPoint)
+		public override LookupResult TryGetMountPoint(string name, out DirectoryNode mountPoint)
 		{
 			throw new NotImplementedException();
 		}

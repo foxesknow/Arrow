@@ -11,7 +11,7 @@ namespace Arrow.Storage.Vfs
 	/// An in-memory filesystem.
 	/// This class is thread safe.
 	/// </summary>
-	public class VirtualFileSystem
+	public partial class VirtualFileSystem
 	{
 		private static readonly char[] UnixSeperator=new char[]{'/'};
 		private static readonly string[] Empty=new string[0];
@@ -182,7 +182,7 @@ namespace Arrow.Storage.Vfs
 		/// </summary>
 		/// <param name="path">The path to the mount point</param>
 		/// <param name="mountPoint">The mount point to register</param>
-		public void RegisterMount(IReadOnlyList<string> path, MountPointNode mountPoint)
+		public void RegisterMount(IReadOnlyList<string> path, DirectoryNode mountPoint)
 		{
 			if(path==null) throw new ArgumentNullException("path");
 			if(path.Count==0) throw new ArgumentException("path is empty","path");
@@ -208,7 +208,7 @@ namespace Arrow.Storage.Vfs
 		/// <param name="path">The path to the mount point</param>
 		/// <param name="mountPoint">On success the mount point, otherwise null</param>
 		/// <returns>true if the mount point was found, otherwise false</returns>
-		public bool TryGetMountPoint(IReadOnlyList<string> path, out MountPointNode mountPoint)
+		public bool TryGetMountPoint(IReadOnlyList<string> path, out DirectoryNode mountPoint)
 		{
 			if(path==null) throw new ArgumentNullException("path");
 			if(path.Count==0) throw new ArgumentException("path is empty","path");
