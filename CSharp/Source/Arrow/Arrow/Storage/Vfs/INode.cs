@@ -12,14 +12,5 @@ namespace Arrow.Storage.Vfs
 	/// </summary>
 	public interface INode
 	{
-		/// <summary>
-		/// Indicates if the node represents a file
-		/// </summary>
-		bool IsFile{get;}
-		
-		/// <summary>
-		/// Indicates if the node represents a directory
-		/// </summary>
-		bool IsDirectory{get;}		
 	}
 }

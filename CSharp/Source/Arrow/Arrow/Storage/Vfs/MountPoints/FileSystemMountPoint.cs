@@ -11,7 +11,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 	/// A mount point that redirects to a directory in the file system.
 	/// The file system is mounted as read only
 	/// </summary>
-	public class FileSystemMountPoint : DirectoryNode
+	public class FileSystemMountPoint : IDirectoryNode
 	{
 		private readonly string m_RootDirectory;
 
@@ -31,7 +31,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// Returns the names of files within the directory
 		/// </summary>
 		/// <returns>a list of filenames</returns>
-		public override IList<string> GetFiles()
+		public IList<string> GetFiles()
 		{
 			var fullyQualifiedFiles=Directory.GetFiles(m_RootDirectory);
 
@@ -49,7 +49,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// Returns the names of directories within the directory
 		/// </summary>
 		/// <returns></returns>
-		public override IList<string> GetDirectories()
+		public IList<string> GetDirectories()
 		{
 			var fullyQualifiedFiles=Directory.GetDirectories(m_RootDirectory);
 
@@ -68,7 +68,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// </summary>
 		/// <param name="name">The name of the directory to create</param>
 		/// <returns>A directory node representing the directory, or null if the directory could not created</returns>
-		public override DirectoryNode CreateDirectory(string name)
+		public IDirectoryNode CreateDirectory(string name)
 		{
 			throw new IOException("directory is read-only: "+m_RootDirectory);
 		}
@@ -79,7 +79,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <param name="name">The name of the file</param>
 		/// <param name="file">A function that returns the contents of the file</param>
 		/// <returns>The node for the file if successful, otherwise null</returns>
-		public override FileNode CreateFile(string name, Func<Stream> file)
+		public IFileNode CreateFile(string name, Func<Stream> file)
 		{
 			throw new IOException("directory is read-only: "+m_RootDirectory);
 		}
@@ -90,9 +90,9 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <param name="name">The name of the directory to get</param>
 		/// <param name="directory">On success the directory node representing the name, otherwise null</param>
 		/// <returns>The success of the operation</returns>
-		public override LookupResult TryGetDirectory(string name, out DirectoryNode directory)
+		public LookupResult TryGetDirectory(string name, out IDirectoryNode directory)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 
 			string fullPath=Path.Combine(m_RootDirectory,name);
 			
@@ -112,9 +112,9 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <param name="name">The name of the file to get</param>
 		/// <param name="file">On success the file node representing the name, otherwise null</param>
 		/// <returns>The success of the operation</returns>
-		public override LookupResult TryGetFile(string name, out FileNode file)
+		public LookupResult TryGetFile(string name, out IFileNode file)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 
 			string filename=Path.Combine(m_RootDirectory,name);
 
@@ -135,7 +135,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// </summary>
 		/// <param name="name">The name of the item to delete</param>
 		/// <returns>true if the item was deleted, false otherwise</returns>
-		public override bool Delete(string name)
+		public bool Delete(string name)
 		{
 			throw new IOException("directory is read-only: "+m_RootDirectory);
 		}
@@ -146,7 +146,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <param name="name">The name of the mount point</param>
 		/// <param name="mountPoint">The mount point to register</param>
 		/// <returns>true if the mount point was registered, otherwise false</returns>
-		public override bool RegisterMount(string name, DirectoryNode mountPoint)
+		public bool RegisterMount(string name, IDirectoryNode mountPoint)
 		{
 			throw new NotImplementedException();
 		}
@@ -157,12 +157,12 @@ namespace Arrow.Storage.Vfs.MountPoints
 		/// <param name="name">The name of the mount point</param>
 		/// <param name="mountPoint">On success the mount point node, otherwise null</param>
 		/// <returns>The success of the operation</returns>
-		public override LookupResult TryGetMountPoint(string name, out DirectoryNode mountPoint)
+		public LookupResult TryGetMountPoint(string name, out IDirectoryNode mountPoint)
 		{
 			throw new NotImplementedException();
 		}
 
-		class FileSystemFileNode : FileNode
+		class FileSystemFileNode : IFileNode
 		{
 			private readonly string m_Filename;
 
@@ -171,7 +171,7 @@ namespace Arrow.Storage.Vfs.MountPoints
 				m_Filename=filename;
 			}
 
-			public override Stream Open()
+			public Stream Open()
 			{
 				return File.OpenRead(m_Filename);
 			}

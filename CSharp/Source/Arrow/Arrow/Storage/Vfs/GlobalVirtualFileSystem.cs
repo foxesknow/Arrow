@@ -23,7 +23,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>The requested filespace</returns>
 		public static VirtualFileSystem GetOrCreate(string filesystemName)
 		{
-			DirectoryNode.ValidateName(filesystemName);
+			VirtualFileSystem.ValidateName(filesystemName);
 
 			lock(s_SyncRoot)
 			{
@@ -45,7 +45,7 @@ namespace Arrow.Storage.Vfs
 		/// <param name="filesystem">The file system to register</param>
 		public static void Register(string filesystemName, VirtualFileSystem filesystem)
 		{
-			DirectoryNode.ValidateName(filesystemName);
+			VirtualFileSystem.ValidateName(filesystemName);
 			if(filesystem==null) throw new ArgumentNullException("filesystem");
 
 			lock(s_SyncRoot)
@@ -67,7 +67,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>true if the file system was found, otherwise false</returns>
 		public static bool TryGetFilesystem(string filesystemName, out VirtualFileSystem filespace)
 		{
-			DirectoryNode.ValidateName(filesystemName);
+			VirtualFileSystem.ValidateName(filesystemName);
 
 			lock(s_SyncRoot)
 			{
@@ -94,7 +94,7 @@ namespace Arrow.Storage.Vfs
 		/// <returns>true if the file system was removed, otherwise false</returns>
 		public static bool Remove(string filesystemName)
 		{
-			DirectoryNode.ValidateName(filesystemName);
+			VirtualFileSystem.ValidateName(filesystemName);
 
 			lock(s_SyncRoot)
 			{

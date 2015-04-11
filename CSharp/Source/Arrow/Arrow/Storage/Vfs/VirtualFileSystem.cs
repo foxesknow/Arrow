@@ -16,7 +16,7 @@ namespace Arrow.Storage.Vfs
 		private static readonly char[] UnixSeperator=new char[]{'/'};
 		private static readonly string[] Empty=new string[0];
 
-		private readonly DirectoryNode m_Root=new DefaultDirectoryNode();
+		private readonly IDirectoryNode m_Root=new DefaultDirectoryNode();
 
 		/// <summary>
 		/// The root path
@@ -33,7 +33,7 @@ namespace Arrow.Storage.Vfs
 			if(path==null) throw new ArgumentNullException("path");
 			if(path.Count==0) throw new ArgumentException("path is empty","path");
 
-			DirectoryNode node=m_Root;
+			IDirectoryNode node=m_Root;
 
 			foreach(string name in path)
 			{
@@ -51,7 +51,7 @@ namespace Arrow.Storage.Vfs
 		{
 			if(path==null) throw new ArgumentNullException("path");
 
-			DirectoryNode node=m_Root;
+			IDirectoryNode node=m_Root;
 
 			foreach(string name in path)
 			{
@@ -73,7 +73,7 @@ namespace Arrow.Storage.Vfs
 		{
 			if(path==null) throw new ArgumentNullException("path");
 
-			DirectoryNode node=m_Root;
+			IDirectoryNode node=m_Root;
 
 			for(int i=0; i<path.Count && node!=null; i++)
 			{
@@ -98,7 +98,7 @@ namespace Arrow.Storage.Vfs
 
 			string filename=path[path.Count-1];
 
-			DirectoryNode node=m_Root;
+			IDirectoryNode node=m_Root;
 			for(int i=0; i<path.Count-1; i++)
 			{
 				string name=path[i];
@@ -122,7 +122,7 @@ namespace Arrow.Storage.Vfs
 		{
 			if(path==null) throw new ArgumentNullException("path");
 
-			DirectoryNode node=m_Root;
+			IDirectoryNode node=m_Root;
 
 			foreach(string name in path)
 			{
@@ -147,10 +147,10 @@ namespace Arrow.Storage.Vfs
 
 			string filename=path[path.Count-1];
 
-			DirectoryNode node=DirectoryForFile(path);
+			IDirectoryNode node=DirectoryForFile(path);
 			if(node==null) throw new IOException("file not found");
 
-			FileNode fileNode;
+			IFileNode fileNode;
 			node.TryGetFile(filename,out fileNode);
 			if(fileNode==null) throw new IOException("could not find "+filename);
 			
@@ -171,9 +171,9 @@ namespace Arrow.Storage.Vfs
 			if(path.Count==0) throw new ArgumentException("path is empty","path");
 
 			string filename=path[path.Count-1];
-			DirectoryNode node=DirectoryForFile(path);
+			IDirectoryNode node=DirectoryForFile(path);
 
-			FileNode fileNode=null;
+			IFileNode fileNode=null;
 			return node!=null && node.TryGetFile(filename,out fileNode)==LookupResult.Success;
 		}
 
@@ -182,7 +182,7 @@ namespace Arrow.Storage.Vfs
 		/// </summary>
 		/// <param name="path">The path to the mount point</param>
 		/// <param name="mountPoint">The mount point to register</param>
-		public void RegisterMount(IReadOnlyList<string> path, DirectoryNode mountPoint)
+		public void RegisterMount(IReadOnlyList<string> path, IDirectoryNode mountPoint)
 		{
 			if(path==null) throw new ArgumentNullException("path");
 			if(path.Count==0) throw new ArgumentException("path is empty","path");
@@ -190,7 +190,7 @@ namespace Arrow.Storage.Vfs
 
 			string mountName=path[path.Count-1];
 
-			DirectoryNode node=m_Root;
+			IDirectoryNode node=m_Root;
 			for(int i=0; i<path.Count-1; i++)
 			{
 				string name=path[i];
@@ -208,14 +208,14 @@ namespace Arrow.Storage.Vfs
 		/// <param name="path">The path to the mount point</param>
 		/// <param name="mountPoint">On success the mount point, otherwise null</param>
 		/// <returns>true if the mount point was found, otherwise false</returns>
-		public bool TryGetMountPoint(IReadOnlyList<string> path, out DirectoryNode mountPoint)
+		public bool TryGetMountPoint(IReadOnlyList<string> path, out IDirectoryNode mountPoint)
 		{
 			if(path==null) throw new ArgumentNullException("path");
 			if(path.Count==0) throw new ArgumentException("path is empty","path");
 
 			mountPoint=null;
 
-			DirectoryNode node=m_Root;
+			IDirectoryNode node=m_Root;
 			string mountName=path[path.Count-1];
 
 			for(int i=0; i<path.Count-1; i++)
@@ -230,9 +230,9 @@ namespace Arrow.Storage.Vfs
 			return node.TryGetMountPoint(mountName,out mountPoint)==LookupResult.Success;
 		}
 
-		private DirectoryNode DirectoryForFile(IReadOnlyList<string> path)
+		private IDirectoryNode DirectoryForFile(IReadOnlyList<string> path)
 		{
-			DirectoryNode node=m_Root;
+			IDirectoryNode node=m_Root;
 
 			// The last part of the path is the filename, so ignore it
 			for(int i=0; i<path.Count-1 && node!=null; i++)
@@ -328,6 +328,21 @@ namespace Arrow.Storage.Vfs
 			{
 				return new MemoryStream(data,false);
 			};
+		}
+
+		/// <summary>
+		/// Checks that a name is valid and throws an exception if not
+		/// </summary>
+		/// <param name="name">The name to validate</param>
+		public static void ValidateName(string name)
+		{
+			if(name==null) throw new ArgumentNullException("name");
+			if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name is whitespace","name");
+
+			if(name.Contains('/')) throw new ArgumentException("name cannot contain /","name");
+
+			var trimmed=name.Trim();
+			if(trimmed=="." || trimmed=="..") throw new ArgumentException("name cannot be . or ..",name);
 		}
 	}
 }

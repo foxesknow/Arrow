@@ -11,7 +11,7 @@ namespace Arrow.Storage.Vfs
 	/// <summary>
 	/// An implementation of a directory node
 	/// </summary>
-	public partial class DefaultDirectoryNode : DirectoryNode
+	public partial class DefaultDirectoryNode : IDirectoryNode
 	{
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<string,INode> m_Contents=new Dictionary<string,INode>(IgnoreCaseEqualityComparer.Instance);
@@ -28,7 +28,7 @@ namespace Arrow.Storage.Vfs
 		/// Returns the files in the directory
 		/// </summary>
 		/// <returns>A list of files</returns>
-		public override IList<string> GetFiles()
+		public IList<string> GetFiles()
 		{
 			var files=new List<string>();
 
@@ -36,7 +36,7 @@ namespace Arrow.Storage.Vfs
 			{
 				foreach(var pair in m_Contents)
 				{
-					if(pair.Value.IsFile) files.Add(pair.Key);
+					if(pair.Value is IFileNode) files.Add(pair.Key);
 				}
 			}
 
@@ -48,27 +48,20 @@ namespace Arrow.Storage.Vfs
 		/// </summary>
 		/// <param name="name">The name of the directory to create</param>
 		/// <returns>On success the directory node representing the directory, otherwise false</returns>
-		public override DirectoryNode CreateDirectory(string name)
+		public IDirectoryNode CreateDirectory(string name)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 
 			lock(m_SyncRoot)
 			{
 				INode node;
 				if(m_Contents.TryGetValue(name,out node))
 				{
-					if(node.IsDirectory)
-					{
-						return (DirectoryNode)node;
-					}
-					else
-					{
-						return null;
-					}
+					return node as IDirectoryNode;
 				}
 				else
 				{
-					DirectoryNode directory=new DefaultDirectoryNode();
+					IDirectoryNode directory=new DefaultDirectoryNode();
 					m_Contents.Add(name,directory);
 
 					return directory;
@@ -82,9 +75,9 @@ namespace Arrow.Storage.Vfs
 		/// <param name="name">The name of the file</param>
 		/// <param name="file">The file</param>
 		/// <returns>On success a file node for the file, otherwise null</returns>
-		public override FileNode CreateFile(string name, Func<Stream> file)
+		public IFileNode CreateFile(string name, Func<Stream> file)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 			if(file==null) throw new ArgumentNullException("file");
 
 			lock(m_SyncRoot)
@@ -92,7 +85,7 @@ namespace Arrow.Storage.Vfs
 				INode node;
 				if(m_Contents.TryGetValue(name,out node))
 				{
-					if(node.IsFile)
+					if(node is IFileNode)
 					{
 						// We can replace a file with a new one
 						var fileNode=new DefaultFileNode(file);
@@ -120,7 +113,7 @@ namespace Arrow.Storage.Vfs
 		/// Note, this also includes mount points
 		/// </summary>
 		/// <returns>A list of directories</returns>
-		public override IList<string> GetDirectories()
+		public IList<string> GetDirectories()
 		{
 			var directories=new List<string>();
 
@@ -128,7 +121,7 @@ namespace Arrow.Storage.Vfs
 			{
 				foreach(var pair in m_Contents)
 				{
-					if(pair.Value.IsDirectory) directories.Add(pair.Key);
+					if(pair.Value is IDirectoryNode) directories.Add(pair.Key);
 				}
 			}
 
@@ -141,9 +134,9 @@ namespace Arrow.Storage.Vfs
 		/// <param name="name">The name of the directory to get</param>
 		/// <param name="directory">On success the directory node representing the name, otherwise null</param>
 		/// <returns>The success of the operation</returns>
-		public override LookupResult TryGetDirectory(string name, out DirectoryNode directory)
+		public LookupResult TryGetDirectory(string name, out IDirectoryNode directory)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 
 			INode node=null;
 			bool foundDirectory=false;
@@ -155,7 +148,7 @@ namespace Arrow.Storage.Vfs
 
 			if(foundDirectory)
 			{
-				directory=node as DirectoryNode;
+				directory=node as IDirectoryNode;
 				return directory!=null ? LookupResult.Success : LookupResult.WrongType;
 			}
 			else
@@ -171,9 +164,9 @@ namespace Arrow.Storage.Vfs
 		/// <param name="name">The name of the file to get</param>
 		/// <param name="file">On success the file node representing the name, otherwise null</param>
 		/// <returns>The success of the operation</returns>
-		public override LookupResult TryGetFile(string name, out FileNode file)
+		public LookupResult TryGetFile(string name, out IFileNode file)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 
 			bool foundFile=false;
 			INode node=null;
@@ -185,7 +178,7 @@ namespace Arrow.Storage.Vfs
 
 			if(foundFile)
 			{
-				file=node as FileNode;
+				file=node as IFileNode;
 				return file!=null ? LookupResult.Success : LookupResult.WrongType;
 			}
 			else
@@ -200,9 +193,9 @@ namespace Arrow.Storage.Vfs
 		/// </summary>
 		/// <param name="name">The name of the item to delete</param>
 		/// <returns>true if the item was deleted, false otherwise</returns>
-		public override bool Delete(string name)
+		public bool Delete(string name)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 
 			lock(m_SyncRoot)
 			{
@@ -216,9 +209,9 @@ namespace Arrow.Storage.Vfs
 		/// <param name="name">The name of the mount point</param>
 		/// <param name="mountPoint">The mount point to register</param>
 		/// <returns>true if the mount point was registered, otherwise false</returns>
-		public override bool RegisterMount(string name, DirectoryNode mountPoint)
+		public bool RegisterMount(string name, IDirectoryNode mountPoint)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 			if(mountPoint==null) throw new ArgumentNullException("mountPoint");
 
 			lock(m_SyncRoot)
@@ -241,9 +234,9 @@ namespace Arrow.Storage.Vfs
 		/// <param name="name">The name of the mount point</param>
 		/// <param name="mountPoint">On success the mount point node, otherwise null</param>
 		/// <returns>The success of the operation</returns>
-		public override LookupResult TryGetMountPoint(string name, out DirectoryNode mountPoint)
+		public LookupResult TryGetMountPoint(string name, out IDirectoryNode mountPoint)
 		{
-			ValidateName(name);
+			VirtualFileSystem.ValidateName(name);
 
 			INode node;
 			bool found=false;
@@ -255,10 +248,11 @@ namespace Arrow.Storage.Vfs
 
 			if(found)
 			{
-				if(node.IsDirectory)
+				mountPoint=node as IDirectoryNode;
+
+				if(mountPoint!=null)
 				{
-					mountPoint=node as DirectoryNode;
-					return mountPoint!=null ? LookupResult.Success : LookupResult.WrongType;
+					return LookupResult.Success;
 				}
 				else
 				{

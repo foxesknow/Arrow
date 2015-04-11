@@ -12,7 +12,7 @@ namespace Arrow.Storage.Vfs
 		/// <summary>
 		/// The file node class used by the default directory
 		/// </summary>
-		class DefaultFileNode : FileNode
+		class DefaultFileNode : IFileNode
 		{
 			private readonly Func<Stream> m_File;
 
@@ -21,7 +21,7 @@ namespace Arrow.Storage.Vfs
 				m_File=file;
 			}
 	
-			public override Stream Open()
+			public Stream Open()
 			{
 				return m_File();
 			}

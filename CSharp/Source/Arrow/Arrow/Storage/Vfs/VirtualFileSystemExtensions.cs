@@ -129,7 +129,7 @@ namespace Arrow.Storage.Vfs
 		/// <param name="filespace">The filesystem</param>
 		/// <param name="unixPath">The unix path to register the mount point at</param>
 		/// <param name="mountPoint">The mount point to register</param>
-		public static void RegisterMount(this VirtualFileSystem filespace, string unixPath, DirectoryNode mountPoint)
+		public static void RegisterMount(this VirtualFileSystem filespace, string unixPath, IDirectoryNode mountPoint)
 		{
 			var path=VirtualFileSystem.FromUnixPath(unixPath);
 			filespace.RegisterMount(path,mountPoint);
@@ -142,7 +142,7 @@ namespace Arrow.Storage.Vfs
 		/// <param name="unixPath">The unix path to the mount point</param>
 		/// <param name="mountPoint">On success the mount point, otherwise null</param>
 		/// <returns>true if a mount point was found, otherwise false</returns>
-		public static bool TryGetMountPoint(this VirtualFileSystem filespace, string unixPath, out DirectoryNode mountPoint)
+		public static bool TryGetMountPoint(this VirtualFileSystem filespace, string unixPath, out IDirectoryNode mountPoint)
 		{
 			var path=VirtualFileSystem.FromUnixPath(unixPath);
 			return filespace.TryGetMountPoint(path,out mountPoint);
@@ -158,7 +158,7 @@ namespace Arrow.Storage.Vfs
 		{
 			var path=VirtualFileSystem.FromUnixPath(unixPath);
 
-			DirectoryNode mountPoint=null;
+			IDirectoryNode mountPoint=null;
 			return filespace.TryGetMountPoint(path,out mountPoint);
 		}
 	}

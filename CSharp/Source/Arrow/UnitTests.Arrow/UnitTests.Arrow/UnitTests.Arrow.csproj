@@ -89,7 +89,7 @@
     <Compile Include="Storage\FileAccessorTests.cs" />
     <Compile Include="Storage\ResourceAccessorTests.cs" />
     <Compile Include="Storage\StorageManagerTests.cs" />
-    <Compile Include="Storage\Vfs\FilespaceTests.cs" />
+    <Compile Include="Storage\Vfs\VirtualFileSystemTests.cs" />
     <Compile Include="Storage\XmlStorageResolverTests.cs" />
     <Compile Include="Support\Foo.cs" />
     <Compile Include="Support\HashSetData.cs" />

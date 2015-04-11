@@ -10,28 +10,12 @@ namespace Arrow.Storage.Vfs
 	/// <summary>
 	/// Base class for files within the virtual file system
 	/// </summary>
-	public abstract class FileNode : INode
+	public interface IFileNode : INode
 	{
 		/// <summary>
 		/// Returns a stream to the file represented by the node
 		/// </summary>
 		/// <returns>A stream</returns>
-		public abstract Stream Open();
-
-		/// <summary>
-		/// Always returns true
-		/// </summary>
-		public bool IsFile
-		{
-			get{return true;}
-		}
-
-		/// <summary>
-		/// Always returns false
-		/// </summary>
-		public bool IsDirectory
-		{
-			get{return false;}
-		}
+		Stream Open();
 	}
 }
