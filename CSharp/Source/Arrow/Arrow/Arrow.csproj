@@ -135,6 +135,7 @@
     <Compile Include="Factory\RegisteredTypeInstallerConfiguration.cs" />
     <Compile Include="Factory\RegisteredTypeInstallerSectionHandler.cs" />
     <Compile Include="Factory\SimpleFactory.cs" />
+    <Compile Include="IO\ByteSegmentStream.cs" />
     <Compile Include="IO\ResourceLoader.cs" />
     <Compile Include="Logging\Async\AsyncLogWriter.cs" />
     <Compile Include="Logging\Async\ILogData.cs" />
