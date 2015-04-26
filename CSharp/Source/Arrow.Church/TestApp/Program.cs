@@ -9,6 +9,7 @@ using Arrow.Church.Server;
 using Arrow.Church.Server.ServiceListeners;
 using Arrow.Church.Common.Data.DotNet;
 using Arrow.Church.Client.Proxy;
+using Arrow.Church.Client.ServiceDispatchers;
 
 namespace TestApp
 {
@@ -16,11 +17,15 @@ namespace TestApp
 	{
 		static void Main(string[] args)
 		{
-			Uri n=new Uri("foo://server:80/hello");
+			ListenerMain(args);
+		}
 
-			Type t=ProxyBase.GenerateProxy(typeof(IFoo));			
-			var ctorArgs=new object[]{null};
-			var foo=(IFoo)Activator.CreateInstance(t,ctorArgs);
+		static void ProxyMain(string[] args)
+		{
+			Uri n=new Uri("foo://server:80");
+
+			var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
+			var foo=(IFoo)factory(null,"hello");
 
 			foo.Add(new BinaryOperationRequest(){Lhs=20,Rhs=0});
 			foo.DoNothing();
@@ -30,15 +35,22 @@ namespace TestApp
 		{
 			try
 			{
+				Uri endpoint=new Uri("church-mem://calc");
+
 				var protocol=new SerializationMessageProtocol();
-				var listener=new TestServiceListener(protocol);
+				var listener=new InProcessServiceListener(endpoint,protocol);
 				var host=new ServiceHost(listener,protocol);
 				host.ServiceContainer.Add("Foo",new FooService());
 
-				var task=listener.Call("Foo","Divide",new BinaryOperationRequest(){Lhs=20,Rhs=0});
+				var dispatcher=new InProcessServiceDispatcher(endpoint,protocol);
+				var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
+				var foo=(IFoo)factory(dispatcher,"Foo");
+
+				//var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=0});
+				var task=foo.DoNothing();
 
 				task.Wait();
-				Console.WriteLine(task.Result);
+				//Console.WriteLine(task.Result);
 				Console.ReadLine();
 			}
 			catch(Exception e)
@@ -73,6 +85,7 @@ namespace TestApp
 
 		public Task DoNothing()
 		{
+			Console.WriteLine("doing nothing!");
 			return Void();
 		}
 	}

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Arrow.Church.Common.Data
 {
+	[Serializable]
 	public sealed class VoidValue
 	{
 		public static readonly VoidValue Instance=new VoidValue();

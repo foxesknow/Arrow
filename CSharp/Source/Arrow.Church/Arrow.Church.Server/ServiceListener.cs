@@ -4,16 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Net;
+using Arrow.Threading;
 
 namespace Arrow.Church.Server
 {
-	public abstract class ServiceListener
+	public abstract class ServiceListener : IDisposable
 	{
+		private readonly MessageProtocol m_MessageProtocol;		
+
 		/// <summary>
 		/// Raised when a service call is received
 		/// </summary>
 		public event EventHandler<ServiceCallEventArgs> ServiceCall;
+
+		protected ServiceListener(MessageProtocol messageProtocol)
+		{
+			if(messageProtocol==null) throw new ArgumentNullException("messageProtocol");
+			m_MessageProtocol=messageProtocol;
+		}
+
+		public MessageProtocol MessageProtocol
+		{
+			get{return m_MessageProtocol;}
+		}
 
 		/// <summary>
 		/// Sends a response back to the sender
@@ -26,6 +41,11 @@ namespace Arrow.Church.Server
 		{
 			var d=ServiceCall;
 			if(d!=null) d(this,args);
+		}
+
+		public virtual void Dispose()
+		{
+			// Does nothing
 		}
 	}
 }

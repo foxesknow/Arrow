@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -12,7 +13,34 @@ namespace Arrow.Church.Client.Proxy
 {
 	partial class ProxyBase
 	{
-		public static Type GenerateProxy(Type @interface)
+		private static readonly object s_SyncRoot=new object();
+		private static readonly Dictionary<Type,ProxyFactory> s_Proxies=new Dictionary<Type,ProxyFactory>();
+
+		public static ProxyFactory GetProxyFactory(Type type)
+		{
+			if(type==null) throw new ArgumentNullException("type");
+			if(type.IsInterface==false) throw new ArgumentException("not an interface: "+type.ToString(),"type");
+
+			lock(s_SyncRoot)
+			{
+				ProxyFactory proxyFactory=null;
+				if(s_Proxies.TryGetValue(type,out proxyFactory)==false)
+				{
+					proxyFactory=GenerateProxyFactory(type);
+					s_Proxies.Add(type,proxyFactory);
+				}
+
+				return proxyFactory;
+			}
+		}
+
+		/// <summary>
+		/// Generates a proxy for the specified interface.
+		/// The resulting class has a constructor of type (Uri endpoint, ServiceDispatcher dispatcher)
+		/// </summary>
+		/// <param name="interface"></param>
+		/// <returns></returns>
+		private static ProxyFactory GenerateProxyFactory(Type @interface)
 		{
 			var builder=CreateTypeBuilder("foo",@interface);
 
@@ -24,12 +52,19 @@ namespace Arrow.Church.Client.Proxy
 			}
 
 			Type type=builder.CreateType();
-			return type;
+			var ctor=type.GetConstructor(new Type[]{typeof(ServiceDispatcher),typeof(string)});
+
+			var dispatcher=Expression.Parameter(typeof(ServiceDispatcher));
+			var serviceName=Expression.Parameter(typeof(string));
+			var @new=Expression.New(ctor,dispatcher,serviceName);
+			var lambda=Expression.Lambda<ProxyFactory>(@new,dispatcher,serviceName);
+			
+			return lambda.Compile();
 		}
 
 		private static void ImplementConstructor(TypeBuilder builder)
 		{
-			var ctorParams=new Type[]{typeof(Uri),typeof(ServiceDispatcher)};
+			var ctorParams=new Type[]{typeof(ServiceDispatcher),typeof(string)};
 			ConstructorInfo baseCtor=typeof(ProxyBase).GetConstructor(ctorParams);
 
 			MethodAttributes attr=MethodAttributes.Public|MethodAttributes.HideBySig;
@@ -37,8 +72,8 @@ namespace Arrow.Church.Client.Proxy
 
 			var gen=ctor.GetILGenerator();
 			gen.Emit(OpCodes.Ldarg_0); // this
-			gen.Emit(OpCodes.Ldarg_1); // Uri
-			gen.Emit(OpCodes.Ldarg_2); // ServiceDispatcher
+			gen.Emit(OpCodes.Ldarg_1); // ServiceDispatcher
+			gen.Emit(OpCodes.Ldarg_2); // string (service name)
 			gen.Emit(OpCodes.Call,baseCtor);
 			gen.Emit(OpCodes.Ret);
 		}

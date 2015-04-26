@@ -19,18 +19,14 @@ namespace Arrow.Church.Server.ServiceListeners
 		private readonly long m_SenderSystemID;
 		private long m_SenderCorrelationID;
 
-		private readonly MessageProtocol m_MessageProtocol;
 		private readonly IWorkDispatcher m_CallDispatcher=new ThreadPoolWorkDispatcher();
 
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<long,OutstandingCall> m_OutstandingCalls=new Dictionary<long,OutstandingCall>();
 
-		public TestServiceListener(MessageProtocol messageProtocol)
+		public TestServiceListener(MessageProtocol messageProtocol) : base(messageProtocol)
 		{
-			if(messageProtocol==null) throw new ArgumentNullException("messageProtocol");
-
 			m_SenderSystemID=Interlocked.Increment(ref s_SenderSystemID);
-			m_MessageProtocol=messageProtocol;
 		}
 
 		public Task<object> Call(string serviceName, string serviceMethod, object request)
@@ -48,7 +44,7 @@ namespace Arrow.Church.Server.ServiceListeners
 					encoder.Write(callRequest);
 				}
 
-				m_MessageProtocol.ToStream(stream,request);
+				this.MessageProtocol.ToStream(stream,request);
 				data=stream.ToArray();
 			}
 
@@ -86,7 +82,7 @@ namespace Arrow.Church.Server.ServiceListeners
 					response=decoder.ReadEncodedData(d=>new ServiceCallResponse(d));
 				}
 
-				object message=m_MessageProtocol.FromStream(stream);
+				object message=this.MessageProtocol.FromStream(stream);
 
 				OutstandingCall outstandingCall=null;
 
