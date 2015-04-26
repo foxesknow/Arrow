@@ -8,12 +8,25 @@ using Arrow.Church.Common;
 using Arrow.Church.Server;
 using Arrow.Church.Server.ServiceListeners;
 using Arrow.Church.Common.Data.DotNet;
+using Arrow.Church.Client.Proxy;
 
 namespace TestApp
 {
 	class Program
 	{
 		static void Main(string[] args)
+		{
+			Uri n=new Uri("foo://server:80/hello");
+
+			Type t=ProxyBase.GenerateProxy(typeof(IFoo));			
+			var ctorArgs=new object[]{null};
+			var foo=(IFoo)Activator.CreateInstance(t,ctorArgs);
+
+			foo.Add(new BinaryOperationRequest(){Lhs=20,Rhs=0});
+			foo.DoNothing();
+		}
+
+		static void ListenerMain(string[] args)
 		{
 			try
 			{
@@ -57,6 +70,11 @@ namespace TestApp
 				};
 			});
 		}
+
+		public Task DoNothing()
+		{
+			return Void();
+		}
 	}
 
 
@@ -65,6 +83,7 @@ namespace TestApp
 	{
 		Task<BinaryOperationResponse> Add(BinaryOperationRequest request);
 		Task<BinaryOperationResponse> Divide(BinaryOperationRequest request);
+		Task DoNothing();
 	}
 
 	[Serializable]

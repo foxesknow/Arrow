@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Church.Client
+namespace Arrow.Church.Common
 {
-    public class Class1
+    [AttributeUsage(AttributeTargets.Interface)]
+	public class ChurchServiceAttribute : Attribute
     {
     }
 }

@@ -39,10 +39,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="ServiceDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Proxy\AssemblyControl.cs" />
+    <Compile Include="Proxy\ProxyBase.Codegen.cs" />
+    <Compile Include="Proxy\ProxyBase.cs" />
+    <Compile Include="ServiceDispatcher.Helpers.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">
+      <Project>{04660b82-1c99-406c-809d-06af5839f648}</Project>
+      <Name>Arrow</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Arrow.Church.Common\Arrow.Church.Common.csproj">
       <Project>{99ae65ba-c015-4ad5-8eee-0e6d9090a0fb}</Project>
       <Name>Arrow.Church.Common</Name>

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Church.Server
+namespace Arrow.Church.Common.Data
 {
-	public sealed class VoidResult
+	public sealed class VoidValue
 	{
-		public static readonly VoidResult Instance=new VoidResult();
+		public static readonly VoidValue Instance=new VoidValue();
 
-		private VoidResult()
+		private VoidValue()
 		{
 		}
 

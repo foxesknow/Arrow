@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Arrow.Church.Common;
+using Arrow.Church.Common.Data;
 
 namespace Arrow.Church.Server
 {
@@ -196,7 +197,7 @@ namespace Arrow.Church.Server
 				}
 				else
 				{
-					source.SetResult(VoidResult.Instance);
+					source.SetResult(VoidValue.Instance);
 				}
 			});
 
