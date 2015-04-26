@@ -73,13 +73,29 @@ namespace Arrow.Church.Server
 				m_Services.TryGetValue(serviceName,out serviceData);
 			}
 
-			if(serviceData!=null)
+			/*
+			 * It's possible for Execute() to run synchronously
+			 * Therefore we need to deal with exceptions thrown here in addition
+			 * to in the AfterServiceCall methods
+			 */
+			try
 			{
-				return serviceData.Execute(method,argument);
+				if(serviceData!=null)
+				{
+					return serviceData.Execute(method,argument);
+				}
+				else
+				{
+					string message=string.Format("serivce ({0}) not found when asked to call ({1})",serviceName,method);
+					throw new ChurchException(message);
+				}
 			}
-			else
+			catch(Exception e)
 			{
-				throw new ChurchException("service not found: "+serviceName);
+				var source=new TaskCompletionSource<object>();
+				source.SetException(e);
+
+				return source.Task;
 			}
 		}
 
@@ -97,9 +113,6 @@ namespace Arrow.Church.Server
 					{
 						var serviceMethod=CreateServiceMethod(@interface,method);
 						serviceData.AddMethod(method.Name,serviceMethod);
-
-						var r=serviceMethod(service,null);
-						Console.WriteLine(r.Result);
 					}
 
 					serviceData.AddInterface(@interface);

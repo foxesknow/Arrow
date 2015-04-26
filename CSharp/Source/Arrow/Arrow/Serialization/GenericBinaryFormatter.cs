@@ -45,7 +45,15 @@ namespace Arrow.Serialization
 			}
 		}
 		
-		
+		/// <summary>
+		/// Serializes an object to a stream
+		/// </summary>
+		/// <param name="stream">The stream to write to</param>
+		/// <param name="obj">The object to serialize</param>
+		public static void ToStream(Stream stream, object obj)
+		{
+			new GenericBinaryFormatter().Serialize(stream,obj);
+		}
 		
 		/// <summary>
 		/// Deserializes an object from an array
@@ -80,6 +88,18 @@ namespace Arrow.Serialization
 				GenericBinaryFormatter formatter=new GenericBinaryFormatter();
 				return formatter.Deserialize<T>(compressedStream);
 			}
+		}
+
+		/// <summary>
+		/// Deserializes an object form a stream
+		/// </summary>
+		/// <typeparam name="T">The type of object expected</typeparam>
+		/// <param name="stream">The stream to deserialize from</param>
+		/// <returns>An instance of T</returns>
+		public static T FromStream<T>(Stream stream)
+		{
+			GenericBinaryFormatter formatter=new GenericBinaryFormatter();
+			return formatter.Deserialize<T>(stream);
 		}
 	
 		/// <summary>

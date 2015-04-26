@@ -46,6 +46,7 @@
     <Compile Include="ServiceData.cs" />
     <Compile Include="ServiceHost.cs" />
     <Compile Include="ServiceListener.cs" />
+    <Compile Include="ServiceListeners\TestServiceListener.cs" />
     <Compile Include="ServiceMethod.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
     <Compile Include="VoidResult.cs" />
