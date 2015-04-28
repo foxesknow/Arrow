@@ -44,7 +44,7 @@ namespace Arrow.Church.Client.Proxy
 		{
 			var builder=CreateTypeBuilder("foo",@interface);
 
-			ImplementConstructor(builder);
+			ImplementConstructor(builder,@interface);
 
 			foreach(var methodInfo in @interface.GetMethods())
 			{
@@ -62,18 +62,21 @@ namespace Arrow.Church.Client.Proxy
 			return lambda.Compile();
 		}
 
-		private static void ImplementConstructor(TypeBuilder builder)
+		private static void ImplementConstructor(TypeBuilder builder, Type @interface)
 		{
-			var ctorParams=new Type[]{typeof(ServiceDispatcher),typeof(string)};
-			ConstructorInfo baseCtor=typeof(ProxyBase).GetConstructor(ctorParams);
+			ConstructorInfo baseCtor=typeof(ProxyBase).GetConstructor(new Type[]{typeof(ServiceDispatcher),typeof(string),typeof(MessageProtocol)});
 
 			MethodAttributes attr=MethodAttributes.Public|MethodAttributes.HideBySig;
-			ConstructorBuilder ctor=builder.DefineConstructor(attr,CallingConventions.Standard,ctorParams);
+			ConstructorBuilder ctor=builder.DefineConstructor(attr,CallingConventions.Standard,new Type[]{typeof(ServiceDispatcher),typeof(string)});
+
+			Type protcolType=ExtractMessageProtocol(@interface);
+			var protocolCtor=protcolType.GetConstructor(Type.EmptyTypes);
 
 			var gen=ctor.GetILGenerator();
 			gen.Emit(OpCodes.Ldarg_0); // this
 			gen.Emit(OpCodes.Ldarg_1); // ServiceDispatcher
 			gen.Emit(OpCodes.Ldarg_2); // string (service name)
+			gen.Emit(OpCodes.Newobj,protocolCtor);
 			gen.Emit(OpCodes.Call,baseCtor);
 			gen.Emit(OpCodes.Ret);
 		}
@@ -152,6 +155,15 @@ namespace Arrow.Church.Client.Proxy
 			builder.AddInterfaceImplementation(@interface);
 
 			return builder;
+		}
+
+		private static Type ExtractMessageProtocol(Type type)
+		{
+			var attributes=type.GetCustomAttributes(typeof(ChurchServiceAttribute),true);
+			if(attributes==null || attributes.Length==0) throw new InvalidOperationException("could not find ChurchService attribute");
+
+			var churchService=(ChurchServiceAttribute)attributes[0];
+			return churchService.MessageProtocolType;
 		}
 	}
 }

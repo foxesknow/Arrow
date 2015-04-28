@@ -19,7 +19,7 @@ namespace Arrow.Church.Server.ServiceListeners
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<Tuple<long,long>,DispatcherCallback> m_Callbacks=new Dictionary<Tuple<long,long>,DispatcherCallback>();
 
-		public InProcessServiceListener(Uri endpoint, MessageProtocol messageProtocol) : base(messageProtocol)
+		public InProcessServiceListener(Uri endpoint) : base()
 		{
 			if(InProcessServiceDispatcherRouter.Register(endpoint,RouterCallback)==false)
 			{

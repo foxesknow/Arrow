@@ -12,22 +12,13 @@ namespace Arrow.Church.Server
 {
 	public abstract class ServiceListener : IDisposable
 	{
-		private readonly MessageProtocol m_MessageProtocol;		
-
 		/// <summary>
 		/// Raised when a service call is received
 		/// </summary>
 		public event EventHandler<ServiceCallEventArgs> ServiceCall;
 
-		protected ServiceListener(MessageProtocol messageProtocol)
+		protected ServiceListener()
 		{
-			if(messageProtocol==null) throw new ArgumentNullException("messageProtocol");
-			m_MessageProtocol=messageProtocol;
-		}
-
-		public MessageProtocol MessageProtocol
-		{
-			get{return m_MessageProtocol;}
 		}
 
 		/// <summary>

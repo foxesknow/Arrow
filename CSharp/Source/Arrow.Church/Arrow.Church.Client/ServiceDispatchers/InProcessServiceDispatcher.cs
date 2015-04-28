@@ -12,7 +12,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 {
 	public class InProcessServiceDispatcher : ServiceDispatcher
 	{
-		public InProcessServiceDispatcher(Uri endpoint, MessageProtocol messageProtocol) : base(endpoint,messageProtocol)
+		public InProcessServiceDispatcher(Uri endpoint) : base(endpoint)
 		{
 
 		}

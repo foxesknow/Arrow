@@ -39,7 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChurchServiceBase.cs" />
+    <Compile Include="ChurchService.cs" />
+    <Compile Include="ChurchServiceBase..cs" />
     <Compile Include="ServiceCallEventArgs.cs" />
     <Compile Include="ServiceContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -47,7 +48,6 @@
     <Compile Include="ServiceHost.cs" />
     <Compile Include="ServiceListener.cs" />
     <Compile Include="ServiceListeners\InProcessServiceListener.cs" />
-    <Compile Include="ServiceListeners\TestServiceListener.cs" />
     <Compile Include="ServiceMethod.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
   </ItemGroup>

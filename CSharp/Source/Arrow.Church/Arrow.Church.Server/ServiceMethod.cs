@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Arrow.Church.Server
 {
-	delegate Task<object> ServiceMethod(ChurchServiceBase service, object argument);
+	delegate Task<object> ServiceMethod(ChurchService service, object argument);
 }

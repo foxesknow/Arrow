@@ -36,21 +36,20 @@ namespace TestApp
 			try
 			{
 				Uri endpoint=new Uri("church-mem://calc");
-
-				var protocol=new SerializationMessageProtocol();
-				var listener=new InProcessServiceListener(endpoint,protocol);
-				var host=new ServiceHost(listener,protocol);
+				
+				var listener=new InProcessServiceListener(endpoint);
+				var host=new ServiceHost(listener);
 				host.ServiceContainer.Add("Foo",new FooService());
-
-				var dispatcher=new InProcessServiceDispatcher(endpoint,protocol);
+				
+				var dispatcher=new InProcessServiceDispatcher(endpoint);
 				var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
 				var foo=(IFoo)factory(dispatcher,"Foo");
 
-				//var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=0});
-				var task=foo.DoNothing();
+				var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=10});
+				//var task=foo.DoNothing();
 
 				task.Wait();
-				//Console.WriteLine(task.Result);
+				Console.WriteLine(task.Result);
 				Console.ReadLine();
 			}
 			catch(Exception e)
@@ -60,8 +59,12 @@ namespace TestApp
 		}
 	}
 
-	public class FooService : ChurchServiceBase, IFoo
+	public class FooService : ChurchService<IFoo>, IFoo
 	{
+		public FooService() : base()
+		{
+		}
+
 		public Task<BinaryOperationResponse> Add(BinaryOperationRequest request)
 		{
 			var answer=new BinaryOperationResponse
@@ -91,7 +94,7 @@ namespace TestApp
 	}
 
 
-	[ChurchService]
+	[ChurchService(typeof(SerializationMessageProtocol))]
 	public interface IFoo
 	{
 		Task<BinaryOperationResponse> Add(BinaryOperationRequest request);

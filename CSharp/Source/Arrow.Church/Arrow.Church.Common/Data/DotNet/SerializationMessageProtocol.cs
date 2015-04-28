@@ -10,12 +10,12 @@ namespace Arrow.Church.Common.Data.DotNet
 {
 	public class SerializationMessageProtocol : MessageProtocol
 	{
-		public override object FromBuffer(byte[] buffer)
+		public override object FromBuffer(byte[] buffer, Type expectedType)
 		{
 			return GenericBinaryFormatter.FromArray<object>(buffer);
 		}
 
-		public override object FromStream(Stream stream)
+		public override object FromStream(Stream stream, Type expectedType)
 		{
 			return GenericBinaryFormatter.FromStream<object>(stream);
 		}

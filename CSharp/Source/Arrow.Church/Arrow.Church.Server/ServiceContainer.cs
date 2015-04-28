@@ -16,7 +16,7 @@ namespace Arrow.Church.Server
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<string,ServiceData> m_Services=new Dictionary<string,ServiceData>();
 
-		public void Add(string serviceName, ChurchServiceBase service)
+		public void Add(string serviceName, ChurchService service)
 		{
 			if(serviceName==null) throw new ArgumentNullException("serviceName");
 			if(string.IsNullOrWhiteSpace(serviceName)) throw new ArgumentException("serviceName");
@@ -27,6 +27,14 @@ namespace Arrow.Church.Server
 			lock(m_SyncRoot)
 			{
 				m_Services.Add(serviceName,serviceData);
+			}
+		}
+
+		internal bool TryGetServiceData(string serviceName, out ServiceData serviceData)
+		{
+			lock(m_SyncRoot)
+			{
+				return m_Services.TryGetValue(serviceName,out serviceData);
 			}
 		}
 
@@ -100,7 +108,7 @@ namespace Arrow.Church.Server
 			}
 		}
 
-		private ServiceData CreateServiceData(ChurchServiceBase service)
+		private ServiceData CreateServiceData(ChurchService service)
 		{
 			var serviceData=new ServiceData(service);
 
@@ -113,7 +121,10 @@ namespace Arrow.Church.Server
 					foreach(var method in @interface.GetMethods())
 					{
 						var serviceMethod=CreateServiceMethod(@interface,method);
-						serviceData.AddMethod(method.Name,serviceMethod);
+						
+						Type returnType, parameterType;
+						ExtractMethodTypes(method,out returnType,out parameterType);
+						serviceData.AddMethod(method.Name,serviceMethod,returnType,parameterType);
 					}
 
 					serviceData.AddInterface(@interface);
@@ -121,6 +132,20 @@ namespace Arrow.Church.Server
 			}
 
 			return serviceData;
+		}
+
+		private void ExtractMethodTypes(MethodInfo method, out Type returnType, out Type parameterType)
+		{
+			returnType=typeof(void);
+			parameterType=typeof(void);
+
+			var parameters=method.GetParameters();
+			if(parameters.Length!=0) parameterType=parameters[0].ParameterType;
+
+			if(method.ReturnType.IsGenericType)
+			{
+				returnType=method.ReturnType.GenericTypeArguments[0];
+			}
 		}
 		
 		private ServiceMethod CreateServiceMethod(Type @interface, MethodInfo method)
@@ -131,7 +156,7 @@ namespace Arrow.Church.Server
 			var returnType=method.ReturnType;
 			if(typeof(Task).IsAssignableFrom(returnType)==false) throw new ChurchException("return type must be a task");
 
-			var instance=Expression.Parameter(typeof(ChurchServiceBase));
+			var instance=Expression.Parameter(typeof(ChurchService));
 			var parameter=Expression.Parameter(typeof(object));
 
 			List<Expression> arguments=new List<Expression>();

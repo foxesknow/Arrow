@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Arrow.Church.Client.Proxy;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Net;
 using Arrow.Threading;
@@ -18,7 +19,6 @@ namespace Arrow.Church.Client
 		private readonly long m_SenderSystemID;
 		private long m_SenderCorrelationID;
 
-		private readonly MessageProtocol m_MessageProtocol;
 		private readonly Uri m_Endpoint;
 
 		private readonly object m_SyncRoot=new object();
@@ -26,12 +26,9 @@ namespace Arrow.Church.Client
 
 		private readonly IWorkDispatcher m_CompletionDispatcher=new ThreadPoolWorkDispatcher();
 
-		protected ServiceDispatcher(Uri endpoint, MessageProtocol messageProtocol)
+		protected ServiceDispatcher(Uri endpoint)
 		{
-			if(messageProtocol==null) throw new ArgumentNullException("messageProtocol");
-			
 			m_SenderSystemID=Interlocked.Increment(ref s_SenderSystemID);
-			m_MessageProtocol=messageProtocol;
 			m_Endpoint=endpoint;
 		}
 
@@ -87,7 +84,9 @@ namespace Arrow.Church.Client
 					response=decoder.ReadEncodedData(d=>new ServiceCallResponse(d));
 				}
 
-				object message=m_MessageProtocol.FromStream(stream);
+				// TODO: Get the return type from somewhere
+				var protocol=GetMessageProtocol(senderMessageEnvelope.SenderCorrelationID);
+				object message=protocol.FromStream(stream,typeof(object));
 
 
 				// TODO: error handling
@@ -102,14 +101,14 @@ namespace Arrow.Church.Client
 			}
 		}
 
-		internal Task Call(string serviceName, string serviceMethod, object request)
+		internal Task Call(ProxyBase proxy, string serviceName, string serviceMethod, object request)
 		{
 			MessageEnvelope envelope=null;
 			byte[] data=null;
 
-			Encode(serviceName,serviceMethod,request,out envelope,out data);
+			Encode(proxy,serviceName,serviceMethod,request,out envelope,out data);
 
-			var callData=new OutstandingCall();
+			var callData=new OutstandingCall(proxy);
 
 			lock(m_SyncRoot)
 			{
@@ -120,14 +119,14 @@ namespace Arrow.Church.Client
 			return callData.GetTask();
 		}
 
-		internal Task<T> Call<T>(string serviceName, string serviceMethod, object request)
+		internal Task<T> Call<T>(ProxyBase proxy, string serviceName, string serviceMethod, object request)
 		{
 			MessageEnvelope envelope=null;
 			byte[] data=null;
 
-			Encode(serviceName,serviceMethod,request,out envelope,out data);
+			Encode(proxy,serviceName,serviceMethod,request,out envelope,out data);
 
-			var callData=new OutstandingCall<T>();
+			var callData=new OutstandingCall<T>(proxy);
 
 			lock(m_SyncRoot)
 			{
@@ -138,7 +137,7 @@ namespace Arrow.Church.Client
 			return callData.GetTask();
 		}
 
-		private void Encode(string serviceName, string serviceMethod, object request, out MessageEnvelope envelope, out byte[] data)
+		private void Encode(ProxyBase proxy, string serviceName, string serviceMethod, object request, out MessageEnvelope envelope, out byte[] data)
 		{
 			using(var stream=new MemoryStream())
 			{
@@ -148,7 +147,7 @@ namespace Arrow.Church.Client
 					encoder.Write(callRequest);
 				}
 
-				m_MessageProtocol.ToStream(stream,request);
+				proxy.MessageProtocol.ToStream(stream,request);
 				data=stream.ToArray();
 			}
 
@@ -177,6 +176,22 @@ namespace Arrow.Church.Client
 			}
 
 			return call;
+		}
+
+		private MessageProtocol GetMessageProtocol(long correlationID)
+		{
+			lock(m_SyncRoot)
+			{
+				IOutstandingCall call=null;
+				if(m_OutstandingCalls.TryGetValue(correlationID,out call))
+				{
+					return call.MessageProtocol;
+				}
+				else
+				{
+					return null;
+				}
+			}
 		}
 
 		protected long AllocateCorrelationID()
