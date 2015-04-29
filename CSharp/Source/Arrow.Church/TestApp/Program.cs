@@ -37,20 +37,36 @@ namespace TestApp
 			{
 				Uri endpoint=new Uri("church-mem://calc");
 				
-				var listener=new InProcessServiceListener(endpoint);
-				var host=new ServiceHost(listener);
-				host.ServiceContainer.Add("Foo",new FooService());
+				using(var listener=new InProcessServiceListener(endpoint))
+				using(var host=new ServiceHost(listener))
+				{
+					host.ServiceContainer.Add("Foo",new FooService());
+					host.Start();
 				
-				var dispatcher=new InProcessServiceDispatcher(endpoint);
-				var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
-				var foo=(IFoo)factory(dispatcher,"Foo");
+					var dispatcher=new InProcessServiceDispatcher(endpoint);
+					var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
+					var foo=(IFoo)factory(dispatcher,"Foo");
 
-				var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=10});
-				//var task=foo.DoNothing();
+					try
+					{
+						var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=0});
+						Console.WriteLine(task.Result);
+					}
+					catch
+					{
+					}
 
-				task.Wait();
-				Console.WriteLine(task.Result);
-				Console.ReadLine();
+					try
+					{
+						var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=5});
+						Console.WriteLine(task.Result);
+					}
+					catch
+					{
+					}
+
+					Console.ReadLine();
+				}
 			}
 			catch(Exception e)
 			{

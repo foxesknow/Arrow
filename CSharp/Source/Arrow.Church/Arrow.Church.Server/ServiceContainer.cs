@@ -30,6 +30,38 @@ namespace Arrow.Church.Server
 			}
 		}
 
+		internal void Start()
+		{
+			foreach(var serviceData in m_Services.Values)
+			{
+				var serviceStartup=serviceData.Service as IServiceStartup;
+				if(serviceStartup!=null) serviceStartup.Start();
+			}
+
+			// That's everything started, now let them know
+			foreach(var serviceData in m_Services.Values)
+			{
+				var serviceStartup=serviceData.Service as IServiceStartup;
+				if(serviceStartup!=null) serviceStartup.AllStarted();
+			}
+		}
+
+		internal void Stop()
+		{
+			foreach(var serviceData in m_Services.Values)
+			{
+				var serviceShutdown=serviceData.Service as IServiceShutdown;
+				if(serviceShutdown!=null) serviceShutdown.Shutdown();
+			}
+
+			// That's everything started, now let them know
+			foreach(var serviceData in m_Services.Values)
+			{
+				var serviceShutdown=serviceData.Service as IServiceShutdown;
+				if(serviceShutdown!=null) serviceShutdown.AllShutdown();
+			}
+		}
+
 		internal bool TryGetServiceData(string serviceName, out ServiceData serviceData)
 		{
 			lock(m_SyncRoot)
@@ -112,23 +144,15 @@ namespace Arrow.Church.Server
 		{
 			var serviceData=new ServiceData(service);
 
-			Type type=service.GetType();
-			
-			foreach(Type @interface in type.GetInterfaces())
-			{
-				if(@interface.IsDefined(typeof(ChurchServiceAttribute)))
-				{
-					foreach(var method in @interface.GetMethods())
-					{
-						var serviceMethod=CreateServiceMethod(@interface,method);
-						
-						Type returnType, parameterType;
-						ExtractMethodTypes(method,out returnType,out parameterType);
-						serviceData.AddMethod(method.Name,serviceMethod,returnType,parameterType);
-					}
+			var serviceInterface=service.ServiceInterface;
 
-					serviceData.AddInterface(@interface);
-				}
+			foreach(var method in serviceInterface.GetMethods())
+			{
+				var serviceMethod=CreateServiceMethod(serviceInterface,method);
+						
+				Type returnType, parameterType;
+				ExtractMethodTypes(method,out returnType,out parameterType);
+				serviceData.AddMethod(method.Name,serviceMethod,returnType,parameterType);
 			}
 
 			return serviceData;

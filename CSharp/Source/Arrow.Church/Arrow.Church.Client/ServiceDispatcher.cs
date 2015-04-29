@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Arrow.Church.Client.Proxy;
 using Arrow.Church.Common.Data;
+using Arrow.Church.Common.Data.DotNet;
 using Arrow.Church.Common.Net;
 using Arrow.Threading;
 
@@ -14,6 +15,8 @@ namespace Arrow.Church.Client
 {
     public abstract partial class ServiceDispatcher : IDisposable
     {
+		private static readonly MessageProtocol s_DotNetSerializer=new SerializationMessageProtocol();
+
 		private static long s_SenderSystemID;
 		
 		private readonly long m_SenderSystemID;
@@ -84,18 +87,18 @@ namespace Arrow.Church.Client
 					response=decoder.ReadEncodedData(d=>new ServiceCallResponse(d));
 				}
 
-				// TODO: Get the return type from somewhere
-				var protocol=GetMessageProtocol(senderMessageEnvelope.SenderCorrelationID);
-				object message=protocol.FromStream(stream,typeof(object));
-
-
 				// TODO: error handling
 				if(response.IsFaulted)
 				{
+					// Exceptions are always serialized using standard .NET serialization
+					var message=s_DotNetSerializer.FromStream(stream,typeof(Exception));
 					CompleteError(senderMessageEnvelope.SenderCorrelationID,(Exception)message);
 				}
 				else
 				{
+					// TODO: Pass the expected return type from somewhere
+					var protocol=GetMessageProtocol(senderMessageEnvelope.SenderCorrelationID);
+					var message=protocol.FromStream(stream,typeof(object));
 					CompleteSuccess(senderMessageEnvelope.SenderCorrelationID,message);
 				}
 			}

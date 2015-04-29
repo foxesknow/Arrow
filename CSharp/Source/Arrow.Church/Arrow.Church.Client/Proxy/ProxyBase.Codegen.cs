@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Arrow.Church.Common;
 using Arrow.Church.Common.Data;
@@ -13,6 +14,7 @@ namespace Arrow.Church.Client.Proxy
 {
 	partial class ProxyBase
 	{
+		private static long s_ClassID;
 		private static readonly object s_SyncRoot=new object();
 		private static readonly Dictionary<Type,ProxyFactory> s_Proxies=new Dictionary<Type,ProxyFactory>();
 
@@ -42,7 +44,8 @@ namespace Arrow.Church.Client.Proxy
 		/// <returns></returns>
 		private static ProxyFactory GenerateProxyFactory(Type @interface)
 		{
-			var builder=CreateTypeBuilder("foo",@interface);
+			var classname=GenerateClassName(@interface);
+			var builder=CreateTypeBuilder(classname,@interface);
 
 			ImplementConstructor(builder,@interface);
 
@@ -64,7 +67,15 @@ namespace Arrow.Church.Client.Proxy
 
 		private static void ImplementConstructor(TypeBuilder builder, Type @interface)
 		{
-			ConstructorInfo baseCtor=typeof(ProxyBase).GetConstructor(new Type[]{typeof(ServiceDispatcher),typeof(string),typeof(MessageProtocol)});
+			ConstructorInfo baseCtor=typeof(ProxyBase).GetConstructor
+			(
+				new Type[]
+				{
+					typeof(ServiceDispatcher),
+					typeof(string),
+					typeof(MessageProtocol)
+				}
+			);
 
 			MethodAttributes attr=MethodAttributes.Public|MethodAttributes.HideBySig;
 			ConstructorBuilder ctor=builder.DefineConstructor(attr,CallingConventions.Standard,new Type[]{typeof(ServiceDispatcher),typeof(string)});
@@ -73,11 +84,11 @@ namespace Arrow.Church.Client.Proxy
 			var protocolCtor=protcolType.GetConstructor(Type.EmptyTypes);
 
 			var gen=ctor.GetILGenerator();
-			gen.Emit(OpCodes.Ldarg_0); // this
-			gen.Emit(OpCodes.Ldarg_1); // ServiceDispatcher
-			gen.Emit(OpCodes.Ldarg_2); // string (service name)
+			gen.Emit(OpCodes.Ldarg_0);				// this
+			gen.Emit(OpCodes.Ldarg_1);				// ServiceDispatcher
+			gen.Emit(OpCodes.Ldarg_2);				// string (service name)
 			gen.Emit(OpCodes.Newobj,protocolCtor);
-			gen.Emit(OpCodes.Call,baseCtor);
+			gen.Emit(OpCodes.Call,baseCtor);		// The protocol hander
 			gen.Emit(OpCodes.Ret);
 		}
 
@@ -164,6 +175,14 @@ namespace Arrow.Church.Client.Proxy
 
 			var churchService=(ChurchServiceAttribute)attributes[0];
 			return churchService.MessageProtocolType;
+		}
+
+		private static string GenerateClassName(Type @interface)
+		{
+			var id=Interlocked.Increment(ref s_ClassID);
+			string name=string.Format("Impl_{0}_{1}",@interface.Name,id);
+
+			return name;
 		}
 	}
 }

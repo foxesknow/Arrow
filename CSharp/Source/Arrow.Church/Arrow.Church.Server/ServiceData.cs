@@ -11,7 +11,6 @@ namespace Arrow.Church.Server
 	{
 		private readonly ChurchService m_Service;
 		private readonly Dictionary<string,MethodDetails> m_ServiceMethods=new Dictionary<string,MethodDetails>();
-		private readonly HashSet<Type> m_Interfaces=new HashSet<Type>();
 
 		public ServiceData(ChurchService service)
 		{
@@ -35,14 +34,9 @@ namespace Arrow.Church.Server
 			m_ServiceMethods.Add(name,details);
 		}
 
-		public void AddInterface(Type type)
-		{
-			m_Interfaces.Add(type);
-		}
-
 		public bool HasInterface(Type type)
 		{
-			return m_Interfaces.Contains(type);
+			return type.IsAssignableFrom(m_Service.ServiceInterface);
 		}
 
 		public bool TryGetReturnType(string methodName, out Type returnType)

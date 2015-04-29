@@ -16,9 +16,7 @@ namespace Arrow.Church.Client.Proxy
 		static AssemblyControl()
 		{
 			AssemblyName assemblyName=CreateAssemblyName();
-			//s_AssemblyBuilder=AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName,AssemblyBuilderAccess.Run,null,true,null);
 			s_AssemblyBuilder=AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName,AssemblyBuilderAccess.Run);
-			//s_AssemblyBuilder=AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName,AssemblyBuilderAccess.Run,null,null);
 			s_ModuleBuilder=s_AssemblyBuilder.DefineDynamicModule(assemblyName.Name);
 		}
 		

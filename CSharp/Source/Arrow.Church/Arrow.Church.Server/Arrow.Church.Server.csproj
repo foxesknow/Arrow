@@ -40,7 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChurchService.cs" />
-    <Compile Include="ChurchServiceBase..cs" />
+    <Compile Include="ChurchService.Generic.cs" />
+    <Compile Include="IServiceShutdown.cs" />
+    <Compile Include="IServiceStartup.cs" />
     <Compile Include="ServiceCallEventArgs.cs" />
     <Compile Include="ServiceContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -5,12 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Arrow.Church.Common.Data;
+using Arrow.Church.Common.Data.DotNet;
+using Arrow.Church.Common.Net;
 using Arrow.Threading;
 
 namespace Arrow.Church.Server
 {
-	public class ServiceHost
+	public class ServiceHost : IDisposable
 	{
+		private static readonly MessageProtocol s_DotNetSerializer=new SerializationMessageProtocol();
+
 		private readonly ServiceListener m_ServiceListener;
 		private readonly ServiceContainer m_ServiceContainer=new ServiceContainer();
 
@@ -28,6 +32,16 @@ namespace Arrow.Church.Server
 		public ServiceContainer ServiceContainer
 		{
 			get{return m_ServiceContainer;}
+		}
+
+		public void Start()
+		{
+			m_ServiceContainer.Start();
+		}
+
+		public void Stop()
+		{
+			m_ServiceContainer.Stop();
 		}
 
 		private void HandleServiceCall(object sender, ServiceCallEventArgs args)
@@ -88,7 +102,9 @@ namespace Arrow.Church.Server
 
 				if(call.IsFaulted)
 				{
-					protocol.ToStream(stream,call.Exception);
+					// Exceptions always go back as a .NET serialized stream 
+					// as some message formats dont support exceptions
+					s_DotNetSerializer.ToStream(stream,call.Exception);
 				}
 				else
 				{
@@ -101,6 +117,11 @@ namespace Arrow.Church.Server
 			var segment=new ArraySegment<byte>(responseBuffer);
 			var segments=segment.ToList();
 			args.ServiceListener.Respond(args.SenderMessageEnvelope,segments);
+		}
+
+		public void Dispose()
+		{
+			Stop();
 		}
 	}
 }

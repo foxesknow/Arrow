@@ -10,13 +10,15 @@ namespace Arrow.Church.Server
 {
     public abstract class ChurchService
     {
+		private readonly Type m_ServiceInterface;
 		private readonly MessageProtocol m_MessageProtocol;
 
-		internal ChurchService(MessageProtocol messageProtocol)
+		internal ChurchService(Type serviceInterface)
 		{
-			if(messageProtocol==null) throw new ArgumentNullException("messageProtocol");
+			if(serviceInterface==null) throw new ArgumentNullException("serviceInterface");
 
-			m_MessageProtocol=messageProtocol;
+			m_ServiceInterface=serviceInterface;
+			m_MessageProtocol=ExtractMessageProtocol(serviceInterface);
 		}
 
 		/// <summary>
@@ -34,6 +36,20 @@ namespace Arrow.Church.Server
 		public MessageProtocol MessageProtocol
 		{
 			get{return m_MessageProtocol;}
+		}
+
+		public Type ServiceInterface
+		{
+			get{return m_ServiceInterface;}
+		}
+
+		private static MessageProtocol ExtractMessageProtocol(Type type)
+		{
+			var attributes=type.GetCustomAttributes(typeof(ChurchServiceAttribute),true);
+			if(attributes==null || attributes.Length==0) throw new InvalidOperationException("could not find ChurchService attribute");
+
+			var churchService=(ChurchServiceAttribute)attributes[0];
+			return (MessageProtocol)Activator.CreateInstance(churchService.MessageProtocolType);
 		}
     }
 }
