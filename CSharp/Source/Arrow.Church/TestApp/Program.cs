@@ -49,17 +49,10 @@ namespace TestApp
 
 					try
 					{
-						var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=0});
-						Console.WriteLine(task.Result);
-					}
-					catch
-					{
-					}
-
-					try
-					{
 						var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=5});
-						Console.WriteLine(task.Result);
+						//var task=foo.DoNothing();
+						task.Wait();
+						//Console.WriteLine(task.Result);
 					}
 					catch
 					{

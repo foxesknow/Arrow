@@ -96,9 +96,11 @@ namespace Arrow.Church.Client
 				}
 				else
 				{
-					// TODO: Pass the expected return type from somewhere
-					var protocol=GetMessageProtocol(senderMessageEnvelope.SenderCorrelationID);
-					var message=protocol.FromStream(stream,typeof(object));
+					var call=GetCall(senderMessageEnvelope.SenderCorrelationID);
+					var returnType=call.ReturnType;
+					object message=null;
+					
+					if(returnType!=typeof(void)) message=call.MessageProtocol.FromStream(stream,returnType);
 					CompleteSuccess(senderMessageEnvelope.SenderCorrelationID,message);
 				}
 			}
@@ -111,7 +113,7 @@ namespace Arrow.Church.Client
 
 			Encode(proxy,serviceName,serviceMethod,request,out envelope,out data);
 
-			var callData=new OutstandingCall(proxy);
+			var callData=new OutstandingCall(serviceMethod,proxy);
 
 			lock(m_SyncRoot)
 			{
@@ -129,7 +131,7 @@ namespace Arrow.Church.Client
 
 			Encode(proxy,serviceName,serviceMethod,request,out envelope,out data);
 
-			var callData=new OutstandingCall<T>(proxy);
+			var callData=new OutstandingCall<T>(serviceMethod,proxy);
 
 			lock(m_SyncRoot)
 			{
@@ -181,19 +183,13 @@ namespace Arrow.Church.Client
 			return call;
 		}
 
-		private MessageProtocol GetMessageProtocol(long correlationID)
+		private IOutstandingCall GetCall(long correlationID)
 		{
 			lock(m_SyncRoot)
 			{
 				IOutstandingCall call=null;
-				if(m_OutstandingCalls.TryGetValue(correlationID,out call))
-				{
-					return call.MessageProtocol;
-				}
-				else
-				{
-					return null;
-				}
+				m_OutstandingCalls.TryGetValue(correlationID,out call);
+				return call;
 			}
 		}
 

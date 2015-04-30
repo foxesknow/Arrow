@@ -89,7 +89,32 @@ namespace Arrow.Church.Client.Proxy
 			gen.Emit(OpCodes.Ldarg_2);				// string (service name)
 			gen.Emit(OpCodes.Newobj,protocolCtor);
 			gen.Emit(OpCodes.Call,baseCtor);		// The protocol hander
+
+			PopulateMethodInfo(gen,@interface);
+
 			gen.Emit(OpCodes.Ret);
+		}
+
+		/// <summary>
+		/// Works out the return types of the service methods and calls 
+		/// the appropriate proxy method to record them
+		/// </summary>
+		/// <param name="gen"></param>
+		/// <param name="interface"></param>
+		private static void PopulateMethodInfo(ILGenerator gen, Type @interface)
+		{
+			var addReturnType=typeof(ProxyBase).GetMethod("AddReturnType",BindingFlags.Instance|BindingFlags.NonPublic);
+
+			foreach(var method in @interface.GetMethods())
+			{
+				string methodName=method.Name;
+				Type returnType=ExtractTaskReturnType(method.ReturnType);
+
+				gen.Emit(OpCodes.Ldarg_0);
+				gen.Emit(OpCodes.Ldstr,methodName);
+				gen.Emit(OpCodes.Ldtoken,returnType);
+				gen.Emit(OpCodes.Callvirt,addReturnType);
+			}
 		}
 
 		private static void ImplementMethod(TypeBuilder builder, MethodInfo methodInfo)
@@ -183,6 +208,20 @@ namespace Arrow.Church.Client.Proxy
 			string name=string.Format("Impl_{0}_{1}",@interface.Name,id);
 
 			return name;
+		}
+
+		private static Type ExtractTaskReturnType(Type type)
+		{
+			if(typeof(Task).IsAssignableFrom(type)==false) throw new ArgumentException("return type is not a task");
+
+			if(type.IsGenericType)
+			{
+				return type.GenericTypeArguments[0];
+			}
+			else
+			{
+				return typeof(void);
+			}
 		}
 	}
 }

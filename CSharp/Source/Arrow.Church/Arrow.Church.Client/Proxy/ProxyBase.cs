@@ -13,6 +13,8 @@ namespace Arrow.Church.Client.Proxy
 		private readonly string m_ServiceName;
 		private readonly MessageProtocol m_MessageProtocol;
 
+		private readonly Dictionary<string,Type> m_MethodReturnTypes=new Dictionary<string,Type>();
+
 		public ProxyBase(ServiceDispatcher serviceDispatcher, string serviceName, MessageProtocol messageProtocol)
 		{
 			if(serviceDispatcher==null) throw new ArgumentNullException("serviceDispatcher");
@@ -22,6 +24,16 @@ namespace Arrow.Church.Client.Proxy
 			m_ServiceDispatcher=serviceDispatcher;
 			m_ServiceName=serviceName;
 			m_MessageProtocol=messageProtocol;
+		}
+
+		protected void AddReturnType(string methodName, Type returnType)
+		{
+			m_MethodReturnTypes.Add(methodName,returnType);
+		}
+
+		internal bool TryGetReturnType(string methodName, out Type returnType)
+		{
+			return m_MethodReturnTypes.TryGetValue(methodName,out returnType);
 		}
 
 		protected Task<T> GenericCall<T>(string methodName, object request)
