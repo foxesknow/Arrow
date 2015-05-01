@@ -70,6 +70,11 @@ namespace Arrow.Church.Server
 			}
 		}
 
+		/// <summary>
+		/// Searches for a service within the current container
+		/// </summary>
+		/// <typeparam name="TInterface"></typeparam>
+		/// <returns></returns>
 		public TInterface Discover<TInterface>() where TInterface:class
 		{
 			TInterface @interface=null;
@@ -84,6 +89,12 @@ namespace Arrow.Church.Server
 			}
 		}
 
+		/// <summary>
+		/// Attempts to find a service within the current container
+		/// </summary>
+		/// <typeparam name="TInterface"></typeparam>
+		/// <param name="instance"></param>
+		/// <returns></returns>
 		public bool TryDiscover<TInterface>(out TInterface instance) where TInterface:class
 		{
 			ServiceData serviceData=null;
@@ -105,6 +116,13 @@ namespace Arrow.Church.Server
 			}
 		}
 
+		/// <summary>
+		/// Executes a service method
+		/// </summary>
+		/// <param name="serviceName"></param>
+		/// <param name="method"></param>
+		/// <param name="argument"></param>
+		/// <returns></returns>
 		public Task<object> Execute(string serviceName, string method, object argument)
 		{
 			ServiceData serviceData=null;
@@ -215,6 +233,12 @@ namespace Arrow.Church.Server
 		}
 
 
+		/// <summary>
+		/// Called after a task that returns a value finishes
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="task"></param>
+		/// <returns></returns>
 		private static Task<object> GenericAfterServiceMethod<T>(Task<T> task)
 		{
 			TaskCompletionSource<object> source=new TaskCompletionSource<object>();
@@ -234,6 +258,11 @@ namespace Arrow.Church.Server
 			return source.Task;
 		}
 
+		/// <summary>
+		/// Called after a task that returns nothing finishes
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
 		private static Task<object> AfterServiceMethod(Task task)
 		{
 			TaskCompletionSource<object> source=new TaskCompletionSource<object>();

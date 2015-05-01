@@ -52,7 +52,7 @@ namespace TestApp
 						var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=5});
 						//var task=foo.DoNothing();
 						task.Wait();
-						//Console.WriteLine(task.Result);
+						Console.WriteLine(task.Result);
 					}
 					catch
 					{

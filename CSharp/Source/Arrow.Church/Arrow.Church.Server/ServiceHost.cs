@@ -34,16 +34,27 @@ namespace Arrow.Church.Server
 			get{return m_ServiceContainer;}
 		}
 
+		/// <summary>
+		/// Starts all the services
+		/// </summary>
 		public void Start()
 		{
 			m_ServiceContainer.Start();
 		}
 
+		/// <summary>
+		/// Stops all the services
+		/// </summary>
 		public void Stop()
 		{
 			m_ServiceContainer.Stop();
 		}
 
+		/// <summary>
+		/// Called when a service call must be processed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void HandleServiceCall(object sender, ServiceCallEventArgs args)
 		{
 			m_ServiceCallRequestQueue.Enqueue(()=>ProcessCallRequest(args));
@@ -73,23 +84,36 @@ namespace Arrow.Church.Server
 					{
 						object message=protocol.FromStream(stream,parameterType);
 
-						m_CallDispatcher.QueueUserWorkItem((state)=>DispatchCall(callDetails,message,args,serviceData));
+						m_CallDispatcher.QueueUserWorkItem((state)=>ExecuteCall(callDetails,message,args,serviceData));
 					}
 				}
 			}			
 		}
 
-		private void DispatchCall(ServiceCallRequest callDetails, object message, ServiceCallEventArgs args, ServiceData serviceData)
+		/// <summary>
+		/// Executes a service call and 
+		/// </summary>
+		/// <param name="callDetails"></param>
+		/// <param name="message"></param>
+		/// <param name="args"></param>
+		/// <param name="serviceData"></param>
+		private void ExecuteCall(ServiceCallRequest callDetails, object message, ServiceCallEventArgs args, ServiceData serviceData)
 		{
 			var task=m_ServiceContainer.Execute(callDetails.ServiceName,callDetails.ServiceMethod,message);
 			task.ContinueWith(t=>AfterServiceCall(t,callDetails,args,serviceData));
 		}
 
+		/// <summary>
+		/// Called after the service method has executed.
+		/// Packages up the return value and schedules it for sending back to the client
+		/// </summary>
+		/// <param name="call"></param>
+		/// <param name="callDetails"></param>
+		/// <param name="args"></param>
+		/// <param name="serviceData"></param>
 		private void AfterServiceCall(Task<object> call, ServiceCallRequest callDetails, ServiceCallEventArgs args, ServiceData serviceData)
 		{
 			var response=new ServiceCallResponse(callDetails.ServiceName,callDetails.ServiceMethod,call.IsFaulted);
-
-			byte[] responseBuffer=null;
 
 			using(var stream=new MemoryStream())
 			{
@@ -111,12 +135,9 @@ namespace Arrow.Church.Server
 					protocol.ToStream(stream,call.Result);
 				}
 
-				responseBuffer=stream.ToArray();
+				var segments=stream.ToArraySegment().ToList();
+				args.ServiceListener.Respond(args.SenderMessageEnvelope,segments);
 			}
-
-			var segment=new ArraySegment<byte>(responseBuffer);
-			var segments=segment.ToList();
-			args.ServiceListener.Respond(args.SenderMessageEnvelope,segments);
 		}
 
 		public void Dispose()

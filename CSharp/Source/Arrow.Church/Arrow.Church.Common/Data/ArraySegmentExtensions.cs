@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,12 @@ namespace Arrow.Church.Common.Data
 			list.Add(segment);
 
 			return list;
+		}
+
+		public static ArraySegment<byte> ToArraySegment(this MemoryStream stream)
+		{
+			var buffer=stream.GetBuffer();
+			return new ArraySegment<byte>(buffer,0,(int)stream.Position);
 		}
 
 		public static int TotalLength<T>(this IList<ArraySegment<T>> segments)
