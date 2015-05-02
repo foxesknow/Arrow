@@ -7,5 +7,5 @@ using Arrow.Church.Common.Net;
 
 namespace Arrow.Church.Common.ServiceDispatchers
 {
-	public delegate void DispatcherCallback(MessageEnvelope senderMessageEnvelope, IList<ArraySegment<byte>> buffers);
+	public delegate void DispatcherCallback(MessageEnvelope messageEnvelope, IList<ArraySegment<byte>> buffers);
 }

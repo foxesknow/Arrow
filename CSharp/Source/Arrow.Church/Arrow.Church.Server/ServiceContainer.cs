@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 
 using Arrow.Church.Common;
 using Arrow.Church.Common.Data;
+using Arrow.Logging;
 
 namespace Arrow.Church.Server
 {
 	public class ServiceContainer
 	{
+		private static readonly ILog Log=LogManager.GetDefaultLog();
+
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<string,ServiceData> m_Services=new Dictionary<string,ServiceData>();
 
@@ -23,6 +26,7 @@ namespace Arrow.Church.Server
 			if(service==null) throw new ArgumentNullException("service");
 
 			var serviceData=CreateServiceData(service);
+			Log.InfoFormat("ServiceContainer.Add - registering service {0} with interface {1}",serviceName,service.ServiceInterface.Name);
 
 			lock(m_SyncRoot)
 			{

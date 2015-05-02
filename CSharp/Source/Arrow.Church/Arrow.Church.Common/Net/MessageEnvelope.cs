@@ -19,8 +19,10 @@ namespace Arrow.Church.Common.Net
 			sizeof(int)+	// BeginMagicNumber
 			sizeof(int)+	// MessageType
 			sizeof(int)+	// DataLength
-			sizeof(long)+	// SenderSystemID
-			sizeof(long)+	// SenderCorrelationID
+			sizeof(long)+	// MessageSystemID
+			sizeof(long)+	// MessageCorrelationID
+			sizeof(long)+	// ResponseSystemID
+			sizeof(long)+	// ResponseCorrelationID
 			sizeof(int)		// EndMagicNumber
 		);
 
@@ -37,8 +39,10 @@ namespace Arrow.Church.Common.Net
 
 			this.MessageType=decoder.ReadInt32();
 			this.DataLength=decoder.ReadInt32();
-			this.SenderSystemID=decoder.ReadInt64();
-			this.SenderCorrelationID=decoder.ReadInt64();
+			this.MessageSystemID=decoder.ReadInt64();
+			this.MessageCorrelationID=decoder.ReadInt64();
+			this.ResponseSystemID=decoder.ReadInt64();
+			this.ResponseCorrelationID=decoder.ReadInt64();
 
 			int end=decoder.ReadInt32();
 			if(end!=EndMagicNumber) throw new IOException("EndMagicNumber not found");
@@ -49,14 +53,34 @@ namespace Arrow.Church.Common.Net
 			encoder.Write(BeginMagicNumber);
 			encoder.Write(this.MessageType);
 			encoder.Write(this.DataLength);
-			encoder.Write(this.SenderSystemID);
-			encoder.Write(this.SenderCorrelationID);
+			encoder.Write(this.MessageSystemID);
+			encoder.Write(this.MessageCorrelationID);
+			encoder.Write(this.ResponseSystemID);
+			encoder.Write(this.ResponseCorrelationID);
 			encoder.Write(EndMagicNumber);
 		}
 
 		public int MessageType{get;set;}
 		public int DataLength{get;set;}
-		public long SenderSystemID{get;set;}
-		public long SenderCorrelationID{get;set;}
+		
+		/// <summary>
+		/// The system ID of the endpoint making the request
+		/// </summary>
+		public long MessageSystemID{get;set;}
+		
+		/// <summary>
+		/// The system ID of the endpoint making the request
+		/// </summary>
+		public long MessageCorrelationID{get;set;}
+
+		/// <summary>
+		/// In a response message this is the original MessageSystemID
+		/// </summary>
+		public long ResponseSystemID{get;set;}
+		
+		/// <summary>
+		/// In a response this is the original MessageCorrelationID
+		/// </summary>
+		public long ResponseCorrelationID{get;set;}
 	}
 }

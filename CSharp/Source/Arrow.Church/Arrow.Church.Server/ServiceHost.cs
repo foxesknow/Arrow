@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Data.DotNet;
 using Arrow.Church.Common.Net;
+
 using Arrow.Threading;
+using Arrow.Logging;
 
 namespace Arrow.Church.Server
 {
 	public class ServiceHost : IDisposable
 	{
 		private static readonly MessageProtocol s_DotNetSerializer=new SerializationMessageProtocol();
+		private static readonly ILog Log=LogManager.GetDefaultLog();
 
 		private readonly ServiceListener m_ServiceListener;
 		private readonly ServiceContainer m_ServiceContainer=new ServiceContainer();
@@ -39,7 +42,9 @@ namespace Arrow.Church.Server
 		/// </summary>
 		public void Start()
 		{
+			Log.Info("ServiceHost.Start - starting");
 			m_ServiceContainer.Start();
+			Log.Info("ServiceHost.Start - started");
 		}
 
 		/// <summary>
@@ -47,7 +52,9 @@ namespace Arrow.Church.Server
 		/// </summary>
 		public void Stop()
 		{
+			Log.Info("ServiceHost.Stop - stopping");
 			m_ServiceContainer.Stop();
+			Log.Info("ServiceHost.Stop - stopped");
 		}
 
 		/// <summary>
@@ -136,7 +143,7 @@ namespace Arrow.Church.Server
 				}
 
 				var segments=stream.ToArraySegment().ToList();
-				args.ServiceListener.Respond(args.SenderMessageEnvelope,segments);
+				args.ServiceListener.Respond(args.RequestMessageEnvelope,segments);
 			}
 		}
 

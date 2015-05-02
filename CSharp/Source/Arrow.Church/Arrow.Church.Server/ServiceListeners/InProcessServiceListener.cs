@@ -29,9 +29,9 @@ namespace Arrow.Church.Server.ServiceListeners
 			m_Endpoint=endpoint;
 		}
 
-		public override void Respond(MessageEnvelope senderMessageEnvelope, IList<ArraySegment<byte>> buffers)
+		public override void Respond(MessageEnvelope requestMessageEnvelope, IList<ArraySegment<byte>> buffers)
 		{
-			var key=Tuple.Create(senderMessageEnvelope.SenderSystemID,senderMessageEnvelope.SenderCorrelationID);
+			var key=Tuple.Create(requestMessageEnvelope.MessageSystemID,requestMessageEnvelope.MessageCorrelationID);
 			DispatcherCallback callback=null;
 
 			lock(m_SyncRoot)
@@ -44,20 +44,23 @@ namespace Arrow.Church.Server.ServiceListeners
 
 			if(callback!=null)
 			{
-				callback(senderMessageEnvelope,buffers);
+				var response=CreateReponse(requestMessageEnvelope);
+				response.DataLength=buffers.TotalLength();
+
+				callback(response,buffers);
 			}
 		}
 
-		private void RouterCallback(MessageEnvelope envelope, byte[] data, DispatcherCallback dispatcherCallback)
+		private void RouterCallback(MessageEnvelope requestMessageEnvelope, byte[] data, DispatcherCallback dispatcherCallback)
 		{
-			var key=Tuple.Create(envelope.SenderSystemID,envelope.SenderCorrelationID);
+			var key=Tuple.Create(requestMessageEnvelope.MessageSystemID,requestMessageEnvelope.MessageCorrelationID);
 
 			lock(m_SyncRoot)
 			{
 				m_Callbacks.Add(key,dispatcherCallback);
 			}
 			
-			m_CallDispatcher.QueueUserWorkItem(s=>DispatchCall(envelope,data));
+			m_CallDispatcher.QueueUserWorkItem(s=>DispatchCall(requestMessageEnvelope,data));
 		}
 
 		private void DispatchCall(MessageEnvelope envelope, byte[] data)

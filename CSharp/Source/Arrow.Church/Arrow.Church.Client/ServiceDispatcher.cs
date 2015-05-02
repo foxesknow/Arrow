@@ -17,10 +17,10 @@ namespace Arrow.Church.Client
     {
 		private static readonly MessageProtocol s_DotNetSerializer=new SerializationMessageProtocol();
 
-		private static long s_SenderSystemID;
+		private static long s_SystemID;
 		
-		private readonly long m_SenderSystemID;
-		private long m_SenderCorrelationID;
+		private readonly long m_SystemID;
+		private long m_CorrelationID;
 
 		private readonly Uri m_Endpoint;
 
@@ -31,7 +31,7 @@ namespace Arrow.Church.Client
 
 		protected ServiceDispatcher(Uri endpoint)
 		{
-			m_SenderSystemID=Interlocked.Increment(ref s_SenderSystemID);
+			m_SystemID=Interlocked.Increment(ref s_SystemID);
 			m_Endpoint=endpoint;
 		}
 
@@ -42,7 +42,7 @@ namespace Arrow.Church.Client
 
 		public long SystemID
 		{
-			get{return m_SenderSystemID;}
+			get{return m_SystemID;}
 		}
 
 		protected abstract void SendRequest(MessageEnvelope envelope, byte[] data);
@@ -75,7 +75,7 @@ namespace Arrow.Church.Client
 			});
 		}
 
-		protected void HandleResponse(MessageEnvelope senderMessageEnvelope, IList<ArraySegment<byte>> buffers)
+		protected void HandleResponse(MessageEnvelope responseMessageEnvelope, IList<ArraySegment<byte>> buffers)
 		{
 			var data=buffers.ToArray();
 			using(var stream=new MemoryStream(data,false))
@@ -87,21 +87,23 @@ namespace Arrow.Church.Client
 					response=decoder.ReadEncodedData(d=>new ServiceCallResponse(d));
 				}
 
+				long correlationID=responseMessageEnvelope.ResponseCorrelationID;
+
 				// TODO: error handling
 				if(response.IsFaulted)
 				{
 					// Exceptions are always serialized using standard .NET serialization
 					var message=s_DotNetSerializer.FromStream(stream,typeof(Exception));
-					CompleteError(senderMessageEnvelope.SenderCorrelationID,(Exception)message);
+					CompleteError(correlationID,(Exception)message);
 				}
 				else
 				{
-					var call=GetCall(senderMessageEnvelope.SenderCorrelationID);
+					var call=GetCall(correlationID);
 					var returnType=call.ReturnType;
 					object message=null;
 					
 					if(returnType!=typeof(void)) message=call.MessageProtocol.FromStream(stream,returnType);
-					CompleteSuccess(senderMessageEnvelope.SenderCorrelationID,message);
+					CompleteSuccess(correlationID,message);
 				}
 			}
 		}
@@ -117,7 +119,7 @@ namespace Arrow.Church.Client
 
 			lock(m_SyncRoot)
 			{
-				m_OutstandingCalls.Add(envelope.SenderCorrelationID,callData);				
+				m_OutstandingCalls.Add(envelope.MessageCorrelationID,callData);				
 			}
 
 			SendRequest(envelope,data);
@@ -135,7 +137,7 @@ namespace Arrow.Church.Client
 
 			lock(m_SyncRoot)
 			{
-				m_OutstandingCalls.Add(envelope.SenderCorrelationID,callData);				
+				m_OutstandingCalls.Add(envelope.MessageCorrelationID,callData);				
 			}
 
 			SendRequest(envelope,data);
@@ -159,13 +161,13 @@ namespace Arrow.Church.Client
 			envelope=new MessageEnvelope();
 			envelope.DataLength=data.Length;
 			envelope.MessageType=MessageType.Request;
-			envelope.SenderSystemID=m_SenderSystemID;
-			envelope.SenderCorrelationID=AllocateCorrelationID();
+			envelope.MessageSystemID=m_SystemID;
+			envelope.MessageCorrelationID=AllocateCorrelationID();
 		}
 
 		private IOutstandingCall RemoveCall(MessageEnvelope envelope)
 		{
-			return RemoveCall(envelope.SenderCorrelationID);
+			return RemoveCall(envelope.MessageCorrelationID);
 		}
 
 		private IOutstandingCall RemoveCall(long correlationID)
@@ -195,7 +197,7 @@ namespace Arrow.Church.Client
 
 		protected long AllocateCorrelationID()
 		{
-			return Interlocked.Increment(ref m_SenderCorrelationID);
+			return Interlocked.Increment(ref m_CorrelationID);
 		}
 
 		public override string ToString()
