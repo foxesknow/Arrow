@@ -72,7 +72,7 @@ namespace Arrow.Church.Server
 			response.MessageCorrelationID=AllocateCorrelationID();
 			response.ResponseSystemID=template.MessageSystemID;
 			response.ResponseCorrelationID=template.MessageCorrelationID;
-			response.MessageType=MessageType.Response;
+			response.MessageType=template.MessageType|1;
 
 			return response;
 		}

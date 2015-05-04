@@ -50,14 +50,19 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		public override void Start()
 		{
-			m_TcpListener.Start();
-
-			m_TcpListener.BeginAcceptSocket(HandleAcceptSocket,null);
+			if(IsStopped())
+			{
+				m_TcpListener.Start();
+				m_TcpListener.BeginAcceptSocket(HandleAcceptSocket,null);
+			}
 		}
 
 		public override void Stop()
 		{
-			m_TcpListener.Stop();
+			if(FlagAsStopped())
+			{
+				m_TcpListener.Stop();
+			}
 		}
 
 		private void HandleAcceptSocket(IAsyncResult result)
