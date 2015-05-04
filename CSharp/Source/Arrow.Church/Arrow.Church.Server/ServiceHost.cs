@@ -69,7 +69,7 @@ namespace Arrow.Church.Server
 
 		private void ProcessCallRequest(ServiceCallEventArgs args)
 		{
-			using(var stream=new MemoryStream(args.Data))
+			using(var stream=new MemoryStream(args.CallDetails.Data))
 			{
 				// First up, work out what we need to call...
 				ServiceCallRequest callDetails=null;
@@ -143,7 +143,7 @@ namespace Arrow.Church.Server
 				}
 
 				var segments=stream.ToArraySegment().ToList();
-				args.ServiceListener.Respond(args.RequestMessageEnvelope,segments);
+				args.ServiceListener.Respond(args.CallDetails,segments);
 			}
 		}
 

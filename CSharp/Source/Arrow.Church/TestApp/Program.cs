@@ -33,6 +33,9 @@ namespace TestApp
 
 		static void ListenerMain(string[] args)
 		{
+			NetworkServiceListener nl=new NetworkServiceListener(new Uri("foo://localhost:8999"));
+			nl.Close();
+
 			try
 			{
 				Uri endpoint=new Uri("church-mem://calc");

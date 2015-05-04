@@ -10,14 +10,12 @@ namespace Arrow.Church.Server
 	public class ServiceCallEventArgs : EventArgs
 	{
 		private readonly ServiceListener m_ServiceListener;
-		private readonly MessageEnvelope m_RequestMessageEnvelope;
-		private readonly byte[] m_Data;
+		private readonly CallDetails m_CallDetails;
 
-		public ServiceCallEventArgs(ServiceListener serviceListener, MessageEnvelope requestMessageEnvelope, byte[] data)
+		public ServiceCallEventArgs(ServiceListener serviceListener, CallDetails callDetails)
 		{
 			m_ServiceListener=serviceListener;
-			m_RequestMessageEnvelope=requestMessageEnvelope;
-			m_Data=data;
+			m_CallDetails=callDetails;
 		}
 
 		public ServiceListener ServiceListener
@@ -25,14 +23,9 @@ namespace Arrow.Church.Server
 			get{return m_ServiceListener;}
 		}
 
-		public MessageEnvelope RequestMessageEnvelope
+		public CallDetails CallDetails
 		{
-			get{return m_RequestMessageEnvelope;}
-		}
-
-		public byte[] Data
-		{
-			get{return m_Data;}
+			get{return m_CallDetails;}
 		}
 	}
 }

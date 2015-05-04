@@ -222,7 +222,7 @@ namespace Arrow.Net.Message
 		/// </summary>
 		/// <param name="buffers">The buffers to write</param>
 		/// <returns>A task that will be signalled when the write completes</returns>
-		public Task<WriteResults> WriteAysnc(IList<ArraySegment<byte>> buffers)
+		public Task<WriteResults> WriteAsync(IList<ArraySegment<byte>> buffers)
 		{
 			if(buffers==null) throw new ArgumentNullException("buffers");
 

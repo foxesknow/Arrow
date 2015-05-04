@@ -29,9 +29,9 @@ namespace Arrow.Church.Server.ServiceListeners
 			m_Endpoint=endpoint;
 		}
 
-		public override void Respond(MessageEnvelope requestMessageEnvelope, IList<ArraySegment<byte>> buffers)
+		public override void Respond(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
 		{
-			var key=Tuple.Create(requestMessageEnvelope.MessageSystemID,requestMessageEnvelope.MessageCorrelationID);
+			var key=Tuple.Create(callDetails.RequestMessageEnvelope.MessageSystemID,callDetails.RequestMessageEnvelope.MessageCorrelationID);
 			DispatcherCallback callback=null;
 
 			lock(m_SyncRoot)
@@ -44,7 +44,7 @@ namespace Arrow.Church.Server.ServiceListeners
 
 			if(callback!=null)
 			{
-				var response=CreateReponse(requestMessageEnvelope);
+				var response=CreateReponse(callDetails.RequestMessageEnvelope);
 				response.DataLength=buffers.TotalLength();
 
 				callback(response,buffers);
@@ -65,7 +65,10 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		private void DispatchCall(MessageEnvelope envelope, byte[] data)
 		{
-			var args=new ServiceCallEventArgs(this,envelope,data);
+			var callID=AllocateCallID();
+			var callDetails=new CallDetails(envelope,data,callID);
+
+			var args=new ServiceCallEventArgs(this,callDetails);
 			OnServiceCall(args);
 		}
 

@@ -17,6 +17,8 @@ namespace Arrow.Church.Server
 		private readonly long m_SystemID;
 		private long m_CorrelationID;
 
+		private long m_CallID;
+
 		/// <summary>
 		/// Raised when a service call is received
 		/// </summary>
@@ -30,9 +32,9 @@ namespace Arrow.Church.Server
 		/// <summary>
 		/// Sends a response back to the sender
 		/// </summary>
-		/// <param name="senderMessageEnvelope"></param>
+		/// <param name="callDetails"></param>
 		/// <param name="buffers"></param>
-		public abstract void Respond(MessageEnvelope requestMessageEnvelope, IList<ArraySegment<byte>> buffers);
+		public abstract void Respond(CallDetails callDetails, IList<ArraySegment<byte>> buffers);
 
 		protected void OnServiceCall(ServiceCallEventArgs args)
 		{
@@ -51,6 +53,11 @@ namespace Arrow.Church.Server
 		protected long AllocateCorrelationID()
 		{
 			return Interlocked.Increment(ref m_CorrelationID);
+		}
+
+		protected long AllocateCallID()
+		{
+			return Interlocked.Increment(ref m_CallID);
 		}
 
 		protected MessageEnvelope CreateReponse(MessageEnvelope template)

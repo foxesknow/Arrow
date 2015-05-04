@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CallDetails.cs" />
     <Compile Include="ChurchService.cs" />
     <Compile Include="ChurchService.Generic.cs" />
     <Compile Include="IServiceShutdown.cs" />
