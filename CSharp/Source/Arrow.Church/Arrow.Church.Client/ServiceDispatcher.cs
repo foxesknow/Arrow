@@ -160,7 +160,7 @@ namespace Arrow.Church.Client
 
 			envelope=new MessageEnvelope();
 			envelope.DataLength=data.Length;
-			envelope.MessageType=MessageType.Request;
+			envelope.MessageType=MessageType.ServiceRequest;
 			envelope.MessageSystemID=m_SystemID;
 			envelope.MessageCorrelationID=AllocateCorrelationID();
 		}

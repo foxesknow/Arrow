@@ -100,7 +100,8 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		private void HandleMessage(object sender, SocketMessageEventArgs<MessageEnvelope,byte[]> args)
 		{
-			m_CallDispatcher.QueueUserWorkItem(s=>DispatchCall(args.Header,args.Body));
+			var callDetails=new CallDetails(args.Header,args.Body,args.SocketProcessor.ID);
+			m_CallDispatcher.QueueUserWorkItem(s=>HandleMessage(callDetails));
 
 			args.ReadMode=ReadMode.KeepReading;
 		}
@@ -133,15 +134,6 @@ namespace Arrow.Church.Server.ServiceListeners
 			processor.Close();
 		}
 
-		private void DispatchCall(MessageEnvelope envelope, byte[] data)
-		{
-			var callID=AllocateCallID();
-			var callDetails=new CallDetails(envelope,data,callID);
-
-			var args=new ServiceCallEventArgs(this,callDetails);
-			OnServiceCall(args);
-		}
-
 		public override void Respond(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
 		{
 			SocketProcessor processor=null;
@@ -155,7 +147,7 @@ namespace Arrow.Church.Server.ServiceListeners
 			{
 				// We've already got the buffers for the response,
 				// but we need to flatten the envelope and stick it on the front
-				var envelope=CreateReponse(callDetails.RequestMessageEnvelope);
+				var envelope=CreateReponse(callDetails.Envelope);
 				envelope.DataLength=buffers.TotalLength();
 				var response=GenerateResponse(envelope,buffers);
 

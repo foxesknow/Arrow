@@ -9,20 +9,20 @@ namespace Arrow.Church.Server
 {
 	public sealed class CallDetails
 	{
-		private readonly MessageEnvelope m_RequestMessageEnvelope;
+		private readonly MessageEnvelope m_Envelope;
 		private readonly byte[] m_Data;
 		private readonly long m_CallID;
 
-		public CallDetails(MessageEnvelope requestMessageEnvelope, byte[] data, long callID)
+		public CallDetails(MessageEnvelope envelope, byte[] data, long callID)
 		{
-			m_RequestMessageEnvelope=requestMessageEnvelope;
+			m_Envelope=envelope;
 			m_Data=data;
 			m_CallID=callID;
 		}
 
-		public MessageEnvelope RequestMessageEnvelope
+		public MessageEnvelope Envelope
 		{
-			get{return m_RequestMessageEnvelope;}
+			get{return m_Envelope;}
 		}
 
 		public byte[] Data

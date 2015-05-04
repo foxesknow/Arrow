@@ -14,9 +14,9 @@ namespace Arrow.Church.Common.Net
 	/// </summary>
 	public static class MessageType
 	{
-		public const int Request=2;			// 0b00000010
-		public const int Response=3;		// 0b00000011
-		public const int Ping=4;			// 0b00000100
-		public const int Pong=5;			// 0b00000101
+		public const int ServiceRequest=2;			// 0b00000010
+		public const int ServiceResponse=3;			// 0b00000011
+		public const int Ping=4;					// 0b00000100
+		public const int Pong=5;					// 0b00000101
 	}
 }

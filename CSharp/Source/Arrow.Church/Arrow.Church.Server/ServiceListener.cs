@@ -77,6 +77,34 @@ namespace Arrow.Church.Server
 			return response;
 		}
 
+		protected void HandleMessage(CallDetails callDetails)
+		{
+			switch(callDetails.Envelope.MessageType)
+			{
+				case MessageType.ServiceRequest:
+					HandleServiceRequest(callDetails);
+					break;
+
+				case MessageType.Ping:
+					HandlePing(callDetails);
+					break;
+
+				default:
+					// TODO
+					break;
+			}
+		}
+
+		protected virtual void HandleServiceRequest(CallDetails callDetails)
+		{
+			var args=new ServiceCallEventArgs(this,callDetails);
+			OnServiceCall(args);
+		}
+
+		protected virtual void HandlePing(CallDetails callDetails)
+		{
+		}
+
 		public virtual void Dispose()
 		{
 			// Does nothing

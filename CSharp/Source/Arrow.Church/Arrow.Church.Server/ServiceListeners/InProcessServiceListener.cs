@@ -41,7 +41,7 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		public override void Respond(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
 		{
-			var key=Tuple.Create(callDetails.RequestMessageEnvelope.MessageSystemID,callDetails.RequestMessageEnvelope.MessageCorrelationID);
+			var key=Tuple.Create(callDetails.Envelope.MessageSystemID,callDetails.Envelope.MessageCorrelationID);
 			DispatcherCallback callback=null;
 
 			lock(m_SyncRoot)
@@ -54,7 +54,7 @@ namespace Arrow.Church.Server.ServiceListeners
 
 			if(callback!=null)
 			{
-				var response=CreateReponse(callDetails.RequestMessageEnvelope);
+				var response=CreateReponse(callDetails.Envelope);
 				response.DataLength=buffers.TotalLength();
 
 				callback(response,buffers);
@@ -70,16 +70,9 @@ namespace Arrow.Church.Server.ServiceListeners
 				m_Callbacks.Add(key,dispatcherCallback);
 			}
 			
-			m_CallDispatcher.QueueUserWorkItem(s=>DispatchCall(requestMessageEnvelope,data));
-		}
-
-		private void DispatchCall(MessageEnvelope envelope, byte[] data)
-		{
 			var callID=AllocateCallID();
-			var callDetails=new CallDetails(envelope,data,callID);
-
-			var args=new ServiceCallEventArgs(this,callDetails);
-			OnServiceCall(args);
+			var callDetails=new CallDetails(requestMessageEnvelope,data,callID);
+			m_CallDispatcher.QueueUserWorkItem(s=>HandleMessage(callDetails));
 		}
 
 		public override string ToString()
