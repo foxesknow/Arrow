@@ -29,6 +29,10 @@ namespace Arrow.Church.Server
 			m_SystemID=Interlocked.Increment(ref s_SystemID);
 		}
 
+		public abstract void Start();
+
+		public abstract void Stop();
+
 		/// <summary>
 		/// Sends a response back to the sender
 		/// </summary>

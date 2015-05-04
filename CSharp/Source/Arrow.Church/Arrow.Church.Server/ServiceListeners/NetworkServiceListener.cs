@@ -22,7 +22,7 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<long,SocketProcessor> m_Processors=new Dictionary<long,SocketProcessor>();
-		private long m_Closed;
+		private long m_Stopped;
 
 		private readonly IWorkDispatcher m_CallDispatcher=new ThreadPoolWorkDispatcher();
 
@@ -45,10 +45,19 @@ namespace Arrow.Church.Server.ServiceListeners
 			m_MessageProcessor.Disconnect+=HandleDisconnect;
 			m_MessageProcessor.NetworkFault+=HandleNetworkFault;
 
-			m_TcpListener=new TcpListener(m_Address,endpoint.Port);
+			m_TcpListener=new TcpListener(m_Address,endpoint.Port);			
+		}
+
+		public override void Start()
+		{
 			m_TcpListener.Start();
 
 			m_TcpListener.BeginAcceptSocket(HandleAcceptSocket,null);
+		}
+
+		public override void Stop()
+		{
+			m_TcpListener.Stop();
 		}
 
 		private void HandleAcceptSocket(IAsyncResult result)
@@ -60,7 +69,7 @@ namespace Arrow.Church.Server.ServiceListeners
 				
 				lock(m_SyncRoot)
 				{
-					if(IsClosed()==false)
+					if(IsStopped()==false)
 					{
 						var processor=new FixedHeaderSocketProcessor<MessageEnvelope,byte[]>(socket,m_MessageFactory,m_MessageProcessor);
 						m_Processors.Add(processor.ID,processor);
@@ -73,9 +82,9 @@ namespace Arrow.Church.Server.ServiceListeners
 			}
 			catch(Exception e)
 			{
-				if(IsClosed())
+				if(IsStopped())
 				{
-					Log.Info("HandleAcceptSocket - exception due to closing");
+					Log.Info("HandleAcceptSocket - exception due to stopping");
 				}
 				else
 				{
@@ -93,7 +102,7 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		private void HandleDisconnect(object sender, SocketProcessorEventArgs args)
 		{
-			if(IsClosed()) return;
+			if(IsStopped()) return;
 
 			var processor=args.SocketProcessor;
 
@@ -107,7 +116,7 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		private void HandleNetworkFault(object sender, SocketProcessorEventArgs args)
 		{
-			if(IsClosed()) return;
+			if(IsStopped()) return;
 
 			var processor=args.SocketProcessor;
 
@@ -159,7 +168,7 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		public void Close()
 		{
-			if(FlagAsClosed()) 
+			if(FlagAsStopped()) 
 			{
 				// We're already flagged, so no need to do it again
 				return;
@@ -182,19 +191,24 @@ namespace Arrow.Church.Server.ServiceListeners
 		/// Flags the network system as being closed.
 		/// This allows the processor to work out how to handle exceptions thrown by network calls
 		/// </summary>
-		protected bool FlagAsClosed()
+		protected bool FlagAsStopped()
 		{
-			var originalValue=Interlocked.Exchange(ref m_Closed,1);
-			return originalValue!=0;
+			var originalValue=Interlocked.Exchange(ref m_Stopped,0);
+			return originalValue==1;
+		}
+
+		protected void FlagAsStarted()
+		{
+			Interlocked.Exchange(ref m_Stopped,1);
 		}
 
 		/// <summary>
 		/// Checks to see if the socket processor is closed
 		/// </summary>
 		/// <returns></returns>
-		protected bool IsClosed()
+		protected bool IsStopped()
 		{
-			return Interlocked.Read(ref m_Closed)==1;
+			return Interlocked.Read(ref m_Stopped)==0;
 		}
 
 		private void WriteResponseComplete(Task<WriteResults> results)

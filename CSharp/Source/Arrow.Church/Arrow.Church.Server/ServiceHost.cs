@@ -44,6 +44,7 @@ namespace Arrow.Church.Server
 		{
 			Log.Info("ServiceHost.Start - starting");
 			m_ServiceContainer.Start();
+			m_ServiceListener.Start();
 			Log.Info("ServiceHost.Start - started");
 		}
 
@@ -53,6 +54,7 @@ namespace Arrow.Church.Server
 		public void Stop()
 		{
 			Log.Info("ServiceHost.Stop - stopping");
+			m_ServiceListener.Stop();
 			m_ServiceContainer.Stop();
 			Log.Info("ServiceHost.Stop - stopped");
 		}

@@ -29,6 +29,16 @@ namespace Arrow.Church.Server.ServiceListeners
 			m_Endpoint=endpoint;
 		}
 
+		public override void Start()
+		{
+			// Does nothing
+		}
+
+		public override void Stop()
+		{
+			// Does nothing
+		}
+
 		public override void Respond(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
 		{
 			var key=Tuple.Create(callDetails.RequestMessageEnvelope.MessageSystemID,callDetails.RequestMessageEnvelope.MessageCorrelationID);
