@@ -52,7 +52,6 @@
     <Compile Include="ServiceListener.cs" />
     <Compile Include="ServiceListeners\InProcessServiceListener.cs" />
     <Compile Include="ServiceListeners\NetworkServiceListener.cs" />
-    <Compile Include="ServiceListeners\NetworkServiceMessageFactory.cs" />
     <Compile Include="ServiceMethod.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
   </ItemGroup>

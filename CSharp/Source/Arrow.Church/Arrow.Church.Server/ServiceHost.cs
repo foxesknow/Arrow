@@ -78,7 +78,7 @@ namespace Arrow.Church.Server
 
 				using(var decoder=new DataDecoder(stream))
 				{
-					callDetails=decoder.ReadEncodedData(d=>new ServiceCallRequest(d));
+					callDetails=decoder.ReadEncodedDataNeverNull(d=>new ServiceCallRequest(d));
 				}
 
 				ServiceData serviceData;
@@ -128,7 +128,7 @@ namespace Arrow.Church.Server
 			{
 				using(var encoder=new DataEncoder(stream))
 				{
-					encoder.Write(response);
+					encoder.WriteNeverNull(response);
 				}
 
 				var protocol=serviceData.Service.MessageProtocol;

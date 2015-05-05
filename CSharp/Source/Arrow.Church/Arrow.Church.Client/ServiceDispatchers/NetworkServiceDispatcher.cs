@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
+using Arrow.Church.Common.Data;
+using Arrow.Church.Common.Internal;
+using Arrow.Church.Common.Net;
+using Arrow.Net.Message;
+
+namespace Arrow.Church.Client.ServiceDispatchers
+{
+	public class NetworkServiceDispatcher : ServiceDispatcher
+	{
+		private readonly IPAddress m_Address;
+
+		private SocketProcessor m_SocketProcessor;
+
+		private readonly EventMessageProcessor<MessageEnvelope,byte[]> m_MessageProcessor=new EventMessageProcessor<MessageEnvelope,byte[]>();
+		private readonly IMessageFactory<MessageEnvelope,byte[]> m_MessageFactory=new MessageEnvelopeMessageFactory();
+
+
+		public NetworkServiceDispatcher(Uri endpoint) : base(endpoint)
+		{
+			m_Address=endpoint.TryResolveIPAddress();
+			if(m_Address==null) throw new ArgumentException("could not resolve host: "+endpoint.Host.ToString(),"endpoint");
+
+			var socket=new Socket(AddressFamily.InterNetwork,SocketType.Stream,ProtocolType.Tcp);
+			socket.Connect(m_Address,this.Endpoint.Port);
+
+			m_MessageProcessor.Message+=HandleMessage;
+			m_MessageProcessor.Disconnect+=HandleDisconnect;
+			m_MessageProcessor.NetworkFault+=HandleNetworkFault;
+
+			m_SocketProcessor=new FixedHeaderSocketProcessor<MessageEnvelope,byte[]>(socket,m_MessageFactory,m_MessageProcessor);
+			m_SocketProcessor.Start();
+		}
+
+		private void HandleMessage(object sender, SocketMessageEventArgs<MessageEnvelope,byte[]> args)
+		{
+			HandleResponse(args.Header,new ArraySegment<byte>(args.Body).ToList());
+			args.ReadMode=ReadMode.KeepReading;
+		}
+
+		private void HandleDisconnect(object sender, SocketProcessorEventArgs args)
+		{
+		}
+
+		private void HandleNetworkFault(object sender, SocketProcessorEventArgs args)
+		{
+		}
+
+		protected override void SendRequest(MessageEnvelope envelope, byte[] data)
+		{
+			using(var stream=new MemoryStream())
+			using(var encoder=new DataEncoder(stream))
+			{
+				encoder.WriteNeverNull(envelope);
+
+				var segment=stream.ToArraySegment();
+				
+				var parts=new List<ArraySegment<byte>>(2);
+				parts.Add(segment);
+				parts.Add(new ArraySegment<byte>(data));
+
+				m_SocketProcessor.WriteAsync(parts);
+			}
+		}
+
+		public override void Dispose()
+		{
+			m_SocketProcessor.Dispose();
+			base.Dispose();
+		}
+	}
+}

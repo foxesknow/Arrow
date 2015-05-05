@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Arrow.Church.Common;
 
 namespace Arrow.Church.Server
 {
-	public class ServiceNotFoundException : ArrowException
+	[Serializable]
+	public class ServiceNotFoundException : ChurchException
 	{
 		/// <summary>
 		/// 

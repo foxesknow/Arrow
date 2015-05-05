@@ -9,9 +9,9 @@ using Arrow.Church.Common.Net;
 using Arrow.Memory.Pools;
 using Arrow.Net.Message;
 
-namespace Arrow.Church.Server.ServiceListeners
+namespace Arrow.Church.Common.Internal
 {
-	class NetworkServiceMessageFactory : IMessageFactory<MessageEnvelope,byte[]>
+	public sealed class MessageEnvelopeMessageFactory : IMessageFactory<MessageEnvelope,byte[]>
 	{
 		private readonly MemoryPool m_Pool=new AlwaysAllocatePool();
 
@@ -32,7 +32,7 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		public byte[] CreateBody(MessageEnvelope header, byte[] buffer, int bodySize)
 		{
-			throw new NotImplementedException();
+			return buffer;
 		}
 
 		public int GetBodySize(MessageEnvelope header)

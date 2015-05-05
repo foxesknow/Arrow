@@ -8,6 +8,7 @@ using Arrow;
 
 namespace Arrow.Church.Common
 {
+	[Serializable]
 	public class ChurchException : ArrowException
 	{
 		/// <summary>

@@ -47,6 +47,7 @@
     <Compile Include="Proxy\ProxyBase.cs" />
     <Compile Include="ServiceDispatcher.Helpers.cs" />
     <Compile Include="ServiceDispatchers\InProcessServiceDispatcher.cs" />
+    <Compile Include="ServiceDispatchers\NetworkServiceDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">

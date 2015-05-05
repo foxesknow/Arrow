@@ -33,30 +33,33 @@ namespace TestApp
 
 		static void ListenerMain(string[] args)
 		{
-			NetworkServiceListener nl=new NetworkServiceListener(new Uri("foo://localhost:8999"));
-			nl.Start();
-			nl.Stop();
+			//NetworkServiceListener nl=new NetworkServiceListener(new Uri("foo://localhost:8999"));
+			//nl.Start();
+			//nl.Stop();
 
 			try
 			{
 				Uri endpoint=new Uri("church-mem://calc");
 				
-				using(var listener=new InProcessServiceListener(endpoint))
+				//using(var listener=new InProcessServiceListener(endpoint))
+				using(var listener=new NetworkServiceListener(new Uri("foo://localhost:8999")))
 				using(var host=new ServiceHost(listener))
 				{
 					host.ServiceContainer.Add("Foo",new FooService());
 					host.Start();
 				
-					var dispatcher=new InProcessServiceDispatcher(endpoint);
+					//var dispatcher=new InProcessServiceDispatcher(endpoint);
+					var dispatcher=new NetworkServiceDispatcher(new Uri("foo://localhost:8999"));
 					var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
 					var foo=(IFoo)factory(dispatcher,"Foo");
 
 					try
 					{
-						var task=foo.Divide(new BinaryOperationRequest(){Lhs=20,Rhs=5});
-						//var task=foo.DoNothing();
-						task.Wait();
-						Console.WriteLine(task.Result);
+						for(int i=1; i<10; i++)
+						{
+							var task=foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=5});
+							Console.WriteLine(task.Result);
+						}
 					}
 					catch
 					{

@@ -66,6 +66,12 @@ namespace Arrow.Church.Common.Data
 			if(hasValue) encodeData.Encode(this);
 		}
 
+		public void WriteNeverNull(IEncodeData encodeData)
+		{
+			if(encodeData==null) throw new ArgumentNullException("encodeData");
+			encodeData.Encode(this);
+		}
+
 		public void Dispose()
 		{
 			m_Writer.Dispose();

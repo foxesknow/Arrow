@@ -47,6 +47,8 @@
     <Compile Include="Data\DotNet\SerializationMessageProtocol.cs" />
     <Compile Include="Data\IEncodeData.cs" />
     <Compile Include="Data\MessageProtocol.cs" />
+    <Compile Include="Internal\MessageEnvelopeMessageFactory.cs" />
+    <Compile Include="Internal\NetworkExtensions.cs" />
     <Compile Include="Net\ServiceCallRequest.cs" />
     <Compile Include="Net\ServiceCallResponse.cs" />
     <Compile Include="Data\VoidValue.cs" />

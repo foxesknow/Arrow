@@ -31,6 +31,8 @@ namespace Arrow.Church.Client
 
 		protected ServiceDispatcher(Uri endpoint)
 		{
+			if(endpoint==null) throw new ArgumentNullException("endpoint");
+
 			m_SystemID=Interlocked.Increment(ref s_SystemID);
 			m_Endpoint=endpoint;
 		}
@@ -84,7 +86,7 @@ namespace Arrow.Church.Client
 
 				using(var decoder=new DataDecoder(stream))
 				{
-					response=decoder.ReadEncodedData(d=>new ServiceCallResponse(d));
+					response=decoder.ReadEncodedDataNeverNull(d=>new ServiceCallResponse(d));
 				}
 
 				long correlationID=responseMessageEnvelope.ResponseCorrelationID;
@@ -151,7 +153,7 @@ namespace Arrow.Church.Client
 				using(var encoder=new DataEncoder(stream))
 				{
 					var callRequest=new ServiceCallRequest(serviceName,serviceMethod);
-					encoder.Write(callRequest);
+					encoder.WriteNeverNull(callRequest);
 				}
 
 				proxy.MessageProtocol.ToStream(stream,request);

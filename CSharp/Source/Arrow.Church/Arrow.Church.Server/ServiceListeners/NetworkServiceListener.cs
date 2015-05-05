@@ -5,14 +5,16 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Threading;
 
 using Arrow.Church.Common.Net;
 using Arrow.Net.Message;
 using Arrow.Threading;
 using Arrow.Church.Common.Data;
-using System.IO;
+using Arrow.Church.Common.Internal;
 using Arrow.Logging;
-using System.Threading;
+
 
 namespace Arrow.Church.Server.ServiceListeners
 {
@@ -31,14 +33,14 @@ namespace Arrow.Church.Server.ServiceListeners
 		private readonly TcpListener m_TcpListener;
 		
 		private readonly EventMessageProcessor<MessageEnvelope,byte[]> m_MessageProcessor=new EventMessageProcessor<MessageEnvelope,byte[]>();
-		private readonly IMessageFactory<MessageEnvelope,byte[]> m_MessageFactory=new NetworkServiceMessageFactory();
+		private readonly IMessageFactory<MessageEnvelope,byte[]> m_MessageFactory=new MessageEnvelopeMessageFactory();
 
 		public NetworkServiceListener(Uri endpoint)
 		{
 			if(endpoint==null) throw new ArgumentNullException("endpoint");
 			m_Endpoint=endpoint;
 
-			m_Address=ResolveIPAddress(endpoint.Host);
+			m_Address=endpoint.TryResolveIPAddress();
 			if(m_Address==null) throw new ArgumentException("could not resolve host: "+endpoint.Host.ToString(),"endpoint");
 
 			m_MessageProcessor.Message+=HandleMessage;
@@ -54,6 +56,7 @@ namespace Arrow.Church.Server.ServiceListeners
 			{
 				m_TcpListener.Start();
 				m_TcpListener.BeginAcceptSocket(HandleAcceptSocket,null);
+				FlagAsStarted();
 			}
 		}
 
@@ -227,7 +230,7 @@ namespace Arrow.Church.Server.ServiceListeners
 			{
 				using(var encoder=new DataEncoder(stream))
 				{
-					encoder.Write(envelope);
+					encoder.WriteNeverNull(envelope);
 				}
 
 				var segment=stream.ToArraySegment();
@@ -249,23 +252,6 @@ namespace Arrow.Church.Server.ServiceListeners
 		public override string ToString()
 		{
 			return m_Endpoint.ToString();
-		}
-
-		private static IPAddress ResolveIPAddress(string name)
-		{
-			IPAddress address=null;
-			if(IPAddress.TryParse(name,out address)) return address;
-
-			var hostAddresses=Dns.GetHostAddresses(name);
-			foreach(var hostAddress in hostAddresses)
-			{
-				if(hostAddress.AddressFamily==AddressFamily.InterNetwork)
-				{
-					return hostAddress;
-				}
-			}
-
-			return null;
-		}
+		}		
 	}
 }

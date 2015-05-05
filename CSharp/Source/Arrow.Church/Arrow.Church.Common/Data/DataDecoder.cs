@@ -73,6 +73,12 @@ namespace Arrow.Church.Common.Data
 			}
 		}
 
+		public T ReadEncodedDataNeverNull<T>(Func<DataDecoder,T> factory) where T:IEncodeData
+		{
+			T value=factory(this);
+			return value;
+		}
+
 		public void Dispose()
 		{
 			m_Reader.Dispose();
