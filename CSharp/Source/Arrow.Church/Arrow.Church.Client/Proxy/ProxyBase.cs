@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Arrow.Church.Client.ServiceDispatchers;
 using Arrow.Church.Common.Data;
 
 namespace Arrow.Church.Client.Proxy
@@ -15,13 +16,13 @@ namespace Arrow.Church.Client.Proxy
 
 		private readonly Dictionary<string,Type> m_MethodReturnTypes=new Dictionary<string,Type>();
 
-		public ProxyBase(ServiceDispatcher serviceDispatcher, string serviceName, MessageProtocol messageProtocol)
+		public ProxyBase(Uri endpoint, string serviceName, MessageProtocol messageProtocol)
 		{
-			if(serviceDispatcher==null) throw new ArgumentNullException("serviceDispatcher");
+			if(endpoint==null) throw new ArgumentNullException("endpoint");
 			if(serviceName==null) throw new ArgumentNullException("serviceName");
 			if(messageProtocol==null) throw new ArgumentNullException("messageProtocol");
 
-			m_ServiceDispatcher=serviceDispatcher;
+			m_ServiceDispatcher=ServiceDispatcherManager.GetServiceDispatcher(endpoint);
 			m_ServiceName=serviceName;
 			m_MessageProtocol=messageProtocol;
 		}

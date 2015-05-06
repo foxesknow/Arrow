@@ -40,14 +40,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Proxy\ProxyFactory.cs" />
-    <Compile Include="ServiceDispatcher.cs" />
+    <Compile Include="ServiceDispatchers\ServiceDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxy\AssemblyControl.cs" />
     <Compile Include="Proxy\ProxyBase.Codegen.cs" />
     <Compile Include="Proxy\ProxyBase.cs" />
-    <Compile Include="ServiceDispatcher.Helpers.cs" />
+    <Compile Include="ServiceDispatchers\ServiceDispatcher.Helpers.cs" />
+    <Compile Include="ServiceDispatchers\ServiceDispatcherAttribute.cs" />
+    <Compile Include="ServiceDispatchers\ServiceDispatcherCreator.cs" />
+    <Compile Include="ServiceDispatchers\ServiceDispatcherFactory.cs" />
+    <Compile Include="ServiceDispatchers\ServiceDispatcherManager.cs" />
     <Compile Include="ServiceDispatchers\InProcessServiceDispatcher.cs" />
+    <Compile Include="ServiceDispatchers\InProcessServiceDispatcherCreator.cs" />
     <Compile Include="ServiceDispatchers\NetworkServiceDispatcher.cs" />
+    <Compile Include="ServiceDispatchers\NetworkServiceDispatcherCreator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">

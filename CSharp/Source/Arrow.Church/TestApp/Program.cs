@@ -39,19 +39,19 @@ namespace TestApp
 
 			try
 			{
-				Uri endpoint=new Uri("church-mem://calc");
+				//Uri endpoint=new Uri("church-mem://calc");
+				Uri endpoint=new Uri("net://localhost:8999");
 				
 				//using(var listener=new InProcessServiceListener(endpoint))
-				using(var listener=new NetworkServiceListener(new Uri("foo://localhost:8999")))
+				using(var listener=new NetworkServiceListener(endpoint))
 				using(var host=new ServiceHost(listener))
 				{
 					host.ServiceContainer.Add("Foo",new FooService());
 					host.Start();
 				
 					//var dispatcher=new InProcessServiceDispatcher(endpoint);
-					var dispatcher=new NetworkServiceDispatcher(new Uri("foo://localhost:8999"));
 					var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
-					var foo=(IFoo)factory(dispatcher,"Foo");
+					var foo=(IFoo)factory(endpoint,"Foo");
 
 					try
 					{

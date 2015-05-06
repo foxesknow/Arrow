@@ -55,12 +55,12 @@ namespace Arrow.Church.Client.Proxy
 			}
 
 			Type type=builder.CreateType();
-			var ctor=type.GetConstructor(new Type[]{typeof(ServiceDispatcher),typeof(string)});
+			var ctor=type.GetConstructor(new Type[]{typeof(Uri),typeof(string)});
 
-			var dispatcher=Expression.Parameter(typeof(ServiceDispatcher));
+			var endpoint=Expression.Parameter(typeof(Uri));
 			var serviceName=Expression.Parameter(typeof(string));
-			var @new=Expression.New(ctor,dispatcher,serviceName);
-			var lambda=Expression.Lambda<ProxyFactory>(@new,dispatcher,serviceName);
+			var @new=Expression.New(ctor,endpoint,serviceName);
+			var lambda=Expression.Lambda<ProxyFactory>(@new,endpoint,serviceName);
 			
 			return lambda.Compile();
 		}
@@ -71,21 +71,21 @@ namespace Arrow.Church.Client.Proxy
 			(
 				new Type[]
 				{
-					typeof(ServiceDispatcher),
+					typeof(Uri),
 					typeof(string),
 					typeof(MessageProtocol)
 				}
 			);
 
 			MethodAttributes attr=MethodAttributes.Public|MethodAttributes.HideBySig;
-			ConstructorBuilder ctor=builder.DefineConstructor(attr,CallingConventions.Standard,new Type[]{typeof(ServiceDispatcher),typeof(string)});
+			ConstructorBuilder ctor=builder.DefineConstructor(attr,CallingConventions.Standard,new Type[]{typeof(Uri),typeof(string)});
 
 			Type protcolType=ExtractMessageProtocol(@interface);
 			var protocolCtor=protcolType.GetConstructor(Type.EmptyTypes);
 
 			var gen=ctor.GetILGenerator();
 			gen.Emit(OpCodes.Ldarg_0);				// this
-			gen.Emit(OpCodes.Ldarg_1);				// ServiceDispatcher
+			gen.Emit(OpCodes.Ldarg_1);				// Uri
 			gen.Emit(OpCodes.Ldarg_2);				// string (service name)
 			gen.Emit(OpCodes.Newobj,protocolCtor);
 			gen.Emit(OpCodes.Call,baseCtor);		// The protocol hander

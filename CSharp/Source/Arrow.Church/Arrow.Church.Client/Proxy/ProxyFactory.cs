@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Arrow.Church.Client.Proxy
 {
-	public delegate object ProxyFactory(ServiceDispatcher serviceDispatcher, string serviceName);
+	public delegate object ProxyFactory(Uri endpoint, string serviceName);
 }

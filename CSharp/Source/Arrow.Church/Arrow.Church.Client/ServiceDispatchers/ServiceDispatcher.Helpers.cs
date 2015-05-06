@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Arrow.Church.Client.Proxy;
 using Arrow.Church.Common.Data;
 
-namespace Arrow.Church.Client
+namespace Arrow.Church.Client.ServiceDispatchers
 {
 	partial class ServiceDispatcher
 	{

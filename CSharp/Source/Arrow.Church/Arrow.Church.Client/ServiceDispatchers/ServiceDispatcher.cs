@@ -11,7 +11,7 @@ using Arrow.Church.Common.Data.DotNet;
 using Arrow.Church.Common.Net;
 using Arrow.Threading;
 
-namespace Arrow.Church.Client
+namespace Arrow.Church.Client.ServiceDispatchers
 {
     public abstract partial class ServiceDispatcher : IDisposable
     {
