@@ -56,11 +56,12 @@ namespace Arrow.Church.Client.ServiceDispatchers
 		/// <param name="result"></param>
 		protected void CompleteSuccess(long correlationID, object result)
 		{
-			m_CompletionDispatcher.QueueUserWorkItem(s=>
+			var call=RemoveCall(correlationID);
+
+			if(call!=null)
 			{
-				var call=RemoveCall(correlationID);
-				if(call!=null) call.Accept(false,result);
-			});
+				m_CompletionDispatcher.QueueUserWorkItem(s=>call.Accept(false,result));
+			}
 		}
 
 		/// <summary>
@@ -70,11 +71,30 @@ namespace Arrow.Church.Client.ServiceDispatchers
 		/// <param name="exception"></param>
 		protected void CompleteError(long correlationID, Exception exception)
 		{
-			m_CompletionDispatcher.QueueUserWorkItem(s=>
+			var call=RemoveCall(correlationID);
+
+			if(call!=null)
 			{
-				var call=RemoveCall(correlationID);
-				if(call!=null) call.Accept(true,exception);
-			});
+				m_CompletionDispatcher.QueueUserWorkItem(s=>call.Accept(true,exception));
+			}
+		}
+
+		protected void CompleteAllError(Exception exception)
+		{
+			lock(m_SyncRoot)
+			{
+				foreach(var call in m_OutstandingCalls.Values)
+				{
+					var theCall=call;
+
+					if(theCall!=null)
+					{
+						m_CompletionDispatcher.QueueUserWorkItem(s=>theCall.Accept(true,exception));
+					}
+				}
+				
+				m_OutstandingCalls.Clear();
+			}
 		}
 
 		protected void HandleResponse(MessageEnvelope responseMessageEnvelope, IList<ArraySegment<byte>> buffers)

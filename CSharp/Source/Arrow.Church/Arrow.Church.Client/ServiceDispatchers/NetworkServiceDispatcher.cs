@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Arrow.Church.Common;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Internal;
 using Arrow.Church.Common.Net;
@@ -47,10 +48,12 @@ namespace Arrow.Church.Client.ServiceDispatchers
 
 		private void HandleDisconnect(object sender, SocketProcessorEventArgs args)
 		{
+			CompleteAllError(new ChurchException("disconnect for "+this.Endpoint));
 		}
 
 		private void HandleNetworkFault(object sender, SocketProcessorEventArgs args)
 		{
+			CompleteAllError(new ChurchException("network fault for "+this.Endpoint));
 		}
 
 		protected override void SendRequest(MessageEnvelope envelope, byte[] data)

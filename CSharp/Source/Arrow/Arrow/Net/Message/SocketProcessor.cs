@@ -87,7 +87,7 @@ namespace Arrow.Net.Message
 		/// Checks to see if the socket processor is closed
 		/// </summary>
 		/// <returns></returns>
-		protected bool IsClosed()
+		public bool IsClosed()
 		{
 			return Interlocked.Read(ref m_Closed)==1;
 		}
