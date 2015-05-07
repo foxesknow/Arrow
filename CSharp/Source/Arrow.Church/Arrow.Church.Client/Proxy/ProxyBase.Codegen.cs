@@ -16,7 +16,7 @@ namespace Arrow.Church.Client.Proxy
 	{
 		private static long s_ClassID;
 		private static readonly object s_SyncRoot=new object();
-		private static readonly Dictionary<Type,ProxyFactory> s_Proxies=new Dictionary<Type,ProxyFactory>();
+		private static readonly Dictionary<Type,ProxyCreator> s_Proxies=new Dictionary<Type,ProxyCreator>();
 
 		public static ProxyFactory GetProxyFactory(Type type)
 		{
@@ -25,14 +25,14 @@ namespace Arrow.Church.Client.Proxy
 
 			lock(s_SyncRoot)
 			{
-				ProxyFactory proxyFactory=null;
+				ProxyCreator proxyFactory=null;
 				if(s_Proxies.TryGetValue(type,out proxyFactory)==false)
 				{
 					proxyFactory=GenerateProxyFactory(type);
 					s_Proxies.Add(type,proxyFactory);
 				}
 
-				return proxyFactory;
+				return new ProxyFactory(proxyFactory);
 			}
 		}
 
@@ -42,7 +42,7 @@ namespace Arrow.Church.Client.Proxy
 		/// </summary>
 		/// <param name="interface"></param>
 		/// <returns></returns>
-		private static ProxyFactory GenerateProxyFactory(Type @interface)
+		private static ProxyCreator GenerateProxyFactory(Type @interface)
 		{
 			var classname=GenerateClassName(@interface);
 			var builder=CreateTypeBuilder(classname,@interface);
@@ -60,7 +60,7 @@ namespace Arrow.Church.Client.Proxy
 			var endpoint=Expression.Parameter(typeof(Uri));
 			var serviceName=Expression.Parameter(typeof(string));
 			var @new=Expression.New(ctor,endpoint,serviceName);
-			var lambda=Expression.Lambda<ProxyFactory>(@new,endpoint,serviceName);
+			var lambda=Expression.Lambda<ProxyCreator>(@new,endpoint,serviceName);
 			
 			return lambda.Compile();
 		}

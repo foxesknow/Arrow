@@ -58,6 +58,7 @@
     <Compile Include="ServiceDispatchers\DispatcherCallback.cs" />
     <Compile Include="ServiceDispatchers\InProcessServiceDispatcherRouter.cs" />
     <Compile Include="ServiceDispatchers\ListenerCallback.cs" />
+    <Compile Include="ServiceNameAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">

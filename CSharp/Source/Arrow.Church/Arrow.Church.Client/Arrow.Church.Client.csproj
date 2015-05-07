@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Proxy\ProxyCreator.cs" />
     <Compile Include="Proxy\ProxyFactory.cs" />
     <Compile Include="ServiceDispatchers\ServiceDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

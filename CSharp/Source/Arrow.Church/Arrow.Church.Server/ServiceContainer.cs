@@ -19,6 +19,21 @@ namespace Arrow.Church.Server
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<string,ServiceData> m_Services=new Dictionary<string,ServiceData>();
 
+		public void Add(ChurchService service)
+		{
+			if(service==null) throw new ArgumentNullException("service");
+
+			// We need to work out the name...
+			Type type=service.GetType();
+			var attr=type.GetCustomAttribute<ServiceNameAttribute>();
+			if(attr==null)
+			{
+				throw new ChurchException("could not infer service name for "+type.ToString());
+			}
+			
+			Add(attr.Name,service);
+		}
+
 		public void Add(string serviceName, ChurchService service)
 		{
 			if(serviceName==null) throw new ArgumentNullException("serviceName");
@@ -30,6 +45,8 @@ namespace Arrow.Church.Server
 
 			lock(m_SyncRoot)
 			{
+				if(m_Services.ContainsKey(serviceName)) throw new ChurchException("service already added: "+serviceName);
+				
 				m_Services.Add(serviceName,serviceData);
 			}
 		}

@@ -7,7 +7,7 @@ using Arrow.Church.Common.Data;
 
 namespace Arrow.Church.Common
 {
-    [AttributeUsage(AttributeTargets.Interface,AllowMultiple=false)]
+    [AttributeUsage(AttributeTargets.Interface,AllowMultiple=false,Inherited=true)]
 	public sealed class ChurchServiceAttribute : Attribute
     {
 		public ChurchServiceAttribute(Type messageProtocolType)

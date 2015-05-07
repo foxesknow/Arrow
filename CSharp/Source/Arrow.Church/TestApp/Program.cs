@@ -20,17 +20,6 @@ namespace TestApp
 			ListenerMain(args);
 		}
 
-		static void ProxyMain(string[] args)
-		{
-			Uri n=new Uri("foo://server:80");
-
-			var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
-			var foo=(IFoo)factory(null,"hello");
-
-			foo.Add(new BinaryOperationRequest(){Lhs=20,Rhs=0});
-			foo.DoNothing();
-		}
-
 		static void ListenerMain(string[] args)
 		{
 			//NetworkServiceListener nl=new NetworkServiceListener(new Uri("foo://localhost:8999"));
@@ -46,12 +35,12 @@ namespace TestApp
 				using(var listener=new NetworkServiceListener(endpoint))
 				using(var host=new ServiceHost(listener))
 				{
-					host.ServiceContainer.Add("Foo",new FooService());
+					host.ServiceContainer.Add(new FooService());
 					host.Start();
 				
 					//var dispatcher=new InProcessServiceDispatcher(endpoint);
 					var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
-					var foo=(IFoo)factory(endpoint,"Foo");
+					var foo=factory.Create<IFoo>(new Uri("net://localhost:8999/Foo"));
 
 					try
 					{
@@ -75,6 +64,7 @@ namespace TestApp
 		}
 	}
 
+	[ServiceName("Foo")]
 	public class FooService : ChurchService<IFoo>, IFoo
 	{
 		public FooService() : base()
