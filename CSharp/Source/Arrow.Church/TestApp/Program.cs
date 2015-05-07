@@ -22,23 +22,15 @@ namespace TestApp
 
 		static void ListenerMain(string[] args)
 		{
-			//NetworkServiceListener nl=new NetworkServiceListener(new Uri("foo://localhost:8999"));
-			//nl.Start();
-			//nl.Stop();
-
 			try
 			{
-				//Uri endpoint=new Uri("church-mem://calc");
 				Uri endpoint=new Uri("net://localhost:8999");
 				
-				//using(var listener=new InProcessServiceListener(endpoint))
-				//using(var listener=new NetworkServiceListener(endpoint))
 				using(var host=new ServiceHost(endpoint))
 				{
 					host.ServiceContainer.Add(new FooService());
 					host.Start();
 				
-					//var dispatcher=new InProcessServiceDispatcher(endpoint);
 					var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
 					var foo=factory.Create<IFoo>(endpoint,"Foo");
 
