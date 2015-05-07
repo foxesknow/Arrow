@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 using Arrow.Configuration;
 using Arrow.Factory;
 
-namespace Arrow.Church.Client.ServiceDispatchers
+namespace Arrow.Church.Server.ServiceListeners
 {
-	static class ServiceDispatcherFactory
+	static class ServiceListenerFactory
 	{
-		private static readonly SimpleFactory<ServiceDispatcherCreator> s_Factory=new SimpleFactory<ServiceDispatcherCreator>(StringComparer.OrdinalIgnoreCase);
+		private static readonly SimpleFactory<ServiceListenerCreator> s_Factory=new SimpleFactory<ServiceListenerCreator>(StringComparer.OrdinalIgnoreCase);
 		
-		static ServiceDispatcherFactory()
+		static ServiceListenerFactory()
 		{
 			LoadDefaults();			
 		}
@@ -21,7 +20,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 		private static void LoadDefaults()
 		{
 			bool loadDefaults=true;
-			var node=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Church.Client/LoadDefaults");
+			var node=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Church.Server/LoadDefaults");
 			
 			if(node!=null)
 			{
@@ -29,7 +28,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 				if(bool.TryParse(node.InnerText,out value)) loadDefaults=value;
 			}
 			
-			if(loadDefaults) RegisteredTypeInstaller.LoadTypes(typeof(ServiceDispatcherFactory).Assembly);		
+			if(loadDefaults) RegisteredTypeInstaller.LoadTypes(typeof(ServiceListenerFactory).Assembly);		
 		}
 		
 		public static void Register(string name, Type type)
@@ -37,7 +36,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 			s_Factory.Register(name,type);
 		}
 		
-		public static ServiceDispatcherCreator TryCreate(string name)
+		public static ServiceListenerCreator TryCreate(string name)
 		{
 			return s_Factory.TryCreate(name);
 		}

@@ -49,9 +49,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceData.cs" />
     <Compile Include="ServiceHost.cs" />
-    <Compile Include="ServiceListener.cs" />
+    <Compile Include="ServiceListeners\InProcessServiceListenerCreator.cs" />
+    <Compile Include="ServiceListeners\NetworkServiceListenerCreator.cs" />
+    <Compile Include="ServiceListeners\ServiceListener.cs" />
+    <Compile Include="ServiceListeners\ServiceListenerAttribute.cs" />
     <Compile Include="ServiceListeners\InProcessServiceListener.cs" />
     <Compile Include="ServiceListeners\NetworkServiceListener.cs" />
+    <Compile Include="ServiceListeners\ServiceListenerCreator.cs" />
+    <Compile Include="ServiceListeners\ServiceListenerFactory.cs" />
     <Compile Include="ServiceMethod.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
   </ItemGroup>

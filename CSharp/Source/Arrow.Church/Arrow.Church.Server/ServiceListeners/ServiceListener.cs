@@ -8,7 +8,7 @@ using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Net;
 using Arrow.Threading;
 
-namespace Arrow.Church.Server
+namespace Arrow.Church.Server.ServiceListeners
 {
 	public abstract class ServiceListener : IDisposable
 	{

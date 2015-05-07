@@ -10,6 +10,8 @@ using Arrow.Church.Common.Net;
 
 using Arrow.Threading;
 using Arrow.Logging;
+using Arrow.Church.Server.ServiceListeners;
+using Arrow.Church.Common;
 
 namespace Arrow.Church.Server
 {
@@ -24,11 +26,14 @@ namespace Arrow.Church.Server
 		private readonly ActionWorkQueue m_ServiceCallRequestQueue=new ActionWorkQueue();
 		private readonly IWorkDispatcher m_CallDispatcher=new ThreadPoolWorkDispatcher();
 
-		public ServiceHost(ServiceListener serviceListener)
+		public ServiceHost(Uri endpoint)
 		{
-			if(serviceListener==null) throw new ArgumentNullException("serviceListener");
+			if(endpoint==null) throw new ArgumentNullException("endpoint");
 
-			m_ServiceListener=serviceListener;
+			var creator=ServiceListenerFactory.TryCreate(endpoint.Scheme);
+			if(creator==null) throw new ChurchException("scheme not registered: "+endpoint.Scheme);
+
+			m_ServiceListener=creator.Create(endpoint);
 			m_ServiceListener.ServiceCall+=HandleServiceCall;
 		}
 

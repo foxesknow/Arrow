@@ -32,15 +32,15 @@ namespace TestApp
 				Uri endpoint=new Uri("net://localhost:8999");
 				
 				//using(var listener=new InProcessServiceListener(endpoint))
-				using(var listener=new NetworkServiceListener(endpoint))
-				using(var host=new ServiceHost(listener))
+				//using(var listener=new NetworkServiceListener(endpoint))
+				using(var host=new ServiceHost(endpoint))
 				{
 					host.ServiceContainer.Add(new FooService());
 					host.Start();
 				
 					//var dispatcher=new InProcessServiceDispatcher(endpoint);
 					var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
-					var foo=factory.Create<IFoo>(new Uri("net://localhost:8999/Foo"));
+					var foo=factory.Create<IFoo>(endpoint,"Foo");
 
 					try
 					{
