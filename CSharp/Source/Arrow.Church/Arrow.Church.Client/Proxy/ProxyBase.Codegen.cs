@@ -49,9 +49,21 @@ namespace Arrow.Church.Client.Proxy
 
 			ImplementConstructor(builder,@interface);
 
+			var methodNames=new HashSet<string>();
+
 			foreach(var methodInfo in @interface.GetMethods())
 			{
-				ImplementMethod(builder,methodInfo);
+				var name=methodInfo.Name;
+
+				if(methodNames.Add(name))
+				{
+					ImplementMethod(builder,methodInfo);
+				}
+				else
+				{
+					string message=string.Format("overloaded method names not support. See {0} on {1}",name,@interface.Name);
+					throw new ChurchException(message);
+				}
 			}
 
 			Type type=builder.CreateType();
