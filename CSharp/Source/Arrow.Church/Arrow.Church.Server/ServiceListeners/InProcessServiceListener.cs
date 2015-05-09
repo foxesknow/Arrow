@@ -14,19 +14,16 @@ namespace Arrow.Church.Server.ServiceListeners
 	public class InProcessServiceListener : ServiceListener
 	{
 		private readonly IWorkDispatcher m_CallDispatcher=new ThreadPoolWorkDispatcher();
-		private readonly Uri m_Endpoint;
 
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<Tuple<long,long>,DispatcherCallback> m_Callbacks=new Dictionary<Tuple<long,long>,DispatcherCallback>();
 
-		public InProcessServiceListener(Uri endpoint) : base()
+		public InProcessServiceListener(Uri endpoint) : base(endpoint)
 		{
 			if(InProcessServiceDispatcherRouter.Register(endpoint,RouterCallback)==false)
 			{
 				throw new ChurchException("endpoint already registered: "+endpoint);
 			}
-
-			m_Endpoint=endpoint;
 		}
 
 		public override void Start()
@@ -73,11 +70,6 @@ namespace Arrow.Church.Server.ServiceListeners
 			var callID=AllocateCallID();
 			var callDetails=new CallDetails(requestMessageEnvelope,data,callID);
 			m_CallDispatcher.QueueUserWorkItem(s=>HandleMessage(callDetails));
-		}
-
-		public override string ToString()
-		{
-			return m_Endpoint.ToString();
-		}
+		}		
 	}
 }

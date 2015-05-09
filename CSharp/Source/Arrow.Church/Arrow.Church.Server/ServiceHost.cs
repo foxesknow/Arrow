@@ -15,6 +15,9 @@ using Arrow.Church.Common;
 
 namespace Arrow.Church.Server
 {
+	/// <summary>
+	/// Hosts a number of services
+	/// </summary>
 	public class ServiceHost : IDisposable
 	{
 		private static readonly MessageProtocol s_DotNetSerializer=new SerializationMessageProtocol();
@@ -26,6 +29,10 @@ namespace Arrow.Church.Server
 		private readonly ActionWorkQueue m_ServiceCallRequestQueue=new ActionWorkQueue();
 		private readonly IWorkDispatcher m_CallDispatcher=new ThreadPoolWorkDispatcher();
 
+		/// <summary>
+		/// Initializes the instance
+		/// </summary>
+		/// <param name="endpoint">The endpoint the host will listen on for incoming calls</param>
 		public ServiceHost(Uri endpoint)
 		{
 			if(endpoint==null) throw new ArgumentNullException("endpoint");
@@ -37,6 +44,9 @@ namespace Arrow.Church.Server
 			m_ServiceListener.ServiceCall+=HandleServiceCall;
 		}
 
+		/// <summary>
+		/// The container which holds the actual services
+		/// </summary>
 		public ServiceContainer ServiceContainer
 		{
 			get{return m_ServiceContainer;}
@@ -74,34 +84,56 @@ namespace Arrow.Church.Server
 			m_ServiceCallRequestQueue.Enqueue(()=>ProcessCallRequest(args));
 		}
 
+		/// <summary>
+		/// Deserializes the call and schedules it for execution
+		/// </summary>
+		/// <param name="args"></param>
 		private void ProcessCallRequest(ServiceCallEventArgs args)
 		{
-			using(var stream=new MemoryStream(args.CallDetails.Data))
+			try
 			{
-				// First up, work out what we need to call...
-				ServiceCallRequest callDetails=null;
-
-				using(var decoder=new DataDecoder(stream))
+				using(var stream=new MemoryStream(args.CallDetails.Data))
 				{
-					callDetails=decoder.ReadEncodedDataNeverNull(d=>new ServiceCallRequest(d));
-				}
+					// First up, work out what we need to call...
+					ServiceCallRequest callDetails=null;
 
-				ServiceData serviceData;
-
-				if(m_ServiceContainer.TryGetServiceData(callDetails.ServiceName,out serviceData))
-				{
-					var protocol=serviceData.Service.MessageProtocol;
-
-					// ...then the actual message to the service
-					Type parameterType;
-					if(serviceData.TryGetParameterType(callDetails.ServiceMethod,out parameterType))
+					using(var decoder=new DataDecoder(stream))
 					{
-						object message=protocol.FromStream(stream,parameterType);
-
-						m_CallDispatcher.QueueUserWorkItem((state)=>ExecuteCall(callDetails,message,args,serviceData));
+						callDetails=decoder.ReadEncodedDataNeverNull(d=>new ServiceCallRequest(d));
 					}
-				}
-			}			
+
+					ServiceData serviceData;
+
+					if(m_ServiceContainer.TryGetServiceData(callDetails.ServiceName,out serviceData))
+					{
+						var protocol=serviceData.Service.MessageProtocol;
+
+						// ...then the actual message to the service
+						Type parameterType;
+						if(serviceData.TryGetParameterType(callDetails.ServiceMethod,out parameterType))
+						{
+							object message=protocol.FromStream(stream,parameterType);
+
+							m_CallDispatcher.QueueUserWorkItem((state)=>ExecuteCall(callDetails,message,args,serviceData));
+						}
+						else
+						{
+							string message=string.Format("Could not find {0} at {1}",callDetails,m_ServiceListener.Endpoint);
+							FailCall(callDetails,args,new ChurchException(message));
+						}
+					}
+					else
+					{
+						string message=string.Format("Could not find a service called {0} at endpoint {1}",callDetails.ServiceName,m_ServiceListener.Endpoint);
+						FailCall(callDetails,args,new ChurchException(message));
+					}
+				}			
+			}
+			catch(Exception e)
+			{
+				Log.Error("ServiceHost.ProcessCallRequest - failed to process call",e);
+				// TODO: Should we stop the listener?
+			}
 		}
 
 		/// <summary>
@@ -127,36 +159,76 @@ namespace Arrow.Church.Server
 		/// <param name="serviceData"></param>
 		private void AfterServiceCall(Task<object> call, ServiceCallRequest callDetails, ServiceCallEventArgs args, ServiceData serviceData)
 		{
-			var response=new ServiceCallResponse(callDetails.ServiceName,callDetails.ServiceMethod,call.IsFaulted);
-
-			using(var stream=new MemoryStream())
+			try
 			{
-				using(var encoder=new DataEncoder(stream))
-				{
-					encoder.WriteNeverNull(response);
-				}
+				var response=new ServiceCallResponse(callDetails.ServiceName,callDetails.ServiceMethod,call.IsFaulted);
 
-				var protocol=serviceData.Service.MessageProtocol;
-
-				if(call.IsFaulted)
+				using(var stream=new MemoryStream())
 				{
-					// Exceptions always go back as a .NET serialized stream 
-					// as some message formats dont support exceptions
-					s_DotNetSerializer.ToStream(stream,call.Exception);
-				}
-				else
-				{
-					protocol.ToStream(stream,call.Result);
-				}
+					using(var encoder=new DataEncoder(stream))
+					{
+						encoder.WriteNeverNull(response);
+					}
 
-				var segments=stream.ToArraySegment().ToList();
-				args.ServiceListener.Respond(args.CallDetails,segments);
+					var protocol=serviceData.Service.MessageProtocol;
+
+					if(call.IsFaulted)
+					{
+						// Exceptions always go back as a .NET serialized stream 
+						// as some message formats dont support exceptions
+						s_DotNetSerializer.ToStream(stream,call.Exception);
+					}
+					else
+					{
+						protocol.ToStream(stream,call.Result);
+					}
+
+					var segments=stream.ToArraySegment().ToList();
+					args.ServiceListener.Respond(args.CallDetails,segments);
+				}
+			}
+			catch(Exception e)
+			{
+				Log.Error("ServiceHost.AfterServiceCall - failed to respond",e);								
+				FailCall(callDetails,args,e);
+			}
+		}
+
+		private void FailCall(ServiceCallRequest callDetails, ServiceCallEventArgs args, Exception reason)
+		{
+			try
+			{
+				var response=new ServiceCallResponse(callDetails.ServiceName,callDetails.ServiceMethod,true);
+
+				using(var stream=new MemoryStream())
+				{
+					using(var encoder=new DataEncoder(stream))
+					{
+						encoder.WriteNeverNull(response);
+					}
+
+					// Exceptions always go back as a .NET serialized object
+					s_DotNetSerializer.ToStream(stream,reason);
+
+					var segments=stream.ToArraySegment().ToList();
+					args.ServiceListener.Respond(args.CallDetails,segments);
+				}
+			}
+			catch(Exception e)
+			{
+				// If something goes wrong here then we've got problems
+				Log.Error("ServiceHost.FailCall",e);
 			}
 		}
 
 		public void Dispose()
 		{
 			Stop();
+		}
+
+		public override string ToString()
+		{
+			return m_ServiceListener.ToString();
 		}
 	}
 }

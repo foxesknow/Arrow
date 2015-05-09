@@ -16,7 +16,7 @@ namespace Arrow.Church.Client.Proxy
 
 		private readonly Dictionary<string,Type> m_MethodReturnTypes=new Dictionary<string,Type>();
 
-		public ProxyBase(Uri endpoint, string serviceName, MessageProtocol messageProtocol)
+		protected ProxyBase(Uri endpoint, string serviceName, MessageProtocol messageProtocol)
 		{
 			if(endpoint==null) throw new ArgumentNullException("endpoint");
 			if(serviceName==null) throw new ArgumentNullException("serviceName");
@@ -50,6 +50,11 @@ namespace Arrow.Church.Client.Proxy
 		protected internal MessageProtocol MessageProtocol
 		{
 			get{return m_MessageProtocol;}
+		}
+
+		public override string ToString()
+		{
+			return string.Format("Service={0}, Endpoint={1}",m_ServiceName,m_ServiceDispatcher.Endpoint);
 		}
 	}
 }

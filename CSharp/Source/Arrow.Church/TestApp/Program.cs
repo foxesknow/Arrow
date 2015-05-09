@@ -36,7 +36,7 @@ namespace TestApp
 					{
 						for(int i=1; i<10; i++)
 						{
-							var task=foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=0});
+							var task=foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=5});
 							Console.WriteLine(task.Result);
 						}
 					}

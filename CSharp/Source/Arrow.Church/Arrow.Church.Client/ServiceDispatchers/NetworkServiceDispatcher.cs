@@ -65,8 +65,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 
 				var segment=stream.ToArraySegment();
 				
-				var parts=new List<ArraySegment<byte>>(2);
-				parts.Add(segment);
+				var parts=segment.ToList();
 				parts.Add(new ArraySegment<byte>(data));
 
 				m_SocketProcessor.WriteAsync(parts);

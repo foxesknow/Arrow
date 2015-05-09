@@ -31,5 +31,10 @@ namespace Arrow.Church.Common.Net
 			encoder.Write(this.ServiceName);
 			encoder.Write(this.ServiceMethod);
 		}
+
+		public override string ToString()
+		{
+			return string.Format("Service={0}, Method={1}",this.ServiceName,this.ServiceMethod);
+		}
 	}
 }

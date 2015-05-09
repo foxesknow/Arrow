@@ -81,12 +81,13 @@ namespace Arrow.Church.Client.Proxy
 		{
 			ConstructorInfo baseCtor=typeof(ProxyBase).GetConstructor
 			(
+				BindingFlags.Instance|BindingFlags.NonPublic,null,
 				new Type[]
 				{
 					typeof(Uri),
 					typeof(string),
 					typeof(MessageProtocol)
-				}
+				},null
 			);
 
 			MethodAttributes attr=MethodAttributes.Public|MethodAttributes.HideBySig;

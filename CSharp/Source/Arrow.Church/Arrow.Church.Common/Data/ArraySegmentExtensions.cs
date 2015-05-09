@@ -17,6 +17,15 @@ namespace Arrow.Church.Common.Data
 			return list;
 		}
 
+		public static IList<ArraySegment<byte>> ToList(this ArraySegment<byte> segment, IList<ArraySegment<byte>> rest)
+		{
+			var list=new List<ArraySegment<byte>>(1+rest.Count);
+			list.Add(segment);
+			list.AddRange(rest);
+
+			return list;
+		}
+
 		public static ArraySegment<byte> ToArraySegment(this MemoryStream stream)
 		{
 			var buffer=stream.GetBuffer();

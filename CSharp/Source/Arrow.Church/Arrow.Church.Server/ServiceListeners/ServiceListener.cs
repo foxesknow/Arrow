@@ -19,14 +19,24 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		private long m_CallID;
 
+		private readonly Uri m_Endpoint;
+
 		/// <summary>
 		/// Raised when a service call is received
 		/// </summary>
 		public event EventHandler<ServiceCallEventArgs> ServiceCall;
 
-		protected ServiceListener()
+		protected ServiceListener(Uri endpoint)
 		{
+			if(endpoint==null) throw new ArgumentNullException("endpoint");
+			m_Endpoint=endpoint;
+
 			m_SystemID=Interlocked.Increment(ref s_SystemID);
+		}
+
+		public Uri Endpoint
+		{
+			get{return m_Endpoint;}
 		}
 
 		public abstract void Start();
@@ -108,6 +118,11 @@ namespace Arrow.Church.Server.ServiceListeners
 		public virtual void Dispose()
 		{
 			// Does nothing
+		}
+
+		public override string ToString()
+		{
+			return m_Endpoint.ToString();
 		}
 	}
 }

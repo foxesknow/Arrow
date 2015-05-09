@@ -28,18 +28,14 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		private readonly IWorkDispatcher m_CallDispatcher=new ThreadPoolWorkDispatcher();
 
-		private readonly Uri m_Endpoint;
 		private readonly IPAddress m_Address;
 		private readonly TcpListener m_TcpListener;
 		
 		private readonly EventMessageProcessor<MessageEnvelope,byte[]> m_MessageProcessor=new EventMessageProcessor<MessageEnvelope,byte[]>();
 		private readonly IMessageFactory<MessageEnvelope,byte[]> m_MessageFactory=new MessageEnvelopeMessageFactory();
 
-		public NetworkServiceListener(Uri endpoint)
-		{
-			if(endpoint==null) throw new ArgumentNullException("endpoint");
-			m_Endpoint=endpoint;
-
+		public NetworkServiceListener(Uri endpoint) : base(endpoint)
+		{			
 			m_Address=endpoint.TryResolveIPAddress();
 			if(m_Address==null) throw new ArgumentException("could not resolve host: "+endpoint.Host.ToString(),"endpoint");
 
@@ -92,11 +88,11 @@ namespace Arrow.Church.Server.ServiceListeners
 			{
 				if(IsStopped())
 				{
-					Log.Info("HandleAcceptSocket - exception due to stopping");
+					Log.Info("NetworkServiceListener.HandleAcceptSocket - exception due to stopping");
 				}
 				else
 				{
-					Log.ErrorFormat("HandleAcceptSocket - failed {0}",e);
+					Log.ErrorFormat("NetworkServiceListener.HandleAcceptSocket - failed {0}",e);
 				}
 			}
 		}
@@ -161,7 +157,7 @@ namespace Arrow.Church.Server.ServiceListeners
 				}
 				catch(Exception e)
 				{
-					Log.ErrorFormat("Respond - failed to send reponse: {0}",e);
+					Log.ErrorFormat("NetworkServiceListener.Respond - failed to send reponse: {0}",e);
 				}
 			}
 		}
@@ -216,11 +212,11 @@ namespace Arrow.Church.Server.ServiceListeners
 			// TODO: Better handle this
 			if(results.IsFaulted)
 			{
-				Log.ErrorFormat("WriteResponseComplete - failed to send data to caller: {0}",results.Exception);
+				Log.ErrorFormat("NetworkServiceListener.WriteResponseComplete - failed to send data to caller: {0}",results.Exception);
 			}
 			else
 			{
-				Log.InfoFormat("WriteResponseComplete - success: {0}",results.Result);
+				Log.InfoFormat("NetworkServiceListener.WriteResponseComplete - success: {0}",results.Result);
 			}
 		}
 
@@ -234,10 +230,7 @@ namespace Arrow.Church.Server.ServiceListeners
 				}
 
 				var segment=stream.ToArraySegment();
-
-				List<ArraySegment<byte>> responseBuffers=new List<ArraySegment<byte>>(1+buffers.Count);
-				responseBuffers.Add(segment);
-				responseBuffers.AddRange(buffers);
+				var responseBuffers=segment.ToList(buffers);
 
 				return responseBuffers;
 			}
@@ -247,11 +240,6 @@ namespace Arrow.Church.Server.ServiceListeners
 		{
 			Close();
 			base.Dispose();			
-		}
-
-		public override string ToString()
-		{
-			return m_Endpoint.ToString();
-		}		
+		}	
 	}
 }

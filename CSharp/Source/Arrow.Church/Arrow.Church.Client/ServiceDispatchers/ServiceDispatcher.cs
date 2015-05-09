@@ -9,12 +9,14 @@ using Arrow.Church.Client.Proxy;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Data.DotNet;
 using Arrow.Church.Common.Net;
+using Arrow.Logging;
 using Arrow.Threading;
 
 namespace Arrow.Church.Client.ServiceDispatchers
 {
     public abstract partial class ServiceDispatcher : IDisposable
     {
+		private static readonly ILog Log=LogManager.GetDefaultLog();
 		private static readonly MessageProtocol s_DotNetSerializer=new SerializationMessageProtocol();
 
 		private static long s_SystemID;
@@ -125,21 +127,31 @@ namespace Arrow.Church.Client.ServiceDispatchers
 
 				long correlationID=responseMessageEnvelope.ResponseCorrelationID;
 
-				// TODO: error handling
-				if(response.IsFaulted)
+				// There's always the chance that we've been returned a type we
+				// can't deserialize, such as if the assembly containing the type
+				// was deployed to the server but not the client
+				try
 				{
-					// Exceptions are always serialized using standard .NET serialization
-					var message=s_DotNetSerializer.FromStream(stream,typeof(Exception));
-					CompleteError(correlationID,(Exception)message);
-				}
-				else
-				{
-					var call=GetCall(correlationID);
-					var returnType=call.ReturnType;
-					object message=null;
+					if(response.IsFaulted)
+					{
+						// Exceptions are always serialized using standard .NET serialization
+						var message=s_DotNetSerializer.FromStream(stream,typeof(Exception));
+						CompleteError(correlationID,(Exception)message);
+					}
+					else
+					{
+						var call=GetCall(correlationID);
+						var returnType=call.ReturnType;
+						object message=null;
 					
-					if(returnType!=typeof(void)) message=call.MessageProtocol.FromStream(stream,returnType);
-					CompleteSuccess(correlationID,message);
+						if(returnType!=typeof(void)) message=call.MessageProtocol.FromStream(stream,returnType);
+						CompleteSuccess(correlationID,message);
+					}
+				}
+				catch(Exception e)
+				{
+					Log.Error("ServiceDispatcher.HandleResponse - failed to complete response",e);
+					CompleteError(correlationID,e);
 				}
 			}
 		}
