@@ -8,6 +8,9 @@ using Arrow.Church.Common.Data;
 
 namespace Arrow.Church.Client.Proxy
 {
+	/// <summary>
+	/// The base class for all proxies
+	/// </summary>
 	public abstract partial class ProxyBase
 	{
 		private readonly ServiceDispatcher m_ServiceDispatcher;
@@ -27,6 +30,13 @@ namespace Arrow.Church.Client.Proxy
 			m_MessageProtocol=messageProtocol;
 		}
 
+		/// <summary>
+		/// Records the return type for a method.
+		/// The outer Task has been stripped from the return type.
+		/// This is used by the framework to deserialize a response from the service
+		/// </summary>
+		/// <param name="methodName">The name of the method</param>
+		/// <param name="returnType">The type of data it returns</param>
 		protected void AddReturnType(string methodName, Type returnType)
 		{
 			m_MethodReturnTypes.Add(methodName,returnType);
@@ -37,16 +47,32 @@ namespace Arrow.Church.Client.Proxy
 			return m_MethodReturnTypes.TryGetValue(methodName,out returnType);
 		}
 
+		/// <summary>
+		/// Called by the codegen layer when a method returning a generic Task is called
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="methodName">The name of the method to call</param>
+		/// <param name="request"></param>
+		/// <returns></returns>
 		protected Task<T> GenericCall<T>(string methodName, object request)
 		{
 			return m_ServiceDispatcher.Call<T>(this,m_ServiceName,methodName,request);
 		}
 
+		/// <summary>
+		/// Called by the codegen layer when a method returning a non-generic task is called
+		/// </summary>
+		/// <param name="methodName">The name of the method to call</param>
+		/// <param name="request"></param>
+		/// <returns></returns>
 		protected Task Call(string methodName, object request)
 		{
 			return m_ServiceDispatcher.Call(this,m_ServiceName,methodName,request);
 		}
 
+		/// <summary>
+		/// The encoding protocol used by the service we're proxying to
+		/// </summary>
 		protected internal MessageProtocol MessageProtocol
 		{
 			get{return m_MessageProtocol;}

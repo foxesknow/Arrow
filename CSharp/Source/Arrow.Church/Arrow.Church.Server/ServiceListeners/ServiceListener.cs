@@ -48,7 +48,7 @@ namespace Arrow.Church.Server.ServiceListeners
 		/// </summary>
 		/// <param name="callDetails"></param>
 		/// <param name="buffers"></param>
-		public abstract void Respond(CallDetails callDetails, IList<ArraySegment<byte>> buffers);
+		public abstract Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers);
 
 		protected void OnServiceCall(ServiceCallEventArgs args)
 		{

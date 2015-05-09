@@ -14,6 +14,7 @@ using Arrow.Threading;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Internal;
 using Arrow.Logging;
+using Arrow.Church.Common;
 
 
 namespace Arrow.Church.Server.ServiceListeners
@@ -133,7 +134,7 @@ namespace Arrow.Church.Server.ServiceListeners
 			processor.Close();
 		}
 
-		public override void Respond(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
+		public override Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
 		{
 			SocketProcessor processor=null;
 
@@ -150,15 +151,11 @@ namespace Arrow.Church.Server.ServiceListeners
 				envelope.DataLength=buffers.TotalLength();
 				var response=GenerateResponse(envelope,buffers);
 
-				try
-				{
-					var writeTask=processor.WriteAsync(response);
-					writeTask.ContinueWith(WriteResponseComplete);
-				}
-				catch(Exception e)
-				{
-					Log.ErrorFormat("NetworkServiceListener.Respond - failed to send reponse: {0}",e);
-				}
+				return processor.WriteAsync(response);
+			}
+			else
+			{
+				return TaskEx.FromException(new ChurchException("could not find socket processor"));
 			}
 		}
 

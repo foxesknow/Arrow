@@ -184,7 +184,15 @@ namespace Arrow.Church.Server
 					}
 
 					var segments=stream.ToArraySegment().ToList();
-					args.ServiceListener.Respond(args.CallDetails,segments);
+					
+					var respondTask=args.ServiceListener.RespondAsync(args.CallDetails,segments);
+					respondTask.ContinueWith(t=>
+					{
+						if(t.IsFaulted)
+						{
+							Log.Error("ServiceHost.AfterServiceCall - failed to respond",t.Exception);
+						}
+					});
 				}
 			}
 			catch(Exception e)
@@ -211,7 +219,15 @@ namespace Arrow.Church.Server
 					s_DotNetSerializer.ToStream(stream,reason);
 
 					var segments=stream.ToArraySegment().ToList();
-					args.ServiceListener.Respond(args.CallDetails,segments);
+					
+					var respondTask=args.ServiceListener.RespondAsync(args.CallDetails,segments);
+					respondTask.ContinueWith(t=>
+					{
+						if(t.IsFaulted)
+						{
+							Log.Error("ServiceHost.FailCall - failed to fail call!",t.Exception);
+						}
+					});
 				}
 			}
 			catch(Exception e)

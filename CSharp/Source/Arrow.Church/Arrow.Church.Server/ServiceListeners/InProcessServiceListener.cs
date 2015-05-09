@@ -36,7 +36,7 @@ namespace Arrow.Church.Server.ServiceListeners
 			// Does nothing
 		}
 
-		public override void Respond(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
+		public override Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
 		{
 			var key=Tuple.Create(callDetails.Envelope.MessageSystemID,callDetails.Envelope.MessageCorrelationID);
 			DispatcherCallback callback=null;
@@ -56,6 +56,8 @@ namespace Arrow.Church.Server.ServiceListeners
 
 				callback(response,buffers);
 			}
+
+			return Task.FromResult(true);
 		}
 
 		private void RouterCallback(MessageEnvelope requestMessageEnvelope, byte[] data, DispatcherCallback dispatcherCallback)
