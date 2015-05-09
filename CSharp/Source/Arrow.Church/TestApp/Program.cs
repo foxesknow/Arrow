@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 using Arrow.Church.Common;
 using Arrow.Church.Server;
-using Arrow.Church.Server.ServiceListeners;
+using Arrow.Church.Client;
 using Arrow.Church.Common.Data.DotNet;
-using Arrow.Church.Client.Proxy;
-using Arrow.Church.Client.ServiceDispatchers;
 
 namespace TestApp
 {
@@ -31,19 +29,20 @@ namespace TestApp
 					host.ServiceContainer.Add(new FooService());
 					host.Start();
 				
-					var factory=ProxyBase.GetProxyFactory(typeof(IFoo));			
-					var foo=factory.Create<IFoo>(endpoint,"Foo");
+					var factory=ProxyManager.FactoryFor<IFoo>();			
+					var foo=factory.Create(endpoint,"Foo");
 
 					try
 					{
 						for(int i=1; i<10; i++)
 						{
-							var task=foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=5});
+							var task=foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=0});
 							Console.WriteLine(task.Result);
 						}
 					}
-					catch
+					catch(Exception e)
 					{
+						Console.Error.WriteLine(e);
 					}
 
 					Console.ReadLine();

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Church.Client.Proxy
+namespace Arrow.Church.Client
 {
-	public delegate object ProxyCreator(Uri endpoint, string serviceName);
+	delegate object ProxyCreator(Uri endpoint, string serviceName);
 }

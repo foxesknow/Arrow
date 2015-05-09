@@ -18,7 +18,7 @@ namespace Arrow.Church.Client.Proxy
 		private static readonly object s_SyncRoot=new object();
 		private static readonly Dictionary<Type,ProxyCreator> s_Proxies=new Dictionary<Type,ProxyCreator>();
 
-		public static ProxyFactory GetProxyFactory(Type type)
+		internal static ProxyCreator GetProxyCreator(Type type)
 		{
 			if(type==null) throw new ArgumentNullException("type");
 			if(type.IsInterface==false) throw new ArgumentException("not an interface: "+type.ToString(),"type");
@@ -32,7 +32,7 @@ namespace Arrow.Church.Client.Proxy
 					s_Proxies.Add(type,proxyFactory);
 				}
 
-				return new ProxyFactory(proxyFactory);
+				return proxyFactory;
 			}
 		}
 

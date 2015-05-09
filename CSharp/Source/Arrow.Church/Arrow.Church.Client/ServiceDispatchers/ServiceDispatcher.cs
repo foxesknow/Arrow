@@ -75,12 +75,15 @@ namespace Arrow.Church.Client.ServiceDispatchers
 
 			if(call!=null)
 			{
-				m_CompletionDispatcher.QueueUserWorkItem(s=>call.Accept(true,exception));
+				var unpackedException=UnpackException(exception);
+				m_CompletionDispatcher.QueueUserWorkItem(s=>call.Accept(true,unpackedException));
 			}
 		}
 
 		protected void CompleteAllError(Exception exception)
 		{
+			var unpackedException=UnpackException(exception);
+
 			lock(m_SyncRoot)
 			{
 				foreach(var call in m_OutstandingCalls.Values)
@@ -89,12 +92,23 @@ namespace Arrow.Church.Client.ServiceDispatchers
 
 					if(theCall!=null)
 					{
-						m_CompletionDispatcher.QueueUserWorkItem(s=>theCall.Accept(true,exception));
+						m_CompletionDispatcher.QueueUserWorkItem(s=>theCall.Accept(true,unpackedException));
 					}
 				}
 				
 				m_OutstandingCalls.Clear();
 			}
+		}
+
+		protected Exception UnpackException(Exception exception)
+		{
+			var aggregate=exception as AggregateException;
+			if(aggregate==null) return exception;
+
+			var flattenedExceptions=aggregate.Flatten();
+			var innerExceptions=flattenedExceptions.InnerExceptions;
+
+			return innerExceptions.Count==1 ? innerExceptions[0] : flattenedExceptions;
 		}
 
 		protected void HandleResponse(MessageEnvelope responseMessageEnvelope, IList<ArraySegment<byte>> buffers)
