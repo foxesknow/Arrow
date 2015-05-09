@@ -38,26 +38,33 @@ namespace Arrow.Church.Server.ServiceListeners
 
 		public override Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
 		{
-			var key=Tuple.Create(callDetails.Envelope.MessageSystemID,callDetails.Envelope.MessageCorrelationID);
-			DispatcherCallback callback=null;
-
-			lock(m_SyncRoot)
+			try
 			{
-				if(m_Callbacks.TryGetValue(key,out callback))
+				var key=Tuple.Create(callDetails.Envelope.MessageSystemID,callDetails.Envelope.MessageCorrelationID);
+				DispatcherCallback callback=null;
+
+				lock(m_SyncRoot)
 				{
-					m_Callbacks.Remove(key);
+					if(m_Callbacks.TryGetValue(key,out callback))
+					{
+						m_Callbacks.Remove(key);
+					}
 				}
-			}
 
-			if(callback!=null)
+				if(callback!=null)
+				{
+					var response=CreateReponse(callDetails.Envelope);
+					response.DataLength=buffers.TotalLength();
+
+					callback(response,buffers);
+				}
+
+				return Task.FromResult(true);
+			}
+			catch(Exception e)
 			{
-				var response=CreateReponse(callDetails.Envelope);
-				response.DataLength=buffers.TotalLength();
-
-				callback(response,buffers);
+				return TaskEx.FromException(e);
 			}
-
-			return Task.FromResult(true);
 		}
 
 		private void RouterCallback(MessageEnvelope requestMessageEnvelope, byte[] data, DispatcherCallback dispatcherCallback)

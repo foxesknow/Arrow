@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Net;
 using Arrow.Church.Common.ServiceDispatchers;
+using Arrow.Threading;
 
 namespace Arrow.Church.Client.ServiceDispatchers
 {
@@ -17,9 +18,10 @@ namespace Arrow.Church.Client.ServiceDispatchers
 
 		}
 
-		protected override void SendRequest(MessageEnvelope envelope, byte[] data)
+		protected override Task SendRequestAsync(MessageEnvelope envelope, byte[] data)
 		{
 			InProcessServiceDispatcherRouter.Enqueue(this.Endpoint,envelope,data,HandleResponse);
+			return TaskEx.Void();
 		}
 	}
 }

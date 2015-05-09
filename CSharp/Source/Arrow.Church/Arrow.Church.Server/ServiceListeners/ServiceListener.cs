@@ -48,6 +48,7 @@ namespace Arrow.Church.Server.ServiceListeners
 		/// </summary>
 		/// <param name="callDetails"></param>
 		/// <param name="buffers"></param>
+		/// <returns>A task that is compete when the response has been sent</returns>
 		public abstract Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers);
 
 		protected void OnServiceCall(ServiceCallEventArgs args)

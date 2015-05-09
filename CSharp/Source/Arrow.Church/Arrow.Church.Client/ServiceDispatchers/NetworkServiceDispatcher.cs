@@ -11,6 +11,7 @@ using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Internal;
 using Arrow.Church.Common.Net;
 using Arrow.Net.Message;
+using Arrow.Threading;
 
 namespace Arrow.Church.Client.ServiceDispatchers
 {
@@ -56,19 +57,26 @@ namespace Arrow.Church.Client.ServiceDispatchers
 			CompleteAllError(new ChurchException("network fault for "+this.Endpoint));
 		}
 
-		protected override void SendRequest(MessageEnvelope envelope, byte[] data)
+		protected override Task SendRequestAsync(MessageEnvelope envelope, byte[] data)
 		{
-			using(var stream=new MemoryStream())
-			using(var encoder=new DataEncoder(stream))
+			try
 			{
-				encoder.WriteNeverNull(envelope);
+				using(var stream=new MemoryStream())
+				using(var encoder=new DataEncoder(stream))
+				{
+					encoder.WriteNeverNull(envelope);
 
-				var segment=stream.ToArraySegment();
+					var segment=stream.ToArraySegment();
 				
-				var parts=segment.ToList();
-				parts.Add(new ArraySegment<byte>(data));
+					var parts=segment.ToList();
+					parts.Add(new ArraySegment<byte>(data));
 
-				m_SocketProcessor.WriteAsync(parts);
+					return m_SocketProcessor.WriteAsync(parts);
+				}
+			}
+			catch(Exception e)
+			{
+				return TaskEx.FromException(e);
 			}
 		}
 

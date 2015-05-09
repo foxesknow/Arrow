@@ -49,7 +49,13 @@ namespace Arrow.Church.Client.ServiceDispatchers
 			get{return m_SystemID;}
 		}
 
-		protected abstract void SendRequest(MessageEnvelope envelope, byte[] data);
+		/// <summary>
+		/// Sends the request to wherever it needs to go
+		/// </summary>
+		/// <param name="envelope">The envolope for the request</param>
+		/// <param name="data">The actual request data</param>
+		/// <returns>A task that is completed when the data has been sent</returns>
+		protected abstract Task SendRequestAsync(MessageEnvelope envelope, byte[] data);
 
 		/// <summary>
 		/// Signals the appropriate task than it has completed successfully
@@ -170,7 +176,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 				m_OutstandingCalls.Add(envelope.MessageCorrelationID,callData);				
 			}
 
-			SendRequest(envelope,data);
+			SendRequestAsync(envelope,data);
 			return callData.GetTask();
 		}
 
@@ -188,7 +194,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 				m_OutstandingCalls.Add(envelope.MessageCorrelationID,callData);				
 			}
 
-			SendRequest(envelope,data);
+			SendRequestAsync(envelope,data);
 			return callData.GetTask();
 		}
 

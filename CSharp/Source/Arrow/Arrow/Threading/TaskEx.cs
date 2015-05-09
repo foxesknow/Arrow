@@ -12,6 +12,18 @@ namespace Arrow.Threading
 	public static class TaskEx
 	{
 		/// <summary>
+		/// Returns a successful that has no value
+		/// </summary>
+		/// <returns>A task</returns>
+		public static Task Void()
+		{
+			var source=new TaskCompletionSource<bool>();
+			source.SetResult(true);
+
+			return source.Task;
+		}
+
+		/// <summary>
 		/// Creates a failed task
 		/// </summary>
 		/// <param name="exception">The reason the task failed</param>
