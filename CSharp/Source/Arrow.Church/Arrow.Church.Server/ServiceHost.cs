@@ -53,6 +53,14 @@ namespace Arrow.Church.Server
 		}
 
 		/// <summary>
+		/// Returns the endpoint the host is listening on
+		/// </summary>
+		public Uri Endpoint
+		{
+			get{return m_ServiceListener.Endpoint;}
+		}
+
+		/// <summary>
 		/// Starts all the services
 		/// </summary>
 		public void Start()

@@ -42,6 +42,7 @@
     <Compile Include="CallDetails.cs" />
     <Compile Include="ChurchService.cs" />
     <Compile Include="ChurchService.Generic.cs" />
+    <Compile Include="HostBuilder\ServiceDetails.cs" />
     <Compile Include="IServiceShutdown.cs" />
     <Compile Include="IServiceStartup.cs" />
     <Compile Include="ServiceCallEventArgs.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceData.cs" />
     <Compile Include="ServiceHost.cs" />
+    <Compile Include="HostBuilder\ServiceHostBuilder.cs" />
     <Compile Include="ServiceListeners\InProcessServiceListenerCreator.cs" />
     <Compile Include="ServiceListeners\NetworkServiceListenerCreator.cs" />
     <Compile Include="ServiceListeners\ServiceListener.cs" />

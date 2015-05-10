@@ -8,6 +8,9 @@ using Arrow.Church.Common;
 using Arrow.Church.Server;
 using Arrow.Church.Client;
 using Arrow.Church.Common.Data.DotNet;
+using Arrow.Configuration;
+using Arrow.Xml.ObjectCreation;
+using Arrow.Church.Server.HostBuilder;
 
 namespace TestApp
 {
@@ -20,17 +23,17 @@ namespace TestApp
 
 		static void ListenerMain(string[] args)
 		{
+			var hostConfigXml=AppConfig.GetSectionXml("App","Hosts/Main");
+			var builder=XmlCreation.Create<ServiceHostBuilder>(hostConfigXml);
+
 			try
 			{
-				Uri endpoint=new Uri("net://localhost:8999");
-				
-				using(var host=new ServiceHost(endpoint))
+				using(var host=builder.Build())
 				{
-					host.ServiceContainer.Add(new FooService());
 					host.Start();
 				
 					var factory=ProxyManager.FactoryFor<IFoo>();			
-					var foo=factory.Create(endpoint,"Foo");
+					var foo=factory.Create(host.Endpoint,"Foo");
 
 					try
 					{
@@ -39,6 +42,8 @@ namespace TestApp
 							var task=foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=5});
 							Console.WriteLine(task.Result);
 						}
+
+						foo.DoNothing();
 					}
 					catch(Exception e)
 					{
@@ -60,7 +65,10 @@ namespace TestApp
 	{
 		public FooService() : base()
 		{
+			this.NothingText="Does nothing!";
 		}
+
+		public string NothingText{get;set;}
 
 		public Task<BinaryOperationResponse> Add(BinaryOperationRequest request)
 		{
@@ -85,7 +93,7 @@ namespace TestApp
 
 		public Task DoNothing()
 		{
-			Console.WriteLine("doing nothing!");
+			Console.WriteLine(this.NothingText);
 			return Void();
 		}
 	}
