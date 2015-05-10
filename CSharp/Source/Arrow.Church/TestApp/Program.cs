@@ -18,10 +18,11 @@ namespace TestApp
 	{
 		static void Main(string[] args)
 		{
-			ListenerMain(args);
+			var task=ListenerMain(args);
+			task.Wait();
 		}
 
-		static void ListenerMain(string[] args)
+		static async Task ListenerMain(string[] args)
 		{
 			var hostConfigXml=AppConfig.GetSectionXml("App","Hosts/Main");
 			var builder=XmlCreation.Create<ServiceHostBuilder>(hostConfigXml);
@@ -39,11 +40,11 @@ namespace TestApp
 					{
 						for(int i=1; i<10; i++)
 						{
-							var task=foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=5});
-							Console.WriteLine(task.Result);
+							var result=await foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=5});
+							Console.WriteLine(result);
 						}
 
-						foo.DoNothing();
+						await foo.DoNothing();
 					}
 					catch(Exception e)
 					{

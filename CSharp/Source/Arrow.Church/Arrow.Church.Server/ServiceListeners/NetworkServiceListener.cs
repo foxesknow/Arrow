@@ -69,6 +69,12 @@ namespace Arrow.Church.Server.ServiceListeners
 		{
 			try
 			{
+				// This method will be triggered if the listener is closing down
+				// so check to save throwing an exception...
+				if(IsStopped()) return;
+
+				// ...However, it's possible that we're not stopping but something goes wrong
+				// with the socket here, so play safe
 				var socket=m_TcpListener.EndAcceptSocket(result);
 
 				

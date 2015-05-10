@@ -8,6 +8,9 @@ using Arrow.Serialization;
 
 namespace Arrow.Church.Common.Data.DotNet
 {
+	/// <summary>
+	/// Implements .NET serialization
+	/// </summary>
 	public class SerializationMessageProtocol : MessageProtocol
 	{
 		public override object FromBuffer(byte[] buffer, Type expectedType)
