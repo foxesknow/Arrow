@@ -61,7 +61,7 @@ namespace TestApp
 		}
 	}
 
-	[ServiceName("Foo")]
+	
 	public class FooService : ChurchService<IFoo>, IFoo
 	{
 		public FooService() : base()
@@ -100,7 +100,7 @@ namespace TestApp
 	}
 
 
-	[ChurchService(typeof(SerializationMessageProtocol))]
+	[ChurchService("Foo",typeof(SerializationMessageProtocol))]
 	public interface IFoo
 	{
 		Task<BinaryOperationResponse> Add(BinaryOperationRequest request);

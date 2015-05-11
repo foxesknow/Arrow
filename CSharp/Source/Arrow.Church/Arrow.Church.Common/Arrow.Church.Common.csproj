@@ -58,7 +58,6 @@
     <Compile Include="ServiceDispatchers\DispatcherCallback.cs" />
     <Compile Include="ServiceDispatchers\InProcessServiceDispatcherRouter.cs" />
     <Compile Include="ServiceDispatchers\ListenerCallback.cs" />
-    <Compile Include="ServiceNameAttribute.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
   </ItemGroup>
   <ItemGroup>

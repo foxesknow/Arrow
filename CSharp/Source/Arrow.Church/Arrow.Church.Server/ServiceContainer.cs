@@ -24,14 +24,14 @@ namespace Arrow.Church.Server
 			if(service==null) throw new ArgumentNullException("service");
 
 			// We need to work out the name...
-			Type type=service.GetType();
-			var attr=type.GetCustomAttribute<ServiceNameAttribute>();
+			Type type=service.ServiceInterface;
+			var attr=type.GetCustomAttribute<ChurchServiceAttribute>();
 			if(attr==null)
 			{
 				throw new ChurchException("could not infer service name for "+type.ToString());
 			}
 			
-			Add(attr.Name,service);
+			Add(attr.ServiceName,service);
 		}
 
 		public void Add(string serviceName, ChurchService service)
