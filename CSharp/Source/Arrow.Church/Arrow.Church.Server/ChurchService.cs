@@ -85,5 +85,15 @@ namespace Arrow.Church.Server
 			var churchService=(ChurchServiceAttribute)attributes[0];
 			return (MessageProtocol)Activator.CreateInstance(churchService.MessageProtocolType);
 		}
-    }
+
+		internal void ContainerDispose()
+		{
+			if(m_StopEvent!=null)
+			{
+				m_StopEvent.Dispose();
+				m_StopEvent=null;
+			}
+		}
+
+	}
 }

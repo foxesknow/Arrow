@@ -248,6 +248,9 @@ namespace Arrow.Church.Server
 		public void Dispose()
 		{
 			Stop();
+
+			m_ServiceListener.Dispose();
+			m_ServiceContainer.Dispose();
 		}
 
 		public override string ToString()

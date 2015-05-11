@@ -4,20 +4,22 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-
 using Arrow.Church.Common;
 using Arrow.Church.Common.Data;
 using Arrow.Logging;
 
 namespace Arrow.Church.Server
 {
-	public class ServiceContainer
+	public class ServiceContainer : IDisposable
 	{
 		private static readonly ILog Log=LogManager.GetDefaultLog();
 
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<string,ServiceData> m_Services=new Dictionary<string,ServiceData>();
+
+		private long m_Running;
 
 		public void Add(ChurchService service)
 		{
@@ -53,39 +55,45 @@ namespace Arrow.Church.Server
 
 		internal void Start()
 		{
-			foreach(var serviceData in m_Services.Values)
+			if(Interlocked.CompareExchange(ref m_Running,1,0)==0)
 			{
-				var service=serviceData.Service;
-				service.ContainerStart();
+				foreach(var serviceData in m_Services.Values)
+				{
+					var service=serviceData.Service;
+					service.ContainerStart();
 
-				var serviceStartup=service as IServiceStartup;
-				if(serviceStartup!=null) serviceStartup.Start();
-			}
+					var serviceStartup=service as IServiceStartup;
+					if(serviceStartup!=null) serviceStartup.Start();
+				}
 
-			// That's everything started, now let them know
-			foreach(var serviceData in m_Services.Values)
-			{
-				var serviceStartup=serviceData.Service as IServiceStartup;
-				if(serviceStartup!=null) serviceStartup.AllStarted();
+				// That's everything started, now let them know
+				foreach(var serviceData in m_Services.Values)
+				{
+					var serviceStartup=serviceData.Service as IServiceStartup;
+					if(serviceStartup!=null) serviceStartup.AllStarted();
+				}
 			}
 		}
 
 		internal void Stop()
 		{
-			foreach(var serviceData in m_Services.Values)
+			if(Interlocked.CompareExchange(ref m_Running,0,1)==1)
 			{
-				var service=serviceData.Service;
-				service.ContainerStop();
+				foreach(var serviceData in m_Services.Values)
+				{
+					var service=serviceData.Service;
+					service.ContainerStop();
 
-				var serviceShutdown=service as IServiceShutdown;
-				if(serviceShutdown!=null) serviceShutdown.Shutdown();
-			}
+					var serviceShutdown=service as IServiceShutdown;
+					if(serviceShutdown!=null) serviceShutdown.Shutdown();
+				}
 
-			// That's everything started, now let them know
-			foreach(var serviceData in m_Services.Values)
-			{
-				var serviceShutdown=serviceData.Service as IServiceShutdown;
-				if(serviceShutdown!=null) serviceShutdown.AllShutdown();
+				// That's everything started, now let them know
+				foreach(var serviceData in m_Services.Values)
+				{
+					var serviceShutdown=serviceData.Service as IServiceShutdown;
+					if(serviceShutdown!=null) serviceShutdown.AllShutdown();
+				}
 			}
 		}
 
@@ -308,5 +316,21 @@ namespace Arrow.Church.Server
 
 			return source.Task;
 		}
+
+		public void Dispose()
+		{
+			Stop();
+
+			foreach(var serviceData in m_Services.Values)
+			{
+				var service=serviceData.Service;
+
+				var disposable=service as IDisposable;
+				if(disposable!=null) disposable.Dispose();
+
+				service.ContainerStop();
+			}
+		}
+
 	}
 }
