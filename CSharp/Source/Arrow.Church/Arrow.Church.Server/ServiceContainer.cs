@@ -55,7 +55,10 @@ namespace Arrow.Church.Server
 		{
 			foreach(var serviceData in m_Services.Values)
 			{
-				var serviceStartup=serviceData.Service as IServiceStartup;
+				var service=serviceData.Service;
+				service.ContainerStart();
+
+				var serviceStartup=service as IServiceStartup;
 				if(serviceStartup!=null) serviceStartup.Start();
 			}
 
@@ -71,7 +74,10 @@ namespace Arrow.Church.Server
 		{
 			foreach(var serviceData in m_Services.Values)
 			{
-				var serviceShutdown=serviceData.Service as IServiceShutdown;
+				var service=serviceData.Service;
+				service.ContainerStop();
+
+				var serviceShutdown=service as IServiceShutdown;
 				if(serviceShutdown!=null) serviceShutdown.Shutdown();
 			}
 
