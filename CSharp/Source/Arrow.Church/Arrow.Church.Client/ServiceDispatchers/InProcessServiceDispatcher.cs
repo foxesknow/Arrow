@@ -18,10 +18,9 @@ namespace Arrow.Church.Client.ServiceDispatchers
 
 		}
 
-		protected override Task SendRequestAsync(MessageEnvelope envelope, byte[] data)
+		protected override void SendRequest(MessageEnvelope envelope, byte[] data)
 		{
 			InProcessServiceDispatcherRouter.Enqueue(this.Endpoint,envelope,data,HandleResponse);
-			return TaskEx.Void();
 		}
 	}
 }

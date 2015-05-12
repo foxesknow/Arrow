@@ -53,6 +53,8 @@
     <Compile Include="HostBuilder\ServiceHostBuilder.cs" />
     <Compile Include="ServiceListeners\InProcessServiceListenerCreator.cs" />
     <Compile Include="ServiceListeners\NetworkServiceListenerCreator.cs" />
+    <Compile Include="ServiceListeners\NullServiceListener.cs" />
+    <Compile Include="ServiceListeners\NullServiceListenerCreator.cs" />
     <Compile Include="ServiceListeners\ServiceListener.cs" />
     <Compile Include="ServiceListeners\ServiceListenerAttribute.cs" />
     <Compile Include="ServiceListeners\InProcessServiceListener.cs" />
