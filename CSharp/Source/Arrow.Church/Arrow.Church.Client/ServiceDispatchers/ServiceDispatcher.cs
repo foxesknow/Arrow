@@ -54,7 +54,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 		/// </summary>
 		/// <param name="envelope">The envolope for the request</param>
 		/// <param name="data">The actual request data</param>
-		protected abstract void SendRequest(MessageEnvelope envelope, byte[] data);
+		protected abstract Task SendRequestAsync(MessageEnvelope envelope, byte[] data);
 
 		/// <summary>
 		/// Signals the appropriate task than it has completed successfully
@@ -175,7 +175,9 @@ namespace Arrow.Church.Client.ServiceDispatchers
 				m_OutstandingCalls.Add(envelope.MessageCorrelationID,callData);				
 			}
 
-			SendRequest(envelope,data);
+			var sendTask=SendRequestAsync(envelope,data);
+			sendTask.ContinueWith(t=>SendRequestContinuation(t,envelope));
+
 			return callData.GetTask();
 		}
 
@@ -193,8 +195,19 @@ namespace Arrow.Church.Client.ServiceDispatchers
 				m_OutstandingCalls.Add(envelope.MessageCorrelationID,callData);				
 			}
 
-			SendRequest(envelope,data);
+			var sendTask=SendRequestAsync(envelope,data);
+			sendTask.ContinueWith(t=>SendRequestContinuation(t,envelope));
+			
 			return callData.GetTask();
+		}
+
+		private void SendRequestContinuation(Task task, MessageEnvelope envelope)
+		{
+			if(task.IsFaulted)
+			{
+				var correlationID=envelope.MessageCorrelationID;
+				CompleteError(correlationID,task.Exception);
+			}
 		}
 
 		private void Encode(ProxyBase proxy, string serviceName, string serviceMethod, object request, out MessageEnvelope envelope, out byte[] data)

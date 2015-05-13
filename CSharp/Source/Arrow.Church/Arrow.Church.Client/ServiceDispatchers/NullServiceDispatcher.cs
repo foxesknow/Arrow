@@ -13,10 +13,9 @@ namespace Arrow.Church.Client.ServiceDispatchers
 		{
 		}
 
-		protected override void SendRequest(Common.Net.MessageEnvelope envelope, byte[] data)
+		protected override Task SendRequestAsync(Common.Net.MessageEnvelope envelope, byte[] data)
 		{
-			var correlationID=envelope.MessageCorrelationID;
-			CompleteError(correlationID,new NotImplementedException());
+			return TaskEx.FromException(new NotImplementedException());
 		}
 	}
 }

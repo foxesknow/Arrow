@@ -107,7 +107,11 @@ namespace Arrow.Church.Server.ServiceListeners
 		private void HandleMessage(object sender, SocketMessageEventArgs<MessageEnvelope,byte[]> args)
 		{
 			var callDetails=new CallDetails(args.Header,args.Body,args.SocketProcessor.ID);
-			m_CallDispatcher.QueueUserWorkItem(s=>HandleMessage(callDetails));
+			
+			m_CallDispatcher.QueueUserWorkItem(cd=>
+			{
+				HandleMessage((CallDetails)cd);
+			},callDetails);
 
 			args.ReadMode=ReadMode.KeepReading;
 		}

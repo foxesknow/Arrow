@@ -57,7 +57,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 			CompleteAllError(new ChurchException("network fault for "+this.Endpoint));
 		}
 
-		protected override void SendRequest(MessageEnvelope envelope, byte[] data)
+		protected override Task SendRequestAsync(MessageEnvelope envelope, byte[] data)
 		{
 			try
 			{
@@ -71,13 +71,12 @@ namespace Arrow.Church.Client.ServiceDispatchers
 					var parts=segment.ToList();
 					parts.Add(new ArraySegment<byte>(data));
 
-					m_SocketProcessor.WriteAsync(parts);
+					return m_SocketProcessor.WriteAsync(parts);
 				}
 			}
 			catch(Exception e)
 			{
-				long correlationID=envelope.MessageCorrelationID;
-				CompleteError(correlationID,e);
+				return TaskEx.FromException(e);
 			}
 		}
 
