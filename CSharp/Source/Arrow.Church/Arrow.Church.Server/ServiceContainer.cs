@@ -21,6 +21,11 @@ namespace Arrow.Church.Server
 
 		private long m_Running;
 
+		public bool IsRunning
+		{
+			get{return Interlocked.Read(ref m_Running)==1;}
+		}
+
 		public void Add(ChurchService service)
 		{
 			if(service==null) throw new ArgumentNullException("service");
@@ -38,6 +43,8 @@ namespace Arrow.Church.Server
 
 		public void Add(string serviceName, ChurchService service)
 		{
+			if(this.IsRunning) throw new InvalidOperationException("ServiceContainer.Add - cannot add once container is started");
+
 			if(serviceName==null) throw new ArgumentNullException("serviceName");
 			if(string.IsNullOrWhiteSpace(serviceName)) throw new ArgumentException("serviceName");
 			if(service==null) throw new ArgumentNullException("service");

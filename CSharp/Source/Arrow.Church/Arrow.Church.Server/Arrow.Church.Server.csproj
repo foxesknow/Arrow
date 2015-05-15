@@ -43,6 +43,7 @@
     <Compile Include="ChurchService.cs" />
     <Compile Include="ChurchService.Generic.cs" />
     <Compile Include="HostBuilder\ServiceDetails.cs" />
+    <Compile Include="IHost.cs" />
     <Compile Include="IServiceShutdown.cs" />
     <Compile Include="IServiceStartup.cs" />
     <Compile Include="ServiceCallEventArgs.cs" />
