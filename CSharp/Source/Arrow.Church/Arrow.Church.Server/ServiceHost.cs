@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Data.DotNet;
 using Arrow.Church.Common.Net;
+using System.Threading;
 
 using Arrow.Threading;
 using Arrow.Logging;
@@ -18,16 +19,19 @@ namespace Arrow.Church.Server
 	/// <summary>
 	/// Hosts a number of services
 	/// </summary>
-	public class ServiceHost : IDisposable
+	public partial class ServiceHost : IDisposable
 	{
 		private static readonly MessageProtocol s_DotNetSerializer=new SerializationMessageProtocol();
 		private static readonly ILog Log=LogManager.GetDefaultLog();
 
 		private readonly ServiceListener m_ServiceListener;
-		private readonly ServiceContainer m_ServiceContainer=new ServiceContainer();
+		private readonly ServiceContainer m_ServiceContainer;
 
 		private readonly ActionWorkQueue m_ServiceCallRequestQueue=new ActionWorkQueue();
 		private readonly IWorkDispatcher m_CallDispatcher=new ThreadPoolWorkDispatcher();
+
+		private CancellationTokenSource m_StopCancellationTokenSource=new CancellationTokenSource();
+		private ManualResetEvent m_StopEvent=new ManualResetEvent(false);
 
 		/// <summary>
 		/// Initializes the instance
@@ -40,6 +44,7 @@ namespace Arrow.Church.Server
 			var creator=ServiceListenerFactory.TryCreate(endpoint.Scheme);
 			if(creator==null) throw new ChurchException("scheme not registered: "+endpoint.Scheme);
 
+			m_ServiceContainer=new ServiceContainer(this);
 			m_ServiceListener=creator.Create(endpoint);
 			m_ServiceListener.ServiceCall+=HandleServiceCall;
 		}
@@ -52,6 +57,11 @@ namespace Arrow.Church.Server
 			get{return m_ServiceContainer;}
 		}
 
+		internal ServiceListener ServiceListener
+		{
+			get{return m_ServiceListener;}
+		}
+
 		/// <summary>
 		/// Returns the endpoint the host is listening on
 		/// </summary>
@@ -61,10 +71,31 @@ namespace Arrow.Church.Server
 		}
 
 		/// <summary>
+		/// Signalled when the service should stop
+		/// </summary>
+		public EventWaitHandle StopEvent
+		{
+			get{return m_StopEvent;}
+		}
+
+		/// <summary>
+		/// Set when the service should stop
+		/// </summary>
+		public CancellationToken StopCancellationToken
+		{
+			get{return m_StopCancellationTokenSource.Token;}
+		}
+
+		/// <summary>
 		/// Starts all the services
 		/// </summary>
 		public void Start()
 		{
+			m_StopEvent.Reset();
+
+			if(m_StopCancellationTokenSource!=null) m_StopCancellationTokenSource.Dispose();
+			m_StopCancellationTokenSource=new CancellationTokenSource();
+
 			Log.Info("ServiceHost.Start - starting");
 			m_ServiceContainer.Start();
 			m_ServiceListener.Start();
@@ -76,6 +107,9 @@ namespace Arrow.Church.Server
 		/// </summary>
 		public void Stop()
 		{
+			m_StopEvent.Set();
+			m_StopCancellationTokenSource.Cancel();
+
 			Log.Info("ServiceHost.Stop - stopping");
 			m_ServiceListener.Stop();
 			m_ServiceContainer.Stop();

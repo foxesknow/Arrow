@@ -9,13 +9,12 @@ using Arrow.Church.Common.Data;
 
 namespace Arrow.Church.Server
 {
-    public abstract class ChurchService
+    public abstract partial class ChurchService
     {
 		private readonly Type m_ServiceInterface;
 		private readonly MessageProtocol m_MessageProtocol;
 
-		private CancellationTokenSource m_StopCancellationTokenSource=new CancellationTokenSource();
-		private ManualResetEvent m_StopEvent=new ManualResetEvent(false);
+		private IHost m_Host=NotRunningHost.Instance;
 
 		internal ChurchService(Type serviceInterface)
 		{
@@ -25,34 +24,14 @@ namespace Arrow.Church.Server
 			m_MessageProtocol=ExtractMessageProtocol(serviceInterface);
 		}
 
-		internal void ContainerStart()
+		internal void ContainerStart(IHost host)
 		{
-			if(m_StopCancellationTokenSource!=null) m_StopCancellationTokenSource.Dispose();
-			m_StopCancellationTokenSource=new CancellationTokenSource();
-
-			m_StopEvent.Reset();
+			m_Host=host;
 		}
 
 		internal void ContainerStop()
 		{
-			m_StopCancellationTokenSource.Cancel();
-			m_StopEvent.Set();
-		}
-
-		/// <summary>
-		/// Signalled when the service should stop
-		/// </summary>
-		protected EventWaitHandle StopEvent
-		{
-			get{return m_StopEvent;}
-		}
-
-		/// <summary>
-		/// Set when the service should stop
-		/// </summary>
-		protected CancellationToken StopCancellationToken
-		{
-			get{return m_StopCancellationTokenSource.Token;}
+			m_Host=NotRunningHost.Instance;
 		}
 
 		/// <summary>
@@ -65,6 +44,15 @@ namespace Arrow.Church.Server
 			source.SetResult(true);
 
 			return source.Task;
+		}
+
+		/// <summary>
+		/// Returns access to host features.
+		/// These are only available once the host has been started
+		/// </summary>
+		protected IHost Host
+		{
+			get{return m_Host;}
 		}
 
 		public MessageProtocol MessageProtocol
@@ -88,12 +76,6 @@ namespace Arrow.Church.Server
 
 		internal void ContainerDispose()
 		{
-			if(m_StopEvent!=null)
-			{
-				m_StopEvent.Dispose();
-				m_StopEvent=null;
-			}
 		}
-
 	}
 }

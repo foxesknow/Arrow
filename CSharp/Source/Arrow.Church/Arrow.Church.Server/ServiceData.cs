@@ -9,12 +9,19 @@ namespace Arrow.Church.Server
 {
 	class ServiceData
 	{
+		private readonly string m_ServiceName;
 		private readonly ChurchService m_Service;
 		private readonly Dictionary<string,MethodDetails> m_ServiceMethods=new Dictionary<string,MethodDetails>();
 
-		public ServiceData(ChurchService service)
+		public ServiceData(string serviceName, ChurchService service)
 		{
+			m_ServiceName=serviceName;
 			m_Service=service;
+		}
+
+		public string ServiceName
+		{
+			get{return m_ServiceName;}
 		}
 
 		public ChurchService Service
@@ -34,7 +41,7 @@ namespace Arrow.Church.Server
 			m_ServiceMethods.Add(name,details);
 		}
 
-		public bool HasInterface(Type type)
+		public bool HasServiceInterface(Type type)
 		{
 			return type.IsAssignableFrom(m_Service.ServiceInterface);
 		}

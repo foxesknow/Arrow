@@ -12,14 +12,21 @@ using Arrow.Logging;
 
 namespace Arrow.Church.Server
 {
-	public class ServiceContainer : IDisposable
+	public partial class ServiceContainer : IDisposable
 	{
 		private static readonly ILog Log=LogManager.GetDefaultLog();
 
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<string,ServiceData> m_Services=new Dictionary<string,ServiceData>();
+		
+		private readonly ServiceHost m_ServiceHost;
 
 		private long m_Running;
+
+		internal ServiceContainer(ServiceHost serviceHost)
+		{
+			m_ServiceHost=serviceHost;
+		}
 
 		public bool IsRunning
 		{
@@ -49,7 +56,7 @@ namespace Arrow.Church.Server
 			if(string.IsNullOrWhiteSpace(serviceName)) throw new ArgumentException("serviceName");
 			if(service==null) throw new ArgumentNullException("service");
 
-			var serviceData=CreateServiceData(service);
+			var serviceData=CreateServiceData(serviceName,service);
 			Log.InfoFormat("ServiceContainer.Add - registering service {0} with interface {1}",serviceName,service.ServiceInterface.Name);
 
 			lock(m_SyncRoot)
@@ -66,8 +73,10 @@ namespace Arrow.Church.Server
 			{
 				foreach(var serviceData in m_Services.Values)
 				{
+					var host=new Host(m_ServiceHost,serviceData);
+
 					var service=serviceData.Service;
-					service.ContainerStart();
+					service.ContainerStart(host);
 
 					var serviceStartup=service as IServiceStartup;
 					if(serviceStartup!=null) serviceStartup.Start();
@@ -106,6 +115,8 @@ namespace Arrow.Church.Server
 
 		internal bool TryGetServiceData(string serviceName, out ServiceData serviceData)
 		{
+			if(serviceName==null) throw new ArgumentNullException("serviceName");
+
 			lock(m_SyncRoot)
 			{
 				return m_Services.TryGetValue(serviceName,out serviceData);
@@ -113,48 +124,43 @@ namespace Arrow.Church.Server
 		}
 
 		/// <summary>
-		/// Searches for a service within the current container
-		/// </summary>
-		/// <typeparam name="TInterface"></typeparam>
-		/// <returns></returns>
-		public TInterface Discover<TInterface>() where TInterface:class
-		{
-			TInterface @interface=null;
-
-			if(TryDiscover<TInterface>(out @interface))
-			{
-				return @interface;
-			}
-			else
-			{
-				throw new ServiceNotFoundException("could not find a service that implements: "+typeof(TInterface).Name);
-			}
-		}
-
-		/// <summary>
 		/// Attempts to find a service within the current container
 		/// </summary>
 		/// <typeparam name="TInterface"></typeparam>
-		/// <param name="instance"></param>
-		/// <returns></returns>
-		public bool TryDiscover<TInterface>(out TInterface instance) where TInterface:class
+		/// <returns>All the services which implement the interface</returns>
+		public IList<TInterface> DiscoverAll<TInterface>() where TInterface:class
 		{
-			ServiceData serviceData=null;
+			var interfaces=new List<TInterface>();
 
 			lock(m_SyncRoot)
 			{
-				serviceData=m_Services.Values.FirstOrDefault(s=>s.HasInterface(typeof(TInterface)));
+				foreach(var serviceData in m_Services.Values)
+				{
+					if(serviceData.HasServiceInterface(typeof(TInterface)))
+					{
+						interfaces.Add(serviceData.Service as TInterface);
+					}
+				}
 			}
 
-			if(serviceData!=null)
+			return interfaces;
+		}
+
+		public bool TryDiscover<TInterface>(string serviceName, out TInterface instance) where TInterface:class
+		{
+			lock(m_SyncRoot)
 			{
-				instance=serviceData.Service as TInterface;
-				return true;
-			}
-			else
-			{
-				instance=null;
-				return false;
+				ServiceData serviceData=null;
+				if(m_Services.TryGetValue(serviceName,out serviceData) && serviceData.HasServiceInterface(typeof(TInterface)))
+				{
+					instance=serviceData.Service as TInterface;
+					return true;
+				}
+				else
+				{
+					instance=null;
+					return false;
+				}
 			}
 		}
 
@@ -200,9 +206,9 @@ namespace Arrow.Church.Server
 			}
 		}
 
-		private ServiceData CreateServiceData(ChurchService service)
+		private ServiceData CreateServiceData(string serviceName, ChurchService service)
 		{
-			var serviceData=new ServiceData(service);
+			var serviceData=new ServiceData(serviceName,service);
 
 			var serviceInterface=service.ServiceInterface;
 
