@@ -140,17 +140,17 @@ namespace Arrow.Church.Client.ServiceDispatchers
 					if(response.IsFaulted)
 					{
 						// Exceptions are always serialized using standard .NET serialization
-						var message=s_DotNetSerializer.FromStream(stream,typeof(Exception));
-						CompleteError(correlationID,(Exception)message);
+						var exception=s_DotNetSerializer.FromStream(stream,typeof(Exception));
+						CompleteError(correlationID,(Exception)exception);
 					}
 					else
 					{
 						var call=GetCall(correlationID);
 						var returnType=call.ReturnType;
-						object message=null;
+						object result=null;
 					
-						if(returnType!=typeof(void)) message=call.MessageProtocol.FromStream(stream,returnType);
-						CompleteSuccess(correlationID,message);
+						if(returnType!=typeof(void)) result=call.MessageProtocol.FromStream(stream,returnType);
+						CompleteSuccess(correlationID,result);
 					}
 				}
 				catch(Exception e)
