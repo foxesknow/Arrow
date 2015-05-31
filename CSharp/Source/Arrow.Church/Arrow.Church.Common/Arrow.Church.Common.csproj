@@ -59,6 +59,9 @@
     <Compile Include="ServiceDispatchers\InProcessServiceDispatcherRouter.cs" />
     <Compile Include="ServiceDispatchers\ListenerCallback.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
+    <Compile Include="Services\Ping\IPingService.cs" />
+    <Compile Include="Services\Ping\PingRequest.cs" />
+    <Compile Include="Services\Ping\PingResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">

@@ -11,6 +11,7 @@ using Arrow.Church.Common.Data.DotNet;
 using Arrow.Configuration;
 using Arrow.Xml.ObjectCreation;
 using Arrow.Church.Server.HostBuilder;
+using Arrow.Church.Common.Services.Ping;
 
 namespace TestApp
 {
@@ -33,8 +34,8 @@ namespace TestApp
 				{
 					host.Start();
 				
-					var factory=ProxyManager.FactoryFor<IFoo>();			
-					var foo=factory.Create(host.Endpoint,"Foo");
+					var fooFactory=ProxyManager.FactoryFor<IFoo>();			
+					var foo=fooFactory.Create(host.Endpoint,"Foo");
 
 					try
 					{
@@ -45,6 +46,12 @@ namespace TestApp
 						}
 
 						await foo.DoNothing();
+
+						var pingFactory=ProxyManager.FactoryFor<IPingService>();
+						var ping=pingFactory.Create(host.Endpoint,"Ping");
+
+						var response=await ping.Ping(new PingRequest());
+						Console.WriteLine(response);
 					}
 					catch(Exception e)
 					{

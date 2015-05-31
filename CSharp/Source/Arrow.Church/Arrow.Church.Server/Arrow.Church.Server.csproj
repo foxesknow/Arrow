@@ -66,6 +66,7 @@
     <Compile Include="ServiceListeners\ServiceListenerCreator.cs" />
     <Compile Include="ServiceListeners\ServiceListenerFactory.cs" />
     <Compile Include="ServiceMethod.cs" />
+    <Compile Include="Services\Ping\PingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">
