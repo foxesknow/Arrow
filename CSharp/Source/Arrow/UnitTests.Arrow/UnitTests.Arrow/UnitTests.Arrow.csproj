@@ -76,6 +76,7 @@
     <Compile Include="Execution\ServiceBusTests.cs" />
     <Compile Include="Factory\FactoryTests.cs" />
     <Compile Include="IO\ByteSegmentStreamTests.cs" />
+    <Compile Include="IO\SandboxDirectoryTests.cs" />
     <Compile Include="Memory\Pools\AlwaysAllocatePoolTests.cs" />
     <Compile Include="Memory\Pools\FixedSizePoolTests.cs" />
     <Compile Include="Memory\Pools\SteppedPoolTests.cs" />

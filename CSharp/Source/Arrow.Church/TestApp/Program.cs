@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 using Arrow.Church.Common;
 using Arrow.Church.Server;
@@ -12,6 +13,7 @@ using Arrow.Configuration;
 using Arrow.Xml.ObjectCreation;
 using Arrow.Church.Server.HostBuilder;
 using Arrow.Church.Common.Services.Ping;
+using Arrow.Church.Common.Services.VirtualDirectory;
 
 namespace TestApp
 {
@@ -22,6 +24,7 @@ namespace TestApp
 			var task=ListenerMain(args);
 			task.Wait();
 		}
+
 
 		static async Task ListenerMain(string[] args)
 		{
@@ -52,6 +55,12 @@ namespace TestApp
 
 						var response=await ping.Ping(new PingRequest());
 						Console.WriteLine(response);
+
+						var dirFactory=ProxyManager.FactoryFor<IVirtualDirectoryService>();
+						var dir=dirFactory.Create(host.Endpoint,"Dir");
+
+						var download=await dir.Download(new PathRequest("AdventureWorks2012_Data.mdf"));
+						Console.WriteLine("got {0} bytes",download.Data.Length);
 					}
 					catch(Exception e)
 					{

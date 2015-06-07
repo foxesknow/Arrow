@@ -9,16 +9,22 @@ namespace Arrow.Church.Common.Services.Ping
 	[Serializable]
 	public sealed class PingResponse
 	{
-		public PingResponse(long pingID)
+		public PingResponse(long clientPingID, long serverPingID)
 		{
-			this.PingID=pingID;
+			this.ClientPingID=clientPingID;
+			this.ServerPingID=serverPingID;
 			this.ServerLocal=DateTime.Now;
 		}
 
 		/// <summary>
 		/// The PingID sent by the client
 		/// </summary>
-		public long PingID{get;private set;}
+		public long ClientPingID{get;private set;}
+
+		/// <summary>
+		/// The PingID sent by the server
+		/// </summary>
+		public long ServerPingID{get;private set;}
 		
 		/// <summary>
 		/// The local time on the server
@@ -27,7 +33,7 @@ namespace Arrow.Church.Common.Services.Ping
 
 		public override string ToString()
 		{
-			return string.Format("ID={0}, ServerLocal={1}",this.PingID,this.ServerLocal);
+			return string.Format("ClientPingID={0}, ServerPingID={1}, ServerLocal={2}",this.ClientPingID,this.ServerPingID,this.ServerLocal);
 		}
 	}
 }
