@@ -229,6 +229,8 @@ namespace Arrow.Church.Client.ServiceDispatchers
 			envelope.MessageType=MessageType.ServiceRequest;
 			envelope.MessageSystemID=m_SystemID;
 			envelope.MessageCorrelationID=AllocateCorrelationID();
+			envelope.SessionHigh=Session.SessionHigh;
+			envelope.SessionLow=Session.SessionLow;
 		}
 
 		private IOutstandingCall RemoveCall(MessageEnvelope envelope)

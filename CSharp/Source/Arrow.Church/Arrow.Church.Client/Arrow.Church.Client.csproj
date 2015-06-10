@@ -58,6 +58,7 @@
     <Compile Include="ServiceDispatchers\InProcessServiceDispatcherCreator.cs" />
     <Compile Include="ServiceDispatchers\NetworkServiceDispatcher.cs" />
     <Compile Include="ServiceDispatchers\NetworkServiceDispatcherCreator.cs" />
+    <Compile Include="Session.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">

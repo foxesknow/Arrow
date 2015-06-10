@@ -83,6 +83,9 @@ namespace Arrow.Church.Server.ServiceListeners
 			response.MessageCorrelationID=AllocateCorrelationID();
 			response.ResponseSystemID=template.MessageSystemID;
 			response.ResponseCorrelationID=template.MessageCorrelationID;
+			response.SessionHigh=template.SessionHigh;
+			response.SessionLow=template.SessionLow;
+
 			response.MessageType=template.MessageType|1;
 
 			return response;

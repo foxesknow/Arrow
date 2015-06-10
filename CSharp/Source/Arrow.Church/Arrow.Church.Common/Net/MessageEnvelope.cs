@@ -23,6 +23,8 @@ namespace Arrow.Church.Common.Net
 			sizeof(long)+	// MessageCorrelationID
 			sizeof(long)+	// ResponseSystemID
 			sizeof(long)+	// ResponseCorrelationID
+			sizeof(long)+	// SessionHigh
+			sizeof(long)+	// SessionLow
 			sizeof(int)		// EndMagicNumber
 		);
 
@@ -43,6 +45,8 @@ namespace Arrow.Church.Common.Net
 			this.MessageCorrelationID=decoder.ReadInt64();
 			this.ResponseSystemID=decoder.ReadInt64();
 			this.ResponseCorrelationID=decoder.ReadInt64();
+			this.SessionHigh=decoder.ReadInt64();
+			this.SessionLow=decoder.ReadInt64();
 
 			int end=decoder.ReadInt32();
 			if(end!=EndMagicNumber) throw new IOException("EndMagicNumber not found");
@@ -57,6 +61,8 @@ namespace Arrow.Church.Common.Net
 			encoder.Write(this.MessageCorrelationID);
 			encoder.Write(this.ResponseSystemID);
 			encoder.Write(this.ResponseCorrelationID);
+			encoder.Write(this.SessionHigh);
+			encoder.Write(this.SessionLow);
 			encoder.Write(EndMagicNumber);
 		}
 
@@ -82,5 +88,9 @@ namespace Arrow.Church.Common.Net
 		/// In a response this is the original MessageCorrelationID
 		/// </summary>
 		public long ResponseCorrelationID{get;set;}
+
+		public long SessionHigh{get;set;}
+
+		public long SessionLow{get;set;}
 	}
 }
