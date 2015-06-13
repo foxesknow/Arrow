@@ -22,13 +22,8 @@ namespace ChurchHost
 
 		static void ServiceMain(string[] args)
 		{
-			var service=new InteractiveChurchHostService();
+			var service=new InteractiveConsoleService<ChurchHostService>();
 			service.Run(args);
 		}
-	}
-
-	class InteractiveChurchHostService : InteractiveConsoleService<ChurchHostService>
-	{
-
 	}
 }
