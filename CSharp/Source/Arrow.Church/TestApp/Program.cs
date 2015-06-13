@@ -21,54 +21,33 @@ namespace TestApp
 	{
 		static void Main(string[] args)
 		{
-			var task=ListenerMain(args);
+			var task=Run(args);
 			task.Wait();
 		}
 
 
-		static async Task ListenerMain(string[] args)
+		static async Task Run(string[] args)
 		{
-			var hostConfigXml=AppConfig.GetSectionXml("App","Hosts/Main");
-			var builder=XmlCreation.Create<ServiceHostBuilder>(hostConfigXml);
+			var endpoint=new Uri("net://localhost:899");
+
+			
+			var fooFactory=ProxyManager.FactoryFor<IFoo>();			
+			var foo=fooFactory.Create(endpoint,"Foo");
 
 			try
 			{
-				using(var host=builder.Build())
-				{
-					host.Start();
-				
-					var fooFactory=ProxyManager.FactoryFor<IFoo>();			
-					var foo=fooFactory.Create(host.Endpoint,"Foo");
 
-					try
-					{
-						for(int i=1; i<10; i++)
-						{
-							var result=await foo.Divide(new BinaryOperationRequest(){Lhs=20*i,Rhs=5});
-							Console.WriteLine(result);
-						}
+				var pingFactory=ProxyManager.FactoryFor<IPingService>();
+				var ping=pingFactory.Create(endpoint,"Ping");
 
-						await foo.DoNothing();
+				var response=await ping.Ping(new PingRequest());
+				Console.WriteLine(response);
 
-						var pingFactory=ProxyManager.FactoryFor<IPingService>();
-						var ping=pingFactory.Create(host.Endpoint,"Ping");
+				var dirFactory=ProxyManager.FactoryFor<IVirtualDirectoryService>();
+				var dir=dirFactory.Create(endpoint,"Dir");
 
-						var response=await ping.Ping(new PingRequest());
-						Console.WriteLine(response);
-
-						var dirFactory=ProxyManager.FactoryFor<IVirtualDirectoryService>();
-						var dir=dirFactory.Create(host.Endpoint,"Dir");
-
-						var download=await dir.Download(new PathRequest("AdventureWorks2012_Data.mdf"));
-						Console.WriteLine("got {0} bytes",download.Data.Length);
-					}
-					catch(Exception e)
-					{
-						Console.Error.WriteLine(e);
-					}
-
-					Console.ReadLine();
-				}
+				var download=await dir.Download(new PathRequest("AdventureWorks2012_Data.mdf"));
+				Console.WriteLine("got {0} bytes",download.Data.Length);
 			}
 			catch(Exception e)
 			{

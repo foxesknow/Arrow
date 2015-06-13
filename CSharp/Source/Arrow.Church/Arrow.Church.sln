@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow", "..\Arrow\Arrow\Arr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{49903DC3-0685-451F-A85F-F55CB78A7786}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChurchHost", "ChurchHost\ChurchHost.csproj", "{39961999-51B4-42FB-B31A-833DE04461CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{49903DC3-0685-451F-A85F-F55CB78A7786}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49903DC3-0685-451F-A85F-F55CB78A7786}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49903DC3-0685-451F-A85F-F55CB78A7786}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39961999-51B4-42FB-B31A-833DE04461CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39961999-51B4-42FB-B31A-833DE04461CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39961999-51B4-42FB-B31A-833DE04461CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39961999-51B4-42FB-B31A-833DE04461CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
