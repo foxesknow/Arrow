@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{49903DC3-0685-451F-A85F-F55CB78A7786}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{6933CA2A-0510-4637-8350-60ECCEA1FFE2}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestApp</RootNamespace>
-    <AssemblyName>TestApp</AssemblyName>
+    <RootNamespace>Arrow.Church.Protobuf.Server</RootNamespace>
+    <AssemblyName>Arrow.Church.Protobuf.Server</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\bin\Arrow.Church\</OutputPath>
@@ -41,25 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ProtoPing\ProtoPingService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">
-      <Project>{04660b82-1c99-406c-809d-06af5839f648}</Project>
-      <Name>Arrow</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Arrow.Church.Client\Arrow.Church.Client.csproj">
-      <Project>{13f1f012-f4a2-49db-b4ae-3b8f8db7e32d}</Project>
-      <Name>Arrow.Church.Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Arrow.Church.Common\Arrow.Church.Common.csproj">
-      <Project>{99ae65ba-c015-4ad5-8eee-0e6d9090a0fb}</Project>
-      <Name>Arrow.Church.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Arrow.Church.Protobuf.Common\Arrow.Church.Protobuf.Common.csproj">
       <Project>{8151f07f-5d3e-48b3-9a5b-64331fdc45ea}</Project>
       <Name>Arrow.Church.Protobuf.Common</Name>

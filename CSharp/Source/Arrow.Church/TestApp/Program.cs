@@ -14,6 +14,7 @@ using Arrow.Xml.ObjectCreation;
 using Arrow.Church.Server.HostBuilder;
 using Arrow.Church.Common.Services.Ping;
 using Arrow.Church.Common.Services.VirtualDirectory;
+using Arrow.Church.Protobuf.Common.Services.ProtoPing;
 
 namespace TestApp
 {
@@ -37,10 +38,10 @@ namespace TestApp
 			try
 			{
 
-				var pingFactory=ProxyManager.FactoryFor<IPingService>();
-				var ping=pingFactory.Create(endpoint,"Ping");
+				var pingFactory=ProxyManager.FactoryFor<IProtoPingService>();
+				var ping=pingFactory.Create(endpoint,"ProtoPing");
 
-				var response=await ping.Ping(new PingRequest());
+				var response=await ping.Ping(new ProtoPingRequest());
 				Console.WriteLine(response);
 
 				var dirFactory=ProxyManager.FactoryFor<IVirtualDirectoryService>();
