@@ -16,7 +16,7 @@ namespace Grouping
 	public class GroupingTests
 	{
 		[TestCase(9000000,30)]
-		public void Duplicates(int numberOfItems, int maxValue)
+		public void Duplicates_Array(int numberOfItems, int maxValue)
 		{
 			var data=RandomRangeList(numberOfItems,maxValue);
 			IList<int> duplicateValues=null;
@@ -29,11 +29,11 @@ namespace Grouping
 
 			CheckUniqueness(duplicateValues);
 
-			Console.WriteLine("Duplicates({0}, {1}) found {2} in {3}",numberOfItems,maxValue,duplicateValues.Count,elapsedTime);
+			Console.WriteLine("Duplicates_Array({0}, {1}) found {2} in {3}",numberOfItems,maxValue,duplicateValues.Count,elapsedTime);
 		}
 
 		[TestCase(9000000,30)]
-		public void DuplicatesLinq(int numberOfItems, int maxValue)
+		public void DuplicatesLinq_Array(int numberOfItems, int maxValue)
 		{
 			var data=RandomRangeList(numberOfItems,maxValue);
 			IList<int> duplicateValues=null;
@@ -46,7 +46,41 @@ namespace Grouping
 
 			CheckUniqueness(duplicateValues);
 
-			Console.WriteLine("DuplicatesLinq({0}, {1}) found {2} in {3}",numberOfItems,maxValue,duplicateValues.Count,elapsedTime);
+			Console.WriteLine("DuplicatesLinq_Array({0}, {1}) found {2} in {3}",numberOfItems,maxValue,duplicateValues.Count,elapsedTime);
+		}
+
+		[TestCase(9000000,30)]
+		public void Duplicates_Enumerable(int numberOfItems, int maxValue)
+		{
+			var data=RandomRange(numberOfItems,maxValue);
+			IList<int> duplicateValues=null;
+
+			var elapsedTime=ExecutionTimer.Measure(TimerMode.Milliseconds,()=>
+			{
+				var duplicates=Duplicates(data);
+				duplicateValues=duplicates.ToArray();
+			});
+
+			CheckUniqueness(duplicateValues);
+
+			Console.WriteLine("Duplicates_Enumerable({0}, {1}) found {2} in {3}",numberOfItems,maxValue,duplicateValues.Count,elapsedTime);
+		}
+
+		[TestCase(9000000,30)]
+		public void DuplicatesLinq_Enumerable(int numberOfItems, int maxValue)
+		{
+			var data=RandomRange(numberOfItems,maxValue);
+			IList<int> duplicateValues=null;
+
+			var elapsedTime=ExecutionTimer.Measure(TimerMode.Milliseconds,()=>
+			{
+				var duplicates=LinqDuplicates(data);
+				duplicateValues=duplicates.ToArray();
+			});
+
+			CheckUniqueness(duplicateValues);
+
+			Console.WriteLine("DuplicatesLinq_Enumerable({0}, {1}) found {2} in {3}",numberOfItems,maxValue,duplicateValues.Count,elapsedTime);
 		}
 
 		private void CheckUniqueness(IList<int> values)
