@@ -9,6 +9,8 @@ namespace Arrow.PowerShell.Calendar
 {
 	/// <summary>
 	/// Returns the closest date to the supplied date
+	/// For example, if today is 16th August 2015 (a Sunday) and you
+	/// set DayOfWeek to Wednesday it will return 19th August 2015
 	/// </summary>
 	[Cmdlet(VerbsCommon.Get,"ClosestDay")]
 	[OutputType(typeof(DateTime))]

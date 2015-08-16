@@ -8,7 +8,7 @@ namespace Arrow.PowerShell.Calendar
 {
 	public enum RelativeDayOfWeek
 	{
-		FirstSunday,
+		FirstSunday=0,
 		FirstMonday,
 		FirstTuesday,
 		FirstWednesday,
@@ -16,7 +16,7 @@ namespace Arrow.PowerShell.Calendar
 		FirstFriday,
 		FirstSaturday,
 
-		SecondSunday,
+		SecondSunday=256,
 		SecondMonday,
 		SecondTuesday,
 		SecondWednesday,
@@ -24,7 +24,7 @@ namespace Arrow.PowerShell.Calendar
 		SecondFriday,
 		SecondSaturday,
 
-		ThirdSunday,
+		ThirdSunday=512,
 		ThirdMonday,
 		ThirdTuesday,
 		ThirdWednesday,
@@ -32,7 +32,7 @@ namespace Arrow.PowerShell.Calendar
 		ThirdFriday,
 		ThirdSaturday,
 
-		FourthSunday,
+		FourthSunday=768,
 		FourthMonday,
 		FourthTuesday,
 		FourthWednesday,
@@ -40,7 +40,7 @@ namespace Arrow.PowerShell.Calendar
 		FourthFriday,
 		FourthSaturday,
 
-		FifthSunday,
+		FifthSunday=1024,
 		FifthMonday,
 		FifthTuesday,
 		FifthWednesday,
@@ -53,114 +53,20 @@ namespace Arrow.PowerShell.Calendar
 	{
 		public static DayOfWeek GetDayOfWeek(this RelativeDayOfWeek relativeDayOfWeek)
 		{
-			switch(relativeDayOfWeek)
-			{
-				case RelativeDayOfWeek.FirstSunday:
-				case RelativeDayOfWeek.SecondSunday:
-				case RelativeDayOfWeek.ThirdSunday:
-				case RelativeDayOfWeek.FourthSunday:
-				case RelativeDayOfWeek.FifthSunday:
-					return DayOfWeek.Sunday;
-
-				case RelativeDayOfWeek.FirstMonday:
-				case RelativeDayOfWeek.SecondMonday:
-				case RelativeDayOfWeek.ThirdMonday:
-				case RelativeDayOfWeek.FourthMonday:
-				case RelativeDayOfWeek.FifthMonday:
-					return DayOfWeek.Monday;
-
-				case RelativeDayOfWeek.FirstTuesday:
-				case RelativeDayOfWeek.SecondTuesday:
-				case RelativeDayOfWeek.ThirdTuesday:
-				case RelativeDayOfWeek.FourthTuesday:
-				case RelativeDayOfWeek.FifthTuesday:
-					return DayOfWeek.Tuesday;
-
-				case RelativeDayOfWeek.FirstWednesday:
-				case RelativeDayOfWeek.SecondWednesday:
-				case RelativeDayOfWeek.ThirdWednesday:
-				case RelativeDayOfWeek.FourthWednesday:
-				case RelativeDayOfWeek.FifthWednesday:
-					return DayOfWeek.Wednesday;
-
-				case RelativeDayOfWeek.FirstThursday:
-				case RelativeDayOfWeek.SecondThursday:
-				case RelativeDayOfWeek.ThirdThursday:
-				case RelativeDayOfWeek.FourthThursday:
-				case RelativeDayOfWeek.FifthThursday:
-					return DayOfWeek.Thursday;
-
-				case RelativeDayOfWeek.FirstFriday:
-				case RelativeDayOfWeek.SecondFriday:
-				case RelativeDayOfWeek.ThirdFriday:
-				case RelativeDayOfWeek.FourthFriday:
-				case RelativeDayOfWeek.FifthFriday:
-					return DayOfWeek.Friday;
-
-				case RelativeDayOfWeek.FirstSaturday:
-				case RelativeDayOfWeek.SecondSaturday:
-				case RelativeDayOfWeek.ThirdSaturday:
-				case RelativeDayOfWeek.FourthSaturday:
-				case RelativeDayOfWeek.FifthSaturday:
-					return DayOfWeek.Saturday;
-
-				default:
-					throw new ArgumentException("Unexpected relative day of week: "+relativeDayOfWeek);
-			}
+			int value=((int)relativeDayOfWeek) & 0xff;
+			return (DayOfWeek)value;
 		}
 
 		public static int GetWeekOffset(this RelativeDayOfWeek relativeDayOfWeek)
 		{
-			switch(relativeDayOfWeek)
-			{
-				case RelativeDayOfWeek.FirstSunday:
-				case RelativeDayOfWeek.FirstMonday:
-				case RelativeDayOfWeek.FirstTuesday:
-				case RelativeDayOfWeek.FirstWednesday:
-				case RelativeDayOfWeek.FirstThursday:
-				case RelativeDayOfWeek.FirstFriday:
-				case RelativeDayOfWeek.FirstSaturday:
-					return 0;
+			int value=((int)relativeDayOfWeek) >> 8;
+			return value;
+		}
 
-				case RelativeDayOfWeek.SecondSunday:
-				case RelativeDayOfWeek.SecondMonday:
-				case RelativeDayOfWeek.SecondTuesday:
-				case RelativeDayOfWeek.SecondWednesday:
-				case RelativeDayOfWeek.SecondThursday:
-				case RelativeDayOfWeek.SecondFriday:
-				case RelativeDayOfWeek.SecondSaturday:
-					return 1;
-
-				case RelativeDayOfWeek.ThirdSunday:
-				case RelativeDayOfWeek.ThirdMonday:
-				case RelativeDayOfWeek.ThirdTuesday:
-				case RelativeDayOfWeek.ThirdWednesday:
-				case RelativeDayOfWeek.ThirdThursday:
-				case RelativeDayOfWeek.ThirdFriday:
-				case RelativeDayOfWeek.ThirdSaturday:
-					return 2;
-
-				case RelativeDayOfWeek.FourthSunday:
-				case RelativeDayOfWeek.FourthMonday:
-				case RelativeDayOfWeek.FourthTuesday:
-				case RelativeDayOfWeek.FourthWednesday:
-				case RelativeDayOfWeek.FourthThursday:
-				case RelativeDayOfWeek.FourthFriday:
-				case RelativeDayOfWeek.FourthSaturday:
-					return 3;
-
-				case RelativeDayOfWeek.FifthSunday:
-				case RelativeDayOfWeek.FifthMonday:
-				case RelativeDayOfWeek.FifthTuesday:
-				case RelativeDayOfWeek.FifthWednesday:
-				case RelativeDayOfWeek.FifthThursday:
-				case RelativeDayOfWeek.FifthFriday:
-				case RelativeDayOfWeek.FifthSaturday:
-					return 4;
-
-				default:
-					throw new ArgumentException("Unexpected relative day of week: "+relativeDayOfWeek);
-			}
+		public static Week GetWeek(this RelativeDayOfWeek relativeDayOfWeek)
+		{
+			int value=((int)relativeDayOfWeek) >> 8;
+			return (Week)value;
 		}
 	}
 }

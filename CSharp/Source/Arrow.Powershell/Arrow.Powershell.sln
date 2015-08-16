@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.PowerShell.ImageMagic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.PowerShell.Calendar", "Arrow.PowerShell.Calendar\Arrow.PowerShell.Calendar.csproj", "{39643169-AADA-4594-AD21-06290A6436D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow", "..\Arrow\Arrow\Arrow.csproj", "{04660B82-1C99-406C-809D-06AF5839F648}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,16 @@ Global
 		{39643169-AADA-4594-AD21-06290A6436D9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{39643169-AADA-4594-AD21-06290A6436D9}.Release|x64.ActiveCfg = Release|x64
 		{39643169-AADA-4594-AD21-06290A6436D9}.Release|x64.Build.0 = Release|x64
+		{04660B82-1C99-406C-809D-06AF5839F648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{04660B82-1C99-406C-809D-06AF5839F648}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

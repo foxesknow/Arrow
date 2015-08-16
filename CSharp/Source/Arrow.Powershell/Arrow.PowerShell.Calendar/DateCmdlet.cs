@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Arrow.PowerShell.Calendar
 {
+	/// <summary>
+	/// Base class for commands that work on a date
+	/// </summary>
 	public abstract class DateCmdlet : PSCmdlet
 	{
 		protected DateCmdlet()
