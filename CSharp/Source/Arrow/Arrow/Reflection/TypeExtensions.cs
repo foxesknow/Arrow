@@ -120,5 +120,29 @@ namespace Arrow.Reflection
 
 			return null;
 		}
+
+		/// <summary>
+		/// Get the method who parameter types exactly match those specified
+		/// </summary>
+		/// <param name="type">The type to query</param>
+		/// <param name="methodName">The name of the method to get</param>
+		/// <param name="bindingFlags">The binding flags for the lookup</param>
+		/// <param name="parameters">The types of the parameters for the method</param>
+		/// <returns>The method, if found, otherwise null</returns>
+		public static MethodInfo GetExactMethod(this Type type, string methodName, BindingFlags bindingFlags, params Type[] parameters)
+		{
+			if(type==null) throw new ArgumentNullException("type");
+
+			var method=type.GetMethod
+			(
+				methodName,
+				bindingFlags|BindingFlags.ExactBinding,
+				null,
+				parameters,
+				null
+			);
+
+			return method;
+		}
 	}
 }

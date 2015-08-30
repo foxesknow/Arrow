@@ -97,8 +97,7 @@ namespace Arrow.IO
 			get{return m_Position;}
 			set
 			{
-				if(value<0 || value>=m_Segment.Count) throw new IOException("invalid position");
-				m_Position=value;
+				Seek(value,SeekOrigin.Begin);
 			}
 		}
 
@@ -116,7 +115,7 @@ namespace Arrow.IO
 			if(count<0) throw new ArgumentOutOfRangeException("count");
 			if(offset+count>buffer.Length) throw new ArgumentException("read beyond buffer");
 
-			int available=m_Segment.Count-(int)m_Position;
+			int available=Math.Max(0,m_Segment.Count-(int)m_Position);
 			int bytesToRead=Math.Min(count,available);
 
 			var underlying=m_Segment.Array;
@@ -159,7 +158,7 @@ namespace Arrow.IO
 					throw new IOException("unsupported origin: "+origin.ToString());
 			}
 
-			if(newPosition<0 || newPosition>=m_Segment.Count) throw new IOException("cannot seek beyond segment");
+			//if(newPosition<0 || newPosition>=m_Segment.Count) throw new IOException("cannot seek beyond segment");
 
 			m_Position=newPosition;
 			return m_Position;

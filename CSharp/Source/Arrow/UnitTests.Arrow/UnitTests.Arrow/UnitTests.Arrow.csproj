@@ -82,6 +82,7 @@
     <Compile Include="Memory\Pools\SteppedPoolTests.cs" />
     <Compile Include="ObjectAccess\ObjectLocatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\ObjectMethodTests.cs" />
     <Compile Include="ResourceLoader.cs" />
     <Compile Include="Settings\DefaultSettingsTests.cs" />
     <Compile Include="Settings\DirectXmlSettingsTests.cs" />

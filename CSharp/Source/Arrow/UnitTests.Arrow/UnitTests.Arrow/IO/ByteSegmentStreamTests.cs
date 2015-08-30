@@ -84,6 +84,22 @@ namespace UnitTests.Arrow.IO
 		}
 
 		[Test]
+		public void Write_PastEnd()
+		{
+			var data=new byte[20];
+			var segment=new ArraySegment<byte>(data);
+
+			Assert.Throws<IOException>(()=>
+			{
+				using(var stream=new ByteSegmentStream(segment))
+				{
+					stream.Position=100;
+					stream.WriteByte(10);
+				}
+			});
+		}
+
+		[Test]
 		public void Write_CheckOverflow()
 		{
 			byte[] data=new byte[200];
@@ -118,6 +134,22 @@ namespace UnitTests.Arrow.IO
 				CheckAllValues(readData,99);
 
 				Assert.That(stream.Position,Is.EqualTo(readData.Length));
+			}
+		}
+
+		[Test]
+		public void Read_PositionPastEnd()
+		{
+			byte[] data=new byte[200];
+			for(int i=0; i<data.Length; i++) data[i]=99;
+
+			using(var stream=new ByteSegmentStream(data))
+			{
+				stream.Position=500;
+				byte[] readData=new byte[50];
+
+				int bytesRead=stream.Read(readData,0,readData.Length);
+				Assert.That(bytesRead,Is.EqualTo(0));
 			}
 		}
 
