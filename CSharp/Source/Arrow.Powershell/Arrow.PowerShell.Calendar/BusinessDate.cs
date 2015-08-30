@@ -48,7 +48,7 @@ namespace Arrow.PowerShell.Calendar
 
 		public override string ToString()
 		{
-			return m_EncodedValue.ToString();
+			return string.Format("{0:0000}-{1:00}-{2:00}",m_Year,m_Month,m_Day);
 		}
 
 		public override int GetHashCode()

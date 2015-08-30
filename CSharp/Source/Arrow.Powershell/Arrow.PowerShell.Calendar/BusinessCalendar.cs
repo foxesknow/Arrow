@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Arrow.PowerShell.Calendar
 {
@@ -56,6 +57,54 @@ namespace Arrow.PowerShell.Calendar
 			if(IsHoliday(date)) return false;
 
 			return true;
+		}
+
+		public XmlDocument ToXml()
+		{
+			var document=new XmlDocument();
+
+			var root=document.CreateElement("BusinessCalendar");
+			document.AppendChild(root);
+
+			var weekends=document.CreateElement("Weekends");
+			root.AppendChild(weekends);
+			foreach(var day in AsSorted(this.Weekends))
+			{
+				var node=document.CreateElement("Day");
+				node.InnerText=day.ToString();
+
+				weekends.AppendChild(node);
+			}
+
+			var holidays=document.CreateElement("Holidays");
+			root.AppendChild(holidays);
+			foreach(var holiday in AsSorted(this.Holidays))
+			{
+				var node=document.CreateElement("Date");
+				node.InnerText=holiday.ToString();
+
+				holidays.AppendChild(node);
+			}
+
+			var recuringHolidays=document.CreateElement("RecuringHolidays");
+			root.AppendChild(recuringHolidays);
+			foreach(var holiday in AsSorted(this.RecuringHolidays))
+			{
+				var node=document.CreateElement("Date");
+				node.InnerText=holiday.ToString();
+
+				recuringHolidays.AppendChild(node);
+			}
+
+			return document;
+		}
+
+		private List<T> AsSorted<T>(ISet<T> values)
+		{
+			var list=new List<T>(values);
+			list.Sort();
+
+			return list;
 		}
 
 		private BusinessDate ToBusinessDate(DateTime date)

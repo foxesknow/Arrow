@@ -20,7 +20,11 @@ namespace Arrow.PowerShell.Calendar
 			this.BusinessCalendar.Weekends.Add(DayOfWeek.Sunday);
 		}
 
-		[Parameter(HelpMessage="The business calendar to use")]
+		[Parameter
+		(
+			HelpMessage="The business calendar to use",
+			Mandatory=true
+		)]
 		[ValidateNotNull]
 		public BusinessCalendar BusinessCalendar{get;set;}
 	}

@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 
 namespace Arrow.PowerShell.Calendar
 {
+	/// <summary>
+	/// Adds a number of days to a date, using a business calendar as reference
+	/// </summary>
 	[Cmdlet(VerbsCommon.Add,"BusinessDays")]
+	[OutputType(typeof(DateTime))]
 	public class AddBusinessDaysCommand : BusinessCalendarCmdlet
 	{	
 		[Parameter
