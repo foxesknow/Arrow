@@ -71,6 +71,7 @@
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="DayOfWeekExtensions.cs" />
     <Compile Include="ExportBusinessCalendarCommand.cs" />
+    <Compile Include="GetClosestBusinessDayCommand.cs" />
     <Compile Include="GetClosestDayCommand.cs" />
     <Compile Include="GetRelativeDayCommand.cs" />
     <Compile Include="BusinessCalendar.cs" />
@@ -89,9 +90,6 @@
       <Project>{4bede0ad-c951-462e-9e9e-d95fd7afda86}</Project>
       <Name>Arrow.PowerShell</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SampleCalendar.xml">
