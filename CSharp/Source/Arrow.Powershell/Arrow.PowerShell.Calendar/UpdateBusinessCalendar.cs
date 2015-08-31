@@ -10,14 +10,19 @@ namespace Arrow.PowerShell.Calendar
 	/// <summary>
 	/// Adds a new date to a calendar
 	/// </summary>
-	[Cmdlet(VerbsCommon.Add,"BusinessDate")]
+	[Cmdlet("Update","BusinessCalendar")]
 	[OutputType(typeof(BusinessCalendar))]
-	public class AddBusinessDateCommand : PSCmdlet
+	public class UpdateBusinessCalendar : PSCmdlet
 	{
+		public UpdateBusinessCalendar()
+		{
+			// Create a default calendar with the weekends filled in
+			this.BusinessCalendar=BusinessCalendar.MakeDefault();
+		}
+
 		[Parameter
 		(
-			HelpMessage="The business calendar to use",
-			Mandatory=true
+			HelpMessage="The business calendar to use"
 		)]
 		[ValidateNotNull]
 		public BusinessCalendar BusinessCalendar{get;set;}

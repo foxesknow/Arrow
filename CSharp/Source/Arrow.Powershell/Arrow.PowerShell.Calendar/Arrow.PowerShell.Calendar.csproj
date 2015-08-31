@@ -63,7 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddBusinessDateCommand.cs" />
+    <Compile Include="UpdateBusinessCalendar.cs" />
     <Compile Include="AddBusinessDaysCommand.cs" />
     <Compile Include="BusinessCalendarCmdlet.cs" />
     <Compile Include="BusinessDate.cs" />

@@ -39,6 +39,7 @@ namespace Arrow.PowerShell.Calendar
 		(
 			Mandatory=true,
 			ParameterSetName="DateTime",
+			ValueFromPipeline=true,
 			HelpMessage="The date"
 		)]
 		public DateTime Date{get;set;}

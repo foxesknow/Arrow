@@ -123,5 +123,14 @@ namespace Arrow.PowerShell.Calendar
 			if(m_WeekendDays.Count==7) throw new InvalidOperationException("can't have 7 weekend days!");
 		}
 
+		public static BusinessCalendar MakeDefault()
+		{
+			// Create a default calendar with the weekends filled in
+			var calendar=new BusinessCalendar();
+			calendar.Weekends.Add(DayOfWeek.Saturday);
+			calendar.Weekends.Add(DayOfWeek.Sunday);
+
+			return calendar;
+		}
 	}
 }

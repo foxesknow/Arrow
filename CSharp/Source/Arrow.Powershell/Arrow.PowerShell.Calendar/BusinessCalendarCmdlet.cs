@@ -15,15 +15,12 @@ namespace Arrow.PowerShell.Calendar
 		protected BusinessCalendarCmdlet()
 		{
 			// Create a default calendar with the weekends filled in
-			this.BusinessCalendar=new BusinessCalendar();
-			this.BusinessCalendar.Weekends.Add(DayOfWeek.Saturday);
-			this.BusinessCalendar.Weekends.Add(DayOfWeek.Sunday);
+			this.BusinessCalendar=BusinessCalendar.MakeDefault();
 		}
 
 		[Parameter
 		(
-			HelpMessage="The business calendar to use",
-			Mandatory=true
+			HelpMessage="The business calendar to use"
 		)]
 		[ValidateNotNull]
 		public BusinessCalendar BusinessCalendar{get;set;}
