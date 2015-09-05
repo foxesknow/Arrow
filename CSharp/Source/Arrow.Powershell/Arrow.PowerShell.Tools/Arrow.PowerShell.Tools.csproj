@@ -63,10 +63,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryRow.cs" />
     <Compile Include="GetTitleCommand.cs" />
     <Compile Include="JoinPathPartsCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetTitleCommand.cs" />
+    <Compile Include="ReadBinaryCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Arrow.PowerShell\Arrow.PowerShell.csproj">
