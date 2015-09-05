@@ -63,8 +63,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetTitleCommand.cs" />
     <Compile Include="JoinPathPartsCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SetTitleCommand.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Arrow.PowerShell\Arrow.PowerShell.csproj">
+      <Project>{4bede0ad-c951-462e-9e9e-d95fd7afda86}</Project>
+      <Name>Arrow.PowerShell</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
