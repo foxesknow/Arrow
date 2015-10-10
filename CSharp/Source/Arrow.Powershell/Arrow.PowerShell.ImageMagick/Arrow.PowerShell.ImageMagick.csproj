@@ -81,7 +81,10 @@
     <Compile Include="InvokeAddNoise.cs" />
     <Compile Include="InvokeAutoGamma.cs" />
     <Compile Include="InvokeAutoLevel.cs" />
+    <Compile Include="InvokeAutoOrient.cs" />
     <Compile Include="InvokeBlueShift.cs" />
+    <Compile Include="InvokeBlur.cs" />
+    <Compile Include="InvokeBorder.cs" />
     <Compile Include="InvokeFlip.cs" />
     <Compile Include="InvokeResize.cs" />
     <Compile Include="InvokeWave.cs" />
