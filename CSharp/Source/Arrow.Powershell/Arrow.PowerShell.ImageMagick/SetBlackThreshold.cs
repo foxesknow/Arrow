@@ -23,11 +23,11 @@ namespace Arrow.PowerShell.ImageMagick
 			{
 				if(this.Channels==global::ImageMagick.Channels.Undefined)
 				{
-					image.BlackThreshold(this.Threshold);
+					image.BlackThreshold((Percentage)this.Threshold);
 				}
 				else
 				{
-					image.BlackThreshold(this.Threshold,this.Channels);
+					image.BlackThreshold((Percentage)this.Threshold,this.Channels);
 				}
 
 				WriteImage(image);

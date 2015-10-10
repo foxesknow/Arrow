@@ -65,7 +65,7 @@ namespace Arrow.PowerShell.ImageMagick
 
 				if(this.Percentage!=null)
 				{
-					geometry=new MagickGeometry(this.Percentage.Value,this.Percentage.Value);
+					geometry=new MagickGeometry((Percentage)this.Percentage.Value,(Percentage)this.Percentage.Value);
 				}
 				else if(this.PercentageWidth!=null || this.PercentageHeight!=null)
 				{

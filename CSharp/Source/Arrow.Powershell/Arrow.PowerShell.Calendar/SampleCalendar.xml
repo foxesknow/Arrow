@@ -1,0 +1,19 @@
+﻿<Calendar>
+	<Weekends>
+	</Weekends>
+
+	<Holidays>
+		<!-- 2016 Holidays-->
+		<Holiday>2016-01-01</Holiday>
+		<Holiday>2016-01-04</Holiday>
+
+		<!-- Easter -->
+		<Holiday>2016-03-25</Holiday>
+		<Holiday>2016-03-28</Holiday>
+	</Holidays>
+
+	<RecuringHolidays>
+		<Holiday>2015-12-25</Holiday>
+		<Holiday>2016-12-25</Holiday>
+	</RecuringHolidays>
+</Calendar>
