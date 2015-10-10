@@ -1,5 +1,7 @@
 ﻿<Calendar>
 	<Weekends>
+		<Day>Saturday</Day>
+		<Day>Sunday</Day>
 	</Weekends>
 
 	<Holidays>
