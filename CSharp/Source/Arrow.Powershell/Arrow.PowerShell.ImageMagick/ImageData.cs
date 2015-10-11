@@ -12,5 +12,7 @@ namespace Arrow.PowerShell.ImageMagick
 		public FileInfo File{get;set;}
 
 		public byte[] Data{get;set;}
+
+		public ImageOptions ImageOptions{get;set;}
 	}
 }

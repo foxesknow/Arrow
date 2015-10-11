@@ -76,6 +76,8 @@
     <Compile Include="ConvertImageFilename.cs" />
     <Compile Include="ConvertToColorspace.cs" />
     <Compile Include="ConvertToFormat.cs" />
+    <Compile Include="IImageOptions.cs" />
+    <Compile Include="ImageOptions.cs" />
     <Compile Include="InvokeAdaptiveBlur.cs" />
     <Compile Include="InvokeAdaptiveSharpen.cs" />
     <Compile Include="InvokeAddNoise.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="InvokeResize.cs" />
     <Compile Include="InvokeWave.cs" />
     <Compile Include="GetExif.cs" />
+    <Compile Include="NewImageOptions.cs" />
     <Compile Include="ReadImage.cs" />
     <Compile Include="ImageCmdlet.cs" />
     <Compile Include="ImageData.cs" />

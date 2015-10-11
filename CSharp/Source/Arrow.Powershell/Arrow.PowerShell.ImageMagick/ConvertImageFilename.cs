@@ -36,7 +36,8 @@ namespace Arrow.PowerShell.ImageMagick
 			var imageData=new ImageData()
 			{
 				File=new FileInfo(name),
-				Data=this.Image.Data
+				Data=this.Image.Data,
+				ImageOptions=this.Image.ImageOptions
 			};
 
 			WriteObject(imageData);

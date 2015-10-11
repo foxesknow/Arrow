@@ -17,7 +17,7 @@ namespace Arrow.PowerShell.ImageMagick
 			Mandatory=true,
 			ValueFromPipeline=true,
 			ParameterSetName="FileInfo",
-			HelpMessage="The file to resize"
+			HelpMessage="The file to read"
 		)]
 		public FileInfo SourceFile{get;set;}
 
@@ -26,9 +26,16 @@ namespace Arrow.PowerShell.ImageMagick
 			Mandatory=true,
 			ParameterSetName="Filename",
 			Position=0,
-			HelpMessage="The file to resize"
+			HelpMessage="The file to read"
 		)]
 		public string Filename{get;set;}
+
+		[Parameter
+		(
+			Mandatory=false,
+			HelpMessage="Options to be used in the pipeline"
+		)]
+		public ImageOptions ImageOptions{get;set;}
 
 		protected override void ProcessRecord()
 		{
@@ -39,7 +46,8 @@ namespace Arrow.PowerShell.ImageMagick
 				var imageData=new ImageData()
 				{
 					File=fileInfo,
-					Data=image.ToByteArray()
+					Data=image.ToByteArray(),
+					ImageOptions=this.ImageOptions
 				};
 
 				WriteObject(imageData);

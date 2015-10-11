@@ -20,6 +20,13 @@ namespace Arrow.PowerShell.ImageMagick
 		[System.Management.Automation.ValidateNotNull]
 		public ImageData Image{get;set;}
 
+		[Parameter
+		(
+			Mandatory=false,
+			HelpMessage="Additional options to layer onto the image"
+		)]
+		public ImageOptions ImageOptions{get;set;}
+
 		protected override sealed void ProcessRecord()
 		{
 			try
@@ -45,7 +52,15 @@ namespace Arrow.PowerShell.ImageMagick
 
 		protected MagickImage GetMagickImage()
 		{
-			return new MagickImage(this.Image.Data);
+			var magick=new MagickImage(this.Image.Data);
+			
+			// First, apply the global options that are in the pipeline...
+			if(this.Image.ImageOptions!=null) this.Image.ImageOptions.Apply(magick);
+
+			// ...then apply any command specific ones
+			if(this.ImageOptions!=null) this.ImageOptions.Apply(magick);
+
+			return magick;
 		}
 
 		protected void WriteImage(MagickImage magickImage)
@@ -53,7 +68,8 @@ namespace Arrow.PowerShell.ImageMagick
 			var imageData=new ImageData()
 			{
 				File=this.Image.File,
-				Data=magickImage.ToByteArray()
+				Data=magickImage.ToByteArray(),
+				ImageOptions=this.Image.ImageOptions
 			};
 
 			WriteObject(imageData);
