@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConvertImageFilename.cs" />
-    <Compile Include="ConvertToColorspace.cs" />
     <Compile Include="ConvertToFormat.cs" />
     <Compile Include="IImageOptions.cs" />
     <Compile Include="ImageOptions.cs" />
@@ -96,6 +95,7 @@
     <Compile Include="InvokeWave.cs" />
     <Compile Include="GetExif.cs" />
     <Compile Include="NewImageOptions.cs" />
+    <Compile Include="NewMagicGeometry.cs" />
     <Compile Include="ReadImage.cs" />
     <Compile Include="ImageCmdlet.cs" />
     <Compile Include="ImageData.cs" />

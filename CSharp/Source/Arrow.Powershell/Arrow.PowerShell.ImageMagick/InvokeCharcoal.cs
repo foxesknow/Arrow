@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arrow.PowerShell.ImageMagick
 {
-	[Cmdlet("Invoke","ChangeColorSpace")]
+	[Cmdlet("Invoke","Charcoal")]
 	public class InvokeCharcoal : ImageCmdlet
 	{
 		public InvokeCharcoal()
