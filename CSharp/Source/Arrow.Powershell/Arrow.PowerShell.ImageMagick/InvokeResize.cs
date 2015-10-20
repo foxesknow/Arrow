@@ -83,7 +83,7 @@ namespace Arrow.PowerShell.ImageMagick
 					image.Resize(geometry);
 				}
 
-				WriteImage(image);				
+				WriteImage(image);
 			}
 		}
 	}

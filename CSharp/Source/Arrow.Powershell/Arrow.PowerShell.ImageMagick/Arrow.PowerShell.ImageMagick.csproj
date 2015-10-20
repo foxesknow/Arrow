@@ -87,6 +87,8 @@
     <Compile Include="InvokeBlueShift.cs" />
     <Compile Include="InvokeBlur.cs" />
     <Compile Include="InvokeBorder.cs" />
+    <Compile Include="InvokeBrightnessContrast.cs" />
+    <Compile Include="InvokeCannyEdge.cs" />
     <Compile Include="InvokeFlip.cs" />
     <Compile Include="InvokeResize.cs" />
     <Compile Include="InvokeWave.cs" />
