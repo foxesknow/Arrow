@@ -27,7 +27,7 @@ namespace Arrow.PowerShell.ImageMagick
 
 		[Parameter
 		(
-			Mandatory=true,
+			Mandatory=false,
 			HelpMessage="The channels to apply the settings to"
 		)]
 		public Channels? Channels{get;set;}

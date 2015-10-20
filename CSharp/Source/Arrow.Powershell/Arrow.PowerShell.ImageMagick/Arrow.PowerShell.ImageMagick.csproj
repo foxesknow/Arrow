@@ -89,6 +89,8 @@
     <Compile Include="InvokeBorder.cs" />
     <Compile Include="InvokeBrightnessContrast.cs" />
     <Compile Include="InvokeCannyEdge.cs" />
+    <Compile Include="InvokeChangeColorSpace.cs" />
+    <Compile Include="InvokeCharcoal.cs" />
     <Compile Include="InvokeFlip.cs" />
     <Compile Include="InvokeResize.cs" />
     <Compile Include="InvokeWave.cs" />
