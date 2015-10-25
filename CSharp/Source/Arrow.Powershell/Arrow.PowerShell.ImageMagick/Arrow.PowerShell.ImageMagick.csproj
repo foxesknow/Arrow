@@ -91,6 +91,7 @@
     <Compile Include="InvokeChangeColorSpace.cs" />
     <Compile Include="InvokeCharcoal.cs" />
     <Compile Include="InvokeChop.cs" />
+    <Compile Include="InvokeChopHorizontal.cs" />
     <Compile Include="InvokeFlip.cs" />
     <Compile Include="InvokeResize.cs" />
     <Compile Include="InvokeWave.cs" />
