@@ -8,7 +8,7 @@ using ImageMagick;
 
 namespace Arrow.PowerShell.ImageMagick
 {
-	[Cmdlet("Invoke","ContrastStretch",DefaultParameterSetName="BPoint")]
+	[Cmdlet("Invoke","ContrastStretch")]
 	public class InvokeContrastStretch : ImageCmdlet
 	{
 		[Parameter(Mandatory=true,ParameterSetName="BPoint",HelpMessage="The black point")]

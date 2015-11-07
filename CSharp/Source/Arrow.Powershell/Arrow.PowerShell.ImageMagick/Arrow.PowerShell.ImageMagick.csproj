@@ -100,6 +100,8 @@
     <Compile Include="InvokeContrastStretch.cs" />
     <Compile Include="InvokeConvolve.cs" />
     <Compile Include="InvokeCopyPixels.cs" />
+    <Compile Include="InvokeCrop.cs" />
+    <Compile Include="InvokeCropToTiles.cs" />
     <Compile Include="InvokeFlip.cs" />
     <Compile Include="InvokeResize.cs" />
     <Compile Include="InvokeWave.cs" />
