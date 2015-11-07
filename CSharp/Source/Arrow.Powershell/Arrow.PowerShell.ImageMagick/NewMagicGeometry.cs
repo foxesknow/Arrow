@@ -65,7 +65,6 @@ namespace Arrow.PowerShell.ImageMagick
 
 				default:
 					throw new InvalidOperationException("Unknown parameter set: "+this.ParameterSetName);
-					break;
 			}
 		}
 	}

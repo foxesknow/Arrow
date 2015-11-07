@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Arrow.Reflection
 {
+	/// <summary>
+	/// Dynamically generates implementations of the overridable methods in System.Object
+	/// </summary>
 	public static partial class ObjectMethod
 	{
 		private static BindingFlags PublicInstance=BindingFlags.Public|BindingFlags.Instance;
