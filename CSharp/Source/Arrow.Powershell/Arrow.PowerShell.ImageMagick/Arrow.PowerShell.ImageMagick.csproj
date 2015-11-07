@@ -99,13 +99,15 @@
     <Compile Include="InvokeContrast.cs" />
     <Compile Include="InvokeContrastStretch.cs" />
     <Compile Include="InvokeConvolve.cs" />
+    <Compile Include="InvokeCopyPixels.cs" />
     <Compile Include="InvokeFlip.cs" />
     <Compile Include="InvokeResize.cs" />
     <Compile Include="InvokeWave.cs" />
     <Compile Include="GetExif.cs" />
     <Compile Include="NewConvolveMatrix.cs" />
+    <Compile Include="NewCoordinate.cs" />
     <Compile Include="NewImageOptions.cs" />
-    <Compile Include="NewMagicGeometry.cs" />
+    <Compile Include="NewMagickGeometry.cs" />
     <Compile Include="NewMagickColor.cs" />
     <Compile Include="ReadImage.cs" />
     <Compile Include="ImageCmdlet.cs" />

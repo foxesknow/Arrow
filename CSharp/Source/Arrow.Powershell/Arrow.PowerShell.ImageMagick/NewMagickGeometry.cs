@@ -8,9 +8,9 @@ using ImageMagick;
 
 namespace Arrow.PowerShell.ImageMagick
 {
-	[Cmdlet("New","MagicGeometry")]
+	[Cmdlet("New","MagickGeometry")]
 	[OutputType(typeof(MagickGeometry))]
-	public class NewMagicGeometry : PSCmdlet
+	public class NewMagickGeometry : PSCmdlet
 	{
 		[Parameter(ParameterSetName="WidthAndHeight",Mandatory=true,HelpMessage="The width and height")]
 		public int WidthAndHeight{get;set;}
