@@ -96,6 +96,8 @@
     <Compile Include="InvokeChroma.cs" />
     <Compile Include="InvokeColorAlpha.cs" />
     <Compile Include="InvokeColorize.cs" />
+    <Compile Include="InvokeContrast.cs" />
+    <Compile Include="InvokeContrastStretch.cs" />
     <Compile Include="InvokeFlip.cs" />
     <Compile Include="InvokeResize.cs" />
     <Compile Include="InvokeWave.cs" />
