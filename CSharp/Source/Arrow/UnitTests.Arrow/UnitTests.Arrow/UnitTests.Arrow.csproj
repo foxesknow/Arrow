@@ -103,6 +103,7 @@
     <Compile Include="Support\PersonBank.cs" />
     <Compile Include="Support\TheOthers.cs" />
     <Compile Include="Support\Tuple.cs" />
+    <Compile Include="Support\TypeHolder.cs" />
     <Compile Include="Support\XmlAssignment.cs" />
     <Compile Include="Text\TokenExpanderTests.cs" />
     <Compile Include="Threading\ActionMultiConsumerWorkQueueTests.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="Xml\ObjectCreation\ObjectCreationTests.cs" />
     <Compile Include="Xml\ObjectCreation\ICustomXmlInitializationTests.cs" />
     <Compile Include="Xml\ObjectCreation\RelativeObjectTests.cs" />
+    <Compile Include="Xml\ObjectCreation\TypeOnlyTests.cs" />
     <Compile Include="Xml\ObjectCreation\UriCreationTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -203,7 +205,11 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\AppConfigInclude.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\TypeOnlyTests.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

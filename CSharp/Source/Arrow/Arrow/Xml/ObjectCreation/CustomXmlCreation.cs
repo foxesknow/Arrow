@@ -425,6 +425,14 @@ namespace Arrow.Xml.ObjectCreation
 			// See if the object node has overridden the actual type
 			if(objectNode.Attributes!=null)
 			{
+				XmlAttribute typeofNode=GetTypeofAttribute(objectNode);
+				if(typeofNode!=null)
+				{
+					// The user is interested in getting a System.Type instance,
+					// rather than creating an instance of the specified type
+					return XmlTypeResolver.GetEncodedType(typeofNode);
+				}
+
 				// NOTE: We support type in or out of the namespace.
 				// The non-namespace support is deprecated and will be removed
 				XmlAttribute typeNode=GetTypeAttribute(objectNode);

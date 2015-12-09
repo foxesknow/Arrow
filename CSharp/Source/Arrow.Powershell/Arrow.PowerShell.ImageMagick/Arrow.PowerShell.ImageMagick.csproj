@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="ConvertImageFilename.cs" />
     <Compile Include="ConvertToFormat.cs" />
+    <Compile Include="GetImageOptions.cs" />
     <Compile Include="IImageOptions.cs" />
     <Compile Include="ImageOptions.cs" />
     <Compile Include="InvokeAdaptiveBlur.cs" />

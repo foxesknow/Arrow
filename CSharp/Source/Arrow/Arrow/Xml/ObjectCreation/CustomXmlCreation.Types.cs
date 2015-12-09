@@ -12,7 +12,15 @@ namespace Arrow.Xml.ObjectCreation
 {
 	public partial class CustomXmlCreation
 	{
+		/// <summary>
+		/// Indicates the type we'd like to create
+		/// </summary>
 		internal static readonly string Typename="type";
+		
+		/// <summary>
+		/// Indicate the type we'd like to assign to a property of System.Type
+		/// </summary>
+		internal static readonly string Typeof="typeof";
 		
 		/// <summary>
 		/// Parses an enum value from a string
@@ -39,6 +47,19 @@ namespace Arrow.Xml.ObjectCreation
 		{
 			XmlAttribute typeNode=(node.Attributes[Typename,FactoryNS] ?? node.Attributes[Typename]);
 			return typeNode;
+		}
+
+		/// <summary>
+		/// Looks for the "typeof" attribute
+		/// "typeof" is used to assign a System.Type instance rather than to create
+		/// an instance of the class represented by the type
+		/// </summary>
+		/// <param name="node">The node to check for a typeof attribute</param>
+		/// <returns>The typeof attribute, or null if one does not exist</returns>
+		internal static XmlAttribute GetTypeofAttribute(XmlNode node)
+		{
+			XmlAttribute typeofNode=node.Attributes[Typeof,FactoryNS];
+			return typeofNode;
 		}
 			
 		private static Type HandleGenerics(XmlNode node, Type type)

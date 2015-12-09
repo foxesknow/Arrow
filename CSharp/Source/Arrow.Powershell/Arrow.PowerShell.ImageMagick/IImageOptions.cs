@@ -46,6 +46,11 @@ namespace Arrow.PowerShell.ImageMagick
 		Color? BorderColor{get;set;}
 
 		/// <summary>
+		/// Color space of the image
+		/// </summary>
+		ColorSpace? ColorSpace{get;set;}
+
+		/// <summary>
 		/// The image quality to use
 		/// </summary>
 		int? Quality{get;set;}

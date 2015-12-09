@@ -1,0 +1,27 @@
+﻿<root xmlns:obj="urn:arrow.xml.objectcreation">
+	<FirstOnly>
+		<First obj:typeof="UnitTests.Arrow.Support.Person,UnitTests.Arrow" />
+	</FirstOnly>
+
+	<FirstAndSecond>
+		<First obj:typeof="UnitTests.Arrow.Support.Person,UnitTests.Arrow" />
+		<Second obj:typeof="System.Collections.ArrayList, mscorlib" />
+	</FirstAndSecond>
+
+	<ListOfTypeHolder>
+		<TypeHolder>
+			<First obj:typeof="UnitTests.Arrow.Support.Person,UnitTests.Arrow" />
+			<Second obj:typeof="UnitTests.Arrow.Support.TheOthers,UnitTests.Arrow" />
+		</TypeHolder>
+		<TypeHolder>
+			<First obj:typeof="UnitTests.Arrow.Support.TheOthers,UnitTests.Arrow" />
+			<Second obj:typeof="UnitTests.Arrow.Support.PersonBank,UnitTests.Arrow" />
+		</TypeHolder>
+	</ListOfTypeHolder>
+
+	<ListOfType>
+		<Type obj:typeof="UnitTests.Arrow.Support.Person,UnitTests.Arrow" />
+		<Type obj:typeof="UnitTests.Arrow.Support.TheOthers,UnitTests.Arrow" />
+		<Type obj:typeof="UnitTests.Arrow.Support.PersonBank,UnitTests.Arrow" />
+	</ListOfType>
+</root>

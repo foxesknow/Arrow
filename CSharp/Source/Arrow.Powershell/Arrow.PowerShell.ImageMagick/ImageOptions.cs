@@ -21,6 +21,7 @@ namespace Arrow.PowerShell.ImageMagick
 			this.AnimationIterations=rhs.AnimationIterations;
 			this.BackgroundColor=rhs.BackgroundColor;
 			this.BorderColor=rhs.BorderColor;
+			this.ColorSpace=rhs.ColorSpace;
 			this.Quality=rhs.Quality;
 		}
 
@@ -60,6 +61,11 @@ namespace Arrow.PowerShell.ImageMagick
 		public Color? BorderColor{get;set;}
 
 		/// <summary>
+		/// Color space of the image
+		/// </summary>
+		public ColorSpace? ColorSpace{get;set;}
+
+		/// <summary>
 		/// The image quality to use
 		/// </summary>
 		public int? Quality{get;set;}
@@ -73,6 +79,7 @@ namespace Arrow.PowerShell.ImageMagick
 			if(this.BackgroundColor!=null) image.BackgroundColor=this.BackgroundColor;
 			if(this.BlackPointCompensation!=null) image.BlackPointCompensation=this.BlackPointCompensation.Value;
 			if(this.BorderColor!=null) image.BorderColor=this.BorderColor.Value;
+			if(this.ColorSpace!=null) image.ColorSpace=this.ColorSpace.Value;
 			if(this.Quality!=null) image.Quality=this.Quality.Value;
 		}
 	}

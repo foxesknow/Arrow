@@ -1,5 +1,5 @@
 <log4net>
-    <appender name="FileAppender" type="CS.Echo.Logging.Log4Net.FileAppender, CS.Echo.Logging.Log4Net">
+    <appender name="FileAppender" type="Arrow.Logging.Log4Net.FileAppender, Arrow.Logging.Log4Net">
         <param name="Threshold" value="DEBUG" />
         <file value="logs\Jackanory-$(app:database)-$(DateTime:Now||yyyyMMdd).log" />
 		<appendToFile value="true" />

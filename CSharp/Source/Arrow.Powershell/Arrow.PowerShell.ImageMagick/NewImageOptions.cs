@@ -34,6 +34,9 @@ namespace Arrow.PowerShell.ImageMagick
 		[Parameter(HelpMessage="The color for borders")]
 		public Color? BorderColor{get;set;}
 
+		[Parameter(HelpMessage="Color space of the image")]
+		public ColorSpace? ColorSpace{get;set;}
+
 		[Parameter(HelpMessage="The image quality to use")]
 		public int? Quality{get;set;}
 
