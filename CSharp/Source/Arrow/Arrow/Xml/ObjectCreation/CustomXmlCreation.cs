@@ -309,7 +309,8 @@ namespace Arrow.Xml.ObjectCreation
 		{
 			if(node==null) throw new ArgumentNullException("node");
 			
-			XmlAttribute typeNode=GetTypeAttribute(node);
+			// Defer to obj:typeof before obj:type
+			XmlAttribute typeNode=GetTypeofAttribute(node) ?? GetTypeAttribute(node);
 			if(typeNode==null) return DefaultNodeType;
 			
 			// The user has specified a different type

@@ -22,13 +22,13 @@ namespace UnitTests.Arrow.DI
 
 	class ConstructorTest
 	{
-		public ConstructorTest(IContainer container, IUserLookup userLookup)
+		public ConstructorTest(IDIContainer container, IUserLookup userLookup)
 		{
 			this.Container=container;
 			this.UserLookup=userLookup;
 		}
 
-		public IContainer Container{get;private set;}
+		public IDIContainer Container{get;private set;}
 
 		public IUserLookup UserLookup{get;private set;}
 	}

@@ -16,7 +16,7 @@ namespace Arrow.DI
 		/// <typeparam name="T">The type to resolve</typeparam>
 		/// <param name="container">The container to resolve against</param>
 		/// <returns>An instance of T</returns>
-		public static T Resolve<T>(this IContainer container)
+		public static T Resolve<T>(this IDIContainer container)
 		{
 			if(container==null) throw new ArgumentNullException("container");
 

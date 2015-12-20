@@ -28,7 +28,7 @@ namespace Arrow.DI
 		/// </example>
 		/// <param name="container">The container the items will be registered into</param>
 		/// <param name="root"></param>
-		public static void RegisterFromXml(this IContainerRegistration container, XmlNode root)
+		public static IDIContainer RegisterFromXml(this IDIContainer container, XmlNode root)
 		{
 			if(root==null) throw new ArgumentNullException("root");
 			
@@ -45,6 +45,8 @@ namespace Arrow.DI
 				
 				container.Register(item.ExposedTypes,item.ConcreteType,item.Lifetime);
 			}
+
+			return container;
 		}
 
 		class RegistrationItem : ICustomXmlInitialization

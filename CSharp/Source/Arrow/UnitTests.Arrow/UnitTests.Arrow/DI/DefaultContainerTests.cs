@@ -18,11 +18,85 @@ namespace UnitTests.Arrow.DI
 		[TestFixtureSetUp]
 		public void Setup()
 		{
-			m_Container.RegisterInstance<IContainer>(m_Container);
+			m_Container.RegisterInstance<IDIContainer>(m_Container);
 			m_Container.Register<IUserLookup,UserLookupStub>(Lifetime.Singleton);
 
 			Type[] multiTypes={typeof(IFoo),typeof(IBar)};
 			m_Container.Register(multiTypes,typeof(FooBar),Lifetime.Singleton);
+		}
+
+		[Test]
+		public void ScopeTest()
+		{
+			var parent=new DefaultContainer();
+			parent.RegisterInstance<IDIContainer>(parent);
+			parent.Register<IFoo,FooBar>(Lifetime.Singleton);
+
+			var child=parent.NewScope();
+			child.RegisterInstance<IDIContainer>(child);
+
+			var container=m_Container.NewScope();
+			container.RegisterInstance<IDIContainer>(container);
+
+			Assert.That(child.Resolve<IDIContainer>(), Is.Not.EqualTo(parent));
+			Assert.That(child.Resolve<IDIContainer>(), Is.EqualTo(child));
+
+			// This should call down to the parent scope
+			var lookupParent=parent.Resolve<IFoo>();
+			var lookupChild=child.Resolve<IFoo>();
+			
+			Assert.That(lookupParent,Is.EqualTo(lookupChild));
+		}
+
+		[Test]
+		public void ScopeTest_CallToChild1()
+		{
+			var parent=new DefaultContainer();
+			parent.RegisterInstance<IDIContainer>(parent);
+			parent.Register<IFoo,FooBar>(Lifetime.Singleton);
+
+			var child=parent.NewScope();
+			child.RegisterInstance<IDIContainer>(child);
+			child.Register<IFoo,FooBar>(Lifetime.Singleton);
+
+			var parentFoo1=parent.Resolve<TakesFoo>();
+			var parentFoo2=parent.Resolve<TakesFoo>();
+			Assert.That(parentFoo1.Foo,Is.EqualTo(parentFoo2.Foo));
+
+			var childFoo1=child.Resolve<TakesFoo>();
+			var childFoo2=child.Resolve<TakesFoo>();
+			Assert.That(childFoo1.Foo,Is.EqualTo(childFoo2.Foo));
+
+			// The parent foo should be different to the child foo
+			Assert.That(childFoo1.Foo,Is.Not.EqualTo(parentFoo1.Foo));
+		}
+
+		[Test]
+		public void ScopeTest_CallToChild2()
+		{
+			var parent=new DefaultContainer();
+			parent.Register<IFoo,FooBar>(Lifetime.Singleton);
+
+			var child=parent.NewScope();
+			child.Register<TakesFoo,TakesFoo>(Lifetime.Singleton);
+
+			var takesFoo=child.Resolve<TakesFoo>();
+		}
+
+		[Test]
+		public void ScopeTest_CallToChild3()
+		{
+			var parent=new DefaultContainer();
+			parent.Register<TakesFoo,TakesFoo>(Lifetime.Singleton);
+
+			var child=parent.NewScope();
+			child.Register<IFoo,TestFoo>(Lifetime.Singleton);
+			child.Register<IBar,FooBar>(Lifetime.Singleton);
+
+			// TakesFoo will be created in the parent, but its dependent types live in the child
+			var takesFoo=child.Resolve<TakesFoo>();
+			Assert.That(takesFoo.Foo,Is.TypeOf<TestFoo>());
+			Assert.That(((TestFoo)takesFoo.Foo).Bar,Is.TypeOf<FooBar>());
 		}
 
 		[Test]
@@ -111,7 +185,7 @@ namespace UnitTests.Arrow.DI
 		public void PopulateFromXml_2()
 		{
 			var container=new DefaultContainer();
-			container.RegisterInstance<IContainer>(container);
+			container.RegisterInstance<IDIContainer>(container);
 
 			var registrationNode=AppConfig.GetSectionXml(ArrowSystem.Name,"DI/Registration");
 			container.RegisterFromXml(registrationNode);
@@ -126,9 +200,39 @@ namespace UnitTests.Arrow.DI
 		}
 	}
 
+	class TakesFoo
+	{
+		public TakesFoo(IFoo foo)
+		{
+			this.Foo=foo;
+		}
+
+		public IFoo Foo{get;set;}
+	}
+
+	class TestFoo : IFoo
+	{
+		private IBar m_Bar;
+
+		public TestFoo(IBar bar)
+		{
+			m_Bar=bar;
+		}
+
+		public IBar Bar
+		{
+			get{return m_Bar;}
+		}
+
+		public void HandleFoo()
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 	class UserManager
 	{
-		public UserManager(IUserLookup lookup, IContainer container)
+		public UserManager(IUserLookup lookup, IDIContainer container)
 		{
 			Assert.IsNotNull(lookup);
 			Assert.IsNotNull(container);

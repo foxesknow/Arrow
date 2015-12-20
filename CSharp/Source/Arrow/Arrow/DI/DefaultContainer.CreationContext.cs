@@ -14,12 +14,24 @@ namespace Arrow.DI
 		/// </summary>
 		class CreationContext
 		{
-			private HashSet<Type> m_ActiveTypes=new HashSet<Type>();
+			private readonly HashSet<Type> m_ActiveTypes=new HashSet<Type>();
+			private readonly DefaultContainer m_StartContainer;
+
+			public CreationContext(DefaultContainer startContainer)
+			{
+				m_StartContainer=startContainer;
+			}
+
+			public DefaultContainer StartContainer
+			{
+				get{return m_StartContainer;}
+			}
 
 			public IDisposable Scope(Type type)
 			{
 				if(m_ActiveTypes.Contains(type)) throw new ContainerException("Circular type dependency: "+type.ToString());
 
+				m_ActiveTypes.Add(type);
 				return new Disposer(()=>End(type));
 			}
 

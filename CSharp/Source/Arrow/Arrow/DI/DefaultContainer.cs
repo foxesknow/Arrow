@@ -11,9 +11,28 @@ namespace Arrow.DI
 	/// If an attempt is made to resolve a type that has not been registered then
 	/// a transient instance of the type will be created
 	/// </summary>
-	public partial class DefaultContainer : IContainer, IContainerRegistration
+	public partial class DefaultContainer : IDIContainer
 	{
+		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<Type,Func<CreationContext,object>> m_Items=new Dictionary<Type,Func<CreationContext,object>>();
+
+		private readonly DefaultContainer m_Parent;
+
+		/// <summary>
+		/// Initializes the instance
+		/// </summary>
+		public DefaultContainer() : this(null)
+		{
+		}
+
+		/// <summary>
+		/// Initializes the instance
+		/// </summary>
+		/// <param name="parent">The parent container, if applicable</param>
+		internal DefaultContainer(DefaultContainer parent)
+		{
+			m_Parent=parent;
+		}
 
 		/// <summary>
 		/// Resolves a type to an underlying implementation
@@ -24,9 +43,21 @@ namespace Arrow.DI
 		{
 			if(type==null) throw new ArgumentNullException("type");
 
-			var context=new CreationContext();
+			var context=new CreationContext(this);
+			
 			var instance=Resolve(context,type);
 			return instance;
+		}
+
+		/// <summary>
+		/// Creates a new container scope.
+		/// When resolving against the new scope the container will defer to its parent
+		/// if it cannot resolve a type
+		/// </summary>
+		/// <returns>A new container scope</returns>
+		public IDIContainer NewScope()
+		{
+			return new DefaultContainer(this);
 		}
 
 		/// <summary>
@@ -35,21 +66,25 @@ namespace Arrow.DI
 		/// <typeparam name="T">The item to register</typeparam>
 		/// <param name="exposedTypes">The types to expose from the item</param>
 		/// <param name="item">The item to register</param>
-		public void RegisterInstance<T>(IList<Type> exposedTypes, T item) where T:class
+		public IDIContainer RegisterInstance<T>(IList<Type> exposedTypes, T item) where T:class
 		{
 			if(exposedTypes==null) throw new ArgumentNullException("exposedTypes");
 			if(exposedTypes.Count==0) throw new ArgumentException("no items in exposedTypes");
 			if(item==null) throw new ArgumentNullException("item");
 
 			Type concreteType=typeof(T);
-			EnsureTypeNotRegistered(exposedTypes);
 			EnsureTypeCompatible(exposedTypes,concreteType);
 
-			foreach(var type in exposedTypes)
+			lock(m_SyncRoot)
 			{
-				Func<CreationContext,object> lookup=context=>item;
-				m_Items.Add(type,lookup);
+				foreach(var type in exposedTypes)
+				{
+					Func<CreationContext,object> lookup=context=>item;
+					m_Items.Add(type,lookup);
+				}
 			}
+
+			return this;
 		}
 		
 
@@ -59,56 +94,67 @@ namespace Arrow.DI
 		/// <param name="exposedTypes">The type to expose</param>
 		/// <param name="concreteType">A concreate implementation of the exposed type</param>
 		/// <param name="lifetime">The lifetime of the type</param>
-		public void Register(IList<Type> exposedTypes, Type concreteType, Lifetime lifetime)
+		public IDIContainer Register(IList<Type> exposedTypes, Type concreteType, Lifetime lifetime)
 		{
 			if(exposedTypes==null) throw new ArgumentNullException("exposedTypes");
 			if(exposedTypes.Count==0) throw new ArgumentException("no items in exposedTypes");
 			if(concreteType==null) throw new ArgumentNullException("contreteType");
 
 			// Do the sanity checks
-			EnsureTypeNotRegistered(exposedTypes);
 			EnsureTypeCompatible(exposedTypes,concreteType);
 			EnsureTypeConstraints(concreteType);
 
 			// This will hold the singleton instance, if required
 			object instance=null;
 
-			foreach(var exposedType in exposedTypes)
+			lock(m_SyncRoot)
 			{
-				Func<CreationContext,object> lookup=null;
+				foreach(var exposedType in exposedTypes)
+				{
+					Func<CreationContext,object> lookup=null;
 			
-				if(lifetime==Lifetime.Transient)
-				{
-					lookup=context=>
+					if(lifetime==Lifetime.Transient)
 					{
-						using(context.Scope(concreteType))
-						{
-							return CreateType(context,concreteType);
-						}
-					};
-				}
-				else
-				{
-					lookup=context=>
-					{
-						if(instance==null) 
+						lookup=context=>
 						{
 							using(context.Scope(concreteType))
 							{
-								instance=CreateType(context,concreteType);
+								return CreateType(context,concreteType);
 							}
-						}
+						};
+					}
+					else
+					{
+						// This will give us a unique lock per singleton
+						object singletonLock=new object();
+					
+						lookup=context=>
+						{
+							lock(singletonLock)
+							{
+								if(instance==null) 
+								{
+									using(context.Scope(concreteType))
+									{
+										instance=CreateType(context,concreteType);
+									}
+								}
+							}
 
-						return instance;
-					};
+							return instance;
+						};
+					}
+
+					m_Items.Add(exposedType,lookup);
 				}
-
-				m_Items.Add(exposedType,lookup);
 			}
+
+			return this;
 		}
 
 		/// <summary>
 		/// Checks to make sure none of the specified types are already registered
+		/// By calling this we stop registration over an existing type, which may or may not be desireable
 		/// </summary>
 		/// <param name="types"></param>
 		private void EnsureTypeNotRegistered(IList<Type> types)
@@ -154,26 +200,23 @@ namespace Arrow.DI
 		/// <returns></returns>
 		private object CreateType(CreationContext context, Type typeInfo)
 		{
-			using(context.Scope(typeInfo))
+			var constructor=SelectConstructor(typeInfo);			
+			var parameterInfo=constructor.GetParameters();	
+
+			object[] parameters=new object[parameterInfo.Length];
+
+			for(int i=0; i<parameterInfo.Length; i++)
 			{
-				var constructor=SelectConstructor(typeInfo);			
-				var parameterInfo=constructor.GetParameters();	
+				Type type=parameterInfo[i].ParameterType;
+				
+				// NOTE: We need to use the StartContainer to pick up any overrides in child containers
+				object value=context.StartContainer.Resolve(context,type);
 
-				object[] parameters=new object[parameterInfo.Length];
-
-				for(int i=0; i<parameterInfo.Length; i++)
-				{
-					Type type=parameterInfo[i].ParameterType;
-
-					Func<CreationContext,object> lookup;
-					if(m_Items.TryGetValue(type,out lookup)==false) throw new ContainerException("Type not registered: "+type.ToString());
-
-					parameters[i]=lookup(context);
-				}
-
-				object instance=constructor.Invoke(parameters);
-				return instance;
+				parameters[i]=value;
 			}
+
+			object instance=constructor.Invoke(parameters);
+			return instance;
 		}
 
 		/// <summary>
@@ -184,15 +227,25 @@ namespace Arrow.DI
 		/// <returns></returns>
 		private object Resolve(CreationContext context, Type type)
 		{
-			using(context.Scope(type))
+			// First, see if we've got an explicit lookup function for the type
+			lock(m_SyncRoot)
 			{
 				Func<CreationContext,object> lookup;
-				if(m_Items.TryGetValue(type,out lookup))
+				if(m_Items.TryGetValue(type,out lookup)) 
 				{
 					return lookup(context);
 				}
+			}
 
-				// The type isn't registered, so assume we want to create a transient instance
+			// If there's a parent then ask them to try
+			if(m_Parent!=null)
+			{
+				return m_Parent.Resolve(context,type);
+			}
+
+			using(context.Scope(type))
+			{
+				// The type isn't registered, so assume we want to create a transient instance of a concrete type
 				EnsureTypeConstraints(type);
 
 				object instance=CreateType(context,type);

@@ -16,13 +16,15 @@ namespace Arrow.DI
 		/// <typeparam name="T">The type of the instance</typeparam>
 		/// <param name="container">The container to register against</param>
 		/// <param name="item">The instance</param>
-		public static void RegisterInstance<T>(this IContainerRegistration container, T item) where T:class
+		public static IDIContainer RegisterInstance<T>(this IDIContainer container, T item) where T:class
 		{
 			if(container==null) throw new ArgumentNullException("container");
 			if(item==null) throw new ArgumentNullException("item");
 
 			Type[] exposedTypes={typeof(T)};
 			container.RegisterInstance(exposedTypes,item);
+
+			return container;
 		}
 
 		/// <summary>
@@ -32,12 +34,14 @@ namespace Arrow.DI
 		/// <typeparam name="B">The base type to expose</typeparam>
 		/// <typeparam name="T">The concrete implementation of the base type</typeparam>
 		/// <param name="container">The container to register against</param>
-		public static void Register<B,T>(this IContainerRegistration container) where T:class,B
+		public static IDIContainer Register<B,T>(this IDIContainer container) where T:class,B
 		{
 			if(container==null) throw new ArgumentNullException("container");
 
 			Type[] exposedTypes={typeof(B)};
 			container.Register(exposedTypes,typeof(T),Lifetime.Transient);
+
+			return container;
 		}
 
 		/// <summary>
@@ -47,7 +51,7 @@ namespace Arrow.DI
 		/// <typeparam name="T">The concrete implementation of the base type</typeparam>
 		/// <param name="container">The container to register against</param>
 		/// <param name="lifetime">The lifetime of the T</param>
-		public static void Register<B,T>(this IContainerRegistration container, Lifetime lifetime) where T:class,B
+		public static void Register<B,T>(this IDIContainer container, Lifetime lifetime) where T:class,B
 		{
 			if(container==null) throw new ArgumentNullException("container");
 
@@ -62,7 +66,7 @@ namespace Arrow.DI
 		/// <param name="exposedType">The type to expose</param>
 		/// <param name="contreteType">A concreate implementation of the exposed type</param>
 		/// <param name="lifetime">The lifetime of the type</param>
-		public static void Register(this IContainerRegistration container, Type exposedType, Type contreteType, Lifetime lifetime)
+		public static IDIContainer Register(this IDIContainer container, Type exposedType, Type contreteType, Lifetime lifetime)
 		{
 			if(container==null) throw new ArgumentNullException("container");
 			if(exposedType==null) throw new ArgumentNullException("exposedType");
@@ -70,6 +74,8 @@ namespace Arrow.DI
 
 			Type[] exposedTypes={exposedType};
 			container.Register(exposedTypes,contreteType,lifetime);
+
+			return container;
 		}
 	}
 }
