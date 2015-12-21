@@ -11,7 +11,7 @@ namespace Arrow.DI
 	/// If an attempt is made to resolve a type that has not been registered then
 	/// a transient instance of the type will be created
 	/// </summary>
-	public partial class DefaultContainer : IDIContainer
+	public partial class DefaultContainer : IDIContainerRegister
 	{
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<Type,Func<CreationContext,object>> m_Items=new Dictionary<Type,Func<CreationContext,object>>();
@@ -55,7 +55,7 @@ namespace Arrow.DI
 		/// if it cannot resolve a type
 		/// </summary>
 		/// <returns>A new container scope</returns>
-		public IDIContainer NewScope()
+		public IDIContainerRegister NewScope()
 		{
 			return new DefaultContainer(this);
 		}
@@ -66,7 +66,7 @@ namespace Arrow.DI
 		/// <typeparam name="T">The item to register</typeparam>
 		/// <param name="exposedTypes">The types to expose from the item</param>
 		/// <param name="item">The item to register</param>
-		public IDIContainer RegisterInstance<T>(IList<Type> exposedTypes, T item) where T:class
+		public IDIContainerRegister RegisterInstance<T>(IList<Type> exposedTypes, T item) where T:class
 		{
 			if(exposedTypes==null) throw new ArgumentNullException("exposedTypes");
 			if(exposedTypes.Count==0) throw new ArgumentException("no items in exposedTypes");
@@ -94,7 +94,7 @@ namespace Arrow.DI
 		/// <param name="exposedTypes">The type to expose</param>
 		/// <param name="concreteType">A concreate implementation of the exposed type</param>
 		/// <param name="lifetime">The lifetime of the type</param>
-		public IDIContainer Register(IList<Type> exposedTypes, Type concreteType, Lifetime lifetime)
+		public IDIContainerRegister Register(IList<Type> exposedTypes, Type concreteType, Lifetime lifetime)
 		{
 			if(exposedTypes==null) throw new ArgumentNullException("exposedTypes");
 			if(exposedTypes.Count==0) throw new ArgumentException("no items in exposedTypes");

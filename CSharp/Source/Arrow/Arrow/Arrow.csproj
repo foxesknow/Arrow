@@ -122,6 +122,7 @@
     <Compile Include="DI\DefaultContainer.cs" />
     <Compile Include="DI\IDIContainer.cs" />
     <Compile Include="DI\ContainerRegistrationExtensions.cs" />
+    <Compile Include="DI\IDIContainerRegister.cs" />
     <Compile Include="DI\Lifetime.cs" />
     <Compile Include="Execution\Disposer.cs" />
     <Compile Include="Execution\ExecutionTimer.cs" />

@@ -28,7 +28,7 @@ namespace Arrow.DI
 		/// </example>
 		/// <param name="container">The container the items will be registered into</param>
 		/// <param name="root"></param>
-		public static IDIContainer RegisterFromXml(this IDIContainer container, XmlNode root)
+		public static IDIContainerRegister RegisterFromXml(this IDIContainerRegister container, XmlNode root)
 		{
 			if(root==null) throw new ArgumentNullException("root");
 			

@@ -165,6 +165,15 @@ namespace UnitTests.Arrow.DI
 		}
 
 		[Test]
+		public void UnregisteredInterface()
+		{
+			Assert.Throws<ContainerException>(()=>
+			{
+				var instance=m_Container.Resolve<IDisposable>();
+			});
+		}
+
+		[Test]
 		public void PopulateFromXml_1()
 		{
 			var container=new DefaultContainer();
