@@ -105,6 +105,7 @@ namespace Arrow.DI
 			EnsureTypeConstraints(concreteType);
 
 			// This will hold the singleton instance, if required
+			// It's declared outside the foreach loop as all exposed types must use the same instance
 			object instance=null;
 
 			lock(m_SyncRoot)
@@ -130,13 +131,16 @@ namespace Arrow.DI
 					
 						lookup=context=>
 						{
-							lock(singletonLock)
+							if(instance==null) 
 							{
-								if(instance==null) 
+								lock(singletonLock)
 								{
-									using(context.Scope(concreteType))
+									if(instance==null) 
 									{
-										instance=CreateType(context,concreteType);
+										using(context.Scope(concreteType))
+										{
+											instance=CreateType(context,concreteType);
+										}
 									}
 								}
 							}

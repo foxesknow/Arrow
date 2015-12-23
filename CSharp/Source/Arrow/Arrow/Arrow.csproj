@@ -116,12 +116,12 @@
     <Compile Include="Data\OdbcDatabaseDetails.cs" />
     <Compile Include="Data\SqlServerDatabaseDetails.cs" />
     <Compile Include="DI\ContainerException.cs" />
-    <Compile Include="DI\ContainerExtensions.cs" />
-    <Compile Include="DI\ContainerRegistrationExtensions.Xml.cs" />
+    <Compile Include="DI\IDIContainer.Extensions.cs" />
+    <Compile Include="DI\IDIContainerRegister.Extensions.Xml.cs" />
     <Compile Include="DI\DefaultContainer.CreationContext.cs" />
     <Compile Include="DI\DefaultContainer.cs" />
     <Compile Include="DI\IDIContainer.cs" />
-    <Compile Include="DI\ContainerRegistrationExtensions.cs" />
+    <Compile Include="DI\IDIContainerRegister.Extensions.cs" />
     <Compile Include="DI\IDIContainerRegister.cs" />
     <Compile Include="DI\Lifetime.cs" />
     <Compile Include="Execution\Disposer.cs" />
