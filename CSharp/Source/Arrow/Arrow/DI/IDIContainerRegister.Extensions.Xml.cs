@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-
+using Arrow.Reflection;
 using Arrow.Xml.ObjectCreation;
 
 namespace Arrow.DI
@@ -33,26 +33,66 @@ namespace Arrow.DI
 		{
 			if(root==null) throw new ArgumentNullException("root");
 			
-			var itemsToRegister=XmlCreation.CreateList<RegistrationItem>(root.SelectNodes("Register"));
-			foreach(var item in itemsToRegister)
+			var registerNodes=root.SelectNodes("Register|RegisterBundles|RegisterBundlesInAssembly");
+			foreach(XmlNode node in registerNodes)
 			{
-				if(item.ConcreteType==null) throw new ContainerException("no concrete type specified");
-
-				if(item.ExposedTypes.Count==0)
+				switch(node.Name)
 				{
-					// Assume that the concrete type is the exposed type
-					item.ExposedTypes.Add(item.ConcreteType);
-				}
+					case "Register":
+					{
+						var item=XmlCreation.Create<RegisterItem>(node);
+						if(item.ConcreteType==null) throw new ContainerException("no concrete type specified");
+
+						if(item.ExposedTypes.Count==0)
+						{
+							// Assume that the concrete type is the exposed type
+							item.ExposedTypes.Add(item.ConcreteType);
+						}
 				
-				container.Register(item.ExposedTypes,item.ConcreteType,item.Lifetime);
+						container.Register(item.ExposedTypes,item.ConcreteType,item.Lifetime);
+
+						break;
+					}
+
+					case "RegisterBundles":
+					{
+						var registerBundles=XmlCreation.Create<RegisterBundlesItem>(node);
+						
+						foreach(var bundle in registerBundles.Bundles)
+						{
+							if(bundle!=null)
+							{
+								container=bundle.RegisterBundle(container);
+							}
+						}
+
+						break;
+					}
+
+					case "RegisterBundlesInAssembly":
+					{
+						var registerBundlesInAssembly=XmlCreation.Create<RegisterBundlesInAssemblyItem>(node);
+
+						foreach(var assemblyName in registerBundlesInAssembly.Assemblies)
+						{
+							var assembly=TypeResolver.LoadAssembly(assemblyName);
+							container=container.RegisterBundlesInAssemby(assembly);
+						}
+
+						break;
+					}
+
+					default:
+						break;
+				}
 			}
 
 			return container;
 		}
 
-		class RegistrationItem : ICustomXmlInitialization
+		class RegisterItem : ICustomXmlInitialization
 		{
-			public RegistrationItem()
+			public RegisterItem()
 			{
 				this.ExposedTypes=new List<Type>();
 				this.Lifetime=DI.Lifetime.Transient;
@@ -83,6 +123,26 @@ namespace Arrow.DI
 				}
 			}
 
+		}
+
+		class RegisterBundlesItem
+		{
+			public RegisterBundlesItem()
+			{
+				this.Bundles=new List<DependencyBundle>();
+			}
+
+			public List<DependencyBundle> Bundles{get;private set;}
+		}
+
+		class RegisterBundlesInAssemblyItem
+		{
+			public RegisterBundlesInAssemblyItem()
+			{
+				this.Assemblies=new List<string>();
+			}
+
+			public List<string> Assemblies{get;private set;}
 		}
 	}
 }

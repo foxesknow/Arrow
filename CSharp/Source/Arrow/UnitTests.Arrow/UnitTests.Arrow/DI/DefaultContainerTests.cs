@@ -202,6 +202,10 @@ namespace UnitTests.Arrow.DI
 			Assert.That(bar,Is.Not.Null);
 
 			Assert.AreSame(foo,bar);
+
+			var holder=container.Resolve<KeyHolder>();
+			Assert.That(holder,Is.Not.Null);
+			Assert.That(holder.Key,Is.EqualTo(8));
 		}
 
 		[Test]
@@ -220,6 +224,20 @@ namespace UnitTests.Arrow.DI
 
 			var ctest2=container.Resolve<ConstructorTest>();
 			Assert.AreNotSame(ctest1,ctest2);
+		}
+
+		[Test]
+		public void PopulateFromXml_AssemblyScan()
+		{
+			var container=new DefaultContainer();
+			container.RegisterInstance<IDIContainer>(container);
+
+			var registrationNode=AppConfig.GetSectionXml(ArrowSystem.Name,"DI/AssemblyScan");
+			container.RegisterFromXml(registrationNode);
+
+			var holder=container.Resolve<KeyHolder>();
+			Assert.That(holder,Is.Not.Null);
+			Assert.That(holder.Key,Is.EqualTo(42));
 		}
 
 		[Test]
@@ -316,6 +334,17 @@ namespace UnitTests.Arrow.DI
 		protected override IDIContainerRegister Register(IDIContainerRegister container)
 		{
 			return container.RegisterInstance(new KeyHolder(42));
+		}
+	}
+
+	/// <summary>
+	/// As this bundle isn't public it won't be picked up by the assembly scanning
+	/// </summary>
+	class IslandBundle : DependencyBundle
+	{
+		protected override IDIContainerRegister Register(IDIContainerRegister container)
+		{
+			return container.RegisterInstance(new KeyHolder(8));
 		}
 	}
 }
