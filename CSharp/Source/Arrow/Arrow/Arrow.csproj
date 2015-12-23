@@ -116,6 +116,7 @@
     <Compile Include="Data\OdbcDatabaseDetails.cs" />
     <Compile Include="Data\SqlServerDatabaseDetails.cs" />
     <Compile Include="DI\ContainerException.cs" />
+    <Compile Include="DI\DependencyBundle.cs" />
     <Compile Include="DI\IDIContainer.Extensions.cs" />
     <Compile Include="DI\IDIContainerRegister.Extensions.Xml.cs" />
     <Compile Include="DI\DefaultContainer.CreationContext.cs" />

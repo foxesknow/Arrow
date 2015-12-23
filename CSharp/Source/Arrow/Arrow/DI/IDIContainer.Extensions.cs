@@ -8,7 +8,7 @@ namespace Arrow.DI
 	/// <summary>
 	/// Provides useful resolution methods
 	/// </summary>
-	public static class ContainerExtensions
+	public static class IDIContainerExtensions
 	{
 		/// <summary>
 		/// Resolves a type to an underlying implementation

@@ -8,7 +8,7 @@ using Arrow.Xml.ObjectCreation;
 
 namespace Arrow.DI
 {
-	public static partial class ContainerRegistrationExtensions
+	public static partial class IDIContainerRegisterExtensions
 	{
 		/// <summary>
 		/// Registers DI items from xml
@@ -28,6 +28,7 @@ namespace Arrow.DI
 		/// </example>
 		/// <param name="container">The container the items will be registered into</param>
 		/// <param name="root"></param>
+		/// <returns>The container to use in subsequent calls</returns>
 		public static IDIContainerRegister RegisterFromXml(this IDIContainerRegister container, XmlNode root)
 		{
 			if(root==null) throw new ArgumentNullException("root");
