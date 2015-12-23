@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Arrow.DI
@@ -110,6 +111,35 @@ namespace Arrow.DI
 			if(bundle==null) throw new ArgumentNullException("bundle");
 
 			return bundle.RegisterBundle(container);
+		}
+
+		/// <summary>
+		/// Registers all public bundles in an assembly
+		/// </summary>
+		/// <param name="container">The container to register into</param>
+		/// <param name="assembly">The assembly to scan for bundles</param>
+		/// <returns>The container to use in subsequent calls</returns>
+		public static IDIContainerRegister RegisterBundlesInAssemby(this IDIContainerRegister container, Assembly assembly)
+		{
+			if(container==null) throw new ArgumentNullException("container");
+			if(assembly==null) throw new ArgumentNullException("assembly");
+
+			foreach(Type type in assembly.GetTypes())
+			{
+				if(type.IsClass && type.IsAbstract==false && type.IsPublic && typeof(DependencyBundle).IsAssignableFrom(type))
+				{
+					// We'll need a default constructor
+					var ctor=type.GetConstructor(Type.EmptyTypes);
+					if(ctor!=null)
+					{
+						var bundle=(DependencyBundle)ctor.Invoke(null);
+						container=bundle.RegisterBundle(container);
+					}
+				}
+			}
+
+			return container;
+
 		}
 	}
 }

@@ -26,6 +26,20 @@ namespace UnitTests.Arrow.DI
 		}
 
 		[Test]
+		public void ResolveGeneric()
+		{
+			var foo=m_Container.Resolve<IFoo>();
+			Assert.That(foo,Is.Not.Null);
+		}
+
+		[Test]
+		public void ResolveType()
+		{
+			var foo=m_Container.Resolve(typeof(IFoo));
+			Assert.That(foo,Is.Not.Null);
+		}
+
+		[Test]
 		public void ScopeTest()
 		{
 			var parent=new DefaultContainer();
@@ -207,6 +221,39 @@ namespace UnitTests.Arrow.DI
 			var ctest2=container.Resolve<ConstructorTest>();
 			Assert.AreNotSame(ctest1,ctest2);
 		}
+
+		[Test]
+		public void RegisterBundleInAssembly()
+		{
+			var container=new DefaultContainer();
+			container.RegisterBundlesInAssemby(typeof(DefaultContainerTests).Assembly);
+
+			var holder=container.Resolve<KeyHolder>();
+			Assert.That(holder,Is.Not.Null);
+			Assert.That(holder.Key,Is.EqualTo(42));
+		}
+
+		[Test]
+		public void RegisterBundleGeneric()
+		{
+			var container=new DefaultContainer();
+			container.RegisterBundle<KeyBundle>();
+
+			var holder=container.Resolve<KeyHolder>();
+			Assert.That(holder,Is.Not.Null);
+			Assert.That(holder.Key,Is.EqualTo(42));
+		}
+
+		[Test]
+		public void RegisterBundleInstance()
+		{
+			var container=new DefaultContainer();
+			container.RegisterBundle(new KeyBundle());
+
+			var holder=container.Resolve<KeyHolder>();
+			Assert.That(holder,Is.Not.Null);
+			Assert.That(holder.Key,Is.EqualTo(42));
+		}
 	}
 
 	class TakesFoo
@@ -248,8 +295,27 @@ namespace UnitTests.Arrow.DI
 		}
 	}
 
+	class KeyHolder
+	{
+		public KeyHolder(int key)
+		{
+			this.Key=key;
+		}
+
+		public int Key{get;private set;}
+	}
+
 	interface INotImplemented
 	{
 		void Foo();
+	}
+
+
+	public class KeyBundle : DependencyBundle
+	{
+		protected override IDIContainerRegister Register(IDIContainerRegister container)
+		{
+			return container.RegisterInstance(new KeyHolder(42));
+		}
 	}
 }
