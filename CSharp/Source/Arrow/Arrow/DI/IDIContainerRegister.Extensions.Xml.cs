@@ -49,7 +49,7 @@ namespace Arrow.DI
 							item.ExposedTypes.Add(item.ConcreteType);
 						}
 				
-						container.Register(item.ExposedTypes,item.ConcreteType,item.Lifetime);
+						container=container.Register(item.ExposedTypes,item.ConcreteType,item.Lifetime);
 
 						break;
 					}

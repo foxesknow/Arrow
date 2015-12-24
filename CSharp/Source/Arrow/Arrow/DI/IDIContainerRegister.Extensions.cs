@@ -23,10 +23,8 @@ namespace Arrow.DI
 			if(container==null) throw new ArgumentNullException("container");
 			if(item==null) throw new ArgumentNullException("item");
 
-			Type[] exposedTypes={typeof(T)};
-			container.RegisterInstance(exposedTypes,item);
-
-			return container;
+			Type[] exposedTypes={typeof(T)};		
+			return container.RegisterInstance(exposedTypes,item);;
 		}
 
 		/// <summary>
@@ -43,9 +41,7 @@ namespace Arrow.DI
 			if(container==null) throw new ArgumentNullException("container");
 
 			Type[] exposedTypes={typeof(B1)};
-			container.Register(exposedTypes,typeof(T),lifetime);
-
-			return container;
+			return container.Register(exposedTypes,typeof(T),lifetime);
 		}
 
 		/// <summary>
@@ -63,9 +59,7 @@ namespace Arrow.DI
 			if(container==null) throw new ArgumentNullException("container");
 
 			Type[] exposedTypes={typeof(B1),typeof(B2)};
-			container.Register(exposedTypes,typeof(T),lifetime);
-
-			return container;
+			return container.Register(exposedTypes,typeof(T),lifetime);;
 		}
 
 		/// <summary>
@@ -84,9 +78,7 @@ namespace Arrow.DI
 			if(container==null) throw new ArgumentNullException("container");
 
 			Type[] exposedTypes={typeof(B1),typeof(B2),typeof(B3)};
-			container.Register(exposedTypes,typeof(T),lifetime);
-
-			return container;
+			return container.Register(exposedTypes,typeof(T),lifetime);
 		}
 
 		/// <summary>
@@ -106,9 +98,7 @@ namespace Arrow.DI
 			if(container==null) throw new ArgumentNullException("container");
 
 			Type[] exposedTypes={typeof(B1),typeof(B2),typeof(B3),typeof(B4)};
-			container.Register(exposedTypes,typeof(T),lifetime);
-
-			return container;
+			return container.Register(exposedTypes,typeof(T),lifetime);
 		}
 
 		/// <summary>
@@ -126,9 +116,7 @@ namespace Arrow.DI
 			if(contreteType==null) throw new ArgumentNullException("contreteType");
 
 			Type[] exposedTypes={exposedType};
-			container.Register(exposedTypes,contreteType,lifetime);
-
-			return container;
+			return container.Register(exposedTypes,contreteType,lifetime);
 		}
 
 		/// <summary>
