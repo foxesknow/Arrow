@@ -138,6 +138,36 @@ namespace UnitTests.Arrow.DI
         }
 
 		[Test]
+		public void Singletion_MultiInterface()
+		{
+			var container=new DefaultContainer();
+			container.Register<IFoo,IBar,FooBar>(Lifetime.Singleton);
+
+			var foo=container.Resolve<IFoo>();
+			Assert.That(foo,Is.Not.Null);
+
+			var bar=container.Resolve<IBar>();
+			Assert.That(bar,Is.Not.Null);
+
+			Assert.That(foo,Is.EqualTo(bar));
+		}
+
+		[Test]
+		public void Transient_MultiInterface()
+		{
+			var container=new DefaultContainer();
+			container.Register<IFoo,IBar,FooBar>(Lifetime.Transient);
+
+			var foo=container.Resolve<IFoo>();
+			Assert.That(foo,Is.Not.Null);
+
+			var bar=container.Resolve<IBar>();
+			Assert.That(bar,Is.Not.Null);
+
+			Assert.That(foo,Is.Not.EqualTo(bar));
+		}
+
+		[Test]
 		public void NonRegisteredType()
 		{
 			var manager1=m_Container.Resolve<UserManager>();

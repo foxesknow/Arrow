@@ -9,7 +9,7 @@ namespace Arrow.DI
 {
 	/// <summary>
 	/// A default implementation of a dependency injection container
-	/// If an attempt is made to resolve a type that has not been registered then
+	/// If an attempt is made to resolve a concrete type that has not been registered then
 	/// a transient instance of the type will be created
 	/// </summary>
 	public partial class DefaultContainer : IDIContainerRegister

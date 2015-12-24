@@ -33,33 +33,79 @@ namespace Arrow.DI
 		/// Registers a concrete type against a base type.
 		/// The lifetime is set to Transient
 		/// </summary>
-		/// <typeparam name="B">The base type to expose</typeparam>
+		/// <typeparam name="B1">The base type to expose</typeparam>
 		/// <typeparam name="T">The concrete implementation of the base type</typeparam>
 		/// <param name="container">The container to register against</param>
+		/// <param name="lifetime">The lifetime of T. Default is transient</param>
 		/// <returns>The container to use in subsequent calls</returns>
-		public static IDIContainerRegister Register<B,T>(this IDIContainerRegister container) where T:class,B
+		public static IDIContainerRegister Register<B1,T>(this IDIContainerRegister container, Lifetime lifetime=Lifetime.Transient) where T:class,B1
 		{
 			if(container==null) throw new ArgumentNullException("container");
 
-			Type[] exposedTypes={typeof(B)};
-			container.Register(exposedTypes,typeof(T),Lifetime.Transient);
+			Type[] exposedTypes={typeof(B1)};
+			container.Register(exposedTypes,typeof(T),lifetime);
 
 			return container;
 		}
 
 		/// <summary>
-		/// Registers a concrete type against a base type
+		/// Registers a concrete type against a base type.
+		/// The lifetime is set to Transient
 		/// </summary>
-		/// <typeparam name="B">The base type to expose</typeparam>
+		/// <typeparam name="B1">A base type to expose</typeparam>
+		/// <typeparam name="B2">A base type to expose</typeparam>
 		/// <typeparam name="T">The concrete implementation of the base type</typeparam>
 		/// <param name="container">The container to register against</param>
-		/// <param name="lifetime">The lifetime of the T</param>
+		/// <param name="lifetime">The lifetime of T. Default is transient</param>
 		/// <returns>The container to use in subsequent calls</returns>
-		public static IDIContainerRegister Register<B,T>(this IDIContainerRegister container, Lifetime lifetime) where T:class,B
+		public static IDIContainerRegister Register<B1,B2,T>(this IDIContainerRegister container, Lifetime lifetime=Lifetime.Transient) where T:class,B1,B2
 		{
 			if(container==null) throw new ArgumentNullException("container");
 
-			Type[] exposedTypes={typeof(B)};
+			Type[] exposedTypes={typeof(B1),typeof(B2)};
+			container.Register(exposedTypes,typeof(T),lifetime);
+
+			return container;
+		}
+
+		/// <summary>
+		/// Registers a concrete type against a base type.
+		/// The lifetime is set to Transient
+		/// </summary>
+		/// <typeparam name="B1">A base type to expose</typeparam>
+		/// <typeparam name="B2">A base type to expose</typeparam>
+		/// <typeparam name="B3">A base type to expose</typeparam>
+		/// <typeparam name="T">The concrete implementation of the base type</typeparam>
+		/// <param name="lifetime">The lifetime of T. Default is transient</param>
+		/// <param name="container">The container to register against</param>
+		/// <returns>The container to use in subsequent calls</returns>
+		public static IDIContainerRegister Register<B1,B2,B3,T>(this IDIContainerRegister container, Lifetime lifetime=Lifetime.Transient) where T:class,B1,B2,B3
+		{
+			if(container==null) throw new ArgumentNullException("container");
+
+			Type[] exposedTypes={typeof(B1),typeof(B2),typeof(B3)};
+			container.Register(exposedTypes,typeof(T),lifetime);
+
+			return container;
+		}
+
+		/// <summary>
+		/// Registers a concrete type against a base type.
+		/// The lifetime is set to Transient
+		/// </summary>
+		/// <typeparam name="B1">A base type to expose</typeparam>
+		/// <typeparam name="B2">A base type to expose</typeparam>
+		/// <typeparam name="B3">A base type to expose</typeparam>
+		/// <typeparam name="B4">A base type to expose</typeparam>
+		/// <typeparam name="T">The concrete implementation of the base type</typeparam>
+		/// <param name="container">The container to register against</param>
+		/// <param name="lifetime">The lifetime of T. Default is transient</param>
+		/// <returns>The container to use in subsequent calls</returns>
+		public static IDIContainerRegister Register<B1,B2,B3,B4,T>(this IDIContainerRegister container, Lifetime lifetime=Lifetime.Transient) where T:class,B1,B2,B3,B4
+		{
+			if(container==null) throw new ArgumentNullException("container");
+
+			Type[] exposedTypes={typeof(B1),typeof(B2),typeof(B3),typeof(B4)};
 			container.Register(exposedTypes,typeof(T),lifetime);
 
 			return container;
