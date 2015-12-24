@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Threading;
 
 namespace Arrow.DI
 {
@@ -107,6 +108,8 @@ namespace Arrow.DI
 			// This will hold the singleton instance, if required
 			// It's declared outside the foreach loop as all exposed types must use the same instance
 			object instance=null;
+			object singletonLock=null;
+			bool initialized=false;
 
 			lock(m_SyncRoot)
 			{
@@ -126,26 +129,15 @@ namespace Arrow.DI
 					}
 					else
 					{
-						// This will give us a unique lock per singleton
-						object singletonLock=new object();
-					
 						lookup=context=>
 						{
-							if(instance==null) 
+							return LazyInitializer.EnsureInitialized(ref instance,ref initialized,ref singletonLock,()=>
 							{
-								lock(singletonLock)
+								using(context.Scope(concreteType))
 								{
-									if(instance==null) 
-									{
-										using(context.Scope(concreteType))
-										{
-											instance=CreateType(context,concreteType);
-										}
-									}
+									return CreateType(context,concreteType);
 								}
-							}
-
-							return instance;
+							});
 						};
 					}
 
