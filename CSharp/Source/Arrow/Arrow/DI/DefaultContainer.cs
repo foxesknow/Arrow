@@ -46,7 +46,7 @@ namespace Arrow.DI
 
 			var context=new CreationContext(this);
 			
-			var instance=Resolve(context,type);
+			var instance=ResolveType(context,type);
 			return instance;
 		}
 
@@ -214,7 +214,7 @@ namespace Arrow.DI
 				Type type=parameterInfo[i].ParameterType;
 				
 				// NOTE: We need to use the StartContainer to pick up any overrides in child containers
-				object value=context.StartContainer.Resolve(context,type);
+				object value=context.StartContainer.ResolveType(context,type);
 
 				parameters[i]=value;
 			}
@@ -229,7 +229,7 @@ namespace Arrow.DI
 		/// <param name="context"></param>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		private object Resolve(CreationContext context, Type type)
+		private object ResolveType(CreationContext context, Type type)
 		{
 			// First, see if we've got an explicit lookup function for the type
 			lock(m_SyncRoot)
@@ -244,7 +244,7 @@ namespace Arrow.DI
 			// If there's a parent then ask them to try
 			if(m_Parent!=null)
 			{
-				return m_Parent.Resolve(context,type);
+				return m_Parent.ResolveType(context,type);
 			}
 
 			using(context.Scope(type))
