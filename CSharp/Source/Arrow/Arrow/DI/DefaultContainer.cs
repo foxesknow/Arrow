@@ -76,11 +76,13 @@ namespace Arrow.DI
 			Type concreteType=typeof(T);
 			EnsureTypeCompatible(exposedTypes,concreteType);
 
+			// The exposed types can all share the same instance
+			Func<CreationContext,object> lookup=context=>item;
+
 			lock(m_SyncRoot)
 			{
 				foreach(var type in exposedTypes)
 				{
-					Func<CreationContext,object> lookup=context=>item;
 					m_Items.Add(type,lookup);
 				}
 			}
@@ -107,40 +109,46 @@ namespace Arrow.DI
 
 			// This will hold the singleton instance, if required
 			// It's declared outside the foreach loop as all exposed types must use the same instance
-			object instance=null;
-			object singletonLock=null;
-			bool initialized=false;
+
+			Func<CreationContext,object> lookup=null;
+
+			if(lifetime==Lifetime.Transient)
+			{
+				lookup=context=>
+				{
+					using(context.Scope(concreteType))
+					{
+						return CreateType(context,concreteType);
+					}
+				};
+			}
+			else if(lifetime==Lifetime.Singleton)
+			{
+				// We'll create the instance and the lock for it on demand
+				object instance=null;
+				object singletonLock=null;
+				bool initialized=false;
+
+				lookup=context=>
+				{
+					return LazyInitializer.EnsureInitialized(ref instance,ref initialized,ref singletonLock,()=>
+					{
+						using(context.Scope(concreteType))
+						{
+							return CreateType(context,concreteType);
+						}
+					});
+				};
+			}
+			else
+			{
+				throw new ArgumentException("Unkown lifetime: "+lifetime.ToString());
+			}
 
 			lock(m_SyncRoot)
 			{
 				foreach(var exposedType in exposedTypes)
 				{
-					Func<CreationContext,object> lookup=null;
-			
-					if(lifetime==Lifetime.Transient)
-					{
-						lookup=context=>
-						{
-							using(context.Scope(concreteType))
-							{
-								return CreateType(context,concreteType);
-							}
-						};
-					}
-					else
-					{
-						lookup=context=>
-						{
-							return LazyInitializer.EnsureInitialized(ref instance,ref initialized,ref singletonLock,()=>
-							{
-								using(context.Scope(concreteType))
-								{
-									return CreateType(context,concreteType);
-								}
-							});
-						};
-					}
-
 					m_Items.Add(exposedType,lookup);
 				}
 			}
