@@ -107,9 +107,6 @@ namespace Arrow.DI
 			EnsureTypeCompatible(exposedTypes,concreteType);
 			EnsureTypeConstraints(concreteType);
 
-			// This will hold the singleton instance, if required
-			// It's declared outside the foreach loop as all exposed types must use the same instance
-
 			Func<CreationContext,object> lookup=null;
 
 			if(lifetime==Lifetime.Transient)
@@ -188,6 +185,8 @@ namespace Arrow.DI
 		{
 			foreach(var baseType in baseTypes)
 			{
+				if(baseType==null) throw new ArgumentException("null type in baseTypes");
+
 				if(baseType.IsAssignableFrom(concreteType)==false) 
 				{
 					string message=string.Format("{0} cannot be converted to {1}",concreteType.Name,baseType.Name);
