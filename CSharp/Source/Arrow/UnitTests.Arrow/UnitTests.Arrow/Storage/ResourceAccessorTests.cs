@@ -31,6 +31,21 @@ namespace UnitTests.Arrow.Storage
 				}
 			}
 		}
+
+		[Test]
+		public void CreateResourceUri()
+		{
+			Uri uri1=ResourceAccessor.CreateUri(typeof(ResourceAccessorTests).Assembly,"path/to/resource.xml");
+			Assert.That(uri1,Is.Not.Null);
+
+			Uri uri2=ResourceAccessor.CreateUri(typeof(ResourceAccessorTests).Assembly,"/path/to/resource.xml");
+			Assert.That(uri2,Is.Not.Null);
+
+			Assert.That(uri1,Is.EqualTo(uri2));
+
+			var builder=new UriBuilder(uri1);
+			Assert.That(builder.Scheme,Is.EqualTo(ResourceAccessor.Scheme));
+		}
 		
 		[Test]
 		[ExpectedException(typeof(IOException))]
@@ -49,7 +64,7 @@ namespace UnitTests.Arrow.Storage
 		[Test]
 		public void Exists()
 		{
-			Uri uri=new Uri("res://UnitTests.Arrow/UnitTests/Arrow/Resources/Jack.xml");
+			Uri uri=ResourceAccessor.CreateUri(typeof(ResourceAccessorTests).Assembly,"UnitTests/Arrow/Resources/Jack.xml");
 			var access=new ResourceAccessor(uri);
 			Assert.IsTrue(access.CanExists);
 			Assert.IsTrue(access.Exists());

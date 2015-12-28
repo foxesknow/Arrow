@@ -16,12 +16,17 @@ namespace Arrow.Storage
 	public class ResourceAccessor : Accessor
 	{
 		/// <summary>
+		/// The scheme used by this acccessor
+		/// </summary>
+		public static readonly string Scheme="res";
+
+		/// <summary>
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="uri">The use of the resource to access</param>
 		public ResourceAccessor(Uri uri) : base(uri)
 		{
-			ValidateScheme(uri,"res");
+			ValidateScheme(uri,Scheme);
 		}
 
 		/// <summary>
@@ -100,6 +105,28 @@ namespace Arrow.Storage
 			if(resourcePath.StartsWith("/")) resourcePath=resourcePath.Substring(1);
 			resourcePath=resourcePath.Replace('/','.');
 			resourcePath=resourcePath.Replace('\\','.');
+		}
+
+		/// <summary>
+		/// Create a uri to a resource
+		/// </summary>
+		/// <param name="assembly">The assembly containing the resource</param>
+		/// <param name="absolutePath">The path within the assembly to the resource</param>
+		/// <returns>A uri to the resource</returns>
+		public static Uri CreateUri(Assembly assembly, string absolutePath)
+		{
+			if(assembly==null) throw new ArgumentNullException("assembly");
+			if(absolutePath==null) throw new ArgumentNullException("absolutePath");
+
+			// We just want the assembly name (ie no version etc)
+			string host=assembly.GetName().Name;
+
+			UriBuilder builder=new UriBuilder();
+			builder.Scheme=Scheme;
+			builder.Host=host;
+			builder.Path=absolutePath;
+
+			return builder.Uri;
 		}
 	}
 }

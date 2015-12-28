@@ -25,7 +25,7 @@ namespace Arrow.Storage
 		{
 			s_Accessors["file"]=uri=>new FileAccessor(uri);
 			s_Accessors["http"]=uri=>new HttpAccessor(uri);
-			s_Accessors["res"]=uri=>new ResourceAccessor(uri);
+			s_Accessors[ResourceAccessor.Scheme]=uri=>new ResourceAccessor(uri);
 			s_Accessors[GlobalVirtualFileSystemAccessor.Scheme]=uri=>new GlobalVirtualFileSystemAccessor(uri);
 
 			LoadFromAppConfig();
