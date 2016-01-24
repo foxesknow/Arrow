@@ -12,7 +12,7 @@ namespace Arrow.Threading
 	public static class TaskEx
 	{
 		/// <summary>
-		/// Returns a successful that has no value
+		/// Returns a successful task that has no value
 		/// </summary>
 		/// <returns>A task</returns>
 		public static Task Void()
