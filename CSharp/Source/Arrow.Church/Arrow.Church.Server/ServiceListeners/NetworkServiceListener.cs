@@ -15,6 +15,7 @@ using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Internal;
 using Arrow.Logging;
 using Arrow.Church.Common;
+using Arrow.Collections;
 
 
 namespace Arrow.Church.Server.ServiceListeners
@@ -144,7 +145,7 @@ namespace Arrow.Church.Server.ServiceListeners
 			processor.Close();
 		}
 
-		public override Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
+		public override Task RespondAsync(CallDetails callDetails, ArraySegmentCollection<byte> buffers)
 		{
 			SocketProcessor processor=null;
 
@@ -158,10 +159,10 @@ namespace Arrow.Church.Server.ServiceListeners
 				// We've already got the buffers for the response,
 				// but we need to flatten the envelope and stick it on the front
 				var envelope=CreateReponse(callDetails.Envelope);
-				envelope.DataLength=buffers.TotalLength();
-				var response=GenerateResponse(envelope,buffers);
+				envelope.DataLength=buffers.GetOverallLength();
+				GenerateResponse(envelope,buffers);
 
-				return processor.WriteAsync(response);
+				return processor.WriteAsync(buffers.UnderlyingSegments);
 			}
 			else
 			{
@@ -227,7 +228,7 @@ namespace Arrow.Church.Server.ServiceListeners
 			}
 		}
 
-		private IList<ArraySegment<byte>> GenerateResponse(MessageEnvelope envelope, IList<ArraySegment<byte>> buffers)
+		private void GenerateResponse(MessageEnvelope envelope, ArraySegmentCollection<byte> buffers)
 		{
 			using(var stream=new MemoryStream(MessageEnvelope.EnvelopeSize))
 			{
@@ -237,9 +238,9 @@ namespace Arrow.Church.Server.ServiceListeners
 				}
 
 				var segment=stream.ToArraySegment();
-				var responseBuffers=segment.ToList(buffers);
-
-				return responseBuffers;
+				
+				// Add to the front as the envelope preceeds the message body
+				buffers.AddFront(segment);
 			}
 		}
 

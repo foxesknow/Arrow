@@ -9,6 +9,7 @@ using Arrow.Church.Client.Proxy;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Data.DotNet;
 using Arrow.Church.Common.Net;
+using Arrow.Collections;
 using Arrow.Logging;
 using Arrow.Threading;
 
@@ -118,7 +119,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 			return innerExceptions.Count==1 ? innerExceptions[0] : flattenedExceptions;
 		}
 
-		protected void HandleResponse(MessageEnvelope responseMessageEnvelope, IList<ArraySegment<byte>> buffers)
+		protected void HandleResponse(MessageEnvelope responseMessageEnvelope, ArraySegmentCollection<byte> buffers)
 		{
 			var data=buffers.ToArray();
 			using(var stream=new MemoryStream(data,false))

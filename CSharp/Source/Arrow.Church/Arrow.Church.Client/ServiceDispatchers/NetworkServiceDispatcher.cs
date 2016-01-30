@@ -10,6 +10,7 @@ using Arrow.Church.Common;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Internal;
 using Arrow.Church.Common.Net;
+using Arrow.Collections;
 using Arrow.Net.Message;
 using Arrow.Threading;
 
@@ -43,7 +44,7 @@ namespace Arrow.Church.Client.ServiceDispatchers
 
 		private void HandleMessage(object sender, SocketMessageEventArgs<MessageEnvelope,byte[]> args)
 		{
-			HandleResponse(args.Header,new ArraySegment<byte>(args.Body).ToList());
+			HandleResponse(args.Header,ArraySegmentCollection.FromArray(args.Body));
 			args.ReadMode=ReadMode.KeepReading;
 		}
 
@@ -66,12 +67,10 @@ namespace Arrow.Church.Client.ServiceDispatchers
 				{
 					encoder.WriteNeverNull(envelope);
 
-					var segment=stream.ToArraySegment();
-				
-					var parts=segment.ToList();
-					parts.Add(new ArraySegment<byte>(data));
+					var segments=ArraySegmentCollection.FromMemoryStream(stream);
+					segments.AddBack(new ArraySegment<byte>(data));
 
-					return m_SocketProcessor.WriteAsync(parts);
+					return m_SocketProcessor.WriteAsync(segments.UnderlyingSegments);
 				}
 			}
 			catch(Exception e)

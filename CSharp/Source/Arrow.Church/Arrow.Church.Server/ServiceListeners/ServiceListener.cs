@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Net;
+using Arrow.Collections;
 using Arrow.Threading;
 
 namespace Arrow.Church.Server.ServiceListeners
@@ -49,7 +50,7 @@ namespace Arrow.Church.Server.ServiceListeners
 		/// <param name="callDetails"></param>
 		/// <param name="buffers"></param>
 		/// <returns>A task that is compete when the response has been sent</returns>
-		public abstract Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers);
+		public abstract Task RespondAsync(CallDetails callDetails, ArraySegmentCollection<byte> buffers);
 
 		protected void OnServiceCall(ServiceCallEventArgs args)
 		{

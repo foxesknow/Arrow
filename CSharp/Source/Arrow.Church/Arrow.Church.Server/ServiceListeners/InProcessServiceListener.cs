@@ -7,6 +7,7 @@ using Arrow.Church.Common;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Net;
 using Arrow.Church.Common.ServiceDispatchers;
+using Arrow.Collections;
 using Arrow.Threading;
 
 namespace Arrow.Church.Server.ServiceListeners
@@ -36,7 +37,7 @@ namespace Arrow.Church.Server.ServiceListeners
 			// Does nothing
 		}
 
-		public override Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
+		public override Task RespondAsync(CallDetails callDetails, ArraySegmentCollection<byte> buffers)
 		{
 			try
 			{
@@ -54,7 +55,7 @@ namespace Arrow.Church.Server.ServiceListeners
 				if(callback!=null)
 				{
 					var response=CreateReponse(callDetails.Envelope);
-					response.DataLength=buffers.TotalLength();
+					response.DataLength=buffers.GetOverallLength();
 
 					callback(response,buffers);
 				}

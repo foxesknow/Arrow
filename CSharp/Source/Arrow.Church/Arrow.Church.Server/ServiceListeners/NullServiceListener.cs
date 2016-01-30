@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Arrow.Collections;
 using Arrow.Threading;
 
 namespace Arrow.Church.Server.ServiceListeners
@@ -21,7 +22,7 @@ namespace Arrow.Church.Server.ServiceListeners
 		{
 		}
 
-		public override Task RespondAsync(CallDetails callDetails, IList<ArraySegment<byte>> buffers)
+		public override Task RespondAsync(CallDetails callDetails, ArraySegmentCollection<byte> buffers)
 		{
 			return TaskEx.FromException(new NotImplementedException());
 		}

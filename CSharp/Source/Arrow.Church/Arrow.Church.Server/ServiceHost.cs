@@ -13,6 +13,7 @@ using Arrow.Threading;
 using Arrow.Logging;
 using Arrow.Church.Server.ServiceListeners;
 using Arrow.Church.Common;
+using Arrow.Collections;
 
 namespace Arrow.Church.Server
 {
@@ -225,7 +226,7 @@ namespace Arrow.Church.Server
 						protocol.ToStream(stream,call.Result);
 					}
 
-					var segments=stream.ToArraySegment().ToList();
+					var segments=ArraySegmentCollection.FromMemoryStream(stream);
 					
 					var respondTask=args.ServiceListener.RespondAsync(args.CallDetails,segments);
 					respondTask.ContinueWith(t=>
@@ -260,7 +261,7 @@ namespace Arrow.Church.Server
 					// Exceptions always go back as a .NET serialized object
 					s_DotNetSerializer.ToStream(stream,reason);
 
-					var segments=stream.ToArraySegment().ToList();
+					var segments=ArraySegmentCollection.FromMemoryStream(stream);
 					
 					var respondTask=args.ServiceListener.RespondAsync(args.CallDetails,segments);
 					respondTask.ContinueWith(t=>
