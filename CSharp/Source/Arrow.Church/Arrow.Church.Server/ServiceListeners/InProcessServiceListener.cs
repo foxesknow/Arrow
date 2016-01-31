@@ -7,7 +7,7 @@ using Arrow.Church.Common;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Net;
 using Arrow.Church.Common.ServiceDispatchers;
-using Arrow.Collections;
+using Arrow.Memory;
 using Arrow.Threading;
 
 namespace Arrow.Church.Server.ServiceListeners

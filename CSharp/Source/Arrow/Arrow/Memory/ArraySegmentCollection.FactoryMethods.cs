@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Collections
+namespace Arrow.Memory
 {
 	/// <summary>
 	/// Useful ArraySegmentCollection factory methods

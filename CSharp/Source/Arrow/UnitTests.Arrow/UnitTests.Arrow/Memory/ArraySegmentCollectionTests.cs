@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Arrow.Collections;
+using Arrow.Memory;
 using NUnit.Framework;
 
-namespace UnitTests.Arrow.Collections
+namespace UnitTests.Arrow.Memory
 {
 	[TestFixture]
 	public class ArraySegmentCollectionTests

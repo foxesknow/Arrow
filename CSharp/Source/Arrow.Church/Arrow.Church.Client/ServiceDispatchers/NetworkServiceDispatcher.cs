@@ -10,7 +10,7 @@ using Arrow.Church.Common;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Internal;
 using Arrow.Church.Common.Net;
-using Arrow.Collections;
+using Arrow.Memory;
 using Arrow.Net.Message;
 using Arrow.Threading;
 

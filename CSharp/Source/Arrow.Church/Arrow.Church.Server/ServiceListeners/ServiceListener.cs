@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Net;
-using Arrow.Collections;
+using Arrow.Memory;
 using Arrow.Threading;
 
 namespace Arrow.Church.Server.ServiceListeners

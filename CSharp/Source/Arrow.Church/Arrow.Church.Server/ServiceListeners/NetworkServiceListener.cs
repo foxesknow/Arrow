@@ -15,7 +15,7 @@ using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Internal;
 using Arrow.Logging;
 using Arrow.Church.Common;
-using Arrow.Collections;
+using Arrow.Memory;
 
 
 namespace Arrow.Church.Server.ServiceListeners

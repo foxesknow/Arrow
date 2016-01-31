@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Collections
+namespace Arrow.Memory
 {
 	/// <summary>
 	/// Manages a collection of array segments

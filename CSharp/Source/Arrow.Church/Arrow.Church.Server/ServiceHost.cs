@@ -13,7 +13,7 @@ using Arrow.Threading;
 using Arrow.Logging;
 using Arrow.Church.Server.ServiceListeners;
 using Arrow.Church.Common;
-using Arrow.Collections;
+using Arrow.Memory;
 
 namespace Arrow.Church.Server
 {

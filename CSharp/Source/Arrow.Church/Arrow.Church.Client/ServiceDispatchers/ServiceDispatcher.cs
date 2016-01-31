@@ -9,7 +9,7 @@ using Arrow.Church.Client.Proxy;
 using Arrow.Church.Common.Data;
 using Arrow.Church.Common.Data.DotNet;
 using Arrow.Church.Common.Net;
-using Arrow.Collections;
+using Arrow.Memory;
 using Arrow.Logging;
 using Arrow.Threading;
 
