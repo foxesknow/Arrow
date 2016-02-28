@@ -154,6 +154,54 @@ namespace Arrow.DI
 		}
 
 		/// <summary>
+		/// Registers a factory method that will be called to create an instance
+		/// </summary>
+		/// <typeparam name="T">The type to register</typeparam>
+		/// <param name="lifetime">The lifetime of the type</param>
+		/// <param name="factory">The factory method that creates they type</param>
+		/// <returns>The DI container</returns>
+		public IDIContainerRegister RegisterFactory<T>(Lifetime lifetime, Func<IDIContainer,T> factory) where T:class
+		{
+			if(factory==null) throw new ArgumentNullException("factory");
+
+			Func<CreationContext,object> lookup=null;
+
+			if(lifetime==Lifetime.Transient)
+			{
+				lookup=context=>
+				{
+					return factory(this);
+				};
+			}
+			else if(lifetime==Lifetime.Singleton)
+			{
+				// We'll create the instance and the lock for it on demand
+				object instance=null;
+				object singletonLock=null;
+				bool initialized=false;
+
+				lookup=context=>
+				{
+					return LazyInitializer.EnsureInitialized(ref instance,ref initialized,ref singletonLock,()=>
+					{
+						return factory(this);
+					});
+				};
+			}
+			else
+			{
+				throw new ArgumentException("Unkown lifetime: "+lifetime.ToString());
+			}
+
+			lock(m_SyncRoot)
+			{
+				m_Items.Add(typeof(T),lookup);
+			}
+
+			return this;
+		}
+
+		/// <summary>
 		/// Checks to make sure none of the specified types are already registered
 		/// By calling this we stop registration over an existing type, which may or may not be desireable
 		/// </summary>

@@ -302,6 +302,74 @@ namespace UnitTests.Arrow.DI
 			Assert.That(holder,Is.Not.Null);
 			Assert.That(holder.Key,Is.EqualTo(42));
 		}
+
+		[Test]
+		public void RegisterFactory_Singleton()
+		{
+			int calls=0;
+
+			var container=new DefaultContainer();
+			container.RegisterFactory<IFoo>(Lifetime.Singleton,di=>
+			{
+				calls++;
+				return new TestFoo(null);
+			});
+
+			Assert.That(calls,Is.EqualTo(0));
+
+			var instance1=container.Resolve<IFoo>();
+			Assert.That(instance1,Is.Not.Null);
+			Assert.That(calls,Is.EqualTo(1));
+
+			var instance2=container.Resolve<IFoo>();
+			Assert.That(instance2,Is.Not.Null);
+			Assert.That(calls,Is.EqualTo(1));
+
+			Assert.That(instance1,Is.SameAs(instance2));
+		}
+
+		[Test]
+		public void RegisterFactory_Transient()
+		{
+			int calls=0;
+
+			var container=new DefaultContainer();
+			container.RegisterFactory<IFoo>(Lifetime.Transient,di=>
+			{
+				calls++;
+				return new TestFoo(null);
+			});
+
+			Assert.That(calls,Is.EqualTo(0));
+
+			var instance1=container.Resolve<IFoo>();
+			Assert.That(instance1,Is.Not.Null);
+			Assert.That(calls,Is.EqualTo(1));
+
+			var instance2=container.Resolve<IFoo>();
+			Assert.That(instance2,Is.Not.Null);
+			Assert.That(calls,Is.EqualTo(2));
+
+			Assert.That(instance1,Is.Not.SameAs(instance2));
+		}
+
+		[Test]
+		public void RegisterFactory_UsingContainer()
+		{
+			var container=new DefaultContainer();
+			container.Register<IFoo,IBar,FooBar>(Lifetime.Singleton);
+			container.RegisterFactory<TakesFoo>(Lifetime.Transient,di=>
+			{
+				var foo=di.Resolve<IFoo>();
+				Assert.That(foo,Is.Not.Null);
+				
+				return new TakesFoo(foo);
+			});
+
+			var takesFoo=container.Resolve<TakesFoo>();
+			Assert.That(takesFoo,Is.Not.Null);
+			Assert.That(takesFoo.Foo,Is.Not.Null);
+		}
 	}
 
 	class TakesFoo
