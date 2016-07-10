@@ -8,23 +8,11 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-using Arrow.Application.Services;
+using Arrow.Application.Service;
 
 namespace ArrowHost
 {
-	public partial class ArrowHostService : InteractiveServiceBase
+	public partial class ArrowHostService : ThreadedService<ServiceMain>
 	{
-		public ArrowHostService()
-		{
-			InitializeComponent();
-		}
-
-		protected override void OnStart(string[] args)
-		{
-		}
-
-		protected override void OnStop()
-		{
-		}
 	}
 }
