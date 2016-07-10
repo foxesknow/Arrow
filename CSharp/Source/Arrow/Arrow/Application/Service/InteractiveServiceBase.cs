@@ -9,7 +9,9 @@ namespace Arrow.Application.Service
 	/// <summary>
 	/// Base class for services that wish to be run either as a service or as a Windows/Console application
 	/// 
-	/// Typically the classes InteractiveService and
+	/// Typically the classes InteractiveServiceMain and ThreadedServiceMain provide enough functionality
+	/// for most cases. Implementations should only derive from this class if they have requirements beyond
+	/// just starting and stopping a service
 	/// </summary>
 	public class InteractiveServiceBase : ServiceBase
 	{
