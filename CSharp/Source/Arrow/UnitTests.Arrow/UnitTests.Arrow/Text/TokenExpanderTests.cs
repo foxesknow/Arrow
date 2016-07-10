@@ -27,7 +27,7 @@ namespace UnitTests.Arrow.Text
 		public void TestExpandTextLookup()
 		{
 			string text="hello there ${test:username|||toupper}$ your id is ${test:id}$";
-			string expanded=TokenExpander.ExpandText(text,"${","}$",delegate(string name)
+			string expanded=TokenExpander.ExpandText(text,"${","}$",(string name)=>
 			{
 				if(name=="test:username") return "sean";
 				if(name=="test:id") return "1";
@@ -42,7 +42,7 @@ namespace UnitTests.Arrow.Text
 		public void TestPropertyLookup()
 		{
 			string text="test:username|Length";
-			string expanded=TokenExpander.ExpandToken(text,delegate(string name)
+			string expanded=TokenExpander.ExpandToken(text,(string name)=>
 			{
 				if(name=="test:username") return "sean";
 				if(name=="test:id") return "1";
@@ -58,7 +58,7 @@ namespace UnitTests.Arrow.Text
 			DateTime when=new DateTime(2008,12,7); // A sunday
 			
 			string text="when|Date.DayOfWeek";
-			string expanded=TokenExpander.ExpandToken(text,delegate(string name)
+			string expanded=TokenExpander.ExpandToken(text,(string name)=>
 			{
 				if(name=="when") return when;
 				throw new ApplicationException();
