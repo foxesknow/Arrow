@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Arrow.Application;
-using Arrow.Application.Services;
+using Arrow.Application.Service;
 
 namespace ChurchHost
 {

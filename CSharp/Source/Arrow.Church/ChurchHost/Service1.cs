@@ -7,7 +7,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
-using Arrow.Application.Services;
+using Arrow.Application.Service;
 using Arrow.Church.Server;
 using Arrow.Church.Server.HostBuilder;
 using Arrow.Configuration;
@@ -24,7 +24,7 @@ namespace ChurchHost
 			InitializeComponent();
 		}
 
-		protected override void DoStart(string[] args)
+		protected override void OnStart(string[] args)
 		{
 			var hostConfigXml=AppConfig.GetSectionXml("App","Hosts/Main");
 			var builder=XmlCreation.Create<ServiceHostBuilder>(hostConfigXml);
@@ -33,7 +33,7 @@ namespace ChurchHost
 			m_Host.Start();
 		}
 
-		protected override void DoStop()
+		protected override void OnStop()
 		{
 			if(m_Host!=null)
 			{

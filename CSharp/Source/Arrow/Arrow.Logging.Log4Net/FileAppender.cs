@@ -23,7 +23,7 @@ namespace Arrow.Logging.Log4Net
 		/// <param name="append">Whether to append or not</param>
 		protected override void OpenFile(string fileName, bool append)
 		{
-			MethodCall.AllowFail(delegate
+			MethodCall.AllowFail(()=>
 			{
 				// Make sure the directory exists
 				FileInfo fileInfo=new FileInfo(fileName);

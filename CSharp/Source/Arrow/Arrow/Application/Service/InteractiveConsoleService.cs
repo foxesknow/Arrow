@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ServiceProcess;
 
-namespace Arrow.Application.Services
+namespace Arrow.Application.Service
 {
 	/// <summary>
 	/// Runs a service as a console application if the app was started as a console process,

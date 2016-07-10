@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ServiceProcess;
 
-namespace Arrow.Application.Services
+namespace Arrow.Application.Service
 {
 	/// <summary>
 	/// Base class for services that wish to be run either as a service
@@ -13,18 +13,20 @@ namespace Arrow.Application.Services
 	public class InteractiveServiceBase : ServiceBase
 	{
 		/// <summary>
-		/// Starts the service by calling OnStart()
+		/// Starts the service by calling OnStart().
+		/// This method exists to call down to OnStart() which is protected, so not available to the framework.
 		/// </summary>
 		/// <param name="args">Any arguments to the service</param>
-		protected internal virtual void DoStart(string[] args)
+		internal void DoStart(string[] args)
 		{
 			OnStart(args);
 		}
 
 		/// <summary>
 		/// Stops the service by calling OnStop
+		/// This method exists to call down to OnStop() which is protected, so not available to the framework.
 		/// </summary>
-		protected internal virtual void DoStop()
+		internal void DoStop()
 		{
 			OnStop();
 		}

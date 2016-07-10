@@ -65,6 +65,10 @@
     <Compile Include="Application\Service\InteractiveServiceBase.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Application\Service\IServiceMain.cs" />
+    <Compile Include="Application\Service\ThreadedService.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ArrowException.cs" />
     <Compile Include="Calendar\BaselineClock.cs" />
     <Compile Include="Calendar\Clock.cs" />

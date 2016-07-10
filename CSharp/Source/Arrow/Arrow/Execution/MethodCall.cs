@@ -29,6 +29,28 @@ namespace Arrow.Execution
 				// Does nothing
 			}
 		}
+
+		/// <summary>
+		/// Executes a method and ignores any exceptions thrown by the method.
+		/// By taking a data parameter this method avoids generating a wrapper class for 
+		/// any data used by method, as long as method only used the passed in data
+		/// </summary>
+		/// <typeparam name="T">The type of data to pass to the method that may fail</typeparam>
+		/// <param name="data">The data to pass to the method</param>
+		/// <param name="method">The method to call</param>
+		public static void AllowFail<T>(T data, Action<T> method)
+		{
+			if(method==null) throw new ArgumentNullException("method");
+			
+			try
+			{
+				method(data);
+			}
+			catch
+			{
+				// Does nothing
+			}
+		}
 		
 		/// <summary>
 		/// Executes a method, calling an optional handler if an exception is thrown

@@ -71,50 +71,58 @@ namespace Arrow.Logging.Loggers
 		
 		private void Log(ConsoleColor color, object message)
 		{
-			MethodCall.AllowFail(delegate
+			MethodCall.AllowFail(()=>
 			{
 				lock(s_Sync)
-				using(new ColorChange(color))
 				{
-					m_Out.WriteLine(message);
+					using(new ColorChange(color))
+					{
+						m_Out.WriteLine(message);
+					}
 				}
 			});
 		}
 		
 		private void Log(ConsoleColor color, object message, Exception exception)
 		{
-			MethodCall.AllowFail(delegate
+			MethodCall.AllowFail(()=>
 			{
 				lock(s_Sync)
-				using(new ColorChange(color))
 				{
-					m_Out.WriteLine(message);
-					m_Out.WriteLine(exception);
+					using(new ColorChange(color))
+					{
+						m_Out.WriteLine(message);
+						m_Out.WriteLine(exception);
+					}
 				}
 			});
 		}
 		
 		private void Log(ConsoleColor color, string format, params object[] args)
 		{
-			MethodCall.AllowFail(delegate
+			MethodCall.AllowFail(()=>
 			{
 				lock(s_Sync)
-				using(new ColorChange(color))
 				{
-					m_Out.WriteLine(format,args);
+					using(new ColorChange(color))
+					{
+						m_Out.WriteLine(format,args);
+					}
 				}
 			});
 		}
 		
 		private void Log(ConsoleColor color, IFormatProvider provider, string format, params object[] args)
 		{
-			MethodCall.AllowFail(delegate
+			MethodCall.AllowFail(()=>
 			{
 				lock(s_Sync)
-				using(new ColorChange(color))
 				{
-					string message=string.Format(provider,format,args);
-					m_Out.WriteLine(message);
+					using(new ColorChange(color))
+					{
+						string message=string.Format(provider,format,args);
+						m_Out.WriteLine(message);
+					}
 				}
 			});
 		}

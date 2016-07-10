@@ -241,7 +241,7 @@ namespace Arrow.ObjectAccess
 		{
 			if(@object==null) throw new ArgumentNullException("object");
 		
-			return delegate(string name)
+			return (string name)=>
 			{
 				return GetValue(@object.GetType(),@object,name);
 			};

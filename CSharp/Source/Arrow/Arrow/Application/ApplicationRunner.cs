@@ -19,7 +19,7 @@ namespace Arrow.Application
 		/// <param name="args">The arguments to pass to the main delegate</param>
 		public static void Run(Action<string[]> main, string[] args)
 		{
-			Func<string[],int> wrapper=delegate(string[] wrapperArgs)
+			Func<string[],int> wrapper=(string[] wrapperArgs)=>
 			{
 				main(wrapperArgs);
 				return 0;
