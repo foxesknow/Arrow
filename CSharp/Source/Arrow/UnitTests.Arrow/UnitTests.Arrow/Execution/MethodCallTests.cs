@@ -19,7 +19,7 @@ namespace UnitTests.Arrow.Execution
 		{
 			bool wasCalled=false;
 			
-			Action method=delegate()
+			Action method=()=>
 			{
 				wasCalled=true;
 				throw new Exception("should not see this");
@@ -33,14 +33,14 @@ namespace UnitTests.Arrow.Execution
 		public void TestAllowFailWithExceptionHandler()
 		{
 			bool methodCalled=false;
-			Action method=delegate()
+			Action method=()=>
 			{
 				methodCalled=true;
 				throw new Exception("should not see this");
 			};
 			
 			bool handlerCalled=false;
-			Action<Exception> handler=delegate(Exception e)
+			Action<Exception> handler=(Exception e)=>
 			{
 				handlerCalled=true;
 				Assert.That(e.Message,Is.EqualTo("should not see this"));
@@ -56,7 +56,7 @@ namespace UnitTests.Arrow.Execution
 		{
 			bool methodCalled=false;
 			int callNumber=0;
-			Action method=delegate()
+			Action method=()=>
 			{
 				callNumber++;
 				if(methodCalled==false)
@@ -75,7 +75,7 @@ namespace UnitTests.Arrow.Execution
 		[ExpectedException(typeof(ArgumentException))]
 		public void TestRetryWithFailure()
 		{
-			Action method=delegate()
+			Action method=()=>
 			{
 				throw new ArgumentException();
 			};
@@ -88,7 +88,7 @@ namespace UnitTests.Arrow.Execution
 		public void TestInvoke1()
 		{
 			string result=null;
-			Action<string> action=delegate(string data)
+			Action<string> action=(string data)=>
 			{
 				result=data;
 			};
@@ -102,7 +102,7 @@ namespace UnitTests.Arrow.Execution
 		public void TestInvoke2()
 		{
 			int result=0;
-			BinaryHandler<int> action=delegate(int first, int second)
+			BinaryHandler<int> action=(int first, int second)=>
 			{
 				result=first+second;
 			};
