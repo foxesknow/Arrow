@@ -22,7 +22,7 @@ namespace ArrowHost
 
 		static void Run(string[] args)
 		{
-			var service=new InteractiveConsoleService<ArrowHostService>();
+			var service=new InteractiveConsoleService<ServiceMainHost<ServiceMain>>();
 			service.Run(args);
 		}
 	}

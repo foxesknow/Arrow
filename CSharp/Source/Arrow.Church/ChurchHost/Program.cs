@@ -22,7 +22,7 @@ namespace ChurchHost
 
 		static void ServiceMain(string[] args)
 		{
-			var service=new InteractiveConsoleService<ChurchHostService>();
+			var service=new InteractiveConsoleService<ServiceMainHost<ServiceMain>>();
 			service.Run(args);
 		}
 	}

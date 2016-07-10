@@ -12,13 +12,22 @@ namespace Arrow.Application.Service
 	/// If the implementing class also implements IDisposable then the
 	/// Dispose() method will be called during shutdown
 	/// </summary>
-	public interface IServiceMain
+	public abstract class ServiceMain
 	{
 		/// <summary>
-		/// Called when the service should run
+		/// Called when the service should start
 		/// </summary>
 		/// <param name="stopEvent">An event that is set when the function should return</param>
 		/// <param name="args">Any arguments to the service</param>
-		void Main(EventWaitHandle stopEvent, string[] args);
+		protected abstract void Start(WaitHandle stopEvent, string[] args);
+
+		/// <summary>
+		/// Called when the service should stop
+		/// </summary>
+		protected abstract void Stop();
+
+		internal abstract void OnStart(string[] args);
+
+		internal abstract void OnStop();
 	}
 }

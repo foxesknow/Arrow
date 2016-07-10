@@ -62,13 +62,15 @@
     <Compile Include="Application\Plugins\Memory\MemoryPressurePlugin.cs" />
     <Compile Include="Application\Plugins\PluginController.cs" />
     <Compile Include="Application\Service\InteractiveConsoleService.cs" />
+    <Compile Include="Application\Service\ServiceMainHost.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Application\Service\InteractiveServiceMain.cs" />
     <Compile Include="Application\Service\InteractiveServiceBase.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Application\Service\IServiceMain.cs" />
-    <Compile Include="Application\Service\ThreadedService.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Application\Service\ServiceMain.cs" />
+    <Compile Include="Application\Service\ThreadedServiceMain.cs" />
     <Compile Include="ArrowException.cs" />
     <Compile Include="Calendar\BaselineClock.cs" />
     <Compile Include="Calendar\Clock.cs" />

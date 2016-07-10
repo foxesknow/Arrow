@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace ArrowHost
 {
-	public class ServiceMain : IServiceMain
+	public class ServiceMain : ThreadedServiceMain, IDisposable
 	{
-		public void Main(System.Threading.EventWaitHandle stopEvent, string[] args)
-		{
-			ILog Log=LogManager.GetDefaultLog();
+		private static ILog Log=LogManager.GetDefaultLog();
 
+		protected override void Start(System.Threading.WaitHandle stopEvent, string[] args)
+		{
 			int id=1;
 
 			do
@@ -21,6 +21,16 @@ namespace ArrowHost
 				Log.InfoFormat("ServiceMain - {0}",id);
 				id++;
 			}while(stopEvent.WaitOne(1000)==false);
+		}
+
+		protected override void Stop()
+		{
+			Log.Info("Stopping");
+		}
+
+		public void Dispose()
+		{
+			Log.Info("Disposing");
 		}
 	}
 }

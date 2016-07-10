@@ -7,8 +7,9 @@ using System.ServiceProcess;
 namespace Arrow.Application.Service
 {
 	/// <summary>
-	/// Base class for services that wish to be run either as a service
-	/// or as a Windows/Console application
+	/// Base class for services that wish to be run either as a service or as a Windows/Console application
+	/// 
+	/// Typically the classes InteractiveService and
 	/// </summary>
 	public class InteractiveServiceBase : ServiceBase
 	{

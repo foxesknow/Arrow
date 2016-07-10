@@ -11,11 +11,11 @@ namespace Arrow.Application.Service
 {
 	/// <summary>
 	/// A class that simplifies writing a service that runs in its own thread.
-	/// This class takes a IServiceMain implementation and runs it in its own thread and
-	/// manages the Start/Stop logic for the service
+	/// 
+	/// This class runs the Start/Stop methods in their own thread
+	/// All calls to the service instance will be made on the same thread.
 	/// </summary>
-	/// <typeparam name="TServiceMain">The service to run</typeparam>
-	public class ThreadedService<TServiceMain> : InteractiveServiceBase where TServiceMain:class,IServiceMain,new()
+	public abstract class ThreadedServiceMain : ServiceMain
 	{
 		private readonly ILog Log=LogManager.GetDefaultLog();
 
@@ -26,19 +26,19 @@ namespace Arrow.Application.Service
 		/// Starts the service
 		/// </summary>
 		/// <param name="args">Arguments to the service</param>
-		protected override void OnStart(string[] args)
+		internal override void OnStart(string[] args)
 		{
 			m_StopEvent=new ManualResetEvent(false);
 			
 			m_ServiceThread=new Thread(()=>RunService(args));
-			m_ServiceThread.Name="ThreadedService";
+			m_ServiceThread.Name="ThreadedServiceMain";
 			m_ServiceThread.Start();
 		}
 
 		/// <summary>
 		/// Stops the service
 		/// </summary>
-		protected override void OnStop()
+		internal override void OnStop()
 		{
 			if(m_ServiceThread!=null)
 			{
@@ -54,24 +54,29 @@ namespace Arrow.Application.Service
 
 		private void RunService(string[] args)
 		{
-			TServiceMain service=null;
-
 			try
 			{
-				service=new TServiceMain();
-				service.Main(m_StopEvent,args);
+				Start(m_StopEvent,args);
+
+				// NOTE: If Start doesn't wait on the event then it will return and we'll drop down to
+				// the finally block and potentially dispose the service. We only want that to happen
+				// when the service is stopping, so by waiting here we can ensure that we only leave this
+				// block when its time to stop
+				m_StopEvent.WaitOne();
 			}
 			catch(Exception e)
 			{
-				Log.Error("Error running threaded service",e);
+				Log.Error("Error starting threaded service",e);
 			}
 			finally
 			{
-				// Make sure we dispose of the service, if required
-				var disposable=service as IDisposable;
-				if(disposable!=null)
+				try
 				{
-					MethodCall.AllowFail(disposable,(d)=>d.Dispose());
+					Stop();
+				}
+				catch(Exception e)
+				{
+					Log.Error("Error stopping threaded service",e);
 				}
 			}
 		}
