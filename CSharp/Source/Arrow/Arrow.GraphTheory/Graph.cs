@@ -20,7 +20,7 @@ namespace Arrow.GraphTheory
 		private List<Edge<T>> m_AllEdges=new List<Edge<T>>();
 		
 		// All the vertices in the list
-		private Dictionary<T,bool> m_AllVertices;
+		private HashSet<T> m_AllVertices;
 		
 		private IEqualityComparer<T> m_EqualityComparer;
 		
@@ -38,7 +38,7 @@ namespace Arrow.GraphTheory
 		protected Graph(IEqualityComparer<T> equalityComparer)
 		{
 			m_VertexMap=new Dictionary<T,List<Edge<T>>>(equalityComparer);
-			m_AllVertices=new Dictionary<T,bool>(equalityComparer);
+			m_AllVertices=new HashSet<T>(equalityComparer);
 			
 			m_EqualityComparer=equalityComparer;
 			if(m_EqualityComparer==null) m_EqualityComparer=EqualityComparer<T>.Default;
@@ -75,7 +75,7 @@ namespace Arrow.GraphTheory
 		public void AddVertex(T vertex)
 		{
 			if(vertex==null) throw new ArgumentNullException("vertex");
-			m_AllVertices[vertex]=true;
+			m_AllVertices.Add(vertex);
 		}
 		
 		/// <summary>
@@ -134,7 +134,7 @@ namespace Arrow.GraphTheory
 		{
 			if(vertex==null) throw new ArgumentNullException("vertex");
 			
-			return m_AllVertices.ContainsKey(vertex);
+			return m_AllVertices.Contains(vertex);
 		}
 		
 		/// <summary>
@@ -152,7 +152,7 @@ namespace Arrow.GraphTheory
 		/// <returns>A list of all the vertices</returns>
 		public IList<T> Vertices()
 		{
-			return new List<T>(m_AllVertices.Keys);
+			return new List<T>(m_AllVertices);
 		}
 		
 		/// <summary>
@@ -320,8 +320,8 @@ namespace Arrow.GraphTheory
 			if(FindEdge(edges,edge)==-1)
 			{
 				edges.Add(edge);
-				m_AllVertices[edge.From]=true;
-				m_AllVertices[edge.To]=true;
+				m_AllVertices.Add(edge.From);
+				m_AllVertices.Add(edge.To);
 				m_AllEdges.Add(edge);
 			}
 			
