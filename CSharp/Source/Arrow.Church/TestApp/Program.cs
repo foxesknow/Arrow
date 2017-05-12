@@ -13,6 +13,7 @@ using Arrow.Configuration;
 using Arrow.Xml.ObjectCreation;
 using Arrow.Church.Server.HostBuilder;
 using Arrow.Church.Common.Services.Ping;
+using Arrow.Church.Common.Services.ServiceRegistrar;
 using Arrow.Church.Common.Services.VirtualDirectory;
 using Arrow.Church.Protobuf.Common.Services.ProtoPing;
 
@@ -22,10 +23,28 @@ namespace TestApp
 	{
 		static void Main(string[] args)
 		{
-			var task=Run(args);
+			//var task=Run(args);
+            var task=ResolveViaRegistrar();
 			task.Wait();
 		}
 
+        static async Task ResolveViaRegistrar()
+        {
+            var registrarEndpoint=new Uri("net://localhost:999/");
+            var proxyFactory=new RegistrarProxyFactory(WellKnownService.ServiceRegistrar,registrarEndpoint);
+
+            var pingService=await proxyFactory.GetServiceAsync<IPingService>(WellKnownService.Ping);
+            var pingResponse=await pingService.Ping(new PingRequest());
+            Console.WriteLine(pingResponse.ServerLocal);
+
+            var protoPingService=await proxyFactory.GetServiceAsync<IProtoPingService>("ProtoPing");
+            
+            for(int i=0; i<10; i++)
+            {
+                var protoPingResponse=await protoPingService.Ping(new ProtoPingRequest());
+                Console.WriteLine("ClientPingID={0}, ServerPingID={1}",protoPingResponse.ClientPingID,protoPingResponse.ServerPingID);
+            }
+        }
 
 		static async Task Run(string[] args)
 		{
@@ -33,19 +52,19 @@ namespace TestApp
 
 			
 			var fooFactory=ProxyManager.FactoryFor<IFoo>();			
-			var foo=fooFactory.Create(endpoint,"Foo");
+			var foo=fooFactory.Create("Foo",endpoint);
 
 			try
 			{
 
 				var pingFactory=ProxyManager.FactoryFor<IProtoPingService>();
-				var ping=pingFactory.Create(endpoint,"ProtoPing");
+				var ping=pingFactory.Create("ProtoPing",endpoint);
 
 				var response=await ping.Ping(new ProtoPingRequest());
 				Console.WriteLine(response);
 
 				var dirFactory=ProxyManager.FactoryFor<IVirtualDirectoryService>();
-				var dir=dirFactory.Create(endpoint,"Dir");
+				var dir=dirFactory.Create("Dir",endpoint);
 
 				var download=await dir.Download(new PathRequest("AdventureWorks2012_Data.mdf"));
 				Console.WriteLine("got {0} bytes",download.Data.Length);

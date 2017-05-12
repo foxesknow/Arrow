@@ -19,7 +19,7 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
 
         public Task<RegisterResponse> Register(RegisterRequest request)
         {
-            if(request==null) throw new ArgumentNullException("request");
+            if(request==null) throw new ArgumentNullException(nameof(request));
 
             var registration=new Registration()
             {
@@ -55,7 +55,7 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
 
         public Task Unregister(UnregisterRequest request)
         {
-            if(request==null) throw new ArgumentNullException("request");
+            if(request==null) throw new ArgumentNullException(nameof(request));
 
             lock(m_SyncRoot)
             {
@@ -83,7 +83,7 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
 
         public Task<GetServiceResponse> GetService(GetServiceRequest request)
         {
-            if(request==null) throw new ArgumentNullException("request");
+            if(request==null) throw new ArgumentNullException(nameof(request));
 
             Registration registration=null;
 
@@ -100,13 +100,13 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
                 throw new RegistrarException("no such service registered: "+request.ServiceName);
             }
 
-            var response=new GetServiceResponse(registration.Endpoint);
+            var response=new GetServiceResponse(request.ServiceName,registration.Endpoint);
             return Task.FromResult(response);
         }
 
         public Task<GetServicesResponse> GetAllServices(GetServiceRequest request)
         {
-            if(request==null) throw new ArgumentNullException("request");
+            if(request==null) throw new ArgumentNullException(nameof(request));
 
             IList<Uri> endpoints=null;
 
@@ -122,7 +122,7 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
                 }
             }
 
-            var response=new GetServicesResponse(endpoints);
+            var response=new GetServicesResponse(request.ServiceName,endpoints);
             return Task.FromResult(response);
         }
     }

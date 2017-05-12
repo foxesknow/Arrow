@@ -11,9 +11,9 @@ namespace Arrow.Church.Common.Services.ServiceRegistrar
     {
         public RegisterRequest(string serviceName, Uri endpoint)
         {
-            if(serviceName==null) throw new ArgumentNullException("serviceName");
-            if(string.IsNullOrWhiteSpace(serviceName)) throw new ArgumentException("invalid service name", "serviceName");
-            if(endpoint==null) throw new ArgumentNullException("endpoint");
+            if(serviceName==null) throw new ArgumentNullException(nameof(serviceName));
+            if(string.IsNullOrWhiteSpace(serviceName)) throw new ArgumentException(nameof(serviceName));
+            if(endpoint==null) throw new ArgumentNullException(nameof(endpoint));
 
             this.ServiceName=serviceName;
             this.Endpoint=endpoint;

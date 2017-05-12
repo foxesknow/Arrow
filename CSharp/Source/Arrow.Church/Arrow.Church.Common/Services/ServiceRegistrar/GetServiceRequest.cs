@@ -11,8 +11,8 @@ namespace Arrow.Church.Common.Services.ServiceRegistrar
     {
         public GetServiceRequest(string serviceName)
         {
-            if(serviceName==null) throw new ArgumentNullException("serviceName");
-            if(string.IsNullOrWhiteSpace(serviceName)) throw new ArgumentException("serviceName is empty","serviceName");
+            if(serviceName==null) throw new ArgumentNullException(nameof(serviceName));
+            if(string.IsNullOrWhiteSpace(serviceName)) throw new ArgumentException(nameof(serviceName));
 
             this.ServiceName=serviceName;
         }

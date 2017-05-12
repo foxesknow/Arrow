@@ -95,7 +95,7 @@ namespace ChurchHost
             var factory=ProxyManager.FactoryFor<IServiceRegistrar>();	
             
             string registrarServiceName=(registrarDetails.Name ?? WellKnownService.ServiceRegistrar);
-			m_ServiceRegistrar=factory.Create(registrarDetails.Endpoint,registrarServiceName);
+			m_ServiceRegistrar=factory.Create(registrarServiceName,registrarDetails.Endpoint);
 
             foreach(var host in m_RegisteredHosts)
             {

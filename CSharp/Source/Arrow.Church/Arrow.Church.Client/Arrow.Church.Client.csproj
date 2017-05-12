@@ -42,6 +42,7 @@
     <Compile Include="ProxyManager.cs" />
     <Compile Include="ProxyCreator.cs" />
     <Compile Include="ProxyFactory.cs" />
+    <Compile Include="RegistrarProxyFactory.cs" />
     <Compile Include="ServiceDispatchers\NullServiceDispatcher.cs" />
     <Compile Include="ServiceDispatchers\NullServiceDispatcherCreator.cs" />
     <Compile Include="ServiceDispatchers\ServiceDispatcher.cs" />

@@ -17,7 +17,7 @@ namespace Arrow.Church.Client
 			m_ServiceInterface=serviceInterface;
 		}
 
-		public TInterface Create<TInterface>(Uri endpoint, string serviceName) where TInterface:class
+		public TInterface Create<TInterface>(string serviceName, Uri endpoint) where TInterface:class
 		{
 			if(endpoint==null) throw new ArgumentNullException("endpoint");
 			if(endpoint.AbsolutePath!="/") throw new ArgumentException("endpoint contains a service name when one has been explicitly supplied","endpoint");
@@ -42,7 +42,7 @@ namespace Arrow.Church.Client
 			builder.Path="";
 
 			var adjustedEndpoint=builder.Uri;
-			return Create<TInterface>(adjustedEndpoint,serviceName);
+			return Create<TInterface>(serviceName,adjustedEndpoint);
 		}
 	}
 
@@ -52,9 +52,9 @@ namespace Arrow.Church.Client
 		{
 		}
 
-		public TInterface Create(Uri endpoint, string serviceName)
+		public TInterface Create(string serviceName, Uri endpoint)
 		{
-			return Create<TInterface>(endpoint,serviceName);
+			return Create<TInterface>(serviceName,endpoint);
 		}
 
 		public TInterface Create(Uri endpoint)
