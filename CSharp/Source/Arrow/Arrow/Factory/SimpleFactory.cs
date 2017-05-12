@@ -92,7 +92,7 @@ namespace Arrow.Factory
 		/// <returns>An instance of the registered type, or the default value for T if the object could not be created</returns>
 		public T TryCreate(string name)
 		{
-			if(name==null)  throw new ArgumentNullException("name");;
+			if(name==null)  throw new ArgumentNullException("name");
 			
 			TypeInfo typeInfo=null;
 			
