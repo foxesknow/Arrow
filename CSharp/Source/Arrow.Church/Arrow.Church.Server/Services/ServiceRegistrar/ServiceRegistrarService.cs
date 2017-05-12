@@ -35,7 +35,8 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
                     var existing=serviceDetails.Registration.FirstOrDefault(r=>r.Endpoint==request.Endpoint);
                     if(existing!=null)
                     {
-                        throw new RegistrarException("This service is already registered on this endpoint");
+                        string message=string.Format("The service {0} is already registered on the endpoint {1}",request.ServiceName,request.Endpoint);
+                        throw new RegistrarException(message);
                     }
                 }
                 else

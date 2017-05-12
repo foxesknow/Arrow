@@ -18,7 +18,7 @@ namespace Arrow.Calendar
 		
 		private Timer m_Timer;
 		
-		private readonly List<Task> m_Tasks=new List<Task>();
+		private readonly List<ScheduledAction> m_ScheduledActions=new List<ScheduledAction>();
 		
 		/// <summary>
 		/// Initializes the instance
@@ -45,17 +45,17 @@ namespace Arrow.Calendar
 			{
 				bool changeSchedule=false;
 				
-				if(m_Tasks.Count==0)
+				if(m_ScheduledActions.Count==0)
 				{
 					// The first item all requires a schedule change
 					changeSchedule=true;
 				}
-				else if(when<m_Tasks[0].When)
+				else if(when<m_ScheduledActions[0].When)
 				{
 					changeSchedule=true;
 				}
 				
-				m_Tasks.Add(new Task(when,reminder));
+				m_ScheduledActions.Add(new ScheduledAction(when,reminder));
 				SortTasks();
 				
 				if(changeSchedule) ScheduleTimer();
@@ -76,11 +76,11 @@ namespace Arrow.Calendar
 			
 			lock(m_SyncRoot)
 			{
-				int index=m_Tasks.FindIndex(task=>task.Reminder==reminder);
+				int index=m_ScheduledActions.FindIndex(task=>task.Reminder==reminder);
 				
 				if(index!=-1)
 				{
-					m_Tasks.RemoveAt(index);
+					m_ScheduledActions.RemoveAt(index);
 					removed=true;
 					
 					if(index==0) ScheduleTimer();
@@ -102,7 +102,7 @@ namespace Arrow.Calendar
 			
 			lock(m_SyncRoot)
 			{
-				int removed=m_Tasks.RemoveAll(task=>task.Reminder==reminder);
+				int removed=m_ScheduledActions.RemoveAll(task=>task.Reminder==reminder);
 				
 				if(removed!=0) ScheduleTimer();
 				
@@ -122,7 +122,7 @@ namespace Arrow.Calendar
 		
 			lock(m_SyncRoot)
 			{
-				int index=m_Tasks.FindIndex(task=>task.Reminder==reminder);
+				int index=m_ScheduledActions.FindIndex(task=>task.Reminder==reminder);
 				return index!=-1;
 			}
 		}
@@ -134,7 +134,7 @@ namespace Arrow.Calendar
 		{
 			lock(m_SyncRoot)
 			{
-				m_Tasks.Clear();
+				m_ScheduledActions.Clear();
 				ScheduleTimer();
 			}
 		}
@@ -148,7 +148,7 @@ namespace Arrow.Calendar
 			{
 				lock(m_SyncRoot)
 				{
-					return m_Tasks.Count;
+					return m_ScheduledActions.Count;
 				}
 			}
 		}
@@ -160,14 +160,14 @@ namespace Arrow.Calendar
 		{
 			if(m_Timer==null) return;
 		
-			if(m_Tasks.Count==0)
+			if(m_ScheduledActions.Count==0)
 			{
 				m_Timer.Change(Timeout.Infinite,Timeout.Infinite);
 			}
 			else
 			{
 				DateTime now=Clock.UtcNow;
-				DateTime when=m_Tasks[0].When;
+				DateTime when=m_ScheduledActions[0].When;
 				long dueTime=(long)(when-now).TotalMilliseconds;
 				
 				// If the due time is negative it means the next time
@@ -184,7 +184,7 @@ namespace Arrow.Calendar
 		private void SortTasks()
 		{
 			// Sort the tasks so the smallest comes first
-			m_Tasks.Sort((lhs,rhs)=>lhs.When.CompareTo(rhs.When));
+			m_ScheduledActions.Sort((lhs,rhs)=>lhs.When.CompareTo(rhs.When));
 		}
 		
 		/// <summary>
@@ -211,24 +211,24 @@ namespace Arrow.Calendar
 			// so that the actions can call back into the 
 			// Reminder instance to re-register without having 
 			// to worry about thread issues
-			var tasksToRun=new List<Task>();
+			var tasksToRun=new List<ScheduledAction>();
 		
 			lock(m_SyncRoot)
 			{
 				DateTime now=Clock.UtcNow;
 				
-				for(int i=0; i<m_Tasks.Count; i++)
+				for(int i=0; i<m_ScheduledActions.Count; i++)
 				{
-					Task task=m_Tasks[i];
+					ScheduledAction task=m_ScheduledActions[i];
 					if(task.When>now) break;
 					
 					tasksToRun.Add(task);
 				}
 				
-				m_Tasks.RemoveRange(0,tasksToRun.Count);
+				m_ScheduledActions.RemoveRange(0,tasksToRun.Count);
 			}
 			
-			foreach(Task task in tasksToRun)
+			foreach(ScheduledAction task in tasksToRun)
 			{
 				MethodCall.AllowFail(task.Reminder);
 			}
@@ -252,16 +252,16 @@ namespace Arrow.Calendar
 				{
 					m_Timer.Dispose();
 					m_Timer=null;
-					m_Tasks.Clear();
+					m_ScheduledActions.Clear();
 				}
 			}
 		}
 
 		#endregion
 		
-		class Task  : IEquatable<Task>
+		class ScheduledAction  : IEquatable<ScheduledAction>
 		{
-			public Task(DateTime when, Action reminder)
+			public ScheduledAction(DateTime when, Action reminder)
 			{
 				this.When=when;
 				this.Reminder=reminder;
@@ -272,7 +272,7 @@ namespace Arrow.Calendar
 
 			public override bool Equals(object obj)
 			{
-				Task rhs=obj as Task;
+				ScheduledAction rhs=obj as ScheduledAction;
 				if(rhs==null) return false;
 				
 				return Equals(rhs);
@@ -285,7 +285,7 @@ namespace Arrow.Calendar
 
 			#region IEquatable<Task> Members
 
-			public bool Equals(Task other)
+			public bool Equals(ScheduledAction other)
 			{
 				return this.When==other.When;
 			}
