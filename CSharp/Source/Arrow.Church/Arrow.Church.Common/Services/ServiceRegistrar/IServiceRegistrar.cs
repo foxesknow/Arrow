@@ -12,7 +12,8 @@ namespace Arrow.Church.Common.Services.ServiceRegistrar
     public interface IServiceRegistrar
     {
         /// <summary>
-        /// Registers a service
+        /// Registers a service.
+        /// Multiple services with the same name may be registered, but not to the same endpoint
         /// </summary>
         /// <param name="request">The register request details</param>
         /// <returns>A response to the registratin</returns>

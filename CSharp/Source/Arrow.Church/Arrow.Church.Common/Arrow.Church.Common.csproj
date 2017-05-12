@@ -65,6 +65,7 @@
     <Compile Include="Services\ServiceRegistrar\IServiceRegistrar.cs" />
     <Compile Include="Services\ServiceRegistrar\RegisterRequest.cs" />
     <Compile Include="Services\ServiceRegistrar\RegisterResponse.cs" />
+    <Compile Include="Services\ServiceRegistrar\RegistrarException.cs" />
     <Compile Include="Services\ServiceRegistrar\UnregisterRequest.cs" />
     <Compile Include="Services\VirtualDirectory\DirectoryContentsResponse.cs" />
     <Compile Include="Services\VirtualDirectory\DownloadResponse.cs" />
