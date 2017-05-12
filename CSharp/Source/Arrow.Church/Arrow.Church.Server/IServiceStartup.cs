@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Arrow.Church.Common;
+
 namespace Arrow.Church.Server
 {
 	/// <summary>
@@ -13,8 +15,9 @@ namespace Arrow.Church.Server
 	{
 		/// <summary>
 		/// Called to allow the service to do any one time initialization
+        /// <param name="serviceNameIdentifier">What the service is known as</param>
 		/// </summary>
-		void Start();
+		void Start(ServiceNameIdentifier serviceNameIdentifier);
 
 		/// <summary>
 		/// Called when all service have been successfully initialized

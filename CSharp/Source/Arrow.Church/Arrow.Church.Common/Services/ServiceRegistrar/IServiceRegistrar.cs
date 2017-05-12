@@ -8,7 +8,7 @@ using Arrow.Church.Common.Data.DotNet;
 
 namespace Arrow.Church.Common.Services.ServiceRegistrar
 {
-    [ChurchService("ServiceRegistrar",typeof(SerializationMessageProtocol))]    
+    [ChurchService(WellKnownService.ServiceRegistrar,typeof(SerializationMessageProtocol))]    
     public interface IServiceRegistrar
     {
         /// <summary>

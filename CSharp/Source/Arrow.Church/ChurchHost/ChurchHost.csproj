@@ -57,6 +57,10 @@
       <Project>{04660b82-1c99-406c-809d-06af5839f648}</Project>
       <Name>Arrow</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Arrow.Church.Client\Arrow.Church.Client.csproj">
+      <Project>{13f1f012-f4a2-49db-b4ae-3b8f8db7e32d}</Project>
+      <Name>Arrow.Church.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Arrow.Church.Common\Arrow.Church.Common.csproj">
       <Project>{99ae65ba-c015-4ad5-8eee-0e6d9090a0fb}</Project>
       <Name>Arrow.Church.Common</Name>

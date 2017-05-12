@@ -7,7 +7,7 @@ using Arrow.Church.Common.Data.DotNet;
 
 namespace Arrow.Church.Common.Services.Ping
 {
-	[ChurchService("Ping",typeof(SerializationMessageProtocol))]
+	[ChurchService(WellKnownService.Ping,typeof(SerializationMessageProtocol))]
 	public interface IPingService
 	{
 		Task<PingResponse> Ping(PingRequest request);

@@ -58,6 +58,7 @@
     <Compile Include="ServiceDispatchers\DispatcherCallback.cs" />
     <Compile Include="ServiceDispatchers\InProcessServiceDispatcherRouter.cs" />
     <Compile Include="ServiceDispatchers\ListenerCallback.cs" />
+    <Compile Include="ServiceNameIdentifier.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
     <Compile Include="Services\ServiceRegistrar\GetServiceRequest.cs" />
     <Compile Include="Services\ServiceRegistrar\GetServiceResponse.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Services\Ping\PingRequest.cs" />
     <Compile Include="Services\Ping\PingResponse.cs" />
     <Compile Include="Services\VirtualDirectory\PathRequest.cs" />
+    <Compile Include="WellKnownService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Arrow\Arrow\Arrow.csproj">

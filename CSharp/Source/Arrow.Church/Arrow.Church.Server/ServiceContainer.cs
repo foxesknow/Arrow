@@ -79,7 +79,15 @@ namespace Arrow.Church.Server
 					service.ContainerStart(host);
 
 					var serviceStartup=service as IServiceStartup;
-					if(serviceStartup!=null) serviceStartup.Start();
+					if(serviceStartup!=null) 
+                    {
+                        var identifier=new ServiceNameIdentifier()
+                        {
+                            Name=serviceData.ServiceName,
+                            Endpoint=host.Endpoint
+                        };
+                        serviceStartup.Start(identifier);
+                    }
 				}
 
 				// That's everything started, now let them know
@@ -122,6 +130,18 @@ namespace Arrow.Church.Server
 				return m_Services.TryGetValue(serviceName,out serviceData);
 			}
 		}
+
+        /// <summary>
+        /// Returns the names of all the registered services
+        /// </summary>
+        /// <returns></returns>
+        public List<string> ServiceNames()
+        {
+            lock(m_SyncRoot)
+            {
+                return m_Services.Keys.ToList();
+            }
+        }
 
 		/// <summary>
 		/// Attempts to find a service within the current container
