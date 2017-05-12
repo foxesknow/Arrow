@@ -19,7 +19,7 @@ namespace Arrow.Church.Common.Services.ServiceRegistrar
             this.Endpoint=endpoint;
         }
 
-        public string ServiceName{get;private set;}
+        public string ServiceName{get;}
 
         public Uri Endpoint{get;private set;}
     }

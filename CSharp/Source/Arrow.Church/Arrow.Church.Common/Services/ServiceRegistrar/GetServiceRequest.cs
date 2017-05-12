@@ -20,6 +20,6 @@ namespace Arrow.Church.Common.Services.ServiceRegistrar
         /// <summary>
         /// The name of the service to get
         /// </summary>
-        public string ServiceName{get;private set;}
+        public string ServiceName{get;}
     }
 }

@@ -19,6 +19,6 @@ namespace Arrow.Church.Common.Services.ServiceRegistrar
         /// <summary>
         /// The endpoint for a service
         /// </summary>
-        public Uri Endpoint{get;private set;}
+        public Uri Endpoint{get;}
     }
 }

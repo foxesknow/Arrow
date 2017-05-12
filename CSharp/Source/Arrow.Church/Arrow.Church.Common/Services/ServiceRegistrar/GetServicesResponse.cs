@@ -24,6 +24,6 @@ namespace Arrow.Church.Common.Services.ServiceRegistrar
         /// <summary>
         /// All the endpoints that match the request
         /// </summary>
-        public IReadOnlyCollection<Uri> Endpoints{get;private set;}
+        public IReadOnlyCollection<Uri> Endpoints{get;}
     }
 }

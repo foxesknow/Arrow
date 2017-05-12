@@ -18,6 +18,6 @@ namespace Arrow.Church.Common.Services.ServiceRegistrar
             this.RegistrationKey=registrationKey;
         }
 
-        public OpaqueKey RegistrationKey{get;private set;}
+        public OpaqueKey RegistrationKey{get;}
     }
 }

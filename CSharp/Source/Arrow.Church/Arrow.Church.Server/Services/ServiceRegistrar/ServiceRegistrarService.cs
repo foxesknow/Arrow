@@ -29,8 +29,7 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
 
             lock(m_SyncRoot)
             {
-                ServiceDetails serviceDetails=null;
-                if(m_Services.TryGetValue(request.ServiceName,out serviceDetails))
+                if(m_Services.TryGetValue(request.ServiceName,out var serviceDetails))
                 {
                     // There's potentially something already here. Check for duplicate endponts
                     var existing=serviceDetails.Registration.FirstOrDefault(r=>r.Endpoint==request.Endpoint);
@@ -60,13 +59,10 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
             lock(m_SyncRoot)
             {
                 // First up, make sure it's a valid key
-                string serviceName=null;
-                if(m_Keys.TryGetValue(request.RegistrationKey,out serviceName))
+                if(m_Keys.TryGetValue(request.RegistrationKey,out var serviceName))
                 {
-                    ServiceDetails serviceDetails=null;
-
                     // Now try and find the details for the specified key
-                    if(m_Services.TryGetValue(serviceName,out serviceDetails))
+                    if(m_Services.TryGetValue(serviceName,out var serviceDetails))
                     {
                         int index=serviceDetails.Registration.FindIndex(r=>r.Key==request.RegistrationKey);
                         if(index!=-1)
@@ -92,8 +88,7 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
 
             lock(m_SyncRoot)
             {
-                ServiceDetails serviceDetails=null;
-                if(m_Services.TryGetValue(request.ServiceName,out serviceDetails))
+                if(m_Services.TryGetValue(request.ServiceName,out var serviceDetails))
                 {
                     registration=serviceDetails.SelectByRoundRobin();
                 }
@@ -116,8 +111,7 @@ namespace Arrow.Church.Server.Services.ServiceRegistrar
 
             lock(m_SyncRoot)
             {
-                ServiceDetails serviceDetails=null;
-                if(m_Services.TryGetValue(request.ServiceName,out serviceDetails))
+                if(m_Services.TryGetValue(request.ServiceName,out var serviceDetails))
                 {
                     endpoints=serviceDetails.Registration.Select(r=>r.Endpoint).ToList();
                 }
