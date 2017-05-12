@@ -79,6 +79,7 @@
     <Compile Include="Calendar\Reminders.cs" />
     <Compile Include="Calendar\SystemClock.cs" />
     <Compile Include="Collections\AlertableEventQueue.cs" />
+    <Compile Include="Execution\OpaqueKey.cs" />
     <Compile Include="Memory\ArraySegmentCollection.cs" />
     <Compile Include="Memory\ArraySegmentCollection.FactoryMethods.cs" />
     <Compile Include="Collections\Caching\AtEvictionPolicy.cs" />

@@ -59,6 +59,13 @@
     <Compile Include="ServiceDispatchers\InProcessServiceDispatcherRouter.cs" />
     <Compile Include="ServiceDispatchers\ListenerCallback.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
+    <Compile Include="Services\ServiceRegistrar\GetServiceRequest.cs" />
+    <Compile Include="Services\ServiceRegistrar\GetServiceResponse.cs" />
+    <Compile Include="Services\ServiceRegistrar\GetServicesResponse.cs" />
+    <Compile Include="Services\ServiceRegistrar\IServiceRegistrar.cs" />
+    <Compile Include="Services\ServiceRegistrar\RegisterRequest.cs" />
+    <Compile Include="Services\ServiceRegistrar\RegisterResponse.cs" />
+    <Compile Include="Services\ServiceRegistrar\UnregisterRequest.cs" />
     <Compile Include="Services\VirtualDirectory\DirectoryContentsResponse.cs" />
     <Compile Include="Services\VirtualDirectory\DownloadResponse.cs" />
     <Compile Include="Services\VirtualDirectory\IVirtualDirectoryService.cs" />
@@ -73,6 +80,7 @@
       <Name>Arrow</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

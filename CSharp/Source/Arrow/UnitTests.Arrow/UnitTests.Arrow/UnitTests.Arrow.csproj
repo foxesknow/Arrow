@@ -53,6 +53,7 @@
     <Compile Include="Application\CommandLineSwitchTests.cs" />
     <Compile Include="Calendar\ClockTests.cs" />
     <Compile Include="Collections\AlertableEventQueueTests.cs" />
+    <Compile Include="Execution\OpaqueKeyTests.cs" />
     <Compile Include="Memory\ArraySegmentCollectionTests.cs" />
     <Compile Include="Collections\Caching\FactoryTests.cs" />
     <Compile Include="Collections\Caching\ManagedCacheTests.cs" />
