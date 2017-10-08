@@ -242,11 +242,13 @@
     <Compile Include="Threading\MonitorQueue.cs" />
     <Compile Include="Threading\MultiConsumerWorkQueue.cs" />
     <Compile Include="Threading\OutstandingEvent.cs" />
+    <Compile Include="Threading\SimpleWorkDispatcher.cs" />
     <Compile Include="Threading\TaskEx.cs" />
     <Compile Include="Threading\TaskWorkQueue.cs" />
     <Compile Include="Threading\TaskWorkQueue.Support.cs" />
     <Compile Include="Threading\ThreadPoolWorkDispatcher.cs" />
     <Compile Include="Threading\UnsafeThreadPoolWorkDispatcher.cs" />
+    <Compile Include="Threading\WorkDispatcherSynchronizationContext.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="Xml\Macro\NameScope.cs" />
     <Compile Include="Xml\Macro\Scope.cs" />
