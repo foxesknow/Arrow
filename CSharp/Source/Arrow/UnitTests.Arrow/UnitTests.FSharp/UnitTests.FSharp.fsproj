@@ -53,6 +53,9 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Calendar.fs" />
     <Content Include="packages.config" />
+    <Content Include="App.config" />
+    <Compile Include="Configuration.fs" />
+    <Compile Include="Execution.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Arrow">
@@ -77,6 +80,7 @@
       <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
