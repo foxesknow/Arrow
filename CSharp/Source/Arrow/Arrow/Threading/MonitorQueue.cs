@@ -53,7 +53,7 @@ namespace Arrow.Threading
 			lock(m_SyncRoot)
 			{
 				m_Queue.Enqueue(item);
-				Monitor.PulseAll(m_SyncRoot);
+				Monitor.Pulse(m_SyncRoot);
 			}
 		}
 
@@ -67,12 +67,25 @@ namespace Arrow.Threading
 
 			lock(m_SyncRoot)
 			{
+                int itemsAdded=0;
+
 				foreach(T item in collection)
 				{
 					m_Queue.Enqueue(item);
+                    itemsAdded++;
 				}
 
-				Monitor.PulseAll(m_SyncRoot);
+                if(itemsAdded!=0)
+                {
+                    if(itemsAdded==1)
+                    {
+                        Monitor.Pulse(m_SyncRoot);
+                    }
+                    else
+                    {
+				        Monitor.PulseAll(m_SyncRoot);
+                    }
+                }
 			}
 		}
 
