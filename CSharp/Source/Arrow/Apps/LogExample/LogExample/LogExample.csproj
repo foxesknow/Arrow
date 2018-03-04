@@ -37,6 +37,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Arrow, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\bin\Arrow\Arrow.dll</HintPath>
+    </Reference>
+    <Reference Include="Arrow.Logging.Log4Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\bin\Arrow\Arrow.Logging.Log4Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,16 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Arrow.Logging.Log4Net\Arrow.Logging.Log4Net.csproj">
-      <Project>{5641A6C2-56F3-4C53-B8D6-F70517D2700B}</Project>
-      <Name>Arrow.Logging.Log4Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Arrow\Arrow.csproj">
-      <Project>{04660B82-1C99-406C-809D-06AF5839F648}</Project>
-      <Name>Arrow</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="LogConfig.xml">

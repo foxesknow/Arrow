@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireConsole", "WireConsole\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{FD20FE66-C04F-459E-8DC9-8D7DB6E1CFC0}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpConsoleApplication", "FSharpConsoleApplication\FSharpConsoleApplication.fsproj", "{98669E42-819A-432B-9857-EF3A5C45FA70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,18 @@ Global
 		{FD20FE66-C04F-459E-8DC9-8D7DB6E1CFC0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FD20FE66-C04F-459E-8DC9-8D7DB6E1CFC0}.Release|x86.ActiveCfg = Release|Any CPU
 		{FD20FE66-C04F-459E-8DC9-8D7DB6E1CFC0}.Release|x86.Build.0 = Release|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Debug|x86.Build.0 = Debug|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|x86.ActiveCfg = Release|Any CPU
+		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

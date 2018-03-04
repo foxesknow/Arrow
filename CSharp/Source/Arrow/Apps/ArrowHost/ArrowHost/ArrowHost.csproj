@@ -36,6 +36,14 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Arrow, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\bin\Arrow\Arrow.dll</HintPath>
+    </Reference>
+    <Reference Include="Arrow.Logging.Log4Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\bin\Arrow\Arrow.Logging.Log4Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -62,16 +70,6 @@
     <Content Include="LogConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Arrow.Logging.Log4Net\Arrow.Logging.Log4Net.csproj">
-      <Project>{5641a6c2-56f3-4c53-b8d6-f70517d2700b}</Project>
-      <Name>Arrow.Logging.Log4Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Arrow\Arrow.csproj">
-      <Project>{04660b82-1c99-406c-809d-06af5839f648}</Project>
-      <Name>Arrow</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
