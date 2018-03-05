@@ -59,6 +59,7 @@
     <Compile Include="Execution.fs" />
     <Compile Include="Calendar.fs" />
     <Compile Include="Collections.fs" />
+    <Compile Include="Logging.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
