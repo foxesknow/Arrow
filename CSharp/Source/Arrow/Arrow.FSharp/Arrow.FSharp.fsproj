@@ -60,6 +60,7 @@
     <Compile Include="Calendar.fs" />
     <Compile Include="Collections.fs" />
     <Compile Include="Logging.fs" />
+    <Compile Include="Attempt.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
