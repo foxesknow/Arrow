@@ -61,6 +61,11 @@
     <Compile Include="Collections.fs" />
     <Compile Include="Logging.fs" />
     <Compile Include="Attempt.fs" />
+    <Compile Include="Factory.fs" />
+    <Compile Include="Reflection.fs" />
+    <Compile Include="Storage.fs" />
+    <Compile Include="Application.fs" />
+    <Compile Include="Threading.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -72,6 +77,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.ValueTuple">
       <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
       <Private>True</Private>

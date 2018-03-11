@@ -46,3 +46,7 @@ module LogManager =
     let getGenericLog<'T> () =
         let log = Arrow.Logging.LogManager.GetLog<'T>()
         {Log.log = log}
+
+    /// Attached an existing log to the F# logging framework
+    let attach (log : Arrow.Logging.ILog) =
+        {Log.log = log}

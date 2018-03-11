@@ -1,11 +1,14 @@
-﻿namespace Arrow.FSharp
+﻿namespace Arrow.FSharp.Attempt
 
-module Attempt =
+[<AutoOpen>]
+module AttemptImpl =
 
     type Attempt<'T> =
         | Success of 'T
         | Failure of string
-    
+
+
+module Attempt =    
     type AttemptBuilder() =
         member this.Bind(r, f) =
             match r with
@@ -75,11 +78,14 @@ module Attempt =
             this.Using(sequence.GetEnumerator(), fun enum ->
                 this.While(enum.MoveNext, this.Delay(fun() -> body enum.Current)))
 
-    let attempt = new AttemptBuilder()
-
     let execute f =
         try
             Success (f())
         with
         | e -> Failure e.Message
+
+[<AutoOpen>]
+module Implementation =
+    let attempt = new Attempt.AttemptBuilder()
+
 

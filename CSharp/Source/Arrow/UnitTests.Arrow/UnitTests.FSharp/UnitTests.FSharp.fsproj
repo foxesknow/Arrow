@@ -51,11 +51,14 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="NUnitWrappers.fs" />
     <Compile Include="Calendar.fs" />
     <Content Include="packages.config" />
     <Content Include="App.config" />
     <Compile Include="Configuration.fs" />
     <Compile Include="Execution.fs" />
+    <Compile Include="Storage.fs" />
+    <Compile Include="Threading.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Arrow">

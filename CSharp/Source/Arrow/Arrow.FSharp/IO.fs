@@ -4,6 +4,9 @@ open System
 open System.IO
 
 module TextReader =
+    /// Creates a reader from a stream
+    let fromStream (stream : System.IO.Stream) =
+        new System.IO.StreamReader(stream) :> System.IO.TextReader
 
     /// Tries to read a line from a TextReader
     let readLine (file : TextReader) =
@@ -41,6 +44,9 @@ module TextReader =
 
 
 module TextWriter =
+    /// Creates a writer from a stream
+    let fromStream (stream : System.IO.Stream) =
+        new System.IO.StreamWriter(stream)  :> System.IO.TextWriter
 
     /// Writes a value
     let write (value : obj) (writer : System.IO.TextWriter) =
