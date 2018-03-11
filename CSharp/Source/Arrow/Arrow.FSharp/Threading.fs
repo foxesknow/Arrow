@@ -35,7 +35,6 @@ module Mutex =
 
     let release (mutex : System.Threading.Mutex) =
         mutex.ReleaseMutex();
-        mutex
 
 
 module Semaphore =
@@ -44,11 +43,9 @@ module Semaphore =
 
     let release (semaphore : System.Threading.Semaphore) =
         semaphore.Release() |> ignore
-        semaphore
 
     let releaseCount (numberToRelease : int) (semaphore : System.Threading.Semaphore) =
         semaphore.Release(numberToRelease) |> ignore
-        semaphore
 
 
 module WaitHandle =

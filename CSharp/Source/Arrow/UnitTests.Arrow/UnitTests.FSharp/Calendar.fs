@@ -66,3 +66,28 @@ type DateTests() =
         date |> Date.month |> isEqualTo 3
         date |> Date.year |> isEqualTo 2018
 
+[<TestFixture>]
+type TimeTests() = 
+    [<Test>]
+    member this.``Make a time``() =
+        let time = Time.makeTime 10 20 30
+        time.Hours |> isEqualTo 10
+        time.Minutes |> isEqualTo 20
+        time.Seconds |> isEqualTo 30
+
+    [<Test>]
+    member this.``Make a day time``() =
+        let time = Time.makeDayTime 1 10 20 30
+        time.Days |> isEqualTo 1
+        time.Hours |> isEqualTo 10
+        time.Minutes |> isEqualTo 20
+        time.Seconds |> isEqualTo 30
+
+    [<Test>]
+    member this.``Make a day time milliseconds``() =
+        let time = Time.makeDayTimeMilli 1 10 20 30 520
+        time.Days |> isEqualTo 1
+        time.Hours |> isEqualTo 10
+        time.Minutes |> isEqualTo 20
+        time.Seconds |> isEqualTo 30
+        time.Milliseconds |> isEqualTo 520

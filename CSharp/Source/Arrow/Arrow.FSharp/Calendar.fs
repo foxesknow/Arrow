@@ -77,6 +77,12 @@ module Time =
     let makeTime hours minutes seconds =
         TimeSpan(hours, minutes, seconds)
 
+    let makeDayTime days hours minutes seconds =
+        TimeSpan(days, hours, minutes, seconds)
+
+    let makeDayTimeMilli days hours minutes seconds milliseconds =
+        TimeSpan(days, hours, minutes, seconds, milliseconds)
+
     let fromDays days =
         TimeSpan.FromDays(days)
 
@@ -91,6 +97,9 @@ module Time =
 
     let fromMilliseconds milliseconds =
         TimeSpan.FromMilliseconds(milliseconds)
+
+    let fromTicks ticks =
+        TimeSpan.FromTicks(ticks)
 
     let add (x : TimeSpan) (y : TimeSpan) =
         x.Add(y)
