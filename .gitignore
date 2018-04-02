@@ -19,3 +19,4 @@ ich
 *.pch
 *.*~
 /CSharp/Source/Arrow/.vs/Arrow/v15/Server/sqlite3
+/CSharp/Source/Arrow/UnitTests.Arrow/.vs/UnitTests.Arrow/v15/Server/sqlite3
