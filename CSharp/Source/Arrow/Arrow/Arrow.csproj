@@ -244,6 +244,13 @@
     <Compile Include="Threading\OutstandingEvent.cs" />
     <Compile Include="Threading\SimpleWorkDispatcher.cs" />
     <Compile Include="Threading\TaskEx.cs" />
+    <Compile Include="Threading\Tasks\AsyncAutoResetEvent.cs" />
+    <Compile Include="Threading\Tasks\AsyncBarrier.cs" />
+    <Compile Include="Threading\Tasks\AsyncEventWaitHandle.cs" />
+    <Compile Include="Threading\Tasks\AsyncManualResetEvent.cs" />
+    <Compile Include="Threading\Tasks\AsyncMonitor.cs" />
+    <Compile Include="Threading\Tasks\AsyncSemaphore.cs" />
+    <Compile Include="Threading\Tasks\AsyncWaitHandle.cs" />
     <Compile Include="Threading\TaskWorkQueue.cs" />
     <Compile Include="Threading\TaskWorkQueue.Support.cs" />
     <Compile Include="Threading\ThreadPoolWorkDispatcher.cs" />

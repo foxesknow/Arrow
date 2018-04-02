@@ -18,3 +18,4 @@ ich
 *.suo
 *.pch
 *.*~
+/CSharp/Source/Arrow/.vs/Arrow/v15/Server/sqlite3
