@@ -20,3 +20,5 @@ ich
 *.*~
 /CSharp/Source/Arrow/.vs/Arrow/v15/Server/sqlite3
 /CSharp/Source/Arrow/UnitTests.Arrow/.vs/UnitTests.Arrow/v15/Server/sqlite3
+/CSharp/Source/Arrow/Apps/.vs/ArrowApps/v15/Server/sqlite3
+/CSharp/Source/Arrow.Church/.vs/Arrow.Church/v15/Server/sqlite3

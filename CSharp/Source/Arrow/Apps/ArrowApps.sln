@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpConsoleApplication", "FSharpConsoleApplication\FSharpConsoleApplication.fsproj", "{98669E42-819A-432B-9857-EF3A5C45FA70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontViewer", "FontViewer\FontViewer.csproj", "{C8472E1D-6240-450E-BC42-BB506FDFE72D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,8 +79,23 @@ Global
 		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|x86.ActiveCfg = Release|Any CPU
 		{98669E42-819A-432B-9857-EF3A5C45FA70}.Release|x86.Build.0 = Release|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Debug|x86.Build.0 = Debug|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8472E1D-6240-450E-BC42-BB506FDFE72D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {027480FA-6FF6-43C5-BAFB-7C03A55E88CA}
 	EndGlobalSection
 EndGlobal
