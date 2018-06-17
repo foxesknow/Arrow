@@ -68,7 +68,7 @@ namespace Arrow.Threading.Tasks
 
             if(source != null)
             {
-                source.SetResult(true);
+                SetTaskCompletionSouce(source);
             }
         }
     }

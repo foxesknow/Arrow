@@ -61,7 +61,7 @@ namespace Arrow.Threading.Tasks
             // If there was someone waiting then release them
             if(callerToRelease != null)
             {
-                callerToRelease.SetResult(true);
+                SetTaskCompletionSouce(callerToRelease);
             }
         }
 

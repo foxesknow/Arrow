@@ -15,11 +15,16 @@ namespace Arrow.Application.Service
 	/// </summary>
 	public class InteractiveServiceBase : ServiceBase
 	{
+        /// <summary>
+        /// The arguments that were part of the command line to the application or service
+        /// </summary>
+        protected internal string[] CommandLineArguments{get;internal set;}
+
 		/// <summary>
 		/// Starts the service by calling OnStart().
 		/// This method exists to call down to OnStart() which is protected, so not available to the framework.
 		/// </summary>
-		/// <param name="args">Any arguments to the service</param>
+		/// <param name="args">Any arguments to the service.</param>
 		internal void DoStart(string[] args)
 		{
 			OnStart(args);

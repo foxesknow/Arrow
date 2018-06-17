@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Arrow.Threading.Tasks
@@ -21,5 +22,19 @@ namespace Arrow.Threading.Tasks
         /// </summary>
         /// <returns></returns>
         public abstract Task WaitAsync();
+
+        protected void SetTaskCompletionSouce(TaskCompletionSource<bool> source)
+        {
+            Task.Factory.StartNew
+            (
+                s => ((TaskCompletionSource<bool>)s).TrySetResult(true),
+                source, 
+                CancellationToken.None, 
+                TaskCreationOptions.PreferFairness, 
+                TaskScheduler.Default
+            );
+            
+            source.Task.Wait(); 
+        }
     }
 }

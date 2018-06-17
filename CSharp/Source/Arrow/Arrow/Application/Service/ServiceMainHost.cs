@@ -22,7 +22,9 @@ namespace Arrow.Application.Service
 		protected override void OnStart(string[] args)
 		{
 			m_ServiceMain=new TServiceMain();
-			m_ServiceMain.OnStart(args);
+
+            // Use the command line arguments as this will be consistent across console and service applications
+			m_ServiceMain.OnStart(this.CommandLineArguments);
 		}
 
 		/// <summary>

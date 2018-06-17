@@ -12,7 +12,7 @@ namespace Arrow.Application.Service
 	/// </summary>
 	/// <typeparam name="TService">The type of service</typeparam>
 	public class InteractiveConsoleService<TService> where TService:InteractiveServiceBase, new()
-	{
+	{       
 		/// <summary>
 		/// Runs the service as either a console app or Windows service
 		/// </summary>
@@ -37,6 +37,8 @@ namespace Arrow.Application.Service
 		protected virtual void RunAsConsole(string[] args)
 		{
 			var service=new TService();
+            service.CommandLineArguments=args;
+
 			service.DoStart(args);
 
 			try
@@ -92,7 +94,10 @@ namespace Arrow.Application.Service
 		/// <param name="args">Any command line arguments passed on the service command line</param>
 		protected virtual void RunAsService(string[] args)
 		{
-			ServiceBase[] servicesToRun={new TService()};
+            var service=new TService();
+            service.CommandLineArguments=args;
+
+			ServiceBase[] servicesToRun={service};
 			ServiceBase.Run(servicesToRun);
 		}
 	}
