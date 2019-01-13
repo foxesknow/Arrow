@@ -99,14 +99,16 @@ namespace UnitTests.Arrow.Xml.Macro
 		}
 		
 		[Test]
-		[ExpectedException(typeof(XmlMacroExpanderException))]
 		public void TestRequireFail()
 		{
-			XmlDocument source=ResourceLoader.LoadXml("Macro.XmlMacro_TestRequireFail.xml");
-			XmlMacroExpander expander=new XmlMacroExpander();
-			XmlDocument output=expander.Expand(source);
+            Assert.Throws<XmlMacroExpanderException>(() =>
+            {
+			    XmlDocument source=ResourceLoader.LoadXml("Macro.XmlMacro_TestRequireFail.xml");
+			    XmlMacroExpander expander=new XmlMacroExpander();
+			    XmlDocument output=expander.Expand(source);
 			
-			Assert.IsTrue(output.SelectSingleNode("root/User/Name").InnerText=="Sawyer");
+			    Assert.IsTrue(output.SelectSingleNode("root/User/Name").InnerText=="Sawyer");
+            });
 		}
 		
 		[Test]

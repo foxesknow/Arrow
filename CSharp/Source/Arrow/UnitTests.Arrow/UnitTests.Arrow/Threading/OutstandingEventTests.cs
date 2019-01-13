@@ -62,14 +62,16 @@ namespace UnitTests.Arrow.Threading
 		}
 		
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void DecreaseToNegative()
 		{
-			using(OutstandingEvent e=new OutstandingEvent())
-			{
-				e.Decrease(1);
-				Assert.Fail(); // Shouldn't get here
-			}
+            Assert.Throws<ArgumentException>(() =>
+            {
+			    using(OutstandingEvent e=new OutstandingEvent())
+			    {
+				    e.Decrease(1);
+				    Assert.Fail(); // Shouldn't get here
+			    }
+            });
 		}
 	}
 }

@@ -27,17 +27,19 @@ namespace UnitTests.Arrow.Storage
 		}
 		
 		[Test]
-		[ExpectedException(typeof(FileNotFoundException))]
 		public void TestNotFound()
 		{
-			Uri uri=MakeUri("foo.bar");
-			Accessor access=new FileAccessor(uri);
+            Assert.Throws<FileNotFoundException>(() =>
+            {
+			    Uri uri=MakeUri("foo.bar");
+			    Accessor access=new FileAccessor(uri);
 			
-			using(Stream stream=access.OpenRead())
-			{
-				// We should never get here
-				Assert.Fail();
-			}
+			    using(Stream stream=access.OpenRead())
+			    {
+				    // We should never get here
+				    Assert.Fail();
+			    }
+            });
 		}
 		
 		[Test]

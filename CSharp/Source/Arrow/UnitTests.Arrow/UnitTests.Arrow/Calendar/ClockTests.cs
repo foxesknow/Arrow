@@ -57,10 +57,12 @@ namespace UnitTests.Arrow.Calendar
 		}
 		
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void BadClock()
 		{
-			Clock.ClockDriver=null;
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+			    Clock.ClockDriver=null;
+            });
 		}
 	}
 }

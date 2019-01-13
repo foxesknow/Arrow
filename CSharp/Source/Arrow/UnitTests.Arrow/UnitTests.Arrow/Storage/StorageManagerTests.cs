@@ -43,10 +43,12 @@ namespace UnitTests.Arrow.Storage
 		}
 		
 		[Test]
-		[ExpectedException(typeof(IOException))]
 		public void Get_WillFail()
 		{
-			StorageManager.Get(new Uri("foo://bar/file.txt"));
+            Assert.Throws<IOException>(() =>
+            {
+			    StorageManager.Get(new Uri("foo://bar/file.txt"));
+            });
 		}
 	}
 }

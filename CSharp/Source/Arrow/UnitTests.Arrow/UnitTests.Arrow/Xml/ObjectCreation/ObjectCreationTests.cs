@@ -54,14 +54,16 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
 		}
 		
 		[Test]
-		[ExpectedException(typeof(XmlCreationException))]
 		public void NotEnoughGenerics()
 		{
-			var doc=ResourceLoader.LoadXml("ObjectCreationTests.xml");
-			var node=doc.SelectSingleNode("root/NotEnough");
+            Assert.Throws<XmlCreationException>(() =>
+            {
+			    var doc=ResourceLoader.LoadXml("ObjectCreationTests.xml");
+			    var node=doc.SelectSingleNode("root/NotEnough");
 			
-			object obj=XmlCreation.Create<object>(node);
-			Assert.Fail(); // We should never get here
+			    object obj=XmlCreation.Create<object>(node);
+			    Assert.Fail(); // We should never get here
+            });
 		}
 	}
 }

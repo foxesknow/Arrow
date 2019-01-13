@@ -72,16 +72,18 @@ namespace UnitTests.Arrow.Execution
 		}
 		
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void TestRetryWithFailure()
 		{
-			Action method=()=>
-			{
-				throw new ArgumentException();
-			};
+            Assert.Throws<ArgumentException>(() =>
+            {
+			    Action method=()=>
+			    {
+				    throw new ArgumentException();
+			    };
 			
-			MethodCall.Retry(3,0,method);
-			Assert.Fail(); // We should never get here
+			    MethodCall.Retry(3,0,method);
+			    Assert.Fail(); // We should never get here
+            });
 		}
 		
 		[Test]

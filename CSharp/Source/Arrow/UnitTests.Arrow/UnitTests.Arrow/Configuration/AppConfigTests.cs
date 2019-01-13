@@ -72,11 +72,13 @@ namespace UnitTests.Arrow.Configuration
 		}
 		
 		[Test]
-		[ExpectedException(typeof(System.IO.IOException))]
 		public void MandatoryUriResource()
 		{
-			XmlNode node=AppConfig.GetSectionXml(ArrowSystem.Name,"MandatoryResource");
-			Assert.IsNull(node);
+            Assert.Throws<System.IO.IOException>(() =>
+            {
+			    XmlNode node=AppConfig.GetSectionXml(ArrowSystem.Name,"MandatoryResource");
+			    Assert.IsNull(node);
+            });
 		}
 		
 		[Test]

@@ -34,13 +34,15 @@ namespace UnitTests.Arrow.ObjectAccess
 		}
 		
 		[Test]
-		[ExpectedException(typeof(UriFormatException))]
 		public void InvalidStatic()
 		{
-			Uri uri=new Uri(@"static://Arrow.ObjectAccess.ObjectLocator@Arrow");
-			ObjectLocator.Locate(uri,null);
+            Assert.Throws<UriFormatException>(() =>
+            {
+			    Uri uri=new Uri(@"static://Arrow.ObjectAccess.ObjectLocator@Arrow");
+			    ObjectLocator.Locate(uri,null);
 			
-			// We should never get here
+			    // We should never get here
+            });
 		}
 		
 		[Test]
@@ -96,14 +98,16 @@ namespace UnitTests.Arrow.ObjectAccess
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void InstanceNullFail()
 		{
-			var resolver=MakeResolver();
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+			    var resolver=MakeResolver();
 			
-			// Since username is null we can get the length
-			Uri uri=new Uri(@"instance://testdata/username/length");
-			int length=ObjectLocator.Locate<int>(uri,resolver);
+			    // Since username is null we can get the length
+			    Uri uri=new Uri(@"instance://testdata/username/length");
+			    int length=ObjectLocator.Locate<int>(uri,resolver);
+            });
 		}
 		
 		private Func<string,object> MakeResolver()

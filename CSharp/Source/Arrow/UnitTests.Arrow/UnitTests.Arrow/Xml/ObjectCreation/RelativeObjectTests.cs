@@ -58,27 +58,29 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
 		}
 		
 		[Test]
-		[ExpectedException(typeof(UriFormatException))]
 		public void NoBaseSpecified()
 		{
-			Uri uri=new Uri(@"res://UnitTests.Arrow/UnitTests/Arrow/Resources/RelativeObjectCreation.xml");
+            Assert.Throws<UriFormatException>(() =>
+            {
+			    Uri uri=new Uri(@"res://UnitTests.Arrow/UnitTests/Arrow/Resources/RelativeObjectCreation.xml");
 			
-			using(Stream stream=StorageManager.Get(uri).OpenRead())
-			{
-				var doc=new XmlDocument();
-				doc.Load(stream);
+			    using(Stream stream=StorageManager.Get(uri).OpenRead())
+			    {
+				    var doc=new XmlDocument();
+				    doc.Load(stream);
 				
-				var factory=new CustomXmlCreation();
+				    var factory=new CustomXmlCreation();
 				
-				// This will fail because the document specifies a 
-				// relative url and we've not specifed the base
-				var node=doc.SelectSingleNode("root/WontWork");
-				Person p=factory.Create<Person>(node,null);
+				    // This will fail because the document specifies a 
+				    // relative url and we've not specifed the base
+				    var node=doc.SelectSingleNode("root/WontWork");
+				    Person p=factory.Create<Person>(node,null);
 				
-				Assert.IsNotNull(p);
-				Assert.That(p.Name,Is.EqualTo("Jack"));
-				Assert.That(p.Age,Is.EqualTo(12));
-			}
+				    Assert.IsNotNull(p);
+				    Assert.That(p.Name,Is.EqualTo("Jack"));
+				    Assert.That(p.Age,Is.EqualTo(12));
+			    }
+            });
 		}
 	}
 }

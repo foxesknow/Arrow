@@ -15,10 +15,12 @@ namespace UnitTests.Arrow.IO
 	public class SandboxDirectoryTests
 	{
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void Construction_Null()
 		{
-			var sandbox=new SandboxDirectory(null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+			    var sandbox=new SandboxDirectory(null);
+            });
 		}
 
 		[Test]

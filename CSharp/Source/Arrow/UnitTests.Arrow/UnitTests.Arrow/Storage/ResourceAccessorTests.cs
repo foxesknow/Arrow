@@ -48,17 +48,19 @@ namespace UnitTests.Arrow.Storage
 		}
 		
 		[Test]
-		[ExpectedException(typeof(IOException))]
 		public void TestNotFound()
 		{
-			Uri uri=new Uri("res://UnitTests.Arrow/this/does/not/exist.xml");
-			var access=new ResourceAccessor(uri);
+            Assert.Throws<IOException>(() =>
+            {
+			    Uri uri=new Uri("res://UnitTests.Arrow/this/does/not/exist.xml");
+			    var access=new ResourceAccessor(uri);
 			
-			using(Stream stream=access.OpenRead())
-			{
-				// We should never get here
-				Assert.Fail();
-			}
+			    using(Stream stream=access.OpenRead())
+			    {
+				    // We should never get here
+				    Assert.Fail();
+			    }
+            });
 		}
 		
 		[Test]

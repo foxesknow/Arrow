@@ -15,7 +15,7 @@ namespace UnitTests.Arrow.DI
 	{
 		private readonly DefaultContainer m_Container=new DefaultContainer();
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			m_Container.RegisterInstance<IDIContainer>(m_Container);
@@ -180,10 +180,12 @@ namespace UnitTests.Arrow.DI
 		}
 
 		[Test]
-		[ExpectedException(typeof(ContainerException))]
 		public void NonRegisterdType_FromInterface()
 		{
-			m_Container.Resolve<INotImplemented>();
+            Assert.Throws<ContainerException>(() =>
+            {
+			    m_Container.Resolve<INotImplemented>();
+            });
 		}
 
 		[Test]

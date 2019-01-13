@@ -251,6 +251,7 @@
     <Compile Include="Threading\Tasks\AsyncMonitor.cs" />
     <Compile Include="Threading\Tasks\AsyncSemaphore.cs" />
     <Compile Include="Threading\Tasks\AsyncWaitHandle.cs" />
+    <Compile Include="Threading\Tasks\AsyncWorkQueue.cs" />
     <Compile Include="Threading\TaskWorkQueue.cs" />
     <Compile Include="Threading\TaskWorkQueue.Support.cs" />
     <Compile Include="Threading\ThreadPoolWorkDispatcher.cs" />

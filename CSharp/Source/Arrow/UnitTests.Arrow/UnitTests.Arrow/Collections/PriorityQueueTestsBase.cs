@@ -130,11 +130,13 @@ namespace UnitTests.Arrow.Collections
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void Peek_Fail()
 		{
-			var queue=CreateStringQueue();
-			var name=queue.Peek();
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+			    var queue=CreateStringQueue();
+			    var name=queue.Peek();
+            });
 		}
 		
 		protected abstract IPriorityQueue<Priority,string> CreateStringQueue();

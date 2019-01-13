@@ -63,10 +63,9 @@ namespace UnitTests.Arrow.Application
 		}
 		
 		[Test]
-		[ExpectedException(typeof(FormatException))]
 		public void ParseFail()
 		{
-			CommandLineSwitch c=CommandLineSwitch.Parse("hello");
+            Assert.Throws<FormatException>(() => CommandLineSwitch.Parse("hello"));
 		}
 		
 		[Test]
@@ -77,11 +76,13 @@ namespace UnitTests.Arrow.Application
 		}
 		
 		[Test]
-		[ExpectedException(typeof(CommandLineSwitchException))]
 		public void EnsureValuePresent_Fail()
 		{
-			CommandLineSwitch c1=CommandLineSwitch.Parse("/verbose");
-			c1.EnsureValuePresent();
+            Assert.Throws<CommandLineSwitchException>(() =>
+            {
+			    CommandLineSwitch c1=CommandLineSwitch.Parse("/verbose");
+			    c1.EnsureValuePresent();
+            });
 		}
 	}
 }

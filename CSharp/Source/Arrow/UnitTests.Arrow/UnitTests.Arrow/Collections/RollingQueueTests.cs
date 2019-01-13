@@ -106,19 +106,23 @@ namespace UnitTests.Arrow.Collections
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void TestDequeException()
 		{
-			RollingQueue<int> q=new RollingQueue<int>(5);
-			q.Dequeue(); // This will fail
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+			    RollingQueue<int> q=new RollingQueue<int>(5);
+			    q.Dequeue(); // This will fail
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void TestPeekException()
 		{
-			RollingQueue<int> q=new RollingQueue<int>(5);
-			q.Peek(); // This will fail
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+			    RollingQueue<int> q=new RollingQueue<int>(5);
+			    q.Peek(); // This will fail
+            });
 		}
 	}
 }
