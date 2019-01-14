@@ -22,7 +22,7 @@ namespace UnitTests.Arrow.Threading.Tasks
                 Assert.That(queue.QueueID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
                 Assert.That(AsyncWorkQueue.ActiveQueueID, Is.EqualTo(AsyncWorkQueue.NoQueue));
 
-                await queue.Enqueue(async () =>
+                await queue.EnqueueAsync(async () =>
                 {
                     Assert.That(queue.QueueID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
                     var id = queue.QueueID;
@@ -43,13 +43,37 @@ namespace UnitTests.Arrow.Threading.Tasks
             {
                 long flag = 0;
 
-                await queue.Enqueue(async () =>
+                await queue.EnqueueAsync(async () =>
                 {
                     await Task.Yield();
                     Interlocked.Exchange(ref flag, 1);
+                    return 1;
                 });
 
                 Assert.That(Interlocked.Read(ref flag), Is.EqualTo(1));
+            }
+        }
+
+        [Test]
+        public async Task TryEnqueue_Func_Task_Int()
+        {
+            using(var queue = new AsyncWorkQueue())
+            {
+                var result = queue.TryEnqueueAsync(async () =>
+                {
+                    await Task.Yield();
+                    return 1;
+                });
+
+                if(result.Enqueued)
+                {
+                    var value = await result.Task;
+                    Assert.That(value, Is.EqualTo(1));
+                }
+                else
+                {
+                    Assert.Fail("call should have been enqueued");
+                }                
             }
         }
     }

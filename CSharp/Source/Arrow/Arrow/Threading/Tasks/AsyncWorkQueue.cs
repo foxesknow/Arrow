@@ -89,101 +89,264 @@ namespace Arrow.Threading.Tasks
 		/// Adds a new item to the queue
 		/// </summary>
 		/// <param name="item">The item to process</param>
-		public Task Enqueue(Action action)
+		public Task EnqueueAsync(Action action)
 		{
             if(action == null) throw new ArgumentNullException(nameof(action));
             
             var work = new ActionWork(action);
-            DoEnqueue(work);
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
+
             return work.Task;
 		}
 
-        /// <summary>
-		/// Adds a new item to the queue
-		/// </summary>
-		/// <param name="item">The item to process</param>
-		public Task Enqueue(object state, Action<object> action)
+        public (bool Enqueued, Task Task) TryEnqueueAsync(Action action)
 		{
             if(action == null) throw new ArgumentNullException(nameof(action));
             
-            var work = new ActionStateWork(state, action);
-            DoEnqueue(work);
-            return work.Task;
+            var work = new ActionWork(action);
+            lock(m_SyncRoot)
+            {
+                var task = TryDoEnqueue(work);
+                return (task != null, task);
+            }
 		}
 
         /// <summary>
 		/// Adds a new item to the queue
 		/// </summary>
 		/// <param name="item">The item to process</param>
-		public Task<T> Enqueue<T>(Func<T> function)
+		public Task EnqueueAsync<T>(T state, Action<T> action)
+		{
+            if(action == null) throw new ArgumentNullException(nameof(action));
+            
+            var work = new ActionStateWork<T>(state, action);
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
+
+            return work.Task;
+		}
+
+        public (bool Enqueued, Task Task) TryEnqueueAsync<T>(T state, Action<T> action)
+		{
+            if(action == null) throw new ArgumentNullException(nameof(action));
+            
+            var work = new ActionStateWork<T>(state, action);
+            lock(m_SyncRoot)
+            {
+                var task = TryDoEnqueue(work);
+                return (task != null, task);
+            }
+		}
+
+        /// <summary>
+		/// Adds a new item to the queue
+		/// </summary>
+		/// <param name="item">The item to process</param>
+		public Task<TResult> EnqueueAsync<TResult>(Func<TResult> function)
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new FuncWork<T>(function);
-            DoEnqueue(work);
+            var work = new FuncWork<TResult>(function);
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
+
             return work.Task;
 		}
 
-        /// <summary>
-		/// Adds a new item to the queue
-		/// </summary>
-		/// <param name="item">The item to process</param>
-		public Task<T> Enqueue<T>(object state, Func<object, T> function)
+        public (bool Enqueued, Task<TResult> Task) TryEnqueueAsync<TResult>(Func<TResult> function)
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new FuncStateWork<T>(state, function);
-            DoEnqueue(work);
-            return work.Task;
+            var work = new FuncWork<TResult>(function);
+            lock(m_SyncRoot)
+            {
+                var task = TryDoEnqueue(work);
+                return (task != null, task);
+            }
 		}
 
         /// <summary>
 		/// Adds a new item to the queue
 		/// </summary>
 		/// <param name="item">The item to process</param>
-		public Task Enqueue(Func<Task> function)
+		public Task<TResult> EnqueueAsync<TState, TResult>(TState state, Func<TState, TResult> function)
+		{
+            if(function == null) throw new ArgumentNullException(nameof(function));
+            
+            var work = new FuncStateWork<TState, TResult>(state, function);
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
+
+            return work.Task;
+		}
+
+        public (bool Enqueued, Task<TResult> Task) TryEnqueueAsync<TState, TResult>(TState state, Func<TState, TResult> function)
+		{
+            if(function == null) throw new ArgumentNullException(nameof(function));
+            
+            var work = new FuncStateWork<TState, TResult>(state, function);
+            lock(m_SyncRoot)
+            {
+                var task = TryDoEnqueue(work);
+                return (task != null, task);
+            }
+		}
+
+        /// <summary>
+		/// Adds a new item to the queue
+		/// </summary>
+		/// <param name="item">The item to process</param>
+		public Task EnqueueAsync(Func<Task> function)
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
             var work = new ProxyFuncWork(function);
-            DoEnqueue(work);
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
+
             return work.Task;
+		}
+
+        public (bool Enqueued, Task Task) TryEnqueueAsync(Func<Task> function)
+		{
+            if(function == null) throw new ArgumentNullException(nameof(function));
+            
+            var work = new ProxyFuncWork(function);
+            lock(m_SyncRoot)
+            {
+                var task = TryDoEnqueue(work);
+                return (task != null, task);
+            }
 		}
 
         /// <summary>
 		/// Adds a new item to the queue
 		/// </summary>
 		/// <param name="item">The item to process</param>
-		public Task<T> Enqueue<T>(Func<Task<T>> function)
+		public Task EnqueueAsync<TState>(TState state, Func<TState, Task> function)
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new ProxyFuncWork<T>(function);
-            DoEnqueue(work);
+            var work = new ProxyFuncStateWork<TState>(state, function);
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
+
             return work.Task;
 		}
 
-        private void Enqueue(SendOrPostCallback callback, object data)
+        public (bool Enqueued, Task Task) TryEnqueueAsync<TState>(TState state, Func<TState, Task> function)
+		{
+            if(function == null) throw new ArgumentNullException(nameof(function));
+            
+            var work = new ProxyFuncStateWork<TState>(state, function);
+            lock(m_SyncRoot)
+            {
+                var task = TryDoEnqueue(work);
+                return (task != null, task);
+            }
+		}
+
+        /// <summary>
+		/// Adds a new item to the queue
+		/// </summary>
+		/// <param name="item">The item to process</param>
+		public Task<TResult> EnqueueAsync<TResult>(Func<Task<TResult>> function)
+		{
+            if(function == null) throw new ArgumentNullException(nameof(function));
+            
+            var work = new ProxyFuncWork<TResult>(function);
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
+
+            return work.Task;
+		}
+
+        public (bool Enqueued, Task<TResult> Task) TryEnqueueAsync<TResult>(Func<Task<TResult>> function)
+		{
+            if(function == null) throw new ArgumentNullException(nameof(function));
+            
+            var work = new ProxyFuncWork<TResult>(function);
+            lock(m_SyncRoot)
+            {
+                var task = TryDoEnqueue(work);
+                return (task != null, task);
+            }
+		}
+
+        /// <summary>
+		/// Adds a new item to the queue
+		/// </summary>
+		/// <param name="item">The item to process</param>
+		public Task<TResult> EnqueueAsync<TState, TResult>(TState state, Func<TState, Task<TResult>> function)
+		{
+            if(function == null) throw new ArgumentNullException(nameof(function));
+            
+            var work = new ProxyFuncStateWork<TState, TResult>(state, function);
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
+
+            return work.Task;
+		}
+
+        public (bool Enqueued, Task<TResult> Task) TryEnqueueAsync<TState, TResult>(TState state, Func<TState, Task<TResult>> function)
+		{
+            if(function == null) throw new ArgumentNullException(nameof(function));
+            
+            var work = new ProxyFuncStateWork<TState, TResult>(state, function);
+            lock(m_SyncRoot)
+            {
+                var task = TryDoEnqueue(work);
+                return (task != null, task);
+            }
+		}
+
+        private void ContextEnqueueAsync(SendOrPostCallback callback, object data)
         {
             var work = new SendOrPostCallbackWork(callback, data);
-            DoEnqueue(work);
+
+            lock(m_SyncRoot)
+            {
+                DoEnqueue(work);
+            }
         }
 
 		private void DoEnqueue(IWork item)
 		{
-            lock(m_SyncRoot)
-            {
-			    if(m_Disposed) throw new ObjectDisposedException("WorkDispatchQueue");
+			if(m_Disposed) throw new ObjectDisposedException(nameof(AsyncWorkQueue));
 				
-			    m_PendingWork.Add(item);
+			m_PendingWork.Add(item);
 				
-			    if(m_ThreadActive == false)
-			    {
-				    m_ThreadActive = true;
-				    m_Dispatcher.QueueUserWorkItem(ProcessQueue);
-			    }
-            }
+			if(m_ThreadActive == false)
+			{
+				m_ThreadActive = true;
+				m_Dispatcher.QueueUserWorkItem(ProcessQueue);
+			}
 		}
+
+        private Task<T> TryDoEnqueue<T>(WorkBase<T> workBase)
+        {
+            if(m_Disposed) return null;
+            DoEnqueue(workBase);
+
+            return workBase.Task;
+        }
 		
 		/// <summary>
 		/// Returns the work item dispatcher being used to schedule threads
@@ -337,14 +500,19 @@ namespace Arrow.Threading.Tasks
                 m_Queue = queue;
             }
 
+            public override SynchronizationContext CreateCopy()
+            {
+                return new CustomSynchronizationContext(m_Queue);
+            }
+
             public override void Post(SendOrPostCallback d, object state)
             {
-                m_Queue.Enqueue(d, state);
+                m_Queue.ContextEnqueueAsync(d, state);
             }
 
             public override void Send(SendOrPostCallback d, object state)
             {
-                m_Queue.Enqueue(d, state);
+                m_Queue.ContextEnqueueAsync(d, state);
             }
         }
 	
@@ -411,12 +579,12 @@ namespace Arrow.Threading.Tasks
             }
         }
 
-        class ActionStateWork : WorkBase<bool>
+        class ActionStateWork<TState> : WorkBase<bool>
         {
-            private readonly object m_State;
-            private readonly Action<object> m_Action;
+            private readonly TState m_State;
+            private readonly Action<TState> m_Action;
 
-            public ActionStateWork(object state, Action<object> action)
+            public ActionStateWork(TState state, Action<TState> action)
             {
                 m_State = state;
                 m_Action = action;
@@ -445,12 +613,12 @@ namespace Arrow.Threading.Tasks
             }
         }
 
-        class FuncStateWork<T> : WorkBase<T>
+        class FuncStateWork<TState, TResult> : WorkBase<TResult>
         {
-            private readonly object m_State;
-            private readonly Func<object, T> m_Function;
+            private readonly TState m_State;
+            private readonly Func<TState, TResult> m_Function;
 
-            public FuncStateWork(object state, Func<object, T> function)
+            public FuncStateWork(TState state, Func<TState, TResult> function)
             {
                 m_State = state;
                 m_Function = function;
@@ -474,25 +642,59 @@ namespace Arrow.Threading.Tasks
 
             protected override async void Run()
             {
-                var task = m_Function();
-                await task;
+                await m_Function();
                 this.TaskCompletionSource.SetResult(true);
             }
         }
 
-        class ProxyFuncWork<T> : WorkBase<T>
+        class ProxyFuncWork<TResult> : WorkBase<TResult>
         {
-            private readonly Func<Task<T>> m_Function;
+            private readonly Func<Task<TResult>> m_Function;
 
-            public ProxyFuncWork(Func<Task<T>> function)
+            public ProxyFuncWork(Func<Task<TResult>> function)
             {
                 m_Function = function;
             }
 
             protected override async void Run()
             {
-                var task = m_Function();
-                var result = await task;
+                var result = await m_Function();
+                this.TaskCompletionSource.SetResult(result);
+            }
+        }
+
+        class ProxyFuncStateWork<TState> : WorkBase<bool>
+        {
+            private readonly TState m_State;
+            private readonly Func<TState, Task> m_Function;
+
+            public ProxyFuncStateWork(TState state, Func<TState, Task> function)
+            {
+                m_State = state;
+                m_Function = function;
+            }
+
+            protected override async void Run()
+            {
+                await m_Function(m_State);
+                this.TaskCompletionSource.SetResult(true);
+            }
+        }
+
+        class ProxyFuncStateWork<TState, TResult> : WorkBase<TResult>
+        {
+            private readonly TState m_State;
+            private readonly Func<TState, Task<TResult>> m_Function;
+
+            public ProxyFuncStateWork(TState state, Func<TState, Task<TResult>> function)
+            {
+                m_State = state;
+                m_Function = function;
+            }
+
+            protected override async void Run()
+            {
+                var result = await m_Function(m_State);
                 this.TaskCompletionSource.SetResult(result);
             }
         }
