@@ -19,20 +19,20 @@ namespace UnitTests.Arrow.Threading.Tasks
         {
             using(var queue = new AsyncWorkQueue())
             {
-                Assert.That(queue.QueueID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
-                Assert.That(AsyncWorkQueue.ActiveQueueID, Is.EqualTo(AsyncWorkQueue.NoQueue));
+                Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
+                Assert.That(AsyncWorkQueue.ActiveID, Is.EqualTo(AsyncWorkQueue.NoQueue));
 
                 await queue.EnqueueAsync(async () =>
                 {
-                    Assert.That(queue.QueueID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
-                    var id = queue.QueueID;
+                    Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
+                    var id = queue.ID;
 
                     await Task.Yield();
-                    Assert.That(queue.QueueID, Is.EqualTo(id));
+                    Assert.That(queue.ID, Is.EqualTo(id));
                 });
 
-                Assert.That(queue.QueueID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
-                Assert.That(AsyncWorkQueue.ActiveQueueID, Is.EqualTo(AsyncWorkQueue.NoQueue));
+                Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
+                Assert.That(AsyncWorkQueue.ActiveID, Is.EqualTo(AsyncWorkQueue.NoQueue));
             }
         }
 
