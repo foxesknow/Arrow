@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arrow.Threading.Tasks
 {
-    public class AsyncWorkQueue : IDisposable
+    public partial class AsyncWorkQueue : IAsyncWorkQueue, IDisposable
     {
         public static readonly long NoQueue = -1;
 
@@ -15,11 +15,13 @@ namespace Arrow.Threading.Tasks
 
         private readonly object m_SyncRoot=new object();
 
-        private readonly long m_QueueID;
+        private readonly long m_ID;
 
-        private static readonly ThreadLocal<long> s_ActiveQueueID = new ThreadLocal<long>(() => NoQueue);
+        private static readonly ThreadLocal<long> s_ActiveID = new ThreadLocal<long>(() => NoQueue);
 		
 		private readonly EventWaitHandle m_StopEvent=new AutoResetEvent(false);
+
+        private readonly CustomSynchronizationContext m_SynchronizationContext;
 		
 		/// <summary>
 		/// A list is used instead of a queue as it performs better is our swap/process usage model
@@ -72,17 +74,18 @@ namespace Arrow.Threading.Tasks
 			m_PendingWork = new List<IWork>(initialCapacity);
 			m_SwapData = new List<IWork>(initialCapacity);
 
-            m_QueueID = Interlocked.Increment(ref s_NextQueueID);
+            m_ID = Interlocked.Increment(ref s_NextQueueID);
+            m_SynchronizationContext = new CustomSynchronizationContext(this);
 		}
 
-        public static long ActiveQueueID
+        public static long ActiveID
         {
-            get{return s_ActiveQueueID.Value;}
+            get{return s_ActiveID.Value;}
         }
 
-        public long QueueID
+        public long ID
         {
-            get{return m_QueueID;}
+            get{return m_ID;}
         }
 		
 		/// <summary>
@@ -106,9 +109,12 @@ namespace Arrow.Threading.Tasks
 		{
             if(action == null) throw new ArgumentNullException(nameof(action));
             
-            var work = new ActionWork(action);
+            
             lock(m_SyncRoot)
             {
+                if(m_Disposed) return (false, null);
+
+                var work = new ActionWork(action);
                 var task = TryDoEnqueue(work);
                 return (task != null, task);
             }
@@ -135,9 +141,11 @@ namespace Arrow.Threading.Tasks
 		{
             if(action == null) throw new ArgumentNullException(nameof(action));
             
-            var work = new ActionStateWork<T>(state, action);
             lock(m_SyncRoot)
             {
+                if(m_Disposed) return (false, null);
+
+                var work = new ActionStateWork<T>(state, action);
                 var task = TryDoEnqueue(work);
                 return (task != null, task);
             }
@@ -164,9 +172,11 @@ namespace Arrow.Threading.Tasks
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new FuncWork<TResult>(function);
             lock(m_SyncRoot)
             {
+                if(m_Disposed) return (false, null);
+
+                var work = new FuncWork<TResult>(function);
                 var task = TryDoEnqueue(work);
                 return (task != null, task);
             }
@@ -193,9 +203,11 @@ namespace Arrow.Threading.Tasks
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new FuncStateWork<TState, TResult>(state, function);
             lock(m_SyncRoot)
             {
+                if(m_Disposed) return (false, null);
+
+                var work = new FuncStateWork<TState, TResult>(state, function);
                 var task = TryDoEnqueue(work);
                 return (task != null, task);
             }
@@ -222,9 +234,11 @@ namespace Arrow.Threading.Tasks
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new ProxyFuncWork(function);
             lock(m_SyncRoot)
             {
+                if(m_Disposed) return (false, null);
+
+                var work = new ProxyFuncWork(function);
                 var task = TryDoEnqueue(work);
                 return (task != null, task);
             }
@@ -251,9 +265,11 @@ namespace Arrow.Threading.Tasks
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new ProxyFuncStateWork<TState>(state, function);
             lock(m_SyncRoot)
             {
+                if(m_Disposed) return (false, null);
+
+                var work = new ProxyFuncStateWork<TState>(state, function);
                 var task = TryDoEnqueue(work);
                 return (task != null, task);
             }
@@ -280,9 +296,11 @@ namespace Arrow.Threading.Tasks
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new ProxyFuncWork<TResult>(function);
             lock(m_SyncRoot)
             {
+                if(m_Disposed) return (false, null);
+
+                var work = new ProxyFuncWork<TResult>(function);
                 var task = TryDoEnqueue(work);
                 return (task != null, task);
             }
@@ -309,9 +327,11 @@ namespace Arrow.Threading.Tasks
 		{
             if(function == null) throw new ArgumentNullException(nameof(function));
             
-            var work = new ProxyFuncStateWork<TState, TResult>(state, function);
             lock(m_SyncRoot)
             {
+                if(m_Disposed) return (false, null);
+
+                var work = new ProxyFuncStateWork<TState, TResult>(state, function);
                 var task = TryDoEnqueue(work);
                 return (task != null, task);
             }
@@ -434,8 +454,8 @@ namespace Arrow.Threading.Tasks
 			lock(m_SyncRoot)
 			{
                 var previousContext = SynchronizationContext.Current;
-                SynchronizationContext.SetSynchronizationContext(new CustomSynchronizationContext(this));
-                s_ActiveQueueID.Value = m_QueueID;
+                SynchronizationContext.SetSynchronizationContext(m_SynchronizationContext);
+                s_ActiveID.Value = m_ID;
 
 				try
 				{
@@ -477,7 +497,7 @@ namespace Arrow.Threading.Tasks
 					}
 
                     SynchronizationContext.SetSynchronizationContext(previousContext);
-                    s_ActiveQueueID.Value = NoQueue;
+                    s_ActiveID.Value = NoQueue;
 				}
 			}
 		}
@@ -489,32 +509,7 @@ namespace Arrow.Threading.Tasks
 				var item = items[i];
 				item.Execute();
 			}
-		}
-
-        class CustomSynchronizationContext : SynchronizationContext
-        {
-            private readonly AsyncWorkQueue m_Queue;
-
-            public CustomSynchronizationContext(AsyncWorkQueue queue)
-            {
-                m_Queue = queue;
-            }
-
-            public override SynchronizationContext CreateCopy()
-            {
-                return new CustomSynchronizationContext(m_Queue);
-            }
-
-            public override void Post(SendOrPostCallback d, object state)
-            {
-                m_Queue.ContextEnqueueAsync(d, state);
-            }
-
-            public override void Send(SendOrPostCallback d, object state)
-            {
-                m_Queue.ContextEnqueueAsync(d, state);
-            }
-        }
+		}       
 	
 
         interface IWork
