@@ -54,12 +54,12 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="NUnitWrappers.fs" />
     <Compile Include="Calendar.fs" />
-    <Content Include="packages.config" />
     <Content Include="App.config" />
     <Compile Include="Configuration.fs" />
     <Compile Include="Execution.fs" />
     <Compile Include="Storage.fs" />
     <Compile Include="Threading.fs" />
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Arrow">
@@ -81,7 +81,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ValueTuple">
-      <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />

@@ -12,29 +12,16 @@ namespace Arrow.Threading.Tasks
     /// </summary>
     public abstract class AsyncWaitHandle
     {
-        /// <summary>
-        /// A task that has always completed successfully
-        /// </summary>
-        protected static readonly Task Completed = Task.FromResult(true);
+        protected TaskCompletionSource<T> CreateTaskCompletionSource<T>()
+        {
+            return new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+        }
 
         /// <summary>
         /// Returns a task that will be completed at some point
         /// </summary>
         /// <returns></returns>
         public abstract Task WaitAsync();
-
-        protected void SetTaskCompletionSouce(TaskCompletionSource<bool> source)
-        {
-            Task.Factory.StartNew
-            (
-                s => ((TaskCompletionSource<bool>)s).TrySetResult(true),
-                source, 
-                CancellationToken.None, 
-                TaskCreationOptions.PreferFairness, 
-                TaskScheduler.Default
-            );
-            
-            source.Task.Wait(); 
-        }
+        
     }
 }

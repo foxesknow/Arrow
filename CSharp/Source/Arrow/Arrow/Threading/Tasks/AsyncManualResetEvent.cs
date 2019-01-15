@@ -33,7 +33,8 @@ namespace Arrow.Threading.Tasks
         public override void Set()
         {
             // Use TrySetResult so that multiple callers can call it without throwing an exception
-            SetTaskCompletionSouce(InterlockedEx.Read(ref m_Source));
+            var source = InterlockedEx.Read(ref m_Source);
+            source.TrySetResult(true);
         }
 
         /// <summary>

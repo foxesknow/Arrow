@@ -61,7 +61,7 @@ namespace Arrow.Threading.Tasks
             // If there was someone waiting then release them
             if(callerToRelease != null)
             {
-                SetTaskCompletionSouce(callerToRelease);
+                callerToRelease.TrySetResult(true);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Arrow.Threading.Tasks
                 {
                     // Easy, we've been signaled so just return success
                     m_Signaled = false;
-                    return Completed;
+                    return Task.CompletedTask;
                 }
                 else
                 {

@@ -30,7 +30,7 @@ namespace Arrow.Threading.Tasks
                 {
                     // We've still got resources to allocate
                     m_Count--;
-                    return Completed;
+                    return Task.CompletedTask;
                 }
                 else
                 {
@@ -68,7 +68,7 @@ namespace Arrow.Threading.Tasks
 
             if(source != null)
             {
-                SetTaskCompletionSouce(source);
+                source.TrySetResult(true);
             }
         }
     }
