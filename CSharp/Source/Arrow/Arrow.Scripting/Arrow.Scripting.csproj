@@ -4,8 +4,6 @@
 		<TargetFramework>net47</TargetFramework>
 		<AssemblyTitle>Arrow.Scripting</AssemblyTitle>
 		<Product>Arrow.Scripting</Product>
-		<Copyright>Copyright ©  2013</Copyright>
-		<OutputPath>..\..\..\bin\Arrow\</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>full</DebugType>

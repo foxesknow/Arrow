@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <TargetFramework>net47</TargetFramework>
+    <AssemblyTitle>UnitTests.Scripting.Wire</AssemblyTitle>
+    <Product>UnitTests.Scripting.Wire</Product>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+
+	  <PackageReference Include="NUnit" Version="3.13.2" />
+	  <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Arithmetic.script" />
+    <EmbeddedResource Include="Scripts\ConditionalMemberAccess.script" />
+    <EmbeddedResource Include="Scripts\ConditionalMemberAccess_static.script" />
+    <EmbeddedResource Include="Scripts\Equality.script" />
+    <EmbeddedResource Include="Scripts\In.script" />
+    <EmbeddedResource Include="Scripts\Logical.script" />
+    <EmbeddedResource Include="Scripts\NumericTypes.script" />
+    <EmbeddedResource Include="Scripts\PropertyAndField.script" />
+    <EmbeddedResource Include="Scripts\Regex.script" />
+    <EmbeddedResource Include="Scripts\Relational.script" />
+    <EmbeddedResource Include="Scripts\Strings.script" />
+    <EmbeddedResource Include="Scripts\Ternary.script" />
+    <EmbeddedResource Include="Scripts\Unary.script" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Like.script" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Select.script" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Arrow.Dynamic\Arrow.Dynamic.csproj" />
+    <ProjectReference Include="..\Arrow.Scripting.Wire\Arrow.Scripting.Wire.csproj" />
+    <ProjectReference Include="..\Arrow.Scripting\Arrow.Scripting.csproj" />
+    <ProjectReference Include="..\Arrow\Arrow.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+</Project>
