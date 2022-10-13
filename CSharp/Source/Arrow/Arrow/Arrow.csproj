@@ -1,290 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{04660B82-1C99-406C-809D-06AF5839F648}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Arrow</RootNamespace>
-    <AssemblyName>Arrow</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\Arrow\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\bin\Arrow\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\bin\Arrow\Arrow.XML</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Application\ApplicationRunContext.cs" />
-    <Compile Include="Application\ApplicationRunner.cs" />
-    <Compile Include="Application\CommandLineSwitch.cs" />
-    <Compile Include="Application\CommandLineSwitchException.cs" />
-    <Compile Include="Application\More.cs" />
-    <Compile Include="Application\Plugins\AssemblyResolver\AssemblyResolverPlugin.cs" />
-    <Compile Include="Application\Plugins\ErrorHandling\UnhandledExceptionPlugin.cs" />
-    <Compile Include="Application\Plugins\PausablePlugin.cs" />
-    <Compile Include="Application\Plugins\Plugin.cs" />
-    <Compile Include="Application\Plugins\IPluginDiscovery.cs" />
-    <Compile Include="Application\Plugins\IPluginInitialize.cs" />
-    <Compile Include="Application\Plugins\IPluginPostStart.cs" />
-    <Compile Include="Application\Plugins\Memory\GarbageCollectorPlugin.cs" />
-    <Compile Include="Application\Plugins\Memory\MemoryPressurePlugin.cs" />
-    <Compile Include="Application\Plugins\PluginController.cs" />
-    <Compile Include="Application\Service\InteractiveConsoleService.cs" />
-    <Compile Include="Application\Service\ServiceMainHost.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Application\Service\InteractiveServiceMain.cs" />
-    <Compile Include="Application\Service\InteractiveServiceBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Application\Service\ServiceMain.cs" />
-    <Compile Include="Application\Service\ThreadedServiceMain.cs" />
-    <Compile Include="ArrowException.cs" />
-    <Compile Include="Calendar\BaselineClock.cs" />
-    <Compile Include="Calendar\Clock.cs" />
-    <Compile Include="Calendar\FixedClock.cs" />
-    <Compile Include="Calendar\IClock.cs" />
-    <Compile Include="Calendar\Reminders.cs" />
-    <Compile Include="Calendar\SystemClock.cs" />
-    <Compile Include="Collections\AlertableEventQueue.cs" />
-    <Compile Include="Execution\OpaqueKey.cs" />
-    <Compile Include="Memory\ArraySegmentCollection.cs" />
-    <Compile Include="Memory\ArraySegmentCollection.FactoryMethods.cs" />
-    <Compile Include="Collections\Caching\AtEvictionPolicy.cs" />
-    <Compile Include="Collections\Caching\Cache.cs" />
-    <Compile Include="Collections\Caching\CacheEventArgs.cs" />
-    <Compile Include="Collections\Caching\CacheFactory.cs" />
-    <Compile Include="Collections\Caching\CacheItem.cs" />
-    <Compile Include="Collections\Caching\EvictionPolicy.cs" />
-    <Compile Include="Collections\Caching\ICache.cs" />
-    <Compile Include="Collections\Caching\LiveForeverEvictionPolicy.cs" />
-    <Compile Include="Collections\Caching\PurgeMode.cs" />
-    <Compile Include="Collections\Caching\UsageCountEvictionPolicy.cs" />
-    <Compile Include="Collections\CheckInOutcome.cs" />
-    <Compile Include="Collections\Extensions\DictionaryExtensions.cs" />
-    <Compile Include="Collections\Heap.cs" />
-    <Compile Include="Collections\IgnoreCaseComparer.cs" />
-    <Compile Include="Collections\IgnoreCaseEqualityComparer.cs" />
-    <Compile Include="Collections\IPriorityQueue.cs" />
-    <Compile Include="Collections\IValueAdder.cs" />
-    <Compile Include="Collections\Memorizer.cs" />
-    <Compile Include="Collections\MultiDictionary.cs" />
-    <Compile Include="Collections\IPool.cs" />
-    <Compile Include="Collections\Pool.cs" />
-    <Compile Include="Collections\PriorityQueue.cs" />
-    <Compile Include="Collections\ReferenceCountedResource.cs" />
-    <Compile Include="Collections\RollingQueue.cs" />
-    <Compile Include="Collections\Sequence.cs" />
-    <Compile Include="Collections\Slice.cs" />
-    <Compile Include="Collections\SliceExtensions.cs" />
-    <Compile Include="Collections\StablePriorityQueue.cs" />
-    <Compile Include="Configuration\AppConfig.cs" />
-    <Compile Include="Configuration\AppDomainConfigFile.cs" />
-    <Compile Include="Configuration\ArrowSystem.cs" />
-    <Compile Include="Configuration\FileSystemConfigFile.cs" />
-    <Compile Include="Configuration\IConfigFile.cs" />
-    <Compile Include="Configuration\NullConfigFile.cs" />
-    <Compile Include="Configuration\StorageConfigFile.cs" />
-    <Compile Include="Configuration\ArrowSectionHandler.cs" />
-    <Compile Include="Data\DatabaseContext.cs" />
-    <Compile Include="Data\DatabaseDetails.cs" />
-    <Compile Include="Data\DatabaseExtensions.cs" />
-    <Compile Include="Data\DataModel.cs" />
-    <Compile Include="Data\OdbcDatabaseDetails.cs" />
-    <Compile Include="Data\SqlServerDatabaseDetails.cs" />
-    <Compile Include="DI\ContainerException.cs" />
-    <Compile Include="DI\DependencyBundle.cs" />
-    <Compile Include="DI\IDIContainer.Extensions.cs" />
-    <Compile Include="DI\IDIContainerRegister.Extensions.Xml.cs" />
-    <Compile Include="DI\DefaultContainer.CreationContext.cs" />
-    <Compile Include="DI\DefaultContainer.cs" />
-    <Compile Include="DI\IDIContainer.cs" />
-    <Compile Include="DI\IDIContainerRegister.Extensions.cs" />
-    <Compile Include="DI\IDIContainerRegister.cs" />
-    <Compile Include="DI\Lifetime.cs" />
-    <Compile Include="Execution\Disposer.cs" />
-    <Compile Include="Execution\ExecutionTimer.cs" />
-    <Compile Include="Execution\ExtensionPoint.cs" />
-    <Compile Include="Execution\MethodCall.cs" />
-    <Compile Include="Execution\ServiceBus.cs" />
-    <Compile Include="Execution\TimerMode.cs" />
-    <Compile Include="Factory\RegisteredTypeAttribute.cs" />
-    <Compile Include="Factory\RegisteredTypeInstaller.cs" />
-    <Compile Include="Factory\RegisteredTypeInstallerConfiguration.cs" />
-    <Compile Include="Factory\RegisteredTypeInstallerSectionHandler.cs" />
-    <Compile Include="Factory\SimpleFactory.cs" />
-    <Compile Include="IO\ByteSegmentStream.cs" />
-    <Compile Include="IO\PathEx.cs" />
-    <Compile Include="IO\ResourceLoader.cs" />
-    <Compile Include="IO\SandboxDirectory.cs" />
-    <Compile Include="Logging\Async\AsyncLogWriter.cs" />
-    <Compile Include="Logging\Async\ILogData.cs" />
-    <Compile Include="Logging\ILog.cs" />
-    <Compile Include="Logging\ILogInitializer.cs" />
-    <Compile Include="Logging\Loggers\ConsoleLog.cs" />
-    <Compile Include="Logging\Loggers\NullLog.cs" />
-    <Compile Include="Logging\LogManager.cs" />
-    <Compile Include="Memory\Pools\AlwaysAllocatePool.cs" />
-    <Compile Include="Memory\Pools\FixedSizePool.cs" />
-    <Compile Include="Memory\Pools\MemoryPool.cs" />
-    <Compile Include="Memory\Pools\PoolMode.cs" />
-    <Compile Include="Memory\Pools\SteppedPool.cs" />
-    <Compile Include="Net\Message\EventMessageProcessor.cs" />
-    <Compile Include="Net\Message\ReadMode.cs" />
-    <Compile Include="Net\Message\FixedHeaderSocketProcessor.cs" />
-    <Compile Include="Net\Message\IMessageFactory.cs" />
-    <Compile Include="Net\Message\IMessageProcessor.cs" />
-    <Compile Include="Net\Message\SocketMessageEventArgs.cs" />
-    <Compile Include="Net\Message\SocketProcessor.cs" />
-    <Compile Include="Net\Message\SocketProcessorEventArgs.cs" />
-    <Compile Include="Net\Message\WriteResults.cs" />
-    <Compile Include="ObjectAccess\ObjectLocator.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\AttributeExtensions.cs" />
-    <Compile Include="Reflection\ExpressionBlock.cs" />
-    <Compile Include="Reflection\ObjectMethod.cs" />
-    <Compile Include="Reflection\ObjectMethod.Equals.cs" />
-    <Compile Include="Reflection\ObjectMethod.GetHashCode.cs" />
-    <Compile Include="Reflection\ObjectMethod.ToString.cs" />
-    <Compile Include="Reflection\TypeExtensions.cs" />
-    <Compile Include="Reflection\TypeInfoExtensions.cs" />
-    <Compile Include="Reflection\TypeResolver.cs" />
-    <Compile Include="Reflection\TypeSupport.cs" />
-    <Compile Include="Serialization\GenericBinaryFormatter.cs" />
-    <Compile Include="Serialization\GenericFormatter.cs" />
-    <Compile Include="Serialization\IGenericFormatter.cs" />
-    <Compile Include="Settings\AnySettings.cs" />
-    <Compile Include="Settings\CommandLineSettings.cs" />
-    <Compile Include="Settings\Config\ProviderInfo.cs" />
-    <Compile Include="Settings\Config\SettingProvidersConfiguration.cs" />
-    <Compile Include="Settings\DateTimeSettings.cs" />
-    <Compile Include="Settings\DefaultSettings.cs" />
-    <Compile Include="Settings\DirectXmlSettings.cs" />
-    <Compile Include="Settings\DotNetSettings.cs" />
-    <Compile Include="Settings\EnvironmentSettings.cs" />
-    <Compile Include="Settings\FileSystemSettings.cs" />
-    <Compile Include="Settings\GuidSettings.cs" />
-    <Compile Include="Settings\ISettings.cs" />
-    <Compile Include="Settings\NetworkSettings.cs" />
-    <Compile Include="Settings\ProcessSettings.cs" />
-    <Compile Include="Settings\Config\SettingProvidersProcessAppConfig.cs" />
-    <Compile Include="Settings\Config\SettingProvidersSectionHandler.cs" />
-    <Compile Include="Settings\SettingsCollection.cs" />
-    <Compile Include="Settings\SettingsManager.cs" />
-    <Compile Include="Storage\Accessor.cs" />
-    <Compile Include="Storage\Accessor.Support.cs" />
-    <Compile Include="Storage\AccessorExtensions.cs" />
-    <Compile Include="Storage\FileAccessor.cs" />
-    <Compile Include="Storage\HttpAccessor.cs" />
-    <Compile Include="Storage\IAccessorFactory.cs" />
-    <Compile Include="Storage\LambdaAccessorFactory.cs" />
-    <Compile Include="Storage\ResourceAccessor.cs" />
-    <Compile Include="Storage\StorageManager.Accessor.cs" />
-    <Compile Include="Storage\StorageManager.cs" />
-    <Compile Include="Storage\UriExtensions.cs" />
-    <Compile Include="Storage\Vfs\DefaultDirectoryNode.cs" />
-    <Compile Include="Storage\Vfs\DefaultDirectoryNode.FileNode.cs" />
-    <Compile Include="Storage\Vfs\MountPoints\FileSystemMountPoint.cs" />
-    <Compile Include="Storage\Vfs\VirtualFileSystem.cs" />
-    <Compile Include="Storage\Vfs\VirtualFileSystem.DirectoryNode.cs" />
-    <Compile Include="Storage\Vfs\VirtualFileSystemExtensions.cs" />
-    <Compile Include="Storage\Vfs\GlobalVirtualFileSystem.cs" />
-    <Compile Include="Storage\Vfs\GlobalVirtualFileSystemAccessor.cs" />
-    <Compile Include="Storage\Vfs\IDirectoryNode.cs" />
-    <Compile Include="Storage\Vfs\IFileNode.cs" />
-    <Compile Include="Storage\Vfs\INode.cs" />
-    <Compile Include="Storage\Vfs\LookupResult.cs" />
-    <Compile Include="Storage\XmlStorageResolver.cs" />
-    <Compile Include="Text\TokenExpander.cs" />
-    <Compile Include="Threading\ActionMultiConsumerWorkQueue.cs" />
-    <Compile Include="Threading\ActionWorkQueue.cs" />
-    <Compile Include="Threading\Collections\SwapDictionary.cs" />
-    <Compile Include="Threading\Collections\SwapList.cs" />
-    <Compile Include="Threading\CustomThreadPool.cs" />
-    <Compile Include="Threading\InterlockedEx.Cas.cs" />
-    <Compile Include="Threading\InterlockedEx.Read.cs" />
-    <Compile Include="Threading\InterlockedEx.Transform.cs" />
-    <Compile Include="Threading\IWorkDispatcher.cs" />
-    <Compile Include="Threading\IWorkQueue.cs" />
-    <Compile Include="Threading\LaunchThreadWorkDispatcher.cs" />
-    <Compile Include="Threading\MonitorQueue.cs" />
-    <Compile Include="Threading\MultiConsumerWorkQueue.cs" />
-    <Compile Include="Threading\OutstandingEvent.cs" />
-    <Compile Include="Threading\SimpleWorkDispatcher.cs" />
-    <Compile Include="Threading\TaskEx.cs" />
-    <Compile Include="Threading\Tasks\AsyncAutoResetEvent.cs" />
-    <Compile Include="Threading\Tasks\AsyncBarrier.cs" />
-    <Compile Include="Threading\Tasks\AsyncEventWaitHandle.cs" />
-    <Compile Include="Threading\Tasks\AsyncManualResetEvent.cs" />
-    <Compile Include="Threading\Tasks\AsyncMonitor.cs" />
-    <Compile Include="Threading\Tasks\AsyncSemaphore.cs" />
-    <Compile Include="Threading\Tasks\AsyncWaitHandle.cs" />
-    <Compile Include="Threading\Tasks\AsyncWorkQueue.cs" />
-    <Compile Include="Threading\Tasks\AsyncWorkQueue.CustomSynchronizationContext.cs" />
-    <Compile Include="Threading\Tasks\IAsyncWorkQueue.cs" />
-    <Compile Include="Threading\TaskWorkQueue.cs" />
-    <Compile Include="Threading\TaskWorkQueue.Support.cs" />
-    <Compile Include="Threading\ThreadPoolWorkDispatcher.cs" />
-    <Compile Include="Threading\UnsafeThreadPoolWorkDispatcher.cs" />
-    <Compile Include="Threading\WorkDispatcherSynchronizationContext.cs" />
-    <Compile Include="Threading\WorkQueue.cs" />
-    <Compile Include="Xml\Macro\NameScope.cs" />
-    <Compile Include="Xml\Macro\Scope.cs" />
-    <Compile Include="Xml\Macro\ScopedItem.cs" />
-    <Compile Include="Xml\Macro\ScopedItemMode.cs" />
-    <Compile Include="Xml\Macro\XmlMacroExpander.cs" />
-    <Compile Include="Xml\Macro\XmlMacroExpanderException.cs" />
-    <Compile Include="Xml\Macro\XmlTypeResolver.cs" />
-    <Compile Include="Xml\ObjectCreation\DelayedCreator.cs" />
-    <Compile Include="Xml\ObjectCreation\ICustomXmlInitialization.cs" />
-    <Compile Include="Xml\ObjectCreation\XmlCreation.cs" />
-    <Compile Include="Xml\ObjectCreation\CustomXmlCreation.Collections.cs" />
-    <Compile Include="Xml\ObjectCreation\CustomXmlCreation.cs" />
-    <Compile Include="Xml\ObjectCreation\CustomXmlCreation.Types.cs" />
-    <Compile Include="Xml\ObjectCreation\CustomXmlCreation.Uri.cs" />
-    <Compile Include="Xml\ObjectCreation\XmlCreationException.cs" />
-    <Compile Include="Xml\ObjectCreation\XmlTypeResolver.cs" />
-    <Compile Include="Xml\XmlExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<ProductVersion>8.0.30703</ProductVersion>
+		<TargetFramework>net47</TargetFramework>
+		<AssemblyTitle>Arrow</AssemblyTitle>
+		<Product>Arrow</Product>
+		<Copyright>Copyright ©  2012</Copyright>
+		<OutputPath>..\..\..\bin\Arrow\</OutputPath>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>pdbonly</DebugType>
+		<DocumentationFile>..\..\..\bin\Arrow\Arrow.XML</DocumentationFile>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<Reference Include="System.ServiceProcess" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Data.DataSetExtensions" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Compile Update="Application\Service\ServiceMainHost.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="Application\Service\InteractiveServiceBase.cs">
+			<SubType>Component</SubType>
+		</Compile>
+	</ItemGroup>
 </Project>

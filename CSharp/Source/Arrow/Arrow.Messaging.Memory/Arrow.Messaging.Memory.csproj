@@ -1,79 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EDF14C78-C19B-4469-9F49-78FC7E3833B1}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Arrow.Messaging.Memory</RootNamespace>
-    <AssemblyName>Arrow.Messaging.Memory</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\Arrow\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\bin\Arrow\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ConnectionManager.cs" />
-    <Compile Include="ConnectionManager.Queue.cs" />
-    <Compile Include="ConnectionManager.Topic.cs" />
-    <Compile Include="IMemoryMessage.cs" />
-    <Compile Include="MemoryExtensions.cs" />
-    <Compile Include="MemoryMessageReceiver.cs" />
-    <Compile Include="MemoryMessageSender.cs" />
-    <Compile Include="MemoryMessagingSystem.cs" />
-    <Compile Include="MemoryScheme.cs" />
-    <Compile Include="Messages\MemByteMessage.cs" />
-    <Compile Include="Messages\MemMapMessage.cs" />
-    <Compile Include="Messages\MemObjectMessage.cs" />
-    <Compile Include="Messages\MemTextMessage.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueueSession.cs" />
-    <Compile Include="Session.cs" />
-    <Compile Include="TopicSession.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Arrow.Messaging\Arrow.Messaging.csproj">
-      <Project>{89b5751a-dad3-44ac-b65e-fa1bffe6a476}</Project>
-      <Name>Arrow.Messaging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Arrow\Arrow.csproj">
-      <Project>{04660b82-1c99-406c-809d-06af5839f648}</Project>
-      <Name>Arrow</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net47</TargetFramework>
+		<AssemblyTitle>Arrow.Messaging.Memory</AssemblyTitle>
+		<Product>Arrow.Messaging.Memory</Product>
+		<Copyright>Copyright ©  2015</Copyright>
+		<OutputPath>..\..\..\bin\Arrow\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>pdbonly</DebugType>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Data.DataSetExtensions" />
+		<Reference Include="Microsoft.CSharp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Arrow.Messaging\Arrow.Messaging.csproj" />
+		<ProjectReference Include="..\Arrow\Arrow.csproj" />
+	</ItemGroup>
 </Project>
