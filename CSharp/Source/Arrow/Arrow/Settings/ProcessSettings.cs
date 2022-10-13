@@ -80,7 +80,7 @@ namespace Arrow.Settings
 				Assembly assembly=Assembly.GetEntryAssembly();
 				if(!(assembly is System.Reflection.Emit.AssemblyBuilder))
 				{
-					if(assembly.GlobalAssemblyCache==false)
+					if(IsAssemblyInGAC(assembly)==false)
 					{
 						FileInfo info=new FileInfo(assembly.Location);
 						process=info.Name;
@@ -111,7 +111,7 @@ namespace Arrow.Settings
 				Assembly assembly=Assembly.GetEntryAssembly();
 				if(!(assembly is System.Reflection.Emit.AssemblyBuilder))
 				{
-					if(assembly.GlobalAssemblyCache==false)
+					if(IsAssemblyInGAC(assembly)==false)
 					{
 						return assembly.GetName();
 					}
@@ -124,6 +124,15 @@ namespace Arrow.Settings
 			}
 			
 			return null;
+		}
+
+		private bool IsAssemblyInGAC(Assembly assembly)
+		{
+			#if NETFRAMEWORK
+				return assembly.GlobalAssemblyCache;
+			#else
+				return false;
+			#endif
 		}
 	}
 }

@@ -4,6 +4,8 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.IO;
 
+#pragma warning disable SYSLIB0011
+
 namespace Arrow.Serialization
 {
 	/// <summary>

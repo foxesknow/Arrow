@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Net;
 
+#pragma warning disable SYSLIB0014
+
 namespace Arrow.Storage
 {
 	class HttpAccessor : Accessor

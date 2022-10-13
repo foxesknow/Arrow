@@ -1,4 +1,5 @@
-﻿using Arrow.Execution;
+﻿#if NETFRAMEWORK
+using Arrow.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,3 +48,5 @@ namespace Arrow.Application.Service
 		}
 	}
 }
+
+#endif

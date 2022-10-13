@@ -1,104 +1,104 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net47</TargetFramework>
-    <AssemblyTitle>UnitTests.Arrow</AssemblyTitle>
-    <Product>UnitTests.Arrow</Product>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <ItemGroup>
-	  <PackageReference Include="NUnit" Version="3.13.2" />
-	  <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
-  </ItemGroup>
-  <ItemGroup>
-    
-    <Reference Include="System.Data.DataSetExtensions" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\StorageStylesheet.xml" />
-    <EmbeddedResource Include="Resources\StorageStylesheetInclude.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Jack.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\People.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\ObjectCreationTests.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\HashCollection.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\ImplicitCollections.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\IndirectObjectCreationTests.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\PeopleList.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\NamespaceTypeInclude.xml" />
-    <EmbeddedResource Include="Resources\NamespaceTypeTests.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\NestedProperties.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CustomXmlInitialization.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\RelativeObjectCreation.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MorePeople\Ben.xml" />
-    <EmbeddedResource Include="Resources\MorePeople\Kate.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\GeneralObjectCreationTests.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_ExpandInArg.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_MetaData.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestComment.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestDefine.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestForEach.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude_1.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude_2.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestInsertSetting.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestLoadXml.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestOptional.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestRequire.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestRequireFail.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestTryDeclare.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestTryInclude.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestVariables.xml" />
-    <EmbeddedResource Include="Resources\Macro\XmlMacro_TestXmlComments.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Macro\SubDir\XmlMacro_TestInclude_3.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\AppConfigTest_Storage.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\AppConfigInclude.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\TypeOnlyTests.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Arrow\Arrow.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0</TargetFrameworks>
+		<ProductVersion>8.0.30703</ProductVersion>
+		<AssemblyTitle>UnitTests.Arrow</AssemblyTitle>
+		<Product>UnitTests.Arrow</Product>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>pdbonly</DebugType>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="NUnit" Version="3.13.2" />
+		<PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+	</ItemGroup>
+	<ItemGroup>
+
+		<Reference Include="System.Data.DataSetExtensions" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\StorageStylesheet.xml" />
+		<EmbeddedResource Include="Resources\StorageStylesheetInclude.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Jack.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\People.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\ObjectCreationTests.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\HashCollection.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\ImplicitCollections.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\IndirectObjectCreationTests.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\PeopleList.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\NamespaceTypeInclude.xml" />
+		<EmbeddedResource Include="Resources\NamespaceTypeTests.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\NestedProperties.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\CustomXmlInitialization.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\RelativeObjectCreation.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\MorePeople\Ben.xml" />
+		<EmbeddedResource Include="Resources\MorePeople\Kate.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\GeneralObjectCreationTests.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_ExpandInArg.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_MetaData.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestComment.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestDefine.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestForEach.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude_1.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestInclude_2.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestInsertSetting.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestLoadXml.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestOptional.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestRequire.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestRequireFail.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestTryDeclare.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestTryInclude.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestVariables.xml" />
+		<EmbeddedResource Include="Resources\Macro\XmlMacro_TestXmlComments.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Macro\SubDir\XmlMacro_TestInclude_3.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\AppConfigTest_Storage.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\AppConfigInclude.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\TypeOnlyTests.xml">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Arrow\Arrow.csproj" />
+	</ItemGroup>
 </Project>

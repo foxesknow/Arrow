@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Configuration;
 
 namespace Arrow.Configuration
 {
@@ -18,14 +19,10 @@ namespace Arrow.Configuration
 		/// </summary>
 		public AppDomainConfigFile()
 		{
-			AppDomain appDomain=AppDomain.CurrentDomain;
-			if(appDomain!=null)
+			var config=ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+			if(config!=null)
 			{
-				AppDomainSetup setup=appDomain.SetupInformation;
-				if(setup!=null)
-				{
-					m_Filename=setup.ConfigurationFile;
-				}
+				m_Filename=config.FilePath;
 			}
 		}
 	

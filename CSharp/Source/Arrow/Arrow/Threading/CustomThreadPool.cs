@@ -1,3 +1,4 @@
+#if NETFRAMEWORK
 // ThreadPool.cs
 //
 // This file defines a custom ThreadPool class that supports the following
@@ -1080,3 +1081,4 @@ namespace Arrow.Threading
 
 
 }
+#endif

@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<ProductVersion>8.0.30703</ProductVersion>
-		<TargetFramework>net47</TargetFramework>
 		<AssemblyTitle>Arrow.Logging.Log4Net</AssemblyTitle>
 		<Product>Arrow.Logging.Log4Net</Product>
 	</PropertyGroup>

@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<ProductVersion>8.0.30703</ProductVersion>
-		<TargetFramework>net47</TargetFramework>
+		
 		<AssemblyTitle>Arrow</AssemblyTitle>
 		<Product>Arrow</Product>
 	</PropertyGroup>
@@ -16,17 +15,28 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<Reference Include="System.ServiceProcess" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
+		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net461' or '$(TargetFramework)' == 'net471' or '$(TargetFramework)' == 'net48'">
+		<Reference Include="System.Management"/>		
+		<Reference Include="System.Data.OracleClient" />
 		<Reference Include="System.Web" />
-		<Reference Include="System.Data.DataSetExtensions" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' != 'net461' and '$(TargetFramework)' != 'net471'">
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+		<PackageReference Include="System.Data.Odbc" Version="6.0.1" />
 	</ItemGroup>
 	
 	<ItemGroup>
-		<Compile Update="Application\Service\ServiceMainHost.cs">
-			<SubType>Component</SubType>
-		</Compile>
-		<Compile Update="Application\Service\InteractiveServiceBase.cs">
-			<SubType>Component</SubType>
-		</Compile>
+		<Compile Update="Application\Service\ServiceMainHost.cs" />
+		<Compile Update="Application\Service\InteractiveServiceBase.cs" />
 	</ItemGroup>
 </Project>

@@ -3,23 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow", "Arrow\Arrow.csproj", "{04660B82-1C99-406C-809D-06AF5839F648}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow", "Arrow\Arrow.csproj", "{04660B82-1C99-406C-809D-06AF5839F648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Logging.Log4Net", "Arrow.Logging.Log4Net\Arrow.Logging.Log4Net.csproj", "{5641A6C2-56F3-4C53-B8D6-F70517D2700B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Logging.Log4Net", "Arrow.Logging.Log4Net\Arrow.Logging.Log4Net.csproj", "{5641A6C2-56F3-4C53-B8D6-F70517D2700B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Scripting", "Arrow.Scripting\Arrow.Scripting.csproj", "{8E23137A-044F-403A-BDC6-4EC70A51CA21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Scripting", "Arrow.Scripting\Arrow.Scripting.csproj", "{8E23137A-044F-403A-BDC6-4EC70A51CA21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Dynamic", "Arrow.Dynamic\Arrow.Dynamic.csproj", "{160ED0F8-E948-4605-8785-FD83D5C1A676}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Dynamic", "Arrow.Dynamic\Arrow.Dynamic.csproj", "{160ED0F8-E948-4605-8785-FD83D5C1A676}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Scripting.Wire", "Arrow.Scripting.Wire\Arrow.Scripting.Wire.csproj", "{EEC15EEF-52D2-4E7F-BED1-06DE1B65D07D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Scripting.Wire", "Arrow.Scripting.Wire\Arrow.Scripting.Wire.csproj", "{EEC15EEF-52D2-4E7F-BED1-06DE1B65D07D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Windows", "Arrow.Windows\Arrow.Windows.csproj", "{A383713A-DD5B-4A33-A002-AB8F3A49D617}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.GraphTheory", "Arrow.GraphTheory\Arrow.GraphTheory.csproj", "{B26FC732-2102-4EA1-9D88-2FA7C68DEBA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.GraphTheory", "Arrow.GraphTheory\Arrow.GraphTheory.csproj", "{B26FC732-2102-4EA1-9D88-2FA7C68DEBA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Messaging", "Arrow.Messaging\Arrow.Messaging.csproj", "{89B5751A-DAD3-44AC-B65E-FA1BFFE6A476}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Messaging", "Arrow.Messaging\Arrow.Messaging.csproj", "{89B5751A-DAD3-44AC-B65E-FA1BFFE6A476}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.Messaging.Memory", "Arrow.Messaging.Memory\Arrow.Messaging.Memory.csproj", "{EDF14C78-C19B-4469-9F49-78FC7E3833B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Messaging.Memory", "Arrow.Messaging.Memory\Arrow.Messaging.Memory.csproj", "{EDF14C78-C19B-4469-9F49-78FC7E3833B1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Arrow", "UnitTests.Arrow\UnitTests.Arrow.csproj", "{17911658-A34B-4B46-BBC0-0C5D002B5EA1}"
 EndProject
@@ -30,6 +28,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Scripting.Wire", "UnitTests.Scripting.Wire\UnitTests.Scripting.Wire.csproj", "{918AC50D-B94C-4F7A-A597-524979E507EC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Messaging.Memory", "UnitTests.Messaging.Memory\UnitTests.Messaging.Memory.csproj", "{2CABCF2C-B6A0-4317-8EF4-0B2293CD906C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{39AA8690-A486-4E81-865E-6B10B71DE6D7}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,10 +60,6 @@ Global
 		{EEC15EEF-52D2-4E7F-BED1-06DE1B65D07D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEC15EEF-52D2-4E7F-BED1-06DE1B65D07D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEC15EEF-52D2-4E7F-BED1-06DE1B65D07D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A383713A-DD5B-4A33-A002-AB8F3A49D617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A383713A-DD5B-4A33-A002-AB8F3A49D617}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A383713A-DD5B-4A33-A002-AB8F3A49D617}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A383713A-DD5B-4A33-A002-AB8F3A49D617}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B26FC732-2102-4EA1-9D88-2FA7C68DEBA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B26FC732-2102-4EA1-9D88-2FA7C68DEBA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B26FC732-2102-4EA1-9D88-2FA7C68DEBA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
