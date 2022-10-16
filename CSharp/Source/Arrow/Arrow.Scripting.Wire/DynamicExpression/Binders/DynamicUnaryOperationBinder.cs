@@ -16,13 +16,13 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 		{
 		}
 
-		public override DynamicMetaObject FallbackUnaryOperation(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
+		public override DynamicMetaObject FallbackUnaryOperation(DynamicMetaObject target, DynamicMetaObject? errorSuggestion)
 		{
 			var restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			var instance=target.GetLimitedExpression();
-			expression=Expression.MakeUnary(this.Operation,instance,null);
+			expression=Expression.MakeUnary(this.Operation,instance,null!);
 			
 			expression=expression.ConvertTo(this.ReturnType);
 			restrictions=restrictions.AndLimitType(target);

@@ -3,22 +3,42 @@
 		<ProductVersion>8.0.30703</ProductVersion>
 		<AssemblyTitle>Arrow.Scripting.Wire</AssemblyTitle>
 		<Product>Arrow.Scripting.Wire</Product>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
+	
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>full</DebugType>
 	</PropertyGroup>
+	
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>pdbonly</DebugType>
 	</PropertyGroup>
+	
 	<ItemGroup>
 		<Reference Include="System.Data.DataSetExtensions" />
 		<Reference Include="Microsoft.CSharp" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\Arrow.Dynamic\Arrow.Dynamic.csproj" />
 		<ProjectReference Include="..\Arrow.Scripting\Arrow.Scripting.csproj" />
 		<ProjectReference Include="..\Arrow\Arrow.csproj" />
 	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net461' or '$(TargetFramework)' == 'net471' or '$(TargetFramework)' == 'net48' or '$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="Nullable" Version="1.3.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="IsExternalInit" Version="1.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
 	<ItemGroup>
 		<Content Include="docs\Operators.txt" />
 	</ItemGroup>

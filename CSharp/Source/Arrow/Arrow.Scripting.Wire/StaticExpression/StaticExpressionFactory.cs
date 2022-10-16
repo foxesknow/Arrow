@@ -18,7 +18,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 		static StaticExpressionFactory()
 		{
-			RegexIsMatch=typeof(Regex).GetMethod("IsMatch",new[]{typeof(string),typeof(string)});
+			RegexIsMatch=typeof(Regex).GetMethod("IsMatch",new[]{typeof(string),typeof(string)})!;
 		}
 
 		public StaticExpressionFactory(Parser parser) : base(parser)
@@ -101,7 +101,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 		public override Expression Add(Expression lhs, Expression rhs)
 		{
-			Expression expression=null;
+			Expression? expression=null;
 
 			if(lhs.IsOfType<string>() && rhs.IsOfType<string>())
 			{
@@ -158,7 +158,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 		public override Expression ArrayAccess(Expression target, IEnumerable<Expression> bounds)
 		{
-			Expression expression=null;
+			Expression? expression=null;
 
 			if(ExpressionEx.TryArrayAccess(target,bounds,out expression)==false)
 			{
@@ -211,7 +211,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 		public override Expression StaticPropertyOrFieldWithArgs(Type type, string name, IEnumerable<Expression> indexes)
 		{
-			Expression expression=null;
+			Expression? expression=null;
 			
 			bool success=ExpressionEx.TryPropertyOrFieldWithArguments(type,name,StaticFlags,indexes,out expression);
 			if(!success) this.Parser.ThrowException("could not resolve static array access");
@@ -233,7 +233,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 		public override Expression InstancePropertyOrFieldWithArgs(Expression instance, string name, IEnumerable<Expression> indexes)
 		{
-			Expression expression=null;
+			Expression? expression=null;
 
 			bool success=ExpressionEx.TryPropertyOrFieldWithArguments(instance,name,InstanceFlags,indexes,out expression);
 			if(!success) this.Parser.ThrowException("could not resolve instance array access");

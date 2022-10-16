@@ -96,8 +96,7 @@ namespace Arrow.Scripting.Wire
 		{
 			var expression=Relational();
 
-			Token token=null;
-			while(m_Tokenizer.TryAcceptOneOf(out token,TokenID.EqualTo,TokenID.NotEquals,TokenID.EqualToNoCase,TokenID.NotEqualsNoCase,TokenID.RegexEquals))
+			while(m_Tokenizer.TryAcceptOneOf(out var token,TokenID.EqualTo,TokenID.NotEquals,TokenID.EqualToNoCase,TokenID.NotEqualsNoCase,TokenID.RegexEquals))
 			{
 				var rhs=Relational();
 
@@ -136,8 +135,7 @@ namespace Arrow.Scripting.Wire
 		{
 			var expression=InBetween();
 
-			Token token=null;
-			while(m_Tokenizer.TryAcceptOneOf(out token,TokenID.GreaterThan,TokenID.GreaterThanOrEqual,TokenID.LessThan,TokenID.LessThanOrEqual))
+			while(m_Tokenizer.TryAcceptOneOf(out var token,TokenID.GreaterThan,TokenID.GreaterThanOrEqual,TokenID.LessThan,TokenID.LessThanOrEqual))
 			{
 				var rhs=InBetween();
 
@@ -172,8 +170,7 @@ namespace Arrow.Scripting.Wire
 		{
 			Expression expression=AddSubtract();
 
-			Token token=null;
-			while(m_Tokenizer.TryAcceptOneOf(out token,TokenID.In,TokenID.InNoCase,TokenID.Between,TokenID.Like,TokenID.LikeNoCase))
+			while(m_Tokenizer.TryAcceptOneOf(out var token,TokenID.In,TokenID.InNoCase,TokenID.Between,TokenID.Like,TokenID.LikeNoCase))
 			{
 				switch(token.ID)
 				{
@@ -217,8 +214,7 @@ namespace Arrow.Scripting.Wire
 		{
 			var expression=MultiplyDivide();
 
-			Token token=null;
-			while(m_Tokenizer.TryAcceptOneOf(out token,TokenID.Add,TokenID.Subtract))
+			while(m_Tokenizer.TryAcceptOneOf(out var token,TokenID.Add,TokenID.Subtract))
 			{
 				var rhs=MultiplyDivide();
 				
@@ -246,8 +242,7 @@ namespace Arrow.Scripting.Wire
 		{
 			var expression=Unary();
 
-			Token token=null;
-			while(m_Tokenizer.TryAcceptOneOf(out token,TokenID.Multiply,TokenID.Divide,TokenID.Modulo))
+			while(m_Tokenizer.TryAcceptOneOf(out var token,TokenID.Multiply,TokenID.Divide,TokenID.Modulo))
 			{
 				var rhs=Unary();
 
@@ -276,7 +271,7 @@ namespace Arrow.Scripting.Wire
 
 		private Expression Unary()
 		{
-			Expression expression=null;
+			Expression? expression=null;
 
 			switch(m_Tokenizer.Current.ID)
 			{
@@ -307,9 +302,9 @@ namespace Arrow.Scripting.Wire
 
 		private Expression Factor()
 		{
-			Expression expression=null;
+			Expression? expression=null;
 
-			Token tempToken=null;
+			Token? tempToken=null;
 			Token token=m_Tokenizer.Current;
 
 			if(m_Tokenizer.TryAccept(TokenID.Symbol))
@@ -423,7 +418,7 @@ namespace Arrow.Scripting.Wire
 			var assignment=Expression.Assign(localTarget,selectValue);
 
 			var caseExpressions=new List<Tuple<Expression,Expression>>();
-			Expression defaultCondition=null;
+			Expression? defaultCondition=null;
 
 			while(m_Tokenizer.TryAccept(TokenID.Comma))
 			{
@@ -447,7 +442,7 @@ namespace Arrow.Scripting.Wire
 			m_Tokenizer.Expect(TokenID.RightParen);
 			if(defaultCondition==null) ThrowException("you must specify a  default condition in a select expression");
 
-			Expression selectEvaluation=null;
+			Expression? selectEvaluation=null;
 
 			if(caseExpressions.Count==0)
 			{
@@ -488,7 +483,7 @@ namespace Arrow.Scripting.Wire
 			m_Tokenizer.Expect(TokenID.LessThan);
 			
 			string typeName=ExtractTypeName();
-			Type type=ResolveType(typeName);			
+			var type=ResolveType(typeName);			
 			if(type==null) ThrowException("could not resolve type: "+typeName);
 			
 			m_Tokenizer.Expect(TokenID.GreaterThan);
@@ -497,7 +492,7 @@ namespace Arrow.Scripting.Wire
 			Expression whatToCast=ParseExpression();
 			m_Tokenizer.Expect(TokenID.RightParen);
 
-			Expression expression=null;
+			Expression? expression=null;
 
 			if(id==TokenID.Cast)
 			{
@@ -529,7 +524,7 @@ namespace Arrow.Scripting.Wire
 			var localTarget=Expression.Variable(target.Type);
 			var assignment=Expression.Assign(localTarget,target);
 
-			Expression expression=null;
+			Expression? expression=null;
 
 			// We need to reverse the list as we want the expression to
 			// expand to target==item1 || (target==item2 || (target==item3))) etc
@@ -554,7 +549,7 @@ namespace Arrow.Scripting.Wire
 			(
 				Sequence.Single(localTarget), // The variables in the block
 				assignment,
-				expression
+				expression!
 			);
 
 			return block;
@@ -662,25 +657,25 @@ namespace Arrow.Scripting.Wire
 			m_Tokenizer.Expect(accessToken);
 
 			// Grab the name of the thing we're after
-			string name=m_Tokenizer.Current.Data;
+			string? name=m_Tokenizer.Current.Data;
 			m_Tokenizer.Expect(TokenID.Symbol);
 
-			Expression access=null;
+			Expression? access=null;
 
 			if(m_Tokenizer.Current.ID==TokenID.LeftParen)
 			{
 				// It's a method call
 				var parameters=ExtractMethodArguments();
-				access=m_ExpressionFactory.InstanceCall(instance,name,parameters);
+				access=m_ExpressionFactory.InstanceCall(instance,name!,parameters);
 			}
 			else if(m_Tokenizer.Current.ID==TokenID.LeftSquare)
 			{
 				var arrayBounds=ExtractSequence(TokenID.LeftSquare,TokenID.RightSquare);
-				access=m_ExpressionFactory.InstancePropertyOrFieldWithArgs(instance,name,arrayBounds);
+				access=m_ExpressionFactory.InstancePropertyOrFieldWithArgs(instance,name!,arrayBounds);
 			}
 			else
 			{
-				access=m_ExpressionFactory.InstancePropertyOrField(instance,name);
+				access=m_ExpressionFactory.InstancePropertyOrField(instance,name!);
 			}
 
 			return access;
@@ -691,26 +686,26 @@ namespace Arrow.Scripting.Wire
 			m_Tokenizer.Expect(TokenID.MemberAccess);
 			
 			// Grab the name of the thing we're after
-			string name=m_Tokenizer.Current.Data;
+			string? name=m_Tokenizer.Current.Data;
 			m_Tokenizer.Expect(TokenID.Symbol);
 
-			Expression access=null;
+			Expression? access=null;
 
 			if(m_Tokenizer.Current.ID==TokenID.LeftParen)
 			{
 				// It's a method call
 				var parameters=ExtractMethodArguments();
-				access=m_ExpressionFactory.StaticCall(type,name,parameters);
+				access=m_ExpressionFactory.StaticCall(type,name!,parameters);
 			}
 			else if(m_Tokenizer.Current.ID==TokenID.LeftSquare)
 			{
 				var bounds=ExtractArrayIndexes();
-				access=m_ExpressionFactory.StaticPropertyOrFieldWithArgs(type,name,bounds);
+				access=m_ExpressionFactory.StaticPropertyOrFieldWithArgs(type,name!,bounds);
 			}
 			else
 			{			
 				// It's a property of a field
-				access=m_ExpressionFactory.StaticPropertyOrField(type,name);
+				access=m_ExpressionFactory.StaticPropertyOrField(type,name!);
 			}
 
 			return access;

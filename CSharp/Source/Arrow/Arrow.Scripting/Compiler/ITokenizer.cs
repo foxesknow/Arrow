@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -34,7 +35,7 @@ namespace Arrow.Compiler
 		/// <param name="token">On success the token that was accepted</param>
 		/// <param name="ids">A list of ids to try</param>
 		/// <returns>true if a token was accepted, otherwise false</returns>
-		bool TryAcceptOneOf(out Token? token, params int[] ids);
+		bool TryAcceptOneOf([NotNullWhen(true)] out Token? token, params int[] ids);
 
 		/// <summary>
 		/// Accepts the current token, regardless of what it is

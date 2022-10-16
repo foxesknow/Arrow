@@ -12,7 +12,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 {
 	class DynamicGetIndexBinder : GetIndexBinder
 	{
-		private readonly string m_Name;
+		private readonly string? m_Name;
 		private readonly BindingFlags m_BindingFlags;
 
 		public DynamicGetIndexBinder(CallInfo callInfo) : this(null,BindingFlags.Default,callInfo)
@@ -20,13 +20,13 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 
 		}
 
-		public DynamicGetIndexBinder(string name, BindingFlags bindingFlags, CallInfo callInfo) : base(callInfo)
+		public DynamicGetIndexBinder(string? name, BindingFlags bindingFlags, CallInfo callInfo) : base(callInfo)
 		{
 			m_Name=name;
 			m_BindingFlags=bindingFlags;
 		}
 
-		public override DynamicMetaObject FallbackGetIndex(DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
+		public override DynamicMetaObject FallbackGetIndex(DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject? errorSuggestion)
 		{
 			if(target.Value is IDynamicMetaObjectProvider)
 			{
@@ -34,7 +34,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			}
 
 			BindingRestrictions restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			var instance=target.GetLimitedExpression();
 
@@ -62,12 +62,12 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			return new DynamicMetaObject(expression,restrictions);
 		}
 
-		private DynamicMetaObject DeferToDynamicMetaObjectProvider(DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
+		private DynamicMetaObject DeferToDynamicMetaObjectProvider(DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject? errorSuggestion)
 		{
 			// We've got an expression such as provider.member[index]
 			// and it's in a dynamic type, so we'll need to resolve
 			// the member and then have another go at doing the index access
-			var getInstance=Binder.InstancePropertyOrField(target.GetLimitedExpression(),m_Name);
+			var getInstance=Binder.InstancePropertyOrField(target.GetLimitedExpression(),m_Name!);
 				
 			var i=indexes.Select(o=>o.GetLimitedExpression());
 			var arrayLookup=Binder.ArrayAccess(getInstance,i);

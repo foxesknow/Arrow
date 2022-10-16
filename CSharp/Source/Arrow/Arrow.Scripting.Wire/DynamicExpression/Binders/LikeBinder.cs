@@ -14,8 +14,8 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 {
 	class LikeBinder : BinderBase
 	{
-		private static readonly MethodInfo ApplyLike=typeof(LikeEvaluator).GetMethod("ApplyLike");
-		private static readonly MethodInfo ApplyLikeNoCase=typeof(LikeEvaluator).GetMethod("ApplyLikeNoCase");
+		private static readonly MethodInfo ApplyLike=typeof(LikeEvaluator).GetMethod("ApplyLike")!;
+		private static readonly MethodInfo ApplyLikeNoCase=typeof(LikeEvaluator).GetMethod("ApplyLikeNoCase")!;
 
 		private readonly CaseMode m_CaseMode;
 
@@ -31,7 +31,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 
 		public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
 		{
-			Expression x=null;
+			Expression? x=null;
 
 			var lhs=target.GetLimitedExpression();
 			var pattern=args[0].GetLimitedExpression();

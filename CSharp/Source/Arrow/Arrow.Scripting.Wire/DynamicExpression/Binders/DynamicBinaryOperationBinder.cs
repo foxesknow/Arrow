@@ -16,10 +16,10 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 		{
 		}
 
-		public override DynamicMetaObject FallbackBinaryOperation(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
+		public override DynamicMetaObject FallbackBinaryOperation(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject? errorSuggestion)
 		{
 			var restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			var lhs=target.GetLimitedExpression();
 			var rhs=arg.GetLimitedExpression();

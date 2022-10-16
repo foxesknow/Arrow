@@ -6,6 +6,7 @@ using System.IO;
 using System.Globalization;
 
 using Arrow.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Arrow.Compiler
 {
@@ -160,7 +161,7 @@ namespace Arrow.Compiler
 		/// <param name="token">On success the token that was accepted</param>
 		/// <param name="ids">A list of ids to try</param>
 		/// <returns>true if a token was accepted, otherwise false</returns>
-		public bool TryAcceptOneOf(out Token? token, params int[] ids)
+		public bool TryAcceptOneOf([NotNullWhen(true)] out Token? token, params int[] ids)
 		{
 			bool accepted=false;
 			token=null;

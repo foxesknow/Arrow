@@ -19,7 +19,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			m_BindingFlags=bindingFlags;
 		}
 
-		public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
+		public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject? errorSuggestion)
 		{
 			if(target.Value is IDynamicMetaObjectProvider)
 			{
@@ -27,11 +27,11 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			}
 
 			BindingRestrictions restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			var instance=target.GetLimitedExpression();
 
-			MemberExpression memberExpression=null;
+			MemberExpression? memberExpression=null;
 			ExpressionEx.TryPropertyOrField(instance,this.Name,m_BindingFlags,out memberExpression);
 			expression=memberExpression;
 
@@ -47,7 +47,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			return new DynamicMetaObject(expression,restrictions);
 		}
 
-		private DynamicMetaObject DeferToDynamicMetaObjectProvider(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
+		private DynamicMetaObject DeferToDynamicMetaObjectProvider(DynamicMetaObject target, DynamicMetaObject? errorSuggestion)
 		{
 			// We don't add any additional members to the provider,
 			// so we'll just opt to throw an exception

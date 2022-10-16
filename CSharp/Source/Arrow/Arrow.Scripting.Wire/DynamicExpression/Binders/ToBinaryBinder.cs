@@ -22,7 +22,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			var restrictions=BindingRestrictions.Empty.AndLimitType(target);
 			var value=target.GetLimitedExpression();
 
-			Expression expression=value;
+			Expression? expression=value;
 
 			if(value.Type!=typeof(bool))
 			{

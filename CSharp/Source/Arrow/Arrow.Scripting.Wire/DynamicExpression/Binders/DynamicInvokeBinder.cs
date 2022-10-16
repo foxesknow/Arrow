@@ -19,10 +19,10 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 
 		}
 
-		public override DynamicMetaObject FallbackInvoke(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
+		public override DynamicMetaObject FallbackInvoke(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject? errorSuggestion)
 		{
 			var restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			// Make sure it's a delegate
 			if(target.LimitType.IsDelegate()==false)

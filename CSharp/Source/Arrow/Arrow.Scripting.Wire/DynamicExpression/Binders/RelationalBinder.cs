@@ -27,7 +27,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 		public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
 		{
 			var restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			var lhs=target.GetLimitedExpression();
 			var rhs=args[0].GetLimitedExpression();

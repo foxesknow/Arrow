@@ -81,10 +81,10 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 
 		public static Expression StaticPropertyOrField(Type type, string name)
 		{			
-			MemberExpression memberExpression=null;
+			MemberExpression? memberExpression=null;
 			ExpressionEx.TryPropertyOrField(type,name,ExpressionFactory.StaticFlags,out memberExpression);
 			
-			Expression expression=memberExpression;			
+			Expression? expression=memberExpression;			
 			if(expression==null) expression=ExpressionEx.Throw<DynamicException>("could not find property or field: "+name);
 
 			return expression;

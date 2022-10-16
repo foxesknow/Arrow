@@ -21,12 +21,12 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			m_BindingFlags=bindingFlags;
 		}
 
-		public override DynamicMetaObject FallbackInvoke(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
+		public override DynamicMetaObject FallbackInvoke(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject? errorSuggestion)
 		{
 			return DeferToDynamicMetaObjectProvider(target,args,errorSuggestion);
 		}
 
-		public override DynamicMetaObject FallbackInvokeMember(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
+		public override DynamicMetaObject FallbackInvokeMember(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject? errorSuggestion)
 		{
 			if(target.Value is IDynamicMetaObjectProvider)
 			{
@@ -34,12 +34,12 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			}
 
 			BindingRestrictions restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			var instance=target.GetLimitedExpression();
 			var arguments=args.Select(o=>o.GetLimitedExpression()).ToArray();
 			
-			MethodCallExpression callExpression=null;
+			MethodCallExpression? callExpression=null;
 			if(MethodCallResolver.TryCall(instance,this.Name,m_BindingFlags,arguments,out callExpression))
 			{
 				expression=callExpression;
@@ -55,7 +55,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			return new DynamicMetaObject(expression,restrictions);
 		}
 
-		private DynamicMetaObject DeferToDynamicMetaObjectProvider(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
+		private DynamicMetaObject DeferToDynamicMetaObjectProvider(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject? errorSuggestion)
 		{
 			// We've been asked to invoke something like provider.method(foo,bar).
 			// Here "method" is actually a delegate, so we'll use an InvokeBinder

@@ -38,7 +38,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 			if(typeof(T).IsDelegate()==false) throw new ArgumentException("not a delegate type");
 			
 			// ...and grab the return type
-			Type returnType=typeof(T).GetMethod("Invoke").ReturnType;
+			Type returnType=typeof(T).GetMethod("Invoke")!.ReturnType;
 			
 			var expression=GenerateExpression();
 
@@ -60,11 +60,11 @@ namespace Arrow.Scripting.Wire.StaticExpression
 		protected override Expression Symbol(string symbolName)
 		{
 			// First, see if there's a parameter with a matching name
-			ParameterExpression parameter=m_StaticParseContext.Parameters.SingleOrDefault(p=>string.Compare(symbolName,p.Name,true)==0);			
+			ParameterExpression? parameter=m_StaticParseContext.Parameters.SingleOrDefault(p=>string.Compare(symbolName,p.Name,true)==0);			
 			if(parameter!=null) return parameter;
 
 			// Otherwise assume it's a type
-			Type type=ResolveType(symbolName);
+			var type=ResolveType(symbolName);
 			if(type==null) ThrowException("could not resolve type: "+symbolName);
 
 			Expression staticExpression=StaticAccess(type);

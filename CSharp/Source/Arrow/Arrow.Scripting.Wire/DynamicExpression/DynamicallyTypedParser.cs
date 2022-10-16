@@ -17,7 +17,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression
 	class DynamicallyTypedParser : Parser
 	{
 		private static readonly ParameterExpression s_LambdaParameter=Expression.Parameter(typeof(IVariableRead));
-		private static readonly System.Reflection.MethodInfo GetVariableMethod=typeof(IVariableRead).GetMethod("GetVariable");
+		private static readonly System.Reflection.MethodInfo GetVariableMethod=typeof(IVariableRead).GetMethod("GetVariable")!;
 
 		private readonly DynamicParseContext m_DynamicParseContext;
 
@@ -59,7 +59,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression
 		/// <returns></returns>
 		protected override Expression Symbol(string symbolName)
 		{
-			Expression expression=null;
+			Expression? expression=null;
 
 			if(m_Tokenizer.Current.ID==TokenID.LeftParen)
 			{
@@ -67,7 +67,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression
 			}
 			else
 			{
-				Type type=ResolveType(symbolName);
+				var type=ResolveType(symbolName);
 
 				if(type!=null)
 				{

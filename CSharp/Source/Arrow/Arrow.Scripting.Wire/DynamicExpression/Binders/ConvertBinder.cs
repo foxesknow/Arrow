@@ -31,7 +31,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 			var restrictions=BindingRestrictions.Empty;
 			Expression toConvert=target.GetLimitedExpression();
 
-			Expression expression=null;
+			Expression? expression=null;
 
 			switch(m_ExpressionType)
 			{
@@ -46,6 +46,9 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 				case ExpressionType.TypeIs:
 					expression=Expression.TypeIs(toConvert,m_Type);
 					break;
+
+				default:
+					throw new Exception("unsupported expression type");
 			}
 
 			restrictions=restrictions.AndLimitType(target);

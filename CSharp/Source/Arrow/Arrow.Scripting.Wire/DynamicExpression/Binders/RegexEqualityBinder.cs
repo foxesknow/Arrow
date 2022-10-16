@@ -18,7 +18,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 
 		static RegexEqualityBinder()
 		{
-			RegexIsMatch=typeof(Regex).GetMethod("IsMatch",new[]{typeof(string),typeof(string)});
+			RegexIsMatch=typeof(Regex).GetMethod("IsMatch",new[]{typeof(string),typeof(string)})!;
 		}
 
 		public override Type ReturnType
@@ -29,7 +29,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 		public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
 		{
 			var restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			var lhs=target.GetLimitedExpression();
 			var rhs=args[0].GetLimitedExpression();

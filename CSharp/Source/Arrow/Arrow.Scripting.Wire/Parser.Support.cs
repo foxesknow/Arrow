@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 using Arrow.Scripting;
 using Arrow.Compiler;
 using Arrow.Dynamic;
 using Arrow.Reflection;
+
 
 namespace Arrow.Scripting.Wire
 {
@@ -33,7 +35,7 @@ namespace Arrow.Scripting.Wire
 		protected ExpressionFactory ExpressionFactory
 		{
 			get{return m_ExpressionFactory;}
-			set{m_ExpressionFactory=value;}			
+			init{m_ExpressionFactory=value;}			
 		}
 
 		protected internal void RequireType<T>(Expression expression, string operation)
@@ -45,11 +47,9 @@ namespace Arrow.Scripting.Wire
 			}
 		}
 
-		protected Type ResolveType(string name)
+		protected Type? ResolveType(string name)
 		{
-			Type cachedType=null;
-
-			if(m_TypeCache.TryGetType(name,out cachedType)) return cachedType;
+			if(m_TypeCache.TryGetType(name,out var cachedType)) return cachedType;
 
 			List<Type> types=new List<Type>();
 
@@ -58,7 +58,7 @@ namespace Arrow.Scripting.Wire
 				// It's a dotted name, so go through the references looking for a match
 				foreach(var assembly in m_ParseContext.References)	
 				{
-					Type type=assembly.GetType(name,false,true);
+					var type=assembly.GetType(name,false,true);
 					if(type!=null) types.Add(type);
 				}
 			}
@@ -72,7 +72,7 @@ namespace Arrow.Scripting.Wire
 
 					foreach(var assembly in m_ParseContext.References)	
 					{
-						Type type=assembly.GetType(fullname,false,true);
+						var type=assembly.GetType(fullname,false,true);
 						if(type!=null) types.Add(type);
 					}
 				}
@@ -105,6 +105,7 @@ namespace Arrow.Scripting.Wire
 			TypeCoercion.NormalizeNumbericBinaryExpression(ref lhs, ref rhs);
 		}
 
+		[DoesNotReturn]
 		protected internal void ThrowException(string message)
 		{
 			var exception=new ParserException(message);

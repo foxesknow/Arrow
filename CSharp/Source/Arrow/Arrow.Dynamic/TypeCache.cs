@@ -5,6 +5,7 @@ using System.Text;
 
 using Arrow.Scripting;
 using Arrow.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Arrow.Dynamic
 {
@@ -53,7 +54,7 @@ namespace Arrow.Dynamic
 		/// <param name="name">The name of the type</param>
 		/// <param name="type">On success, set to the actual type</param>
 		/// <returns>true if the type was found, otherwise false</returns>
-		public bool TryGetType(string name, out Type type)
+		public bool TryGetType(string name, [NotNullWhen(true)] out Type? type)
 		{
 			if(name==null) throw new ArgumentNullException("name");
 

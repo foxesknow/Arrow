@@ -27,10 +27,10 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 		public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
 		{
 			BindingRestrictions restrictions=BindingRestrictions.Empty;
-			Expression expression=null;
+			Expression? expression=null;
 
 			var arguments=args.Select(o=>o.GetLimitedExpression()).ToArray();
-			MethodCallExpression callExpression=null;
+			MethodCallExpression? callExpression=null;
 			if(MethodCallResolver.TryCall(m_TargetType,m_Name,m_BindingFlags,arguments,out callExpression))
 			{
 				expression=callExpression;

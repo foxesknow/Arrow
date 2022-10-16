@@ -10,12 +10,12 @@ namespace Arrow.Scripting.Wire
 {
 	static class LikeEvaluator
 	{
-		private static readonly MethodInfo ApplyLikeMethodInfo=typeof(LikeEvaluator).GetMethod("ApplyLike");
-		private static readonly MethodInfo ApplyLikeNoCaseMethodInfo=typeof(LikeEvaluator).GetMethod("ApplyLikeNoCase");
+		private static readonly MethodInfo ApplyLikeMethodInfo=typeof(LikeEvaluator).GetMethod("ApplyLike")!;
+		private static readonly MethodInfo ApplyLikeNoCaseMethodInfo=typeof(LikeEvaluator).GetMethod("ApplyLikeNoCase")!;
 
 		public static Expression Like(CaseMode caseMode, Expression lhs, Expression pattern)
 		{
-			Expression x=null;
+			Expression? x=null;
 			
 			if(caseMode==CaseMode.Sensitive)
 			{
