@@ -21,8 +21,8 @@ namespace Arrow.Compiler
 		public static readonly Token UnknownToken=new Token(BaseTokenID.Unknown);
 
 		private readonly int m_ID;
-		private readonly string m_Data;
-		private readonly object m_ConvertedData;
+		private readonly string? m_Data;
+		private readonly object? m_ConvertedData;
 
 		/// <summary>
 		/// Initializes the instance
@@ -37,7 +37,7 @@ namespace Arrow.Compiler
 		/// </summary>
 		/// <param name="id">The token identifier</param>
 		/// <param name="data">Any textual data about the token</param>
-		public Token(int id, string data)
+		public Token(int id, string? data)
 		{
 			m_ID=id;
 			m_Data=data;
@@ -49,7 +49,7 @@ namespace Arrow.Compiler
 		/// <param name="id">The token identifier</param>
 		/// <param name="data">Any textual data about the token</param>
 		/// <param name="convertedData">Any additional data about the token</param>
-		public Token(int id, string data, object convertedData) : this(id,data)
+		public Token(int id, string data, object? convertedData) : this(id,data)
 		{
 			m_ConvertedData=convertedData;
 		}
@@ -65,7 +65,7 @@ namespace Arrow.Compiler
 		/// <summary>
 		/// Any token data
 		/// </summary>
-		public string Data
+		public string? Data
 		{
 			get{return m_Data;}
 		}
@@ -73,7 +73,7 @@ namespace Arrow.Compiler
 		/// <summary>
 		/// Any addition data
 		/// </summary>
-		public object ConvertedData
+		public object? ConvertedData
 		{
 			get{return m_ConvertedData;}
 		}

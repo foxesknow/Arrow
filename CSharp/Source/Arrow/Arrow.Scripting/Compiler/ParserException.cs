@@ -47,6 +47,6 @@ namespace Arrow.Compiler
 		/// <summary>
 		/// The name of the file the error occurred in
 		/// </summary>
-		public string Filename{get;set;}
+		public string? Filename{get;set;}
 	}
 }

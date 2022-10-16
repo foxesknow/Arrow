@@ -26,7 +26,7 @@ namespace Arrow.Scripting
 		/// <param name="result">On success the value of the variable</param>
 		/// <returns>true on success, false if the variable could not be found</returns>
 		/// <exception cref="System.ArgumentNullException">if variableName is null</exception>
-		bool TryGetVariable(string variableName, out object result);
+		bool TryGetVariable(string variableName, out object? result);
 		
 		/// <summary>
 		/// Checks to see if a variable is present

@@ -64,8 +64,7 @@ namespace Arrow.Scripting
 		{
 			if(variableName==null) throw new ArgumentNullException("variableName");
 
-			Func<T,object> lookup;
-			if(m_Lookup.TryGetValue(variableName,out lookup)==false)
+			if(m_Lookup.TryGetValue(variableName,out var lookup)==false)
 			{
 				throw new VariableNotFoundException(variableName);
 			}
@@ -80,14 +79,13 @@ namespace Arrow.Scripting
 		/// <param name="result">On success the value of the variable</param>
 		/// <returns>true on success, false if the variable could not be found</returns>
 		/// <exception cref="System.ArgumentNullException">if variableName is null</exception>
-		public bool TryGetVariable(string variableName, out object result)
+		public bool TryGetVariable(string variableName, out object? result)
 		{
 			if(variableName==null) throw new ArgumentNullException("variableName");
 
 			bool found=false;
 
-			Func<T,object> lookup;
-			if(m_Lookup.TryGetValue(variableName,out lookup))
+			if(m_Lookup.TryGetValue(variableName,out var lookup))
 			{
 				result=lookup(m_Instance);
 				found=true;
@@ -122,7 +120,7 @@ namespace Arrow.Scripting
 				if(property.CanRead==false) continue;
 					
 				// Ignore properties that take parameters (this[,,,])
-				if(property.GetGetMethod().GetParameters().Length!=0) continue;
+				if(property.GetGetMethod()!.GetParameters().Length!=0) continue;
 
 				var parameter=Expression.Parameter(typeof(T));
 				var propertyRead=Expression.Property(parameter,property);

@@ -20,16 +20,16 @@ namespace Arrow.Compiler
 		private TextReader m_Reader;
 		
 		private Token m_Current=Token.NoToken;
-		private Token m_Peek;
+		private Token? m_Peek;
 		
 		private int m_LineNumber=1;
 		private string m_Filename;
 
-		private Dictionary<string,int> m_Keywords;
-		private Dictionary<string,int> m_Operators;
-		private List<string> m_OperatorLookup;
+		private Dictionary<string,int> m_Keywords = new();
+		private Dictionary<string,int> m_Operators = new();
+		private List<string> m_OperatorLookup = new();
 
-		private IComparer<string> m_Comparer;
+		private IComparer<string>? m_Comparer;
 		
 		/// <summary>
 		/// Initializes the instance
@@ -50,7 +50,7 @@ namespace Arrow.Compiler
 		/// </summary>
 		public virtual void Initialize()
 		{
-			IEqualityComparer<string> comparer=null;
+			IEqualityComparer<string>? comparer=null;
 			
 			if(this.CaseSensitive)
 			{
@@ -160,7 +160,7 @@ namespace Arrow.Compiler
 		/// <param name="token">On success the token that was accepted</param>
 		/// <param name="ids">A list of ids to try</param>
 		/// <returns>true if a token was accepted, otherwise false</returns>
-		public bool TryAcceptOneOf(out Token token, params int[] ids)
+		public bool TryAcceptOneOf(out Token? token, params int[] ids)
 		{
 			bool accepted=false;
 			token=null;
@@ -521,7 +521,7 @@ namespace Arrow.Compiler
 			}
 			
 			Token tokenData=Token.UnknownToken;
-			object convertedNumber=null;
+			object? convertedNumber=null;
 			
 			char typeQualifier=PeekChar();
 			
@@ -602,7 +602,7 @@ namespace Arrow.Compiler
 					ThrowException("invalid hex character: "+PeekChar());
 				}
 			}
-			object converted=null;
+			object? converted=null;
 			
 			int i;
 			if(int.TryParse(hexNumber,NumberStyles.HexNumber,null,out i))
@@ -634,7 +634,7 @@ namespace Arrow.Compiler
 				symbol+=NextChar();
 			}
 			
-			Token token=null;
+			Token? token=null;
 			int id;
 			
 			if(m_Keywords.TryGetValue(symbol,out id))

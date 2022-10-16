@@ -30,7 +30,7 @@ namespace Arrow.Scripting
 		/// <param name="caseMode">The case mode to use for the variable names</param>
 		public LightweightScope(CaseMode caseMode)
 		{
-			IEqualityComparer<string> comparer=null;
+			IEqualityComparer<string>? comparer=null;
 			if(caseMode==CaseMode.Insensitive) comparer=IgnoreCaseEqualityComparer.Instance;
 
 			m_Variables=new Dictionary<string,object>(comparer);
@@ -47,7 +47,7 @@ namespace Arrow.Scripting
 		{
 			if(variableName==null) throw new ArgumentNullException("variableName");
 
-			object value;
+			object? value;
 			if(m_Variables.TryGetValue(variableName,out value)==false)
 			{
 				throw new VariableNotFoundException(variableName);
@@ -63,7 +63,7 @@ namespace Arrow.Scripting
 		/// <param name="result">On success the value of the variable</param>
 		/// <returns>true on success, false if the variable could not be found</returns>
 		/// <exception cref="System.ArgumentNullException">if variableName is null</exception>
-		public bool TryGetVariable(string variableName, out object result)
+		public bool TryGetVariable(string variableName, out object? result)
 		{
 			return m_Variables.TryGetValue(variableName,out result);
 		}
