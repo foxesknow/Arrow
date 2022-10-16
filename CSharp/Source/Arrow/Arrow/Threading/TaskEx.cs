@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Arrow.Threading
@@ -52,6 +53,23 @@ namespace Arrow.Threading
 			source.SetException(exception);
 
 			return source.Task;
+		}
+
+		public static async Task CancelAndWait(CancellationTokenSource cts, Task task)
+		{
+			if(cts is null) throw new ArgumentNullException(nameof(cts));
+			if(task is null) throw new ArgumentNullException(nameof(task));
+
+			cts.Cancel();
+
+			try
+			{
+				await task.ContinueOnAnyContext();
+			}
+			catch(TaskCanceledException)
+			{
+				// We can ignore it
+			}
 		}
 	}
 }

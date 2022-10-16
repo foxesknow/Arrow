@@ -81,7 +81,7 @@ namespace Arrow.Reflection
 
 		private static MethodInfo GetGetHashCode(Type type)
 		{
-			return type.GetMethod("GetHashCode",PublicInstance);
+			return type.GetMethod("GetHashCode",PublicInstance,null, Array.Empty<Type>(), null);
 		}
 	}
 }
