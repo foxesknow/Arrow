@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Arrow.Threading.Tasks
 {
     /// <summary>
@@ -13,7 +15,7 @@ namespace Arrow.Threading.Tasks
     public class AsyncAutoResetEvent : AsyncEventWaitHandle
     {
         private bool m_Signaled;
-        private readonly Queue<TaskCompletionSource<bool>> m_PendingWaits = new Queue<TaskCompletionSource<bool>>();
+        private readonly Queue<TaskCompletionSource<bool>> m_PendingWaits = new();
 
         /// <summary>
         /// Initializes the instance
@@ -42,14 +44,14 @@ namespace Arrow.Threading.Tasks
         /// </summary>
         public override void Set()
         {
-            TaskCompletionSource<bool> callerToRelease = null;
+            TaskCompletionSource<bool>? tcs = null;
 
             lock(m_PendingWaits)
             {
-                if(m_PendingWaits.Count != 0)
+                if(m_PendingWaits.Count > 0)
                 {
                     // There's someone waiting, so just release them
-                    callerToRelease = m_PendingWaits.Dequeue();
+                    tcs = m_PendingWaits.Dequeue();
                 }
                 else
                 {
@@ -59,9 +61,9 @@ namespace Arrow.Threading.Tasks
             }
 
             // If there was someone waiting then release them
-            if(callerToRelease != null)
+            if(tcs is not null)
             {
-                callerToRelease.TrySetResult(true);
+                ReleaseTcs(tcs);
             }
         }
 
@@ -79,7 +81,7 @@ namespace Arrow.Threading.Tasks
                 {
                     // We've not been signaled yet, so place the caller on a queue
                     // waiting to be signaled
-                    var source = new TaskCompletionSource<bool>();
+                    var source = MakeTcs();
                     m_PendingWaits.Enqueue(source);
 
                     return source.Task;

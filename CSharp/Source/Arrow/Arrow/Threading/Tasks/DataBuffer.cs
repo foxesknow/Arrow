@@ -318,7 +318,7 @@ namespace Arrow.Threading.Tasks
             if(ifCondition is null) throw new ArgumentNullException(nameof(ifCondition));
             if(then is null) throw new ArgumentNullException(nameof(then));
 
-            var tcs = new TaskCompletionSource<TData>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var tcs = TaskCompletionSourceEx.CreateAsynchronousCompletionSource<TData>();
             var condition = new ConditionState(tcs, ifCondition, then);
 
             lock(m_SyncRoot)

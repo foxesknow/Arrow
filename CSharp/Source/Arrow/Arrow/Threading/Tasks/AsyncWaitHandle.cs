@@ -12,9 +12,9 @@ namespace Arrow.Threading.Tasks
     /// </summary>
     public abstract class AsyncWaitHandle
     {
-        protected TaskCompletionSource<T> CreateTaskCompletionSource<T>()
+        protected static TaskCompletionSource<bool> MakeTcs()
         {
-            return new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            return new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         }
 
         /// <summary>
@@ -22,6 +22,19 @@ namespace Arrow.Threading.Tasks
         /// </summary>
         /// <returns></returns>
         public abstract Task WaitAsync();
-        
+     
+        protected void ReleaseTcs(TaskCompletionSource<bool> tcs)
+        {
+            Task.Factory.StartNew
+            (
+                s => ((TaskCompletionSource<bool>)s!).TrySetResult(true),
+                tcs,
+                CancellationToken.None,
+                TaskCreationOptions.PreferFairness,
+                TaskScheduler.Default
+            );
+
+            tcs.Task.Wait();
+        }
     }
 }

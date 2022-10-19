@@ -541,7 +541,7 @@ namespace Arrow.Threading.Tasks
                 get{return TaskCompletionSource.Task;}
             }
 
-            protected TaskCompletionSource<T> TaskCompletionSource{get;} = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            protected TaskCompletionSource<T> TaskCompletionSource{get;} = TaskCompletionSourceEx.CreateAsynchronousCompletionSource<T>();
 
             protected abstract void Run();
 

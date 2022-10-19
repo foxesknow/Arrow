@@ -13,7 +13,7 @@ namespace Arrow.Threading.Tasks
     /// </summary>
     public class AsyncManualResetEvent : AsyncEventWaitHandle
     {
-        private TaskCompletionSource<bool> m_Source = new TaskCompletionSource<bool>();
+        private volatile TaskCompletionSource<bool> m_Source = MakeTcs();
 
         /// <summary>
         /// Initializes the instance
@@ -32,9 +32,8 @@ namespace Arrow.Threading.Tasks
         /// </summary>
         public override void Set()
         {
-            // Use TrySetResult so that multiple callers can call it without throwing an exception
-            var source = InterlockedEx.Read(ref m_Source);
-            source.TrySetResult(true);
+            var source = m_Source;
+            ReleaseTcs(source);
         }
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace Arrow.Threading.Tasks
         /// <returns></returns>
         public override Task WaitAsync()
         {
-            return InterlockedEx.Read(ref m_Source).Task;
+            return m_Source.Task;
         }
 
         /// <summary>
@@ -51,23 +50,15 @@ namespace Arrow.Threading.Tasks
         /// </summary>
         public override void Reset()
         {
-            var source = m_Source;
-
             while(true)
             {
-                if(source.Task.IsCompleted == false)
-                {
-                    // It's not completed (eg set) so we don't need to replace it
-                    return;
-                }
+                var tcs = m_Source;
+                if(tcs.Task.IsCompleted == false) return;
 
-                var previous = Interlocked.CompareExchange(ref m_Source, new TaskCompletionSource<bool>(), source);
-                if(previous == source)
+                if(Interlocked.CompareExchange(ref m_Source, MakeTcs(), tcs) == tcs)
                 {
                     return;
                 }
-
-                source = previous;
             }
         }
     }

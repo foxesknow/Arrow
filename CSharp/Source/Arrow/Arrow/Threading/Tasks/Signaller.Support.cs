@@ -17,7 +17,7 @@ namespace Arrow.Threading.Tasks
                 this.Task = this.Tcs.Task;
             }
 
-            public readonly TaskCompletionSource<T> Tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            public readonly TaskCompletionSource<T> Tcs = TaskCompletionSourceEx.CreateAsynchronousCompletionSource<T>();
 
             public readonly long ID;
             public readonly Func<T, bool> Condition;

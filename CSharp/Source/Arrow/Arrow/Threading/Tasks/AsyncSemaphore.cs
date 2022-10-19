@@ -5,37 +5,37 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Arrow.Threading.Tasks
 {
     public class AsyncSemaphore : AsyncWaitHandle
     {
         private readonly Queue<TaskCompletionSource<bool>> m_Waiters = new Queue<TaskCompletionSource<bool>>();
 
-        private int m_Count;
-        private int m_MaximumCount;
+        private int m_CurrentCount;
 
-        public AsyncSemaphore(int count)
+        public AsyncSemaphore(int initialCount)
         {
-            if(count <= 0) throw new ArgumentException("need at least a count of one", nameof(count));
+            if(initialCount <= 0) throw new ArgumentException("need at least a count of one", nameof(initialCount));
 
-            m_Count = count;
-            m_MaximumCount = count;
+            m_CurrentCount = initialCount;
         }
 
         public override Task WaitAsync()
         {
             lock(m_Waiters)
             {
-                if(m_Count != 0)
+                if(m_CurrentCount > 0)
                 {
                     // We've still got resources to allocate
-                    m_Count--;
+                    m_CurrentCount--;
                     return Task.CompletedTask;
                 }
                 else
                 {
                     // We're all out of resources, so the caller will have to wait
-                    var waiter = new TaskCompletionSource<bool>();
+                    var waiter = MakeTcs();
                     m_Waiters.Enqueue(waiter);
 
                     return waiter.Task;
@@ -43,32 +43,45 @@ namespace Arrow.Threading.Tasks
             }
         }
 
+        /// <summary>
+        /// Attempts to acquire a resource
+        /// </summary>
+        /// <returns></returns>
+        public bool TryAccquire()
+        {
+            lock(m_Waiters)
+            {
+                if(m_CurrentCount > 0)
+                {
+                    m_CurrentCount--;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         public void Release()
         {
-            TaskCompletionSource<bool> source = null;
+            TaskCompletionSource<bool>? source = null;
 
             lock(m_Waiters)
             {
-                if(m_Count == m_MaximumCount)
+                if(m_Waiters.Count > 0)
                 {
-                    throw new SemaphoreFullException();
-                }
-
-                if(m_Waiters.Count != 0)
-                {
-                    // There's someone waiting.
-                    // Don't bother adding the resource back, just release the waiter and give the resource to them
                     source = m_Waiters.Dequeue();
                 }
                 else
                 {
-                    m_Count++;
+                    m_CurrentCount++;
                 }
             }
 
-            if(source != null)
+            if(source is not null)
             {
-                source.TrySetResult(true);
+                ReleaseTcs(source);
             }
         }
     }
