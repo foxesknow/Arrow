@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+#nullable enable
+
 namespace Arrow.Logging
 {
 	/// <summary>
@@ -27,14 +29,14 @@ namespace Arrow.Logging
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void DebugFormat(string format, params object[] args); 
+		void DebugFormat(string format, params object?[] args); 
 		
 		/// <summary>
 		/// Writes a debug message
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
-		void DebugFormat(string format, object arg0); 
+		void DebugFormat(string format, object? arg0); 
 		
 		/// <summary>
 		/// Writes a debug message
@@ -42,7 +44,7 @@ namespace Arrow.Logging
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
-		void DebugFormat(string format, object arg0, object arg1); 
+		void DebugFormat(string format, object? arg0, object? arg1); 
 		
 		/// <summary>
 		/// Writes a debug message
@@ -51,7 +53,7 @@ namespace Arrow.Logging
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
 		/// <param name="arg2"></param>
-		void DebugFormat(string format, object arg0, object arg1, object arg2); 
+		void DebugFormat(string format, object? arg0, object? arg1, object? arg2); 
 		
 		/// <summary>
 		/// Writes a debug message
@@ -59,7 +61,7 @@ namespace Arrow.Logging
 		/// <param name="provider"></param>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void DebugFormat(IFormatProvider provider, string format, params object[] args);
+		void DebugFormat(IFormatProvider provider, string format, params object?[] args);
 
 		/// <summary>
 		/// Writes an information message
@@ -86,7 +88,7 @@ namespace Arrow.Logging
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
-		void InfoFormat(string format, object arg0); 
+		void InfoFormat(string format, object? arg0); 
 		
 		/// <summary>
 		/// Writes an information message
@@ -94,7 +96,7 @@ namespace Arrow.Logging
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
-		void InfoFormat(string format, object arg0, object arg1); 
+		void InfoFormat(string format, object? arg0, object? arg1); 
 		
 		/// <summary>
 		/// Writes an information message
@@ -103,7 +105,7 @@ namespace Arrow.Logging
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
 		/// <param name="arg2"></param>
-		void InfoFormat(string format, object arg0, object arg1, object arg2); 
+		void InfoFormat(string format, object? arg0, object? arg1, object? arg2); 
 		
 		/// <summary>
 		/// Writes an information message
@@ -111,7 +113,7 @@ namespace Arrow.Logging
 		/// <param name="provider"></param>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void InfoFormat(IFormatProvider provider, string format, params object[] args);
+		void InfoFormat(IFormatProvider provider, string format, params object?[] args);
 		
 		/// <summary>
 		/// Writes a warning message
@@ -131,14 +133,14 @@ namespace Arrow.Logging
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void WarnFormat(string format, params object[] args);
+		void WarnFormat(string format, params object?[] args);
 		
 		/// <summary>
 		/// Writes a warning message
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
-		void WarnFormat(string format, object arg0); 
+		void WarnFormat(string format, object? arg0); 
 		
 		/// <summary>
 		/// Writes a warning message
@@ -146,7 +148,7 @@ namespace Arrow.Logging
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
-		void WarnFormat(string format, object arg0, object arg1); 
+		void WarnFormat(string format, object? arg0, object? arg1); 
 		
 		/// <summary>
 		/// Writes a warning message
@@ -155,7 +157,7 @@ namespace Arrow.Logging
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
 		/// <param name="arg2"></param>
-		void WarnFormat(string format, object arg0, object arg1, object arg2); 
+		void WarnFormat(string format, object? arg0, object? arg1, object? arg2); 
 		
 		/// <summary>
 		/// Writes a warning message
@@ -163,7 +165,7 @@ namespace Arrow.Logging
 		/// <param name="provider"></param>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void WarnFormat(IFormatProvider provider, string format, params object[] args);
+		void WarnFormat(IFormatProvider provider, string format, params object?[] args);
 
 		/// <summary>
 		/// Writes an error message
@@ -183,14 +185,14 @@ namespace Arrow.Logging
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void ErrorFormat(string format, params object[] args);
+		void ErrorFormat(string format, params object?[] args);
 		
 		/// <summary>
 		/// Writes an error message
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
-		void ErrorFormat(string format, object arg0); 
+		void ErrorFormat(string format, object? arg0); 
 		
 		/// <summary>
 		/// Writes an error message
@@ -198,7 +200,7 @@ namespace Arrow.Logging
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
-		void ErrorFormat(string format, object arg0, object arg1); 
+		void ErrorFormat(string format, object? arg0, object? arg1); 
 		
 		/// <summary>
 		/// Writes an error message
@@ -207,7 +209,7 @@ namespace Arrow.Logging
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
 		/// <param name="arg2"></param>
-		void ErrorFormat(string format, object arg0, object arg1, object arg2); 
+		void ErrorFormat(string format, object? arg0, object? arg1, object? arg2); 
 		
 		/// <summary>
 		/// Writes an error message
@@ -215,7 +217,7 @@ namespace Arrow.Logging
 		/// <param name="provider"></param>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void ErrorFormat(IFormatProvider provider, string format, params object[] args);
+		void ErrorFormat(IFormatProvider provider, string format, params object?[] args);
 		
 		/// <summary>
 		/// Writes a fatal message
@@ -235,14 +237,14 @@ namespace Arrow.Logging
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void FatalFormat(string format, params object[] args);
+		void FatalFormat(string format, params object?[] args);
 		
 		/// <summary>
 		/// Writes a fatal message
 		/// </summary>
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
-		void FatalFormat(string format, object arg0); 
+		void FatalFormat(string format, object? arg0); 
 		
 		/// <summary>
 		/// Writes a fatal message
@@ -250,7 +252,7 @@ namespace Arrow.Logging
 		/// <param name="format"></param>
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
-		void FatalFormat(string format, object arg0, object arg1); 
+		void FatalFormat(string format, object? arg0, object? arg1); 
 		
 		/// <summary>
 		/// Writes a fatal message
@@ -259,7 +261,7 @@ namespace Arrow.Logging
 		/// <param name="arg0"></param>
 		/// <param name="arg1"></param>
 		/// <param name="arg2"></param>
-		void FatalFormat(string format, object arg0, object arg1, object arg2); 
+		void FatalFormat(string format, object? arg0, object? arg1, object? arg2); 
 		
 		/// <summary>
 		/// Writes a fatal message
@@ -267,7 +269,7 @@ namespace Arrow.Logging
 		/// <param name="provider"></param>
 		/// <param name="format"></param>
 		/// <param name="args"></param>
-		void FatalFormat(IFormatProvider provider, string format, params object[] args);
+		void FatalFormat(IFormatProvider provider, string format, params object?[] args);
 
 		/// <summary>
 		/// Indicates if debug logging is enabled

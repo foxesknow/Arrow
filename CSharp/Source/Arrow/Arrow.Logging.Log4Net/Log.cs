@@ -6,13 +6,14 @@ using System.Xml;
 using Arrow.Configuration;
 using Arrow.Text;
 using Arrow.Storage;
+using log4net;
 
 namespace Arrow.Logging.Log4Net
 {
 	/// <summary>
 	/// Log class that uses the Apache log4net framework
 	/// </summary>
-	public class Log : ILogInitializer, ILog, IPropertyContext
+	public class Log : ILogInitializer, ILog, IPropertyContext, IForContext
 	{
 		private static readonly AsyncPropertyPusher s_PropertyPusher = new();
 
@@ -25,7 +26,7 @@ namespace Arrow.Logging.Log4Net
 		{
 			try
 			{
-				var config = AppConfig.GetSectionObject<Config>(ArrowSystem.Name,"Arrow.Logging.Log4Net/Configuration");
+				var config = AppConfig.GetSectionObject<Config>(ArrowSystem.Name,"Arrow.Logging.Log4Net");
 				if(config is not null)
 				{
 					// We've got an explicit path to log4net configuration file
@@ -50,8 +51,17 @@ namespace Arrow.Logging.Log4Net
 			}
 			catch
 			{
+				// If all goes wrong then try to do something!
 				log4net.Config.XmlConfigurator.Configure();
 			}
+
+			// We don't need this
+			GlobalContext.Properties.Remove(log4net.Core.LoggingEvent.HostNameProperty);
+		}
+
+		private Log(log4net.ILog log)
+		{
+			m_Log = log;
 		}
 
 		void ILogInitializer.Initialize(string name)
@@ -262,6 +272,32 @@ namespace Arrow.Logging.Log4Net
 		IPropertyPusher IPropertyContext.GetPusher()
 		{
 			return s_PropertyPusher;
+		}
+
+		ILog IForContext.ForContext<T>()
+		{
+			IForContext self = this;
+			return self.ForContext(typeof(T));
+		}
+
+		ILog IForContext.ForContext(Type type)
+		{
+			if(type is null) return this;
+
+			var log = log4net.LogManager.GetLogger(type);
+			if(log is null) return this;
+
+			return new Log(log);
+		}
+
+		ILog IForContext.ForContext(string name)
+		{
+			if(name is null) return this;
+
+			var log = log4net.LogManager.GetLogger(name);
+			if(log is null) return this;
+
+			return new Log(log);
 		}
 
 		class Config
