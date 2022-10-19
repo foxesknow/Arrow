@@ -13,6 +13,9 @@ using Arrow.Collections;
 using Arrow.Reflection;
 using Arrow.Text;
 using Arrow.ObjectAccess;
+using System.Diagnostics.CodeAnalysis;
+
+#nullable enable
 
 namespace Arrow.Xml.ObjectCreation
 {
@@ -54,7 +57,9 @@ namespace Arrow.Xml.ObjectCreation
 		
 		private Stack<Uri> m_Contexts=new Stack<Uri>();
 		
-		private Func<string,object> m_UnknownVariableLookup;
+		private Func<string, object?>? m_UnknownVariableLookup;
+
+		private Func<Type, object?[]?, object> m_MakeInstance = DefaultMakeInstance;
 		
 		/// <summary>
 		/// Initializes the instance
@@ -67,9 +72,19 @@ namespace Arrow.Xml.ObjectCreation
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="unknownVariableLookup">A delegate that can map a variable to an object during text expansion</param>
-		public CustomXmlCreation(Func<string,object> unknownVariableLookup)
+		public CustomXmlCreation(Func<string, object?>? unknownVariableLookup)
 		{
 			m_UnknownVariableLookup=unknownVariableLookup;
+		}
+
+		public Func<Type, object?[]?, object>? MakeInstance
+		{
+			get{return m_MakeInstance;}
+			set
+			{
+				if(value is null) throw new ArgumentNullException(nameof(value));
+				m_MakeInstance = value;
+			}
 		}
 		
 		/// <summary>
@@ -129,7 +144,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="baseLocation">The base uri to use when resolving urls. May be null</param>
 		/// <returns>The created object</returns>
 		/// <exception cref="System.ArgumentNullException">node is null</exception>
-		public object Create(Type type, XmlNode node, Uri baseLocation)
+		public object Create(Type type, XmlNode node, Uri? baseLocation)
 		{
 			return Create<object>(type,node,baseLocation);
 		}
@@ -154,15 +169,15 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="baseLocation">The base uri to use when resolving urls. May be null</param>
 		/// <returns>A list</returns>
 		/// <exception cref="System.ArgumentNullException">nodes is null</exception>
-		public List<T> CreateList<T>(XmlNodeList nodes, Uri baseLocation)
+		public List<T> CreateList<T>(XmlNodeList nodes, Uri? baseLocation)
 		{
 			if(nodes==null) throw new ArgumentNullException("nodes");
 		
 			List<T> list=new List<T>();
 			
-			foreach(XmlNode node in nodes)
+			foreach(XmlNode? node in nodes)
 			{
-				T item=Create<T>(typeof(T),node,baseLocation);
+				T item=Create<T>(typeof(T),node!,baseLocation);
 				list.Add(item);
 			}
 			
@@ -190,7 +205,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="baseLocation">The base uri to use when resolving urls. May be null</param>
 		/// <returns>A list</returns>
 		/// <exception cref="System.ArgumentNullException">nodes is null</exception>
-		public List<T> CreateList<T>(IEnumerable<XmlNode> nodes, Uri baseLocation)
+		public List<T> CreateList<T>(IEnumerable<XmlNode> nodes, Uri? baseLocation)
 		{
 			if(nodes==null) throw new ArgumentNullException("nodes");
 		
@@ -227,7 +242,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <returns>A DelayedCreator instance for the type</returns>
 		/// <exception cref="System.ArgumentNullException">node is null</exception>
 		/// <exception cref="System.InvalidCastException">the delayed type is not assignable to T</exception>
-		public DelayedCreator DelayedCreate<T>(XmlNode node, Uri baseLocation)
+		public DelayedCreator DelayedCreate<T>(XmlNode node, Uri? baseLocation)
 		{
 			if(node==null) throw new ArgumentNullException("node");
 			
@@ -266,14 +281,14 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="baseLocation">The base uri to use when resolving urls. May be null</param>
 		/// <exception cref="System.ArgumentNullException">dictionary is null</exception>
 		/// <exception cref="System.ArgumentNullException">nodes is null</exception>
-		public void PopulateDictionary<T>(IDictionary<string,T> dictionary, XmlNodeList nodes, Uri baseLocation)
+		public void PopulateDictionary<T>(IDictionary<string,T> dictionary, XmlNodeList nodes, Uri? baseLocation)
 		{
 			if(dictionary==null) throw new ArgumentNullException("dictionary");
 			if(nodes==null) throw new ArgumentNullException("nodes");
 			
-			foreach(XmlNode node in nodes)
+			foreach(XmlNode? node in nodes)
 			{
-				string name=node.Name;
+				string name=node!.Name;
 				T item=Create<T>(typeof(T),node,baseLocation);
 				dictionary.Add(name,item);
 			}
@@ -286,14 +301,14 @@ namespace Arrow.Xml.ObjectCreation
 		/// <typeparam name="V">The type of the value</typeparam>
 		/// <param name="dictionary">The dictionary to populate</param>
 		/// <param name="nodes">The nodes to process</param>
-		public void PopulateKeyValuePair<K,V>(IDictionary<K,V> dictionary, XmlNodeList nodes)
+		public void PopulateKeyValuePair<K,V>(IDictionary<K,V> dictionary, XmlNodeList nodes) where K : notnull
 		{
 			if(dictionary==null) throw new ArgumentNullException("dictionary");
 			if(nodes==null) throw new ArgumentNullException("nodes");
 		
-			foreach(XmlNode keyValueNode in nodes)
+			foreach(XmlNode? keyValueNode in nodes)
 			{
-				ProcessDictionary(dictionary,keyValueNode);
+				ProcessDictionary(dictionary,keyValueNode!);
 			}
 		}
 		
@@ -350,7 +365,7 @@ namespace Arrow.Xml.ObjectCreation
 			if(node==null) throw new ArgumentNullException("node");
 			if(@object==null) throw new ArgumentNullException("object");
 			
-			var attributeNodes=node.Attributes.Cast<XmlNode>();
+			var attributeNodes=node.Attributes!.Cast<XmlNode>();
 
 			ApplyNodes(@object,attributeNodes);
 		}
@@ -391,24 +406,24 @@ namespace Arrow.Xml.ObjectCreation
 		/// If an exception is thrown after construction then <code>IDisposable.Dispose</code> will be called
 		/// on any created object if it is implemented
 		/// </remarks>
-		public T Create<T>(Type type, XmlNode node, Uri baseLocation) 
+		public T Create<T>(Type type, XmlNode node, Uri? baseLocation) 
 		{
 			if(node==null) throw new ArgumentNullException("node");
 			if(type==null) throw new ArgumentNullException("type");
 			
-			object obj=null;
+			object? obj=null;
 			try
 			{
 				if(baseLocation!=null) m_Contexts.Push(baseLocation);
 				
 				obj=CreateObject(node,type);
-				return (T)obj;
+				return (T)obj!;
 			}
 			catch
 			{
 				if(baseLocation!=null) m_Contexts.Pop();
 				
-				IDisposable disposable=obj as IDisposable;
+				var disposable=obj as IDisposable;
 				if(disposable!=null) disposable.Dispose();
 				throw;
 			}			
@@ -419,9 +434,9 @@ namespace Arrow.Xml.ObjectCreation
 		/// </summary>
 		/// <param name="objectNode">The xml node containing the object description</param>
 		/// <param name="type">The type of the object to create if the node does not specify a type</param>
-		private object CreateObject(XmlNode objectNode, Type type)
+		private object? CreateObject(XmlNode objectNode, Type type)
 		{
-			object obj=null;
+			object? obj=null;
 			
 			// See if the object node has overridden the actual type
 			if(objectNode.Attributes!=null)
@@ -454,9 +469,9 @@ namespace Arrow.Xml.ObjectCreation
 				return CreateFromString(objectNode,type,data);				
 			}
 			
-			XmlElement element=objectNode as XmlElement;			
-			XmlAttribute urlAttr=(element==null ? null : element.Attributes["uri",FactoryNS]);
-			XmlAttribute objectAttr=(element==null ? null : element.Attributes["object",FactoryNS]);
+			XmlElement? element=objectNode as XmlElement;			
+			XmlAttribute? urlAttr=(element==null ? null : element.Attributes["uri",FactoryNS]);
+			XmlAttribute? objectAttr=(element==null ? null : element.Attributes["object",FactoryNS]);
 			
 			if(objectAttr!=null)
 			{
@@ -476,7 +491,7 @@ namespace Arrow.Xml.ObjectCreation
 				// It's a call to the default constructor
 				obj=CreateInstance(type,null);
 			}
-			else if(element!=null && element.SelectNodes("*").Count==0)
+			else if(element!=null && element.SelectNodes("*")!.Count==0)
 			{
 				// It's an element which just contains text
 				string data=objectNode.InnerText;
@@ -489,8 +504,8 @@ namespace Arrow.Xml.ObjectCreation
 				if(objectNode["Null",FactoryNS]!=null) return null;
 
 				// It's an element with children. Get any constructor elements and create an instance
-				XmlNode constructorNode=objectNode["Ctor",FactoryNS];
-				object[] constructorParameters=GetConstructorParameters(type,constructorNode);
+				XmlNode constructorNode=objectNode["Ctor",FactoryNS]!;
+				object?[]? constructorParameters=GetConstructorParameters(type,constructorNode);
 				obj=CreateInstance(type,constructorParameters);
 			}
 			
@@ -504,9 +519,9 @@ namespace Arrow.Xml.ObjectCreation
 		/// </summary>
 		/// <param name="element">The element to examine</param>
 		/// <returns>true to text expand the element, false to leave it as is</returns>
-		private bool IsExpansionRequired(XmlElement element)
+		private bool IsExpansionRequired(XmlElement? element)
 		{
-			XmlAttribute expandAttr=(element==null ? null : element.Attributes["expand",FactoryNS]);
+			XmlAttribute? expandAttr=(element==null ? null : element.Attributes["expand",FactoryNS]);
 			bool expand=true;
 			if(expandAttr!=null)
 			{
@@ -525,12 +540,12 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="objectNode">The xml node to use for initialization</param>
 		private void DoInitializeInstance(object obj, Type type, XmlNode objectNode)
 		{
-			ISupportInitialize initializer=obj as ISupportInitialize;
+			ISupportInitialize? initializer=obj as ISupportInitialize;
 			
 			if(initializer!=null) initializer.BeginInit();
 			
 			// See if the object wants to do the work itself
-			ICustomXmlInitialization objectInitialization=obj as ICustomXmlInitialization;			
+			ICustomXmlInitialization? objectInitialization=obj as ICustomXmlInitialization;			
 			if(objectInitialization!=null)
 			{
 				objectInitialization.InitializeObject(objectNode,this);
@@ -564,10 +579,10 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="url">The url to the object definition</param>
 		/// <param name="element">The element that specified the external link</param>
 		/// <returns>An object</returns>
-		private object CreateFromExternalSource(Type targetType, string url, XmlElement element)
+		private object CreateFromExternalSource(Type targetType, string url, XmlElement? element)
 		{
 			url=ExpandText(url);
-			Uri uri=null;
+			Uri? uri=null;
 			
 			if(m_Contexts.Count!=0)
 			{
@@ -579,15 +594,16 @@ namespace Arrow.Xml.ObjectCreation
 			{
 				uri=new Uri(url);
 			}
+
 			using(Stream stream=StorageManager.Get(uri).OpenRead())
 			{
 				XmlDocument doc=new XmlDocument();
 				doc.Load(stream);
 				
 				// The user can either select a node or we'll default to the document element
-				XmlNode definitionNode=doc.DocumentElement;
+				XmlNode? definitionNode=doc.DocumentElement!;
 				
-				XmlAttribute selectAttr=element.Attributes["select",FactoryNS];
+				XmlAttribute? selectAttr=element!.Attributes["select",FactoryNS];
 				if(selectAttr!=null)
 				{
 					string xpath=ExpandText(selectAttr.Value);
@@ -603,7 +619,7 @@ namespace Arrow.Xml.ObjectCreation
 				{
 					m_Contexts.Push(uri);
 					
-					object obj=CreateObject(definitionNode,targetType);
+					object? obj=CreateObject(definitionNode,targetType);
 					obj=TypeResolver.CoerceToType(targetType,obj);
 					return obj;
 				}
@@ -621,7 +637,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="url">The url to the object</param>
 		/// <param name="node">The node that made the reference</param>
 		/// <returns></returns>
-		private object ReferenceExistingObject(Type type, string url, XmlNode node)
+		private object? ReferenceExistingObject(Type type, string url, XmlNode node)
 		{
 			url=ExpandText(url);
 			
@@ -640,7 +656,7 @@ namespace Arrow.Xml.ObjectCreation
 			url=TokenExpander.ExpandText(url,"{","}",namespaceExpansion);
 			Uri uri=new Uri(url);
 			
-			object obj=null;
+			object? obj=null;
 			
 			
 			if(ObjectLocator.IsSchemeSupported(uri.Scheme))
@@ -650,8 +666,7 @@ namespace Arrow.Xml.ObjectCreation
 			else
 			{
 				// See if anyone has shown an interest
-				Converter<Uri,object> resolver;
-				if(m_ReferenceResolvers.TryGetValue(uri.Scheme,out resolver))
+				if(m_ReferenceResolvers.TryGetValue(uri.Scheme,out var resolver))
 				{
 					obj=resolver(uri);
 				}
@@ -672,7 +687,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <returns>The original object</returns>
 		private object QuickInitialize(object obj)
 		{
-			ISupportInitialize initializer=obj as ISupportInitialize;
+			ISupportInitialize? initializer=obj as ISupportInitialize;
 			
 			if(initializer!=null) 
 			{
@@ -692,15 +707,15 @@ namespace Arrow.Xml.ObjectCreation
 		private void ApplyPropertiesAndMethods(object obj, Type type, XmlNode objectNode)
 		{
 			// Process all the child elements. They're either properties or method calls
-			foreach(XmlNode node in objectNode.SelectNodes("*|@*"))
+			foreach(XmlNode? node in objectNode.SelectNodes("*|@*")!)
 			{
 				// Ignore any namespace'd values
-				if(node.NamespaceURI!="") continue;
+				if(node!.NamespaceURI!="") continue;
 			
 				string name=node.Name;
 				
 				string propertyName=name;
-				object propertyObject=obj;
+				object? propertyObject=obj;
 				
 				if(ResolveProperty(ref propertyObject,ref propertyName) && IsProperty(propertyObject,propertyName))
 				{
@@ -741,7 +756,7 @@ namespace Arrow.Xml.ObjectCreation
 				if(node.NamespaceURI!="") continue;
 				
 				string propertyName=node.Name;
-				object propertyObject=@object;
+				object? propertyObject=@object;
 				
 				if(ResolveProperty(ref propertyObject,ref propertyName) && IsProperty(propertyObject,propertyName))
 				{
@@ -757,7 +772,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="obj">The object to start from</param>
 		/// <param name="name">The qualified name of the property</param>
 		/// <returns>true if the name resolved, otherwise false</returns>
-		private bool ResolveProperty(ref object obj, ref string name)
+		private bool ResolveProperty([NotNullWhen(true)] ref object? obj, ref string name)
 		{
 			string[] parts=name.Split('.');
 			
@@ -765,14 +780,14 @@ namespace Arrow.Xml.ObjectCreation
 			
 			for(int i=0; i<parts.Length-1 && isProperty && obj!=null; i++)
 			{
-				PropertyInfo property=obj.GetType().GetProperty(parts[i],PropertyBindings);
+				PropertyInfo? property=obj.GetType().GetProperty(parts[i],PropertyBindings);
 				if(property==null)
 				{
 					isProperty=false;
 					break;
 				}
 				
-				MethodInfo method=property.GetGetMethod();
+				MethodInfo? method=property.GetGetMethod();
 				if(method==null)
 				{
 					isProperty=false;
@@ -796,10 +811,15 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="type">The type of the instance to create</param>
 		/// <param name="constructorParameters">Any parameters to the constructor, or null to call the default constructor</param>
 		/// <returns>An instance of the specified type</returns>
-		private object CreateInstance(Type type, object[] constructorParameters)
+		private object CreateInstance(Type type, object?[]? constructorParameters)
 		{
 			if(type==typeof(string) && constructorParameters==null) return "";
-			return Activator.CreateInstance(type,constructorParameters);
+			return m_MakeInstance(type,constructorParameters);
+		}
+
+		private static object DefaultMakeInstance(Type type, object?[]? constructorParameters)
+		{
+			return Activator.CreateInstance(type,constructorParameters)!;
 		}
 		
 		/// <summary>
@@ -810,7 +830,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <returns>true is name represents a property, false otherwise</returns>
 		private bool IsProperty(object @object, string name)
 		{
-			PropertyInfo info=@object.GetType().GetProperty(name,PropertyBindings);
+			PropertyInfo? info=@object.GetType().GetProperty(name,PropertyBindings);
 			return info!=null;
 		}
 		
@@ -822,7 +842,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <returns>true is name represents a mehtod, false otherwise</returns>
 		private bool IsMethod(Type type, string name)
 		{
-			MethodInfo info=type.GetMethod(name,MethodInstanceBindings);
+			MethodInfo? info=type.GetMethod(name,MethodInstanceBindings);
 			return info!=null;
 		}
 		
@@ -840,7 +860,7 @@ namespace Arrow.Xml.ObjectCreation
 				return;
 			}
 			
-			PropertyInfo propertyInfo=theObject.GetType().GetProperty(propertyName,PropertyBindings);
+			PropertyInfo propertyInfo=theObject.GetType().GetProperty(propertyName,PropertyBindings)!;
 			Type propertyType=propertyInfo.PropertyType;
 			
 			if(IsList(propertyType))
@@ -862,10 +882,10 @@ namespace Arrow.Xml.ObjectCreation
 			}
 			else
 			{			
-				MethodInfo setter=propertyInfo.GetSetMethod();
+				MethodInfo? setter=propertyInfo.GetSetMethod();
 				if(setter==null) throw new XmlCreationException("could not find property setter: "+propertyName);
 				
-				object value=null;
+				object? value=null;
 				
 				// It feasible that the user just wants to grab the xml we've got
 				// instead of trying to create an object from it
@@ -926,18 +946,18 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="callNode">A node whose name is the name of the method to call</param>
 		internal void HandleCall(Type type, object theObject, XmlNode callNode)
 		{
-			XmlElement element=callNode as XmlElement;
+			XmlElement? element=callNode as XmlElement;
 			if(element==null) return; // NOTE: Early return
 			
 			string methodName=element.Name;
 			
-			List<Type> types=new List<Type>();
-			List<object> parameters=new List<object>();
+			var types=new List<Type?>();
+			var parameters=new List<object?>();
 			
-			foreach(XmlNode parameterNode in callNode.SelectNodes("*"))
+			foreach(XmlNode? parameterNode in callNode.SelectNodes("*")!)
 			{
-				object parameter=CreateObject(parameterNode,DefaultNodeType);
-				types.Add(parameter.GetType());
+				object? parameter=CreateObject(parameterNode!,DefaultNodeType);
+				types.Add(parameter?.GetType());
 				parameters.Add(parameter);
 			}
 			
@@ -967,7 +987,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// </summary>
 		/// <param name="rootType">The type of object we are creating</param>
 		/// <param name="ctorNode">The constructor node whose children will be used as constructor parameters</param>
-		private object[] GetConstructorParameters(Type rootType, XmlNode ctorNode)
+		private object?[]? GetConstructorParameters(Type rootType, XmlNode ctorNode)
 		{
 			if(ctorNode==null)
 			{
@@ -976,11 +996,11 @@ namespace Arrow.Xml.ObjectCreation
 			}
 			
 			// Loop over each child creating the types
-			List<object> parameters=new List<object>();
+			var parameters=new List<object?>();
 			
-			foreach(XmlNode parameterNode in ctorNode.SelectNodes("*"))
+			foreach(XmlNode? parameterNode in ctorNode.SelectNodes("*")!)
 			{
-				object o=CreateObject(parameterNode,DefaultNodeType);
+				object? o=CreateObject(parameterNode!,DefaultNodeType);
 				parameters.Add(o);
 			}
 			

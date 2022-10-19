@@ -26,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net461' or '$(TargetFramework)' == 'net471' or '$(TargetFramework)' == 'net48'">
-		<Reference Include="System.Management"/>		
+		<Reference Include="System.Management" />		
 		<Reference Include="System.Data.OracleClient" />
 		<Reference Include="System.Web" />
 	</ItemGroup>

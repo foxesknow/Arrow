@@ -95,7 +95,7 @@ namespace Arrow.Threading
             
             return DoTimeoutAfter(task, timeout);
 
-            static async Task<T> DoTimeoutAfter<T>(Task<T> task, TimeSpan timeout)
+            static async Task<T> DoTimeoutAfter(Task<T> task, TimeSpan timeout)
             {
                 var result = await task.TryWaitFor(timeout).ContinueOnAnyContext();
 
