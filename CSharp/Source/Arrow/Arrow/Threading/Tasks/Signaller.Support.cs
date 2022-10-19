@@ -8,7 +8,7 @@ namespace Arrow.Threading.Tasks
 {
     public sealed partial class Signaller<T>
     {
-        sealed class State
+        private sealed class State
         {
             public State(long id, Func<T, bool> condition)
             {
@@ -35,8 +35,14 @@ namespace Arrow.Threading.Tasks
                 this.ID = id;
             }
 
+            /// <summary>
+            /// The task that will be signalled
+            /// </summary>
             public Task<T> Task{get;}
 
+            /// <summary>
+            /// A unique ID
+            /// </summary>
             public long ID{get;}
         }
     }

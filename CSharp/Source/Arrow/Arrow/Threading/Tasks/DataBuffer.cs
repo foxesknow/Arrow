@@ -9,7 +9,11 @@ using Arrow.Execution;
 
 namespace Arrow.Threading.Tasks
 {
-    public partial class DataBuffer<TData>
+    /// <summary>
+    /// A class that holds data and will notify anyone waiting for data matching data to be added
+    /// </summary>
+    /// <typeparam name="TData"></typeparam>
+    public sealed partial class DataBuffer<TData> : IPeekableReceiver<TData>
     {
         private readonly object m_SyncRoot = new object();
 
@@ -17,17 +21,30 @@ namespace Arrow.Threading.Tasks
         private readonly List<ConditionState> m_WhenConditions = new();
         private readonly List<ConditionState> m_PeekConditions = new();
 
+        /// <summary>
+        /// Initializes the instance so that waits wait forever
+        /// </summary>
         public DataBuffer() : this(DataTimeout.WaitForever)
         {
         }
 
+        /// <summary>
+        /// Initializes the buffer
+        /// </summary>
+        /// <param name="waitTimeout"></param>
         public DataBuffer(TimeSpan waitTimeout)
         {
             this.DefaultTimeout = waitTimeout;
         }
 
+        /// <summary>
+        /// How long to wait by default
+        /// </summary>
         public TimeSpan DefaultTimeout{get;}
 
+        /// <summary>
+        /// True if there is data in the buffer, otherwise false
+        /// </summary>
         public bool HasData
         {
             get
@@ -39,6 +56,9 @@ namespace Arrow.Threading.Tasks
             }
         }
 
+        /// <summary>
+        /// Removes all data from teh buffer
+        /// </summary>
         public void Clear()
         {
             lock(m_SyncRoot)
@@ -47,6 +67,10 @@ namespace Arrow.Threading.Tasks
             }
         }
 
+        /// <summary>
+        /// Removes all data and cancels any waiting task
+        /// Anyone waiting on the cancelled task will observe a OperationCanceledException
+        /// </summary>
         public void Reset()
         {
             lock(m_SyncRoot)
@@ -56,6 +80,10 @@ namespace Arrow.Threading.Tasks
             }
         }
 
+        /// <summary>
+        /// Cancels all peek and wait conditions.
+        /// Anyone waiting on the cancelled task will observe a OperationCanceledException
+        /// </summary>
         public void CancelAll()
         {
             lock(m_SyncRoot)
@@ -77,12 +105,57 @@ namespace Arrow.Threading.Tasks
             }
         }
 
+        /// <summary>
+        /// Cancels a specific wait or peek task.
+        /// Anyone waiting on the cancelled task will observe a OperationCanceledException
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns>true if cancelled, otherwis false</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public bool Cancel(Task<TData> task)
+        {
+            if(task is null) throw new ArgumentNullException(nameof(task));
+
+            lock(m_SyncRoot)
+            {
+                return Cancel(task, m_PeekConditions) || Cancel(task, m_WhenConditions);
+            }
+
+            static bool Cancel(Task<TData> task, IList<ConditionState> conditions)
+            {
+                for(int i = 0; i < conditions.Count; i++)
+                {
+                    var tcs = conditions[i].Tcs;
+                    if(tcs.Task == task)
+                    {
+                        conditions.RemoveAt(i);
+                        tcs.SetCanceled();
+
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Resets the buffer and returns a disposable instance that will reset the buffer when disposed.
+        /// Anyone waiting on the cancelled task will observe a OperationCanceledException
+        /// This is useful for testing discrete areas of code, such as in a test
+        /// </summary>
+        /// <returns></returns>
         public IDisposable StartActivity()
         {
             Reset();
             return new Disposer(() => Reset());
         }
 
+        /// <summary>
+        /// Publishes data
+        /// Any conditions waiting for the data will be notified
+        /// </summary>
+        /// <param name="data"></param>
         public void Publish(TData data)
         {
             lock(m_SyncRoot)
@@ -94,14 +167,58 @@ namespace Arrow.Threading.Tasks
             }
         }
 
+        /// <summary>
+        /// Waits for data to arrive that satisfies a condition then then executes an action
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="ifCondition"></param>
+        /// <param name="then"></param>
+        /// <returns></returns>
         public Task<TData> WaitFor(TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then)
         {
             return MakeTask(m_WhenConditions, timeout, ifCondition, then);
         }
 
+        /// <summary>
+        /// Waits for data to arrive that satisfies a condition then then executes an action.
+        /// The data is not removed from the buffer
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="ifCondition"></param>
+        /// <param name="then"></param>
+        /// <returns></returns>
         public Task<TData> PeekFor(TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then)
         {
             return MakeTask(m_PeekConditions, timeout, ifCondition, then);
+        }
+        
+        /// <summary>
+        /// Tries to see if there is any data in the buffer that satisfies the condition
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public bool TryPeek(out TData data, Func<TData, bool> condition)
+        {
+            if(condition is null) throw new ArgumentNullException(nameof(condition));
+
+            lock(m_SyncRoot)
+            {
+                // Process in reverese to be consistent with Push()
+                for(int i = m_Buffer.Count -1; i >= 0; i--)
+                {
+                    var item = m_Buffer[i];
+                    if(condition(item))
+                    {
+                        data = item;
+                        return true;
+                    }
+                }
+            }
+
+            data = default!;
+            return false;
         }
 
         private Task<TData> MakeTask(IList<ConditionState> conditions, TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then)
@@ -134,28 +251,6 @@ namespace Arrow.Threading.Tasks
                     throw new TimeoutException("condition timed out");
                 }
             }
-        }
-
-        public bool TryPeek(out TData data, Func<TData, bool> condition)
-        {
-            if(condition is null) throw new ArgumentNullException(nameof(condition));
-
-            lock(m_SyncRoot)
-            {
-                // Process in reverese to be consistent with Push()
-                for(int i = m_Buffer.Count -1; i >= 0; i--)
-                {
-                    var item = m_Buffer[i];
-                    if(condition(item))
-                    {
-                        data = item;
-                        return true;
-                    }
-                }
-            }
-
-            data = default!;
-            return false;
         }
 
         private void Push()
