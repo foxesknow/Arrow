@@ -1,11 +1,10 @@
-﻿using Arrow.Logging.Loggers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Logging
+namespace Arrow.Logging.Loggers
 {
     /// <summary>
 	/// Writes to the console window.
@@ -13,10 +12,10 @@ namespace Arrow.Logging
 	/// </summary>
     public sealed class StdoutLog : BaseConsoleLog
     {
-        private static readonly object s_Sync=new object();
-		
-		public StdoutLog() : base(Console.Error, Console.IsErrorRedirected, s_Sync)
-		{
-		}
+        private static readonly object s_Sync = new object();
+
+        public StdoutLog() : base(Console.Out, Console.IsOutputRedirected, s_Sync)
+        {
+        }
     }
 }
