@@ -15,11 +15,6 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<Reference Include="System.Data.DataSetExtensions" />
-		<Reference Include="Microsoft.CSharp" />
-	</ItemGroup>
-	
-	<ItemGroup>
 		<ProjectReference Include="..\Arrow.Dynamic\Arrow.Dynamic.csproj" />
 		<ProjectReference Include="..\Arrow.Scripting\Arrow.Scripting.csproj" />
 		<ProjectReference Include="..\Arrow\Arrow.csproj" />

@@ -17,10 +17,6 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
 	</ItemGroup>
 	<ItemGroup>
-
-		<Reference Include="System.Data.DataSetExtensions" />
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Resources\StorageStylesheet.xml" />
 		<EmbeddedResource Include="Resources\StorageStylesheetInclude.xml" />
 	</ItemGroup>

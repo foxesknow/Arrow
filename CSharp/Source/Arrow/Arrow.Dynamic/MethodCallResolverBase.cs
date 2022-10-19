@@ -58,12 +58,12 @@ namespace Arrow.Dynamic
 		/// <typeparam name="T">The type of the call data to examine</typeparam>
 		/// <param name="candidates">The possible candidates to call</param>
 		/// <returns>The CallData to use, or null if there isn't a best match</returns>
-		protected static T FindBestMatch<T>(List<T> candidates) where T:ICallData
+		protected static T? FindBestMatch<T>(List<T> candidates) where T:ICallData
 		{
 			// Easy, there's only one so it must be the one
 			if(candidates.Count==1) return candidates[0];
 
-			T callData=default(T);
+			T? callData=default(T);
 			
 			candidates.Sort((lhs,rhs)=>lhs.Cost.CompareTo(rhs.Cost));
 			

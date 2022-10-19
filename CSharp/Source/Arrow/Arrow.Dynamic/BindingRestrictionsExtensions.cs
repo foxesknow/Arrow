@@ -47,7 +47,7 @@ namespace Arrow.Dynamic
 		/// <param name="target">The object the call will be made against. May be null</param>
 		/// <param name="args">Meta objects that represent arguments to the call</param>
 		/// <returns>A new restriction</returns>
-		public static BindingRestrictions ForCall(this BindingRestrictions restrictions, DynamicMetaObject target, DynamicMetaObject[] args)
+		public static BindingRestrictions ForCall(this BindingRestrictions restrictions, DynamicMetaObject? target, DynamicMetaObject[] args)
 		{
 			if(target!=null) restrictions=restrictions.AndType(target.Expression,target.LimitType);
 

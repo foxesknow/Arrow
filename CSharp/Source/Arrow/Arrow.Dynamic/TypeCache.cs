@@ -29,7 +29,7 @@ namespace Arrow.Dynamic
 		/// <param name="caseMode">The case mode to use for the type names</param>
 		public TypeCache(CaseMode caseMode)
 		{
-			IEqualityComparer<string> comparer=null;
+			IEqualityComparer<string>? comparer=null;
 			if(caseMode==CaseMode.Insensitive) comparer=IgnoreCaseEqualityComparer.Instance;
 
 			m_Types=new Dictionary<string,Type>(comparer);

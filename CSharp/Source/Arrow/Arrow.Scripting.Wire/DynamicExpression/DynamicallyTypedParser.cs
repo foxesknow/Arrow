@@ -63,7 +63,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression
 
 			if(m_Tokenizer.Current.ID==TokenID.LeftParen)
 			{
-				ThrowException("Free standing functions not supported (yet!)");
+				throw MakeException("Free standing functions not supported (yet!)");
 			}
 			else
 			{

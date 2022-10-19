@@ -6,12 +6,13 @@ using System.Text;
 using System.Reflection;
 
 using Arrow.Reflection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Arrow.Dynamic
 {
 	public static partial class ExpressionEx
 	{
-		public static bool TryArrayAccess(Expression instance, IEnumerable<Expression> indexes, out Expression expression)
+		public static bool TryArrayAccess(Expression instance, IEnumerable<Expression> indexes, [NotNullWhen(true)] out Expression? expression)
 		{
 			expression=null;
 
@@ -31,7 +32,7 @@ namespace Arrow.Dynamic
 			return expression!=null;
 		}
 
-		public static bool TryPropertyOrFieldWithArguments(Expression instance, string name, BindingFlags bindingFlags, IEnumerable<Expression> indexes, out Expression expression)
+		public static bool TryPropertyOrFieldWithArguments(Expression instance, string name, BindingFlags bindingFlags, IEnumerable<Expression> indexes, [NotNullWhen(true)] out Expression? expression)
 		{
 			expression=null;
 
@@ -78,10 +79,10 @@ namespace Arrow.Dynamic
 			return true;
 		}
 
-		public static bool TryPropertyOrFieldWithArguments(Type type, string name, BindingFlags bindingFlags, IEnumerable<Expression> indexes, out Expression expression)
+		public static bool TryPropertyOrFieldWithArguments(Type type, string name, BindingFlags bindingFlags, IEnumerable<Expression> indexes, [NotNullWhen(true)] out Expression? expression)
 		{
 			expression=null;
-			Expression instance=null;
+			Expression? instance=null;
 
 			var fieldInfo = type.GetField(name, bindingFlags);
 			if (fieldInfo!= null)

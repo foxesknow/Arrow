@@ -47,7 +47,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 			if(lhs.Type.IsValueType || rhs.Type.IsValueType)
 			{
-				m_Parser.ThrowException("null coalesce can only be applied to reference types");
+				throw m_Parser.MakeException("null coalesce can only be applied to reference types");
 			}
 
 			return Expression.Coalesce(lhs,rhs);
@@ -62,8 +62,8 @@ namespace Arrow.Scripting.Wire.StaticExpression
 		public override Expression RegexEqual(Expression lhs, Expression rhs)
 		{
 			NormalizeBinaryExpression(ref lhs, ref rhs);
-			if(lhs.Type!=typeof(string)) m_Parser.ThrowException("left side of regex must be string");
-			if(rhs.Type!=typeof(string)) m_Parser.ThrowException("right side of regex must be string");
+			if(lhs.Type!=typeof(string)) throw m_Parser.MakeException("left side of regex must be string");
+			if(rhs.Type!=typeof(string)) throw m_Parser.MakeException("right side of regex must be string");
 
 			return Expression.Call(null,RegexIsMatch,lhs,rhs);
 		}
@@ -162,7 +162,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 			if(ExpressionEx.TryArrayAccess(target,bounds,out expression)==false)
 			{
-				m_Parser.ThrowException("could not resolve array");
+				throw m_Parser.MakeException("could not resolve array");
 			}
 			return expression;
 		}
@@ -184,7 +184,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 		public override Expression ToBoolean(Expression target)
 		{
-			if(target.IsOfType<bool>()==false) m_Parser.ThrowException("not a boolean");
+			if(target.IsOfType<bool>()==false) throw m_Parser.MakeException("not a boolean");
 			return target;
 		}
 
@@ -199,7 +199,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 		{
 			if(TypeCoercion.NormalizeBinaryExpression(ref lhs, ref rhs)==false)
 			{
-				m_Parser.ThrowException("could not find a common type");
+				throw m_Parser.MakeException("could not find a common type");
 			}
 		}
 
@@ -211,12 +211,9 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 		public override Expression StaticPropertyOrFieldWithArgs(Type type, string name, IEnumerable<Expression> indexes)
 		{
-			Expression? expression=null;
+			if(ExpressionEx.TryPropertyOrFieldWithArguments(type,name,StaticFlags,indexes,out var expression)) return expression;
 			
-			bool success=ExpressionEx.TryPropertyOrFieldWithArguments(type,name,StaticFlags,indexes,out expression);
-			if(!success) this.Parser.ThrowException("could not resolve static array access");
-
-			return expression;
+			throw this.Parser.MakeException("could not resolve static array access");
 		}
 
 		public override Expression StaticPropertyOrField(Type type, string name)
@@ -233,12 +230,9 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 		public override Expression InstancePropertyOrFieldWithArgs(Expression instance, string name, IEnumerable<Expression> indexes)
 		{
-			Expression? expression=null;
-
-			bool success=ExpressionEx.TryPropertyOrFieldWithArguments(instance,name,InstanceFlags,indexes,out expression);
-			if(!success) this.Parser.ThrowException("could not resolve instance array access");
-
-			return expression;
+			if(ExpressionEx.TryPropertyOrFieldWithArguments(instance,name,InstanceFlags,indexes,out var expression)) return expression;
+			
+			throw this.Parser.MakeException("could not resolve instance array access");
 		}
 
 		public override Expression InstancePropertyOrField(Expression instance, string name)

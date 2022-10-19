@@ -66,7 +66,7 @@ namespace Arrow.Dynamic
 					if(property.CanRead==false) continue;
 					
 					// Ignore properties that take parameters (this[,,,])
-					if(property.GetGetMethod().GetParameters().Length!=0) continue;
+					if(property!.GetGetMethod()!.GetParameters().Length!=0) continue;
 
 					var propertyName=Expression.Constant(property.Name);
 					var propertyValue=Expression.Property(item,property).ConvertTo<object>();

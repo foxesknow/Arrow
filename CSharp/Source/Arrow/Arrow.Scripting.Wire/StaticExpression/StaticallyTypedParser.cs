@@ -65,7 +65,7 @@ namespace Arrow.Scripting.Wire.StaticExpression
 
 			// Otherwise assume it's a type
 			var type=ResolveType(symbolName);
-			if(type==null) ThrowException("could not resolve type: "+symbolName);
+			if(type==null) throw MakeException("could not resolve type: "+symbolName);
 
 			Expression staticExpression=StaticAccess(type);
 

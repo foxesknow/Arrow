@@ -35,7 +35,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 
 			// The Invoke method on the delegate is prototyped
 			// in the same style as the delegate
-			var method=target.LimitType.GetMethod("Invoke");
+			var method=target.LimitType.GetMethod("Invoke")!;
 			var arguments=args.Select(o=>o.GetLimitedExpression()).ToArray();
 
 			int cost=0;

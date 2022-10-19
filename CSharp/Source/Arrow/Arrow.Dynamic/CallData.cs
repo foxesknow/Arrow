@@ -23,7 +23,7 @@ namespace Arrow.Dynamic
 			m_Cost=cost;
 		}
 
-		public MethodCallExpression Make(Type type, Expression instance)
+		public MethodCallExpression Make(Type type, Expression? instance)
 		{
 			if(instance!=null)
 			{

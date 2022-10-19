@@ -12,14 +12,14 @@ namespace Arrow.Dynamic
 {
 	public static class StringExpression
 	{
-		private static readonly MethodInfo CompareMethod=typeof(string).GetMethod("Compare",TypeArray.Make<string,string,bool>());
-		private static readonly MethodInfo ConcatMethod=typeof(string).GetMethod("Concat",TypeArray.Make<string,string>());
+		private static readonly MethodInfo CompareMethod=typeof(string).GetMethod("Compare",TypeArray.Make<string,string,bool>())!;
+		private static readonly MethodInfo ConcatMethod=typeof(string).GetMethod("Concat",TypeArray.Make<string,string>())!;
 
 		public static Expression Equal(CaseMode caseMode, Expression lhs, Expression rhs)
 		{
 			CheckSides(lhs,rhs);
 
-			Expression expression=null;
+			Expression? expression=null;
 
 			if(caseMode==CaseMode.Sensitive)
 			{
@@ -37,7 +37,7 @@ namespace Arrow.Dynamic
 		{
 			CheckSides(lhs,rhs);
 
-			Expression expression=null;
+			Expression? expression=null;
 
 			if(caseMode==CaseMode.Sensitive)
 			{

@@ -32,7 +32,7 @@ namespace Arrow.Dynamic
 		{
 			var ctor=typeof(T).GetConstructor(TypeArray.Make<string>());
 
-			var toThrow=Expression.Throw(Expression.New(ctor,Expression.Constant(message)));
+			var toThrow=Expression.Throw(Expression.New(ctor!,Expression.Constant(message)));
 			return toThrow;
 		}
 
@@ -48,7 +48,7 @@ namespace Arrow.Dynamic
 		{
 			var ctor=typeof(T).GetConstructor(TypeArray.Make<string>());
 
-			var e=Expression.Throw(Expression.New(ctor,Expression.Constant(message)));
+			var e=Expression.Throw(Expression.New(ctor!,Expression.Constant(message)));
 			return Expression.Block(e,Expression.Constant(returnValue));
 		}
 	}

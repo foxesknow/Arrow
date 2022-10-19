@@ -30,9 +30,7 @@ namespace Arrow.Threading.Tasks
 
             public override void Send(SendOrPostCallback d, object state)
             {
-                var activeQueue = (SynchronizationContext.Current as CustomSynchronizationContext)?.m_Queue;
-
-                if(object.ReferenceEquals(m_Queue, activeQueue))
+                if(m_Queue.ID == AsyncWorkQueue.ActiveID)
                 {
                     // We're already on the queue, so just call the callback
                     d(state);

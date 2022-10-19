@@ -10,10 +10,6 @@
 		<DebugType>pdbonly</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
-		<Reference Include="System.Data.DataSetExtensions" />
-		<Reference Include="Microsoft.CSharp" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\Arrow.Messaging\Arrow.Messaging.csproj" />
 		<ProjectReference Include="..\Arrow\Arrow.csproj" />
 	</ItemGroup>

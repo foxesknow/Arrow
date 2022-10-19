@@ -6,6 +6,7 @@ using System.Text;
 using System.Reflection;
 
 using Arrow.Reflection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Arrow.Dynamic
 {
@@ -27,11 +28,9 @@ namespace Arrow.Dynamic
 			if(instance==null) throw new ArgumentNullException("instance");
 			if(name==null) throw new ArgumentNullException("name");
 
-			MethodCallExpression callExpression;
-			bool success=TryMakeCall(instance.Type,instance,name,bindingFlags,arguments,out callExpression);
-			if(!success) throw new DynamicException("Could not resolve instance call to "+name);
-
-			return callExpression;
+			if(TryMakeCall(instance.Type,instance,name,bindingFlags,arguments,out var callExpression)) return callExpression;
+			
+			throw new DynamicException("Could not resolve instance call to "+name);
 		}
 
 		/// <summary>
@@ -47,14 +46,12 @@ namespace Arrow.Dynamic
 			if(name==null) throw new ArgumentNullException("name");
 			if(arguments==null) throw new ArgumentNullException("arguments");
 
-			MethodCallExpression callExpression;
-			bool success=TryMakeCall(instance.Type,instance,name,bindingFlags,arguments,out callExpression);
-			if(!success) throw new DynamicException("Could not resolve instance call to "+name);
-
-			return callExpression;
+			if(TryMakeCall(instance.Type,instance,name,bindingFlags,arguments,out var callExpression)) return callExpression;
+			
+			throw new DynamicException("Could not resolve instance call to "+name);
 		}
 
-		public static bool TryCall(Expression instance, string name, BindingFlags bindingFlags, IList<Expression> arguments, out MethodCallExpression callExpression)
+		public static bool TryCall(Expression instance, string name, BindingFlags bindingFlags, IList<Expression> arguments, [NotNullWhen(true)] out MethodCallExpression? callExpression)
 		{
 			if(instance==null) throw new ArgumentNullException("instance");
 			if(name==null) throw new ArgumentNullException("name");
@@ -75,11 +72,9 @@ namespace Arrow.Dynamic
 			if(type==null) throw new ArgumentNullException("type");
 			if(name==null) throw new ArgumentNullException("name");
 			
-			MethodCallExpression callExpression;
-			bool success=TryMakeCall(type,null,name,bindingFlags,arguments,out callExpression);
-			if(!success) throw new DynamicException("Could not resolve static call to "+name);
-
-			return callExpression;
+			if(TryMakeCall(type,null,name,bindingFlags,arguments,out var callExpression)) return callExpression;
+			
+			throw new DynamicException("Could not resolve static call to "+name);
 		}
 
 		/// <summary>
@@ -94,14 +89,12 @@ namespace Arrow.Dynamic
 			if(type==null) throw new ArgumentNullException("type");
 			if(name==null) throw new ArgumentNullException("name");
 			
-			MethodCallExpression callExpression;
-			bool success=TryMakeCall(type,null,name,bindingFlags,arguments,out callExpression);
-			if(!success) throw new DynamicException("Could not resolve static call to "+name);
-
-			return callExpression;
+			if(TryMakeCall(type,null,name,bindingFlags,arguments,out var callExpression)) return callExpression;
+			
+			throw new DynamicException("Could not resolve static call to "+name);
 		}
 
-		public static bool TryCall(Type type, string name, BindingFlags bindingFlags, IList<Expression> arguments, out MethodCallExpression callExpression)
+		public static bool TryCall(Type type, string name, BindingFlags bindingFlags, IList<Expression> arguments, [NotNullWhen(true)] out MethodCallExpression? callExpression)
 		{
 			if(type==null) throw new ArgumentNullException("type");
 			if(name==null) throw new ArgumentNullException("name");
@@ -110,7 +103,7 @@ namespace Arrow.Dynamic
 		}
 		
 
-		private static bool TryMakeCall(Type type, Expression instance, string name, BindingFlags flags, IList<Expression> arguments, out MethodCallExpression callExpression)
+		private static bool TryMakeCall(Type type, Expression? instance, string name, BindingFlags flags, IList<Expression> arguments, [NotNullWhen(true)] out MethodCallExpression? callExpression)
 		{
 			callExpression=null;
 
@@ -188,11 +181,11 @@ namespace Arrow.Dynamic
 		/// <param name="matchType">How to match the parameters</param>
 		/// <param name="cost">Set to the cost of the call</param>
 		/// <returns>A new argument list which can be passed to the method on success, otherwise null</returns>
-		public static List<Expression> BuildArgumentList(MethodInfo method, IList<Expression> arguments, ParameterMatchType matchType, out int cost)
+		public static List<Expression>? BuildArgumentList(MethodInfo method, IList<Expression> arguments, ParameterMatchType matchType, out int cost)
 		{
 			cost=0;
 
-			List<Expression> callArguments=new List<Expression>();
+			List<Expression>? callArguments=new List<Expression>();
 
 			var parameters=method.GetParameters();
 			bool hasVariable=parameters.HasVariableParameters();
@@ -202,7 +195,7 @@ namespace Arrow.Dynamic
 			{
 				var parameter=parameters[i];
 				int paramCost=0;
-				Expression processedArgument=null;
+				Expression? processedArgument=null;
 				
 				if(hasVariable && i==parameters.Length-1)
 				{
@@ -237,12 +230,12 @@ namespace Arrow.Dynamic
 			return callArguments;
 		}
 
-		private static NewArrayExpression ProcessParamsList(ParameterInfo parameter, IList<Expression> args, int startIndex, ParameterMatchType matchType, out int cost)
+		private static NewArrayExpression? ProcessParamsList(ParameterInfo parameter, IList<Expression> args, int startIndex, ParameterMatchType matchType, out int cost)
 		{
 			cost=0;
 
 			int paramsLength=args.Count-startIndex;
-			Type type=parameter.ParameterType.GetElementType();
+			Type type=parameter.ParameterType.GetElementType()!;
 
 			List<Expression> variableArgs=new List<Expression>();
 
@@ -258,7 +251,7 @@ namespace Arrow.Dynamic
 			return Expression.NewArrayInit(type,variableArgs);
 		}
 
-		private static Expression ProcessArgument(Type paramType, Expression expression, ParameterMatchType matchType, out int cost)
+		private static Expression? ProcessArgument(Type paramType, Expression expression, ParameterMatchType matchType, out int cost)
 		{
 			cost=0;
 
@@ -304,7 +297,7 @@ namespace Arrow.Dynamic
 
 		private static bool IsNull(Expression expression)
 		{
-			ConstantExpression c=expression as ConstantExpression;
+			ConstantExpression? c=expression as ConstantExpression;
 			return c!=null && c.Value==null;
 		}
 

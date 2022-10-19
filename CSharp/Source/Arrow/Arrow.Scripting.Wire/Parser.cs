@@ -19,7 +19,7 @@ namespace Arrow.Scripting.Wire
 		{
 			var expression=ParseExpression();
 
-			if(m_Tokenizer.Current.ID!=TokenID.None) ThrowException("error parsing data");
+			if(m_Tokenizer.Current.ID!=TokenID.None) throw MakeException("error parsing data");
 			return expression;
 		}
 
@@ -123,8 +123,7 @@ namespace Arrow.Scripting.Wire
 						break;
 
 					default:
-						ThrowException("unexpected equality-op");
-						break;
+						throw MakeException("unexpected equality-op");
 				}
 			}
 
@@ -158,8 +157,7 @@ namespace Arrow.Scripting.Wire
 						break;
 
 					default:
-						ThrowException("unexpected relational-op");
-						break;
+						throw MakeException("unexpected relational-op");
 				}
 			}
 
@@ -202,8 +200,7 @@ namespace Arrow.Scripting.Wire
 					}
 
 					default:
-						ThrowException("unexpected in-like-between-op");
-						break;
+						throw MakeException("unexpected in-like-between-op");
 				}
 			}
 
@@ -229,8 +226,7 @@ namespace Arrow.Scripting.Wire
 						break;
 
 					default:
-						ThrowException("unexpected add-op");
-						break;
+						throw MakeException("unexpected add-op");
 
 				}
 			}
@@ -261,8 +257,7 @@ namespace Arrow.Scripting.Wire
 						break;
 
 					default:
-						ThrowException("unexpected mul-op");
-						break;
+						throw MakeException("unexpected mul-op");
 				}
 			}
 
@@ -309,7 +304,7 @@ namespace Arrow.Scripting.Wire
 
 			if(m_Tokenizer.TryAccept(TokenID.Symbol))
 			{
-				expression=Symbol(token.Data);
+				expression=Symbol(token.Data!);
 			}
 			else if(m_Tokenizer.TryAccept(TokenID.LeftParen))
 			{
@@ -354,7 +349,7 @@ namespace Arrow.Scripting.Wire
 			}
 			else
 			{
-				ThrowException("Unexpected factor: "+token.Data);
+				throw MakeException("Unexpected factor: "+token.Data);
 			}
 
 			expression=Primary(expression);
@@ -384,8 +379,7 @@ namespace Arrow.Scripting.Wire
 						break;
 
 					default:
-						ThrowException("Unhandled primary-op: "+m_Tokenizer.Current);
-						break;
+						throw MakeException("Unhandled primary-op: "+m_Tokenizer.Current);
 				}
 			}
 
@@ -424,7 +418,7 @@ namespace Arrow.Scripting.Wire
 			{
 				if(m_Tokenizer.TryAccept(TokenID.Default))
 				{
-					if(defaultCondition!=null) ThrowException("multiple default conditions detected in select expression");
+					if(defaultCondition!=null) throw MakeException("multiple default conditions detected in select expression");
 					
 					m_Tokenizer.Expect(TokenID.LeadsTo);
 					defaultCondition=ParseExpression();
@@ -440,7 +434,7 @@ namespace Arrow.Scripting.Wire
 			}
 
 			m_Tokenizer.Expect(TokenID.RightParen);
-			if(defaultCondition==null) ThrowException("you must specify a  default condition in a select expression");
+			if(defaultCondition==null) throw MakeException("you must specify a  default condition in a select expression");
 
 			Expression? selectEvaluation=null;
 
@@ -484,7 +478,7 @@ namespace Arrow.Scripting.Wire
 			
 			string typeName=ExtractTypeName();
 			var type=ResolveType(typeName);			
-			if(type==null) ThrowException("could not resolve type: "+typeName);
+			if(type==null) throw MakeException("could not resolve type: "+typeName);
 			
 			m_Tokenizer.Expect(TokenID.GreaterThan);
 
@@ -500,7 +494,7 @@ namespace Arrow.Scripting.Wire
 			}
 			else if(id==TokenID.As)
 			{
-				if(type.IsValueType==false) ThrowException("As cannot be used with value type");
+				if(type.IsValueType==false) throw MakeException("As cannot be used with value type");
 				expression=m_ExpressionFactory.As(whatToCast,type);
 			}
 			else if(id==TokenID.Is)
@@ -509,7 +503,7 @@ namespace Arrow.Scripting.Wire
 			}
 			else
 			{
-				ThrowException("Unsupported cast operation");
+				throw MakeException("Unsupported cast operation");
 			}
 			
 			return expression;

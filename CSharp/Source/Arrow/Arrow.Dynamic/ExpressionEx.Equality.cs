@@ -15,7 +15,7 @@ namespace Arrow.Dynamic
 			if(lhs==null) throw new ArgumentNullException("lhs");
 			if(rhs==null) throw new ArgumentNullException("rhs");
 
-			Expression expression=null;
+			Expression? expression=null;
 
 			if(caseMode==CaseMode.Insensitive && AreStrings(lhs,rhs))
 			{
@@ -34,7 +34,7 @@ namespace Arrow.Dynamic
 			if(lhs==null) throw new ArgumentNullException("lhs");
 			if(rhs==null) throw new ArgumentNullException("rhs");
 
-			Expression expression=null;
+			Expression? expression=null;
 
 			if(caseMode==CaseMode.Insensitive && AreStrings(lhs,rhs))
 			{

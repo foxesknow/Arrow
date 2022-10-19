@@ -15,7 +15,6 @@
 			<HintPath>.\log4net.dll</HintPath>
 			<SpecificVersion>False</SpecificVersion>
 		</Reference>
-		<Reference Include="System.Data.DataSetExtensions" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="log4net.dll" />
