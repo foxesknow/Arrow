@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -199,7 +200,7 @@ namespace Arrow.Threading.Tasks
         /// <param name="condition"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public bool TryPeek(out TData data, Func<TData, bool> condition)
+        public bool TryPeek([MaybeNullWhen(false)]out TData data, Func<TData, bool> condition)
         {
             if(condition is null) throw new ArgumentNullException(nameof(condition));
 

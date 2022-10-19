@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable enable
+
 namespace Arrow.Execution
 {
 	/// <summary>
@@ -10,9 +12,9 @@ namespace Arrow.Execution
 	/// This saves having to write a class specificly to do this.
 	/// The "disposer" delegate is guaranteed to only be called once.
 	/// </summary>
-	public class Disposer : IDisposable
+	public sealed class Disposer : IDisposable
 	{
-		private Action m_Disposer;
+		private Action? m_Disposer;
 	
 		/// <summary>
 		/// Initializes the instace
@@ -21,16 +23,25 @@ namespace Arrow.Execution
 		/// <exception cref="System.ArgumentNullException">disposer is null</exception>
 		public Disposer(Action disposer)
 		{
-			if(disposer==null) throw new ArgumentNullException("disposer");
-			m_Disposer=disposer;
+			if(disposer is null) throw new ArgumentNullException("disposer");
+			m_Disposer = disposer;
 		}
 	
 		void IDisposable.Dispose()
 		{
-			var disposer=m_Disposer;
-			m_Disposer=null;
-			if(disposer!=null) disposer();
-			
+			var disposer = m_Disposer;
+			m_Disposer = null;
+			if(disposer is not null) disposer();			
+		}
+
+		/// <summary>
+		/// Creates an instance
+		/// </summary>
+		/// <param name="action"></param>
+		/// <returns></returns>
+		public static IDisposable Make(Action action)
+		{
+			return new Disposer(action);
 		}
 	}
 }

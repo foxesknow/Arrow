@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Arrow.Threading.Tasks
     {
         Task<TData> PeekFor(TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then);
 
-        public bool TryPeek(out TData data, Func<TData, bool> condition);
+        public bool TryPeek([MaybeNullWhen(false)]out TData data, Func<TData, bool> condition);
     }
 
     public static class PeekableReceiverExtensions

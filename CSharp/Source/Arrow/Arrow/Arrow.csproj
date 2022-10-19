@@ -35,6 +35,13 @@
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
 		<PackageReference Include="System.Data.Odbc" Version="6.0.1" />
 	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net461' or '$(TargetFramework)' == 'net471' or '$(TargetFramework)' == 'net48' or '$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="Nullable" Version="1.3.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 	
 	<ItemGroup>
 		<Compile Update="Application\Service\ServiceMainHost.cs" />

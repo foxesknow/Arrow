@@ -12,8 +12,10 @@ namespace Arrow.Logging.Log4Net
 	/// <summary>
 	/// Log class that uses the Apache log4net framework
 	/// </summary>
-	public class Log : ILogInitializer, ILog
+	public class Log : ILogInitializer, ILog, IPropertyContext
 	{
+		private static readonly AsyncPropertyPusher s_PropertyPusher = new();
+
 		private log4net.ILog m_Log;
 	
 		/// <summary>
@@ -23,16 +25,21 @@ namespace Arrow.Logging.Log4Net
 		{
 			try
 			{
-				XmlNode configurationNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Logging.Log4Net/Configuration");
-				if(configurationNode!=null)
+				var config = AppConfig.GetSectionObject<Config>(ArrowSystem.Name,"Arrow.Logging.Log4Net/Configuration");
+				if(config is not null)
 				{
 					// We've got an explicit path to log4net configuration file
-					string path=configurationNode.InnerText;
+					string path = config.Configuration;
 					path=TokenExpander.ExpandText(path);
 					Uri uri=Accessor.CreateUri(path);
 					
 					XmlDocument doc=StorageManager.Get(uri).ReadXmlDocument();
-					log4net.Config.XmlConfigurator.Configure(doc.DocumentElement);
+					var expandedXml = TokenExpander.ExpandText(doc.OuterXml, "$(", ")");
+
+					var expandedDoc = new XmlDocument();
+					expandedDoc.LoadXml(expandedXml);
+
+					log4net.Config.XmlConfigurator.Configure(expandedDoc.DocumentElement);
 				}
 				else
 				{
@@ -47,16 +54,10 @@ namespace Arrow.Logging.Log4Net
 			}
 		}
 
-		#region ILogInitializer Members
-
 		void ILogInitializer.Initialize(string name)
 		{
 			m_Log=log4net.LogManager.GetLogger(name ?? "root");
 		}
-
-		#endregion
-
-		#region ILog Members
 
 		void ILog.Debug(object message)
 		{
@@ -231,7 +232,7 @@ namespace Arrow.Logging.Log4Net
 		void ILog.FatalFormat(IFormatProvider provider, string format, params object[] args)
 		{
 			m_Log.FatalFormat(provider,format,args);
-		}
+		}		
 
 		bool ILog.IsDebugEnabled
 		{
@@ -258,6 +259,14 @@ namespace Arrow.Logging.Log4Net
 			get{return m_Log.IsFatalEnabled;}
 		}
 
-		#endregion
+		IPropertyPusher IPropertyContext.GetPusher()
+		{
+			return s_PropertyPusher;
+		}
+
+		class Config
+		{
+			public string Configuration{get; set;}
+		}
 	}
 }
