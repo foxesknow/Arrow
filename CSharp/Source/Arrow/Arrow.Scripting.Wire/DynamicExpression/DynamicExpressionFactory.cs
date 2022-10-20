@@ -179,7 +179,7 @@ namespace Arrow.Scripting.Wire.DynamicExpression
 		{
 			condition=ToBoolean(condition);
 			
-			Type mostSpecificType=TypeSupport.MostSpecificType(ifTrue.Type,ifFalse.Type);
+			var mostSpecificType=TypeSupport.MostSpecificType(ifTrue.Type,ifFalse.Type);
 			if(mostSpecificType==null) mostSpecificType=typeof(object);
 
 			ifTrue=ifTrue.ConvertTo(mostSpecificType);

@@ -19,20 +19,20 @@ namespace UnitTests.Arrow.Threading.Tasks
         {
             using(var queue = new AsyncWorkQueue())
             {
-                Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
-                Assert.That(AsyncWorkQueue.ActiveID, Is.EqualTo(AsyncWorkQueue.NoQueue));
+                Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoActiveQueue));
+                Assert.That(AsyncWorkQueue.ActiveID, Is.EqualTo(AsyncWorkQueue.NoActiveQueue));
 
                 await queue.EnqueueAsync(async () =>
                 {
-                    Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
+                    Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoActiveQueue));
                     var id = queue.ID;
 
                     await Task.Yield();
                     Assert.That(queue.ID, Is.EqualTo(id));
                 });
 
-                Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoQueue));
-                Assert.That(AsyncWorkQueue.ActiveID, Is.EqualTo(AsyncWorkQueue.NoQueue));
+                Assert.That(queue.ID, Is.Not.EqualTo(AsyncWorkQueue.NoActiveQueue));
+                Assert.That(AsyncWorkQueue.ActiveID, Is.EqualTo(AsyncWorkQueue.NoActiveQueue));
             }
         }
 
@@ -59,15 +59,15 @@ namespace UnitTests.Arrow.Threading.Tasks
         {
             using(var queue = new AsyncWorkQueue())
             {
-                var result = queue.TryEnqueueAsync(async () =>
+                var enqueued = queue.TryEnqueueAsync(async () =>
                 {
                     await Task.Yield();
                     return 1;
-                });
+                }, out var task);
 
-                if(result.Enqueued)
+                if(enqueued)
                 {
-                    var value = await result.Task;
+                    var value = await task;
                     Assert.That(value, Is.EqualTo(1));
                 }
                 else

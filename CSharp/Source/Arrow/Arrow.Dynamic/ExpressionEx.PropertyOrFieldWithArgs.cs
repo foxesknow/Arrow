@@ -23,7 +23,7 @@ namespace Arrow.Dynamic
 			else
 			{
 				// Look for a default member
-				string defaultMemberName=instance.Type.DefaultMemberName();
+				var defaultMemberName=instance.Type.DefaultMemberName();
 				if(defaultMemberName==null) return false;
 
 				expression=Expression.Property(instance,defaultMemberName,indexes.ToArray());
@@ -49,7 +49,7 @@ namespace Arrow.Dynamic
 				}
 
 				// It's a type, so we call the default member
-				string defaultMemberName=fieldInfo.FieldType.DefaultMemberName();
+				var defaultMemberName=fieldInfo.FieldType.DefaultMemberName();
 				if(defaultMemberName==null) return false;
 
 				name=defaultMemberName;
@@ -68,7 +68,7 @@ namespace Arrow.Dynamic
 				}
 
 				// It's a type, so we call the default member
-				string defaultMemberName=propertyInfo.PropertyType.DefaultMemberName();
+				var defaultMemberName=propertyInfo.PropertyType.DefaultMemberName();
 				if(defaultMemberName==null) return false;
 
 				name=defaultMemberName;
@@ -97,7 +97,7 @@ namespace Arrow.Dynamic
 				}
 
 				// It's a type, so we call the default member
-				string defaultMemberName=fieldInfo.FieldType.DefaultMemberName();
+				var defaultMemberName=fieldInfo.FieldType.DefaultMemberName();
 				if(defaultMemberName==null) return false;
 
 				name=defaultMemberName;
@@ -116,7 +116,7 @@ namespace Arrow.Dynamic
 				}
 
 				// It's a type, so we call the default member
-				string defaultMemberName=propertyInfo.PropertyType.DefaultMemberName();
+				var defaultMemberName=propertyInfo.PropertyType.DefaultMemberName();
 				if(defaultMemberName==null) return false;
 
 				name=defaultMemberName;

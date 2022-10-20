@@ -36,7 +36,7 @@ namespace Arrow.Scripting.Wire
 			}
 			else
 			{
-				Type commonType=TypeSupport.MostSpecificType(lhs.Type,rhs.Type);
+				var commonType=TypeSupport.MostSpecificType(lhs.Type,rhs.Type);
 				if(commonType!=null)
 				{
 					lhs=lhs.ConvertTo(commonType);
