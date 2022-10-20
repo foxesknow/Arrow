@@ -21,7 +21,7 @@ namespace Arrow.Threading
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
-		public ActionWorkQueue(IWorkDispatcher dispatcher) : base(dispatcher,8)
+		public ActionWorkQueue(IWorkDispatcher? dispatcher) : base(dispatcher,8)
 		{
 		}
 		
@@ -30,7 +30,7 @@ namespace Arrow.Threading
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
 		/// <param name="initialCapacity">The initial capacity for the queue</param>
-		public ActionWorkQueue(IWorkDispatcher dispatcher, int initialCapacity) : base(dispatcher,initialCapacity)
+		public ActionWorkQueue(IWorkDispatcher? dispatcher, int initialCapacity) : base(dispatcher,initialCapacity)
 		{
 		}
 	

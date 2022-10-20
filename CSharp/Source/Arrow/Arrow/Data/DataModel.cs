@@ -57,7 +57,7 @@ namespace Arrow.Data
 			XmlDocument doc=StorageManager.Get(path).ReadXmlDocument();
 			
 			string xpath=string.Format("Script[@name='{0}']",scriptName);
-			XmlNode node=doc.DocumentElement.SelectSingleNode(xpath);
+			var node=doc.DocumentElement!.SelectSingleNode(xpath);
 			if(node==null) throw new ArrowException("script not found: "+scriptName);
 			
 			return node.InnerText.Trim();
@@ -78,7 +78,7 @@ namespace Arrow.Data
 			if(partialPath==null) throw new ArgumentNullException("partialPath");
 			
 			Assembly assembly=typeof(T).Assembly;
-			AssemblyName assemblyName=new AssemblyName(assembly.FullName);	
+			AssemblyName assemblyName=new AssemblyName(assembly.FullName!);	
 			
 			string path=string.Format("res://{0}/{1}",assemblyName.Name,partialPath);
 			return new Uri(path);
@@ -122,7 +122,7 @@ namespace Arrow.Data
 		/// Used to select single row/column results (such as select count(*) from X)
 		/// where we don't want to have to create a type specially for the result
 		/// </summary>
-		/// <typeparam name="CV">The type of the value being selecte</typeparam>
+		/// <typeparam name="CV">The type of the value being selected</typeparam>
 		/// <param name="command">The command object that will provide the result</param>
 		/// <returns>The value of the select</returns>
 		protected static CV SelectSingleValue<CV>(IDbCommand command)
@@ -136,18 +136,18 @@ namespace Arrow.Data
 				if(reader.FieldCount!=1) throw new ArrowException("only expected 1 column");
 				
 				object fieldValue=reader.GetValue(0);
-				if(DBNull.Value.Equals(fieldValue)) return default(CV);
+				if(DBNull.Value.Equals(fieldValue)) return default!;
 				
 				if(fieldValue.GetType()==typeof(CV)) return (CV)fieldValue;
 				
 				Type fieldType=reader.GetFieldType(0);
 				
 				// We'll need to do a conversion
-				TypeConverter converter=TypeDescriptor.GetConverter(typeof(CV));
-				if(converter!=null && converter.CanConvertFrom(fieldType)) return (CV)converter.ConvertFrom(fieldValue);
+				var converter=TypeDescriptor.GetConverter(typeof(CV));
+				if(converter!=null && converter.CanConvertFrom(fieldType)) return (CV)converter.ConvertFrom(fieldValue)!;
 				
 				converter=TypeDescriptor.GetConverter(fieldType);
-				if(converter!=null && converter.CanConvertTo(typeof(CV))) return (CV)converter.ConvertTo(fieldValue,typeof(CV));
+				if(converter!=null && converter.CanConvertTo(typeof(CV))) return (CV)converter.ConvertTo(fieldValue,typeof(CV))!;
 				
 				return (CV)Convert.ChangeType(fieldValue,typeof(CV));
 			}
@@ -279,7 +279,7 @@ namespace Arrow.Data
 					RowMetaData metaData=rowMetaData[i];
 					
 					// Handle database nulls
-					object fieldValue=reader.GetValue(metaData.FieldIndex);
+					object? fieldValue=reader.GetValue(metaData.FieldIndex);
 					if(DBNull.Value.Equals(fieldValue)) fieldValue=null;
 					
 					// Convert the value if need be
@@ -290,7 +290,7 @@ namespace Arrow.Data
 						else if(metaData.DoStandardConvert) fieldValue=Convert.ChangeType(fieldValue,metaData.PropertyType);
 					}
 					
-					metaData.SetMethod.Invoke(row,new object[]{fieldValue});
+					metaData.SetMethod.Invoke(row,new object?[]{fieldValue});
 				}
 				
 				yield return row;
@@ -310,10 +310,10 @@ namespace Arrow.Data
 			{
 				string originalFieldName=reader.GetName(i);
 				string fieldName=originalFieldName.Replace("_","");
-				PropertyInfo property=typeof(T).GetProperty(fieldName,BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase);
+				var property=typeof(T).GetProperty(fieldName,BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase);
 				if(property!=null)
 				{
-					MethodInfo setMethod=property.GetSetMethod();
+					var setMethod=property.GetSetMethod();
 					if(setMethod!=null) 
 					{
 						RowMetaData rowData=new RowMetaData();
@@ -330,7 +330,7 @@ namespace Arrow.Data
 						}
 						else
 						{
-							TypeConverter converter=TypeDescriptor.GetConverter(property.PropertyType);
+							var converter=TypeDescriptor.GetConverter(property.PropertyType);
 							if(converter!=null && converter.CanConvertFrom(fieldType)) 
 							{
 								rowData.FromTypeConverter=converter;
@@ -360,11 +360,11 @@ namespace Arrow.Data
 		class RowMetaData
 		{
 			public int FieldIndex{get;set;}
-			public MethodInfo SetMethod{get;set;}
+			public MethodInfo SetMethod{get;set;} = default!;
 			public bool TypesAreCompatible{get;set;}
-			public TypeConverter FromTypeConverter{get;set;}
-			public TypeConverter ToTypeConverter{get;set;}
-			public Type PropertyType{get;set;}
+			public TypeConverter FromTypeConverter{get;set;} = default!;
+			public TypeConverter ToTypeConverter{get;set;} = default!;
+			public Type PropertyType{get;set;} = default!;
 			public bool DoStandardConvert{get;set;}
 		}
 	}

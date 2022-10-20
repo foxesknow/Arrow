@@ -41,9 +41,9 @@ namespace Arrow.Collections
 	/// </code>
 	/// </remarks>
 	[Serializable]
-	public class Memorizer<FROM,TO> : IEnumerable<KeyValuePair<FROM,TO>>
+	public class Memorizer<FROM,TO> : IEnumerable<KeyValuePair<FROM,TO>> where FROM : notnull
 	{
-		private Dictionary<FROM,TO> m_Values=null;
+		private Dictionary<FROM,TO> m_Values;
 		
 		private Func<FROM,TO> m_LookupFunction;
 		
@@ -62,7 +62,7 @@ namespace Arrow.Collections
 		/// <param name="lookupFunction">A function that can map from one value to another</param>
 		/// <param name="equalityComparer">A comparer that will check for equality of "from" values</param>
 		/// <exception cref="System.ArgumentNullException">lookupFunction is null</exception>
-		public Memorizer(Func<FROM,TO> lookupFunction, IEqualityComparer<FROM> equalityComparer)
+		public Memorizer(Func<FROM,TO> lookupFunction, IEqualityComparer<FROM>? equalityComparer)
 		{
 			if(lookupFunction==null) throw new ArgumentNullException("lookupFunction");
 			
@@ -77,9 +77,7 @@ namespace Arrow.Collections
 		/// <returns>The value that "from" maps to</returns>
 		public TO Lookup(FROM from)
 		{
-			TO to=default(TO);
-			
-			if(m_Values.TryGetValue(from,out to)==false)
+			if(m_Values.TryGetValue(from,out var to)==false)
 			{
 				// The value hasn't been looked up yet, so fetch in
 				to=m_LookupFunction(from);

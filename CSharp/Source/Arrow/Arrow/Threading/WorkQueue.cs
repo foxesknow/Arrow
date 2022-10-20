@@ -46,7 +46,7 @@ namespace Arrow.Threading
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
-		protected WorkQueue(IWorkDispatcher dispatcher) : this(dispatcher,8)
+		protected WorkQueue(IWorkDispatcher? dispatcher) : this(dispatcher,8)
 		{
 		}
 		
@@ -55,7 +55,7 @@ namespace Arrow.Threading
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
 		/// <param name="initialCapacity">The initial capacity for the queue</param>
-		protected WorkQueue(IWorkDispatcher dispatcher, int initialCapacity)
+		protected WorkQueue(IWorkDispatcher? dispatcher, int initialCapacity)
 		{
 			if(initialCapacity<0) throw new ArgumentOutOfRangeException("initialCapacity");
 		
@@ -214,7 +214,7 @@ namespace Arrow.Threading
 		/// Processes all the items in the queue
 		/// </summary>
 		/// <param name="state">Not used</param>
-		private void ProcessQueue(object state)
+		private void ProcessQueue(object? state)
 		{
 			lock(m_SyncRoot)
 			{

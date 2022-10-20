@@ -6,6 +6,7 @@ using System.Xml;
 
 using Arrow.Configuration;
 using Arrow.Storage;
+using Arrow.Xml;
 using Arrow.Xml.ObjectCreation;
 
 namespace Arrow.Application.Plugins
@@ -22,7 +23,7 @@ namespace Arrow.Application.Plugins
 		private volatile bool m_Started;
 		
 		private static readonly object s_SyncRoot=new object();
-		private static PluginController s_SystemPlugins;
+		private static PluginController? s_SystemPlugins;
 		
 		/// <summary>
 		/// Initializes the instance
@@ -43,7 +44,7 @@ namespace Arrow.Application.Plugins
 				{
 					m_Plugins.ForEach(plugin=>
 					{
-						IPluginInitialize serviceInitialize=plugin as IPluginInitialize;
+						var serviceInitialize=plugin as IPluginInitialize;
 						if(serviceInitialize!=null) serviceInitialize.Initialize(this);
 						plugin.Start();
 					});
@@ -52,7 +53,7 @@ namespace Arrow.Application.Plugins
 					
 					m_Plugins.ForEach(plugin=>
 					{
-						IPluginPostStart postStart=plugin as IPluginPostStart;
+						var postStart=plugin as IPluginPostStart;
 						if(postStart!=null) postStart.AllPluginsStarted(this);
 					});
 				}
@@ -141,7 +142,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="predicate">The predicate to apply to each plugin</param>
 		/// <returns>The first plugin to match the predicate, or null if no plugin matches</returns>
-		public Plugin Find(Predicate<Plugin> predicate)
+		public Plugin? Find(Predicate<Plugin> predicate)
 		{
 			if(predicate==null) throw new ArgumentNullException("predicate");
 			
@@ -156,10 +157,10 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <typeparam name="T">The type the required plugin must implement</typeparam>
 		/// <returns>The first plugin to match, or null if no plugin matches</returns>
-		public T Find<T>()
+		public T? Find<T>() where T : class
 		{
 			Type type=typeof(T);
-			return (T)GetService(type);
+			return (T?)GetService(type);
 		}
 		
 		/// <summary>
@@ -167,7 +168,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="name">The name of the service to find</param>
 		/// <returns>The first service that matches the name, otherwise null</returns>
-		public Plugin FindByName(string name)
+		public Plugin? FindByName(string name)
 		{
 			if(name==null) throw new ArgumentNullException("name");
 			
@@ -219,7 +220,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="pluginType">The type of service object to get</param>
 		/// <returns>A service object of the specified type, or null if no matching object found</returns>
-		public object GetService(Type pluginType)
+		public object? GetService(Type pluginType)
 		{
 			if(pluginType==null) throw new ArgumentNullException("pluginType");
 			
@@ -259,7 +260,7 @@ namespace Arrow.Application.Plugins
 				
 				foreach(var plugin in m_Plugins)
 				{
-					IDisposable disposable=plugin as IDisposable;
+					var disposable=plugin as IDisposable;
 					if(disposable!=null) disposable.Dispose();	
 				}
 				
@@ -281,7 +282,7 @@ namespace Arrow.Application.Plugins
 						if(s_SystemPlugins==null)
 						{
 							
-							XmlNode systemPluginsNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Services/SystemPlugins");
+							var systemPluginsNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Services/SystemPlugins");
 							if(systemPluginsNode!=null)
 							{
 								try
@@ -320,9 +321,9 @@ namespace Arrow.Application.Plugins
 			
 			PluginController controller=new PluginController();
 			
-			foreach(XmlNode pluginNode in pluginsRoot.SelectNodes("Plugin"))
+			foreach(XmlNode? pluginNode in pluginsRoot.SelectNodesOrEmpty("Plugin"))
 			{
-				var plugin=XmlCreation.Create<Plugin>(pluginNode);
+				var plugin=XmlCreation.Create<Plugin>(pluginNode!);
 				controller.Add(plugin);
 			}
 			
@@ -339,7 +340,7 @@ namespace Arrow.Application.Plugins
 			if(uri==null) throw new ArgumentNullException("uri");
 		
 			XmlDocument doc=StorageManager.Get(uri).ReadXmlDocument();
-			return FromXml(doc.DocumentElement);
+			return FromXml(doc.DocumentElement!);
 		}
 	}
 }

@@ -50,7 +50,7 @@ namespace Arrow.ObjectAccess
 		/// <returns>The object at the uri</returns>
 		/// <exception cref="System.ArgumentNullException">uri is null</exception>
 		/// <exception cref="System.ArgumentNullException">if the scheme is not static and rootLookup is null</exception>
-		public static object Locate(Uri uri, Func<string,object> rootLookup)
+		public static object Locate(Uri uri, Func<string,object>? rootLookup)
 		{
 			return Locate<object>(uri,rootLookup);
 		}
@@ -64,11 +64,11 @@ namespace Arrow.ObjectAccess
 		/// <returns>The object at the uri</returns>
 		/// <exception cref="System.ArgumentNullException">uri is null</exception>
 		/// <exception cref="System.ArgumentNullException">if the scheme is not "static" or "depend" and rootLookup is null</exception>
-		public static T Locate<T>(Uri uri, Func<string,object> rootLookup)
+		public static T Locate<T>(Uri uri, Func<string,object>? rootLookup)
 		{
 			if(uri==null) throw new ArgumentNullException("uri");
 			
-			object obj=null;
+			object? obj=null;
 			
 			switch(uri.Scheme)
 			{
@@ -87,7 +87,7 @@ namespace Arrow.ObjectAccess
 					break;
 			}
 			
-			return (T)obj;
+			return (T)obj!;
 		}
 		
 		/// <summary>
@@ -102,10 +102,10 @@ namespace Arrow.ObjectAccess
 			return scheme==StaticScheme || scheme==SettingScheme;
 		}
 		
-		private static object ResolveStatic(Uri uri)
+		private static object? ResolveStatic(Uri uri)
 		{
 			string typeName=uri.Host;
-			string assemblyName=null;
+			string? assemblyName=null;
 			
 			// If the hostname is in the form x@y then x is the type and y is the namespace
 			// We can't use , to seperate them as it's an invalid character
@@ -125,11 +125,11 @@ namespace Arrow.ObjectAccess
 			return NavigateObject(type,null,properties);
 		}
 		
-		private static object ResolveViaLookup(Uri uri, Func<string,object> rootLookup)
+		private static object? ResolveViaLookup(Uri uri, Func<string,object?> rootLookup)
 		{
 			string startObjectName=uri.Host;
 			
-			object locatedObject=rootLookup(startObjectName);
+			object? locatedObject=rootLookup(startObjectName);
 			if(locatedObject==null) throw new ArrowException("root object is null: "+uri);
 			
 			string[] properties=SplitPathIntoProperties(uri);
@@ -154,9 +154,9 @@ namespace Arrow.ObjectAccess
 		/// <param name="obj"></param>
 		/// <param name="properties"></param>
 		/// <returns></returns>
-		private static object NavigateObject(Type type, object obj, string[] properties)
+		private static object? NavigateObject(Type type, object? obj, string[] properties)
 		{
-			object locatedObject=obj;
+			object? locatedObject=obj;
 		
 			for(int i=0; i<properties.Length; i++)
 			{
@@ -183,7 +183,7 @@ namespace Arrow.ObjectAccess
 		/// <param name="object">The object to call against. If null then the call is a static call</param>
 		/// <param name="name">The name of the property/field/method to fetch/call</param>
 		/// <returns>The value of the property/field/method</returns>
-		private static object GetValue(Type type, object @object, string name)
+		private static object? GetValue(Type type, object? @object, string name)
 		{
 			// Treat setting providers as a bucket of properties
 			if(@object is ISettings)
@@ -193,10 +193,10 @@ namespace Arrow.ObjectAccess
 		
 			// We'll resolve in property/field/method order as 
 			// this seems the most obvious thing a user would intend
-			PropertyInfo propertyInfo=type.GetProperty(name,Flags);
+			var propertyInfo=type.GetProperty(name,Flags);
 			if(propertyInfo!=null)
 			{
-				MethodInfo getMethod=propertyInfo.GetGetMethod();
+				var getMethod=propertyInfo.GetGetMethod();
 				if(getMethod==null) throw new ArrowException("property not readable: "+name);
 				
 				@object=getMethod.Invoke(@object,null);
@@ -204,7 +204,7 @@ namespace Arrow.ObjectAccess
 			else
 			{
 				// It might be a public field
-				FieldInfo fieldInfo=type.GetField(name,Flags);
+				var fieldInfo=type.GetField(name,Flags);
 				if(fieldInfo!=null)
 				{				
 					@object=fieldInfo.GetValue(@object);
@@ -212,7 +212,7 @@ namespace Arrow.ObjectAccess
 				else
 				{
 					// Finally, try a method of the form: RetType Method()
-					MethodInfo methodInfo=type.GetMethod(name,Flags,null,Type.EmptyTypes,null);
+					var methodInfo=type.GetMethod(name,Flags,null,Type.EmptyTypes,null);
 					if(methodInfo!=null)
 					{
 						if(methodInfo.ReturnType==typeof(void)) throw new ArrowException("resolved method returns void: "+name);
@@ -237,7 +237,7 @@ namespace Arrow.ObjectAccess
 		/// <param name="object">The object to lookup against</param>
 		/// <returns>A lookup delegate</returns>
 		/// <exception cref="System.ArgumentNullException">@object is null</exception>
-		public static Converter<string,object> MakeObjectRootLookup(object @object)
+		public static Converter<string,object?> MakeObjectRootLookup(object @object)
 		{
 			if(@object==null) throw new ArgumentNullException("object");
 		

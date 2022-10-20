@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable disable
+
 namespace Arrow.Collections
 {
 	/// <summary>
@@ -129,7 +131,7 @@ namespace Arrow.Collections
 		
 		class Comparer : IComparer<KeyValuePair<P,V>>
 		{
-			public IComparer<P> OuterPriority;
+			public IComparer<P> OuterPriority = default!;
 		
 			public int Compare(KeyValuePair<P,V> x, KeyValuePair<P,V> y)
 			{

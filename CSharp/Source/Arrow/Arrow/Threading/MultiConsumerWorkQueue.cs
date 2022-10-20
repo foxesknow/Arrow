@@ -48,7 +48,7 @@ namespace Arrow.Threading
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
 		/// <param name="numberOfConsumers">The number of consumer threads for the work</param>
-		protected MultiConsumerWorkQueue(IWorkDispatcher dispatcher, int numberOfConsumers)
+		protected MultiConsumerWorkQueue(IWorkDispatcher? dispatcher, int numberOfConsumers)
 		{
 			if(numberOfConsumers<=0) throw new ArgumentOutOfRangeException("numberOfConsumers");
 			if(dispatcher==null) dispatcher=new ThreadPoolWorkDispatcher();
@@ -158,7 +158,7 @@ namespace Arrow.Threading
 				// To cancel and exit a user should call Clear()
 				if(m_StopProcessing && m_Queue.Count==0)
 				{
-					data=default(T);
+					data=default!;
 					return DequeueResult.StopProcessing;
 				}
 
@@ -169,7 +169,7 @@ namespace Arrow.Threading
 					// We've been woken up, but it may be because we need to stop
 					if(m_StopProcessing && m_Queue.Count==0)
 					{
-						data=default(T);
+						data=default!;
 						return DequeueResult.StopProcessing;
 					}
 				}
@@ -183,7 +183,7 @@ namespace Arrow.Threading
 		/// Processes items in the queue
 		/// </summary>
 		/// <param name="state">Not used</param>
-		private void ProcessQueue(object state)
+		private void ProcessQueue(object? state)
 		{
 			while(true)
 			{

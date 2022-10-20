@@ -509,7 +509,7 @@ namespace Arrow.Xml.ObjectCreation
 				obj=CreateInstance(type,constructorParameters);
 			}
 			
-			DoInitializeInstance(obj,type,objectNode);			
+			DoInitializeInstance(obj!,type,objectNode);			
 			return obj;
 		}
 		
@@ -566,7 +566,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="type">The type that is expected</param>
 		/// <param name="value">The string version of the object</param>
 		/// <returns>An object of the specified type</returns>
-		private object CreateFromString(XmlNode node, Type type, string value)
+		private object? CreateFromString(XmlNode node, Type type, string value)
 		{
 			return QuickInitialize(TypeResolver.CoerceToType(type,value));
 		}
@@ -579,7 +579,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="url">The url to the object definition</param>
 		/// <param name="element">The element that specified the external link</param>
 		/// <returns>An object</returns>
-		private object CreateFromExternalSource(Type targetType, string url, XmlElement? element)
+		private object? CreateFromExternalSource(Type targetType, string url, XmlElement? element)
 		{
 			url=ExpandText(url);
 			Uri? uri=null;
@@ -685,7 +685,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// </summary>
 		/// <param name="obj">The object to initialize</param>
 		/// <returns>The original object</returns>
-		private object QuickInitialize(object obj)
+		private object? QuickInitialize(object? obj)
 		{
 			ISupportInitialize? initializer=obj as ISupportInitialize;
 			
@@ -899,7 +899,7 @@ namespace Arrow.Xml.ObjectCreation
 					value=TypeResolver.CoerceToType(propertyType,value);
 				}
 				
-				setter.Invoke(theObject,new object[]{value});
+				setter.Invoke(theObject,new object?[]{value});
 			}
 		}
 		

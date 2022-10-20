@@ -3,6 +3,7 @@
 		
 		<AssemblyTitle>Arrow</AssemblyTitle>
 		<Product>Arrow</Product>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -46,5 +47,9 @@
 	<ItemGroup>
 		<Compile Update="Application\Service\ServiceMainHost.cs" />
 		<Compile Update="Application\Service\InteractiveServiceBase.cs" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Net\" />
 	</ItemGroup>
 </Project>

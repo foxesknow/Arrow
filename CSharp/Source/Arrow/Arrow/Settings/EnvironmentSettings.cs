@@ -20,7 +20,7 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The environment variable to fetch</param>
 		/// <returns>The value of the variable</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
 			return Environment.GetEnvironmentVariable(name);
 		}

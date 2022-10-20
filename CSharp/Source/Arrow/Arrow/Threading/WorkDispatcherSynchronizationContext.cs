@@ -32,7 +32,7 @@ namespace Arrow.Threading
         /// </summary>
         /// <param name="d">The method to execute</param>
         /// <param name="state">State information for the method</param>
-        public override void Post(SendOrPostCallback d, object state)
+        public override void Post(SendOrPostCallback d, object? state)
         {
             m_WorkDispatcher.QueueUserWorkItem(s=>
             {
@@ -45,7 +45,7 @@ namespace Arrow.Threading
         /// </summary>
         /// <param name="d">The method to execute</param>
         /// <param name="state">State information for the method</param>
-        public override void Send(SendOrPostCallback d, object state)
+        public override void Send(SendOrPostCallback d, object? state)
         {
             d(state);
         }

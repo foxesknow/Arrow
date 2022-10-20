@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -94,7 +95,7 @@ namespace Arrow.Threading
 		/// </summary>
 		/// <param name="item">On success, the item from the front of the queue</param>
 		/// <returns>true if an item was taken from the queue, false otherwise</returns>
-		public bool TryDequeue(out T item)
+		public bool TryDequeue([MaybeNullWhen(false)] out T item)
 		{
 			bool gotItem=false;
 
@@ -107,7 +108,7 @@ namespace Arrow.Threading
 				}
 				else
 				{
-					item=default(T);
+					item=default;
 				}
 			}
 
@@ -120,7 +121,7 @@ namespace Arrow.Threading
 		/// <param name="timespan">How long to wait if nothing is on the queue</param>
 		/// <param name="item">On success, the item from the front of the queue</param>
 		/// <returns>true if an item was taken from the queue, false otherwise</returns>
-		public bool TryDequeue(TimeSpan timespan, out T item)
+		public bool TryDequeue(TimeSpan timespan, [MaybeNullWhen(false)] out T item)
 		{
 			bool gotItem=false;
 
@@ -137,7 +138,7 @@ namespace Arrow.Threading
 					}
 					else
 					{
-						item=default(T);
+						item=default;
 					}
 				}
 				else
@@ -184,7 +185,7 @@ namespace Arrow.Threading
 		/// </summary>
 		/// <param name="item">On success the item at the front of the queue</param>
 		/// <returns>true if there was an item that was peeked, false otherwise</returns>
-		public bool TryPeek(out T item)
+		public bool TryPeek([MaybeNullWhen(false)]out T item)
 		{
 			bool peeked=false;
 
@@ -197,7 +198,7 @@ namespace Arrow.Threading
 				}
 				else
 				{
-					item=default(T);
+					item=default;
 				}
 			}
 
@@ -210,7 +211,7 @@ namespace Arrow.Threading
 		/// <param name="timespan">How long to wait if nothing is on the queue</param>
 		/// <param name="item">On success the item at the front of the queue</param>
 		/// <returns>true if an item was peeked, false otherwise</returns>
-		public bool TryPeek(TimeSpan timespan, out T item)
+		public bool TryPeek(TimeSpan timespan, [MaybeNullWhen(false)]out T item)
 		{
 			bool peeked=false;
 
@@ -227,7 +228,7 @@ namespace Arrow.Threading
 					}
 					else
 					{
-						item=default(T);
+						item=default;
 					}
 				}
 				else

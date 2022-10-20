@@ -17,13 +17,13 @@ namespace Arrow.Storage
 		/// <param name="possibleRelativeUri">A uri string that may be relative</param>
 		/// <returns>A uri for the resource</returns>
 		/// <exception cref="System.ArgumentNullException">possibleRelativeUri is null</exception>
-		public static Uri ResolveRelative(Uri baseUri, string possibleRelativeUri)
+		public static Uri ResolveRelative(Uri? baseUri, string possibleRelativeUri)
 		{
 			if(possibleRelativeUri==null) throw new ArgumentNullException("possibleRelativeUri");
 			
 			if(baseUri==null) return CreateUri(possibleRelativeUri);
 			
-			Uri uri=null;
+			Uri? uri=null;
 			
 			if(possibleRelativeUri.Contains(Uri.SchemeDelimiter))
 			{
@@ -78,7 +78,7 @@ namespace Arrow.Storage
 		{
 			if(uriText==null) throw new ArgumentNullException("uriText");
 			
-			Uri uri=null;
+			Uri? uri=null;
 			
 			if(uriText.Contains(Uri.SchemeDelimiter))
 			{

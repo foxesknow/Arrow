@@ -16,7 +16,7 @@ namespace Arrow.Calendar
 	{
 		private readonly object m_SyncRoot=new object();
 		
-		private Timer m_Timer;
+		private Timer? m_Timer;
 		
 		private readonly List<ScheduledAction> m_ScheduledActions=new List<ScheduledAction>();
 		
@@ -205,7 +205,7 @@ namespace Arrow.Calendar
 		/// Called when the timer triggers
 		/// </summary>
 		/// <param name="state"></param>
-		private void HandlerTimer(object state)
+		private void HandlerTimer(object? state)
 		{
 			// We'll run the tasks outside of the sync root
 			// so that the actions can call back into the 
@@ -239,8 +239,6 @@ namespace Arrow.Calendar
 			}
 		}
 
-		#region IDisposable Members
-
 		/// <summary>
 		/// Stops scheduling reminders and releases any resources
 		/// </summary>
@@ -256,8 +254,6 @@ namespace Arrow.Calendar
 				}
 			}
 		}
-
-		#endregion
 		
 		class ScheduledAction  : IEquatable<ScheduledAction>
 		{
@@ -270,9 +266,9 @@ namespace Arrow.Calendar
 			public DateTime When{get;private set;}
 			public Action Reminder{get;private set;}
 
-			public override bool Equals(object obj)
+			public override bool Equals(object? obj)
 			{
-				ScheduledAction rhs=obj as ScheduledAction;
+				var rhs=obj as ScheduledAction;
 				if(rhs==null) return false;
 				
 				return Equals(rhs);
@@ -283,14 +279,10 @@ namespace Arrow.Calendar
 				return this.When.GetHashCode();
 			}
 
-			#region IEquatable<Task> Members
-
-			public bool Equals(ScheduledAction other)
+			public bool Equals(ScheduledAction? other)
 			{
-				return this.When==other.When;
+				return other is not null && this.When==other.When;
 			}
-
-			#endregion
 		}
 	}
 }

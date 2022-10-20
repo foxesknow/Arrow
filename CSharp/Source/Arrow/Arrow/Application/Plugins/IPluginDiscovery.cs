@@ -16,21 +16,21 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="predicate">The predicate to apply to each plugin</param>
 		/// <returns>The first plugin to match the predicate, or null if no plugin matches</returns>
-		Plugin Find(Predicate<Plugin> predicate);
+		Plugin? Find(Predicate<Plugin> predicate);
 		
 		/// <summary>
 		/// Searches for the first service to implements the specified type
 		/// </summary>
 		/// <typeparam name="T">The type the required service must implement</typeparam>
 		/// <returns>The first service to match, or null if no service matches</returns>
-		T Find<T>();
+		T? Find<T>() where T : class;
 		
 		/// <summary>
 		/// Searches for a plugin with a given name
 		/// </summary>
 		/// <param name="pluginName">The name of the plugin to find</param>
 		/// <returns>The first plugin that matches the name, otherwise null</returns>
-		Plugin FindByName(string pluginName);
+		Plugin? FindByName(string pluginName);
 		
 		/// <summary>
 		/// Returns all the plugins in a controller

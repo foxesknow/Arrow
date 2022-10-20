@@ -17,11 +17,11 @@ namespace Arrow.Configuration
 		/// loaded then it should return null
 		/// </summary>
 		/// <returns>The config document, or null if it could not be loaded</returns>
-		XmlDocument LoadConfig();
+		XmlDocument? LoadConfig();
 		
 		/// <summary>
 		/// The location of the document
 		/// </summary>
-		Uri Uri{get;}
+		Uri? Uri{get;}
 	}
 }

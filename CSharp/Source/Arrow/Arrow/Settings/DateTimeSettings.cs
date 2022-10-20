@@ -22,7 +22,7 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The name of the setting to retrieve</param>
 		/// <returns>The value of the setting, or null if it does not exist</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
 			switch(name.ToLower())
 			{

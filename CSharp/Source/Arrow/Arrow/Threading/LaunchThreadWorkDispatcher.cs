@@ -66,7 +66,7 @@ namespace Arrow.Threading
 		/// <param name="waitCallback">The callback to execute</param>
 		/// <param name="state">Any additional state to pass to the callback</param>
 		/// <returns>true if the work was queued, otherwise false</returns>
-		public bool QueueUserWorkItem(WaitCallback waitCallback, object state)
+		public bool QueueUserWorkItem(WaitCallback waitCallback, object? state)
 		{
 			if(waitCallback==null) throw new ArgumentNullException("waitCallback");
 

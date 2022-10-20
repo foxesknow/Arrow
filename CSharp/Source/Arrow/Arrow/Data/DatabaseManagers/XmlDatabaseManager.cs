@@ -102,7 +102,7 @@ namespace Arrow.Data.DatabaseManagers
 
             if(this.DynamicDatabases is not null)
             {
-                foreach(XmlNode? node in this.DynamicDatabases.SelectNodeOrEmpty("*"))
+                foreach(XmlNode? node in this.DynamicDatabases.SelectNodesOrEmpty("*"))
                 {
                     if(node is null) continue;
 
@@ -175,7 +175,7 @@ namespace Arrow.Data.DatabaseManagers
         {
             if(this.DynamicDatabases is null) throw new DataException($"could not find database: {databaseName}");
 
-            foreach(XmlNode? node in this.DynamicDatabases.SelectNodeOrEmpty("*"))
+            foreach(XmlNode? node in this.DynamicDatabases.SelectNodesOrEmpty("*"))
             {
                 if(node is null) continue;
 

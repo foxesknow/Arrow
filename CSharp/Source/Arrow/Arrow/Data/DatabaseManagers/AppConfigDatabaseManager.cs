@@ -96,7 +96,7 @@ namespace Arrow.Data.DatabaseManagers
             var nodes = document.DocumentElement!.SelectSingleNode("connectionStrings");
             if(nodes is null) return;
 
-            foreach(XmlNode? node in nodes.SelectNodeOrEmpty("*"))
+            foreach(XmlNode? node in nodes.SelectNodesOrEmpty("*"))
             {
                 if(node is null) continue;
 
@@ -105,7 +105,7 @@ namespace Arrow.Data.DatabaseManagers
                 var name = node.Attributes!.GetValueOrDefault("name", null);
                 
                 if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("invalid database name");
-                if(m_ConnectionInfo.ContainsKey(name)) throw new DataException($"duplicate argument name: {name}");
+                if(m_ConnectionInfo.ContainsKey(name!)) throw new DataException($"duplicate argument name: {name}");
 
                 var connectionString = node.Attributes!.GetValueOrDefault("connectionString", "");
                 var providerName = node.Attributes!.GetValueOrDefault("providerName", "");
@@ -125,7 +125,7 @@ namespace Arrow.Data.DatabaseManagers
                     var transational = (details.ConnectionInfo  & ConnectionInfo.Transactional) != 0;
                     if(transational != details.Database.Transactional) throw new DataException($"conflicting transactional status for {name}");
 
-                    m_ConnectionInfo.Add(name, details);
+                    m_ConnectionInfo.Add(name!, details);
                 }
             }
         }

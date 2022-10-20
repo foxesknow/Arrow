@@ -13,7 +13,7 @@ namespace Arrow.Xml.ObjectCreation
 		private CustomXmlCreation m_Factory;
 		private XmlNode m_Node;
 		private Type m_Type;
-		private Uri m_BaseUri;
+		private Uri? m_BaseUri;
 	
 		/// <summary>
 		/// Initializes the object
@@ -22,7 +22,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <param name="node">The node containing the xml description of the object</param>
 		/// <param name="type">The type of the object that will be created</param>
 		/// <param name="uri">The uri to the document containing the node, if applicable</param>
-		internal DelayedCreator(CustomXmlCreation factory, XmlNode node, Type type, Uri uri)
+		internal DelayedCreator(CustomXmlCreation factory, XmlNode node, Type type, Uri? uri)
 		{
 			m_Factory=factory;
 			m_Node=node;

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.ServiceProcess;
 
+#nullable disable
+
 namespace Arrow.Application.Service
 {
 	/// <summary>

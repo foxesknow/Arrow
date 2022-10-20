@@ -5,6 +5,8 @@ using System.Text;
 
 using Arrow.Logging;
 
+#nullable disable
+
 namespace Arrow.Application.Plugins.ErrorHandling
 {
 	/// <summary>

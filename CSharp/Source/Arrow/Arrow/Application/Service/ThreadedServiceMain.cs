@@ -19,8 +19,8 @@ namespace Arrow.Application.Service
 	{
 		private readonly ILog Log=LogManager.GetDefaultLog();
 
-		private Thread m_ServiceThread;
-		private ManualResetEvent m_StopEvent;
+		private Thread? m_ServiceThread;
+		private ManualResetEvent? m_StopEvent;
 
 		/// <summary>
 		/// Starts the service
@@ -42,7 +42,7 @@ namespace Arrow.Application.Service
 		{
 			if(m_ServiceThread!=null)
 			{
-				m_StopEvent.Set();
+				m_StopEvent!.Set();
 				m_ServiceThread.Join();
 
 				m_StopEvent.Dispose();
@@ -56,13 +56,13 @@ namespace Arrow.Application.Service
 		{
 			try
 			{
-				Start(m_StopEvent,args);
+				Start(m_StopEvent!,args);
 
 				// NOTE: If Start doesn't wait on the event then it will return and we'll drop down to
 				// the finally block and potentially dispose the service. We only want that to happen
 				// when the service is stopping, so by waiting here we can ensure that we only leave this
 				// block when its time to stop
-				m_StopEvent.WaitOne();
+				m_StopEvent!.WaitOne();
 			}
 			catch(Exception e)
 			{

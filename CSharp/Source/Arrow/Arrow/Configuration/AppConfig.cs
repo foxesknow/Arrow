@@ -42,8 +42,8 @@ namespace Arrow.Configuration
 	/// </summary>
 	public static class AppConfig
 	{
-		private static XmlDocument s_ConfigDocument;
-		private static IConfigFile s_CurrentConfigFile;
+		private static XmlDocument? s_ConfigDocument;
+		private static IConfigFile s_CurrentConfigFile = default!;
 		
 		static AppConfig()
 		{
@@ -71,7 +71,7 @@ namespace Arrow.Configuration
 		/// <summary>
 		/// Returns the document used for configuration, or null if no document exists
 		/// </summary>
-		internal static XmlDocument ConfigDocument
+		internal static XmlDocument? ConfigDocument
 		{
 			get{return s_ConfigDocument;}
 		}
@@ -85,7 +85,7 @@ namespace Arrow.Configuration
 		{
 			if(configFile==null) throw new ArgumentNullException("configFile");
 			
-			XmlDocument newDoc=configFile.LoadConfig();
+			var newDoc=configFile.LoadConfig();
 			s_ConfigDocument=newDoc;
 			s_CurrentConfigFile=configFile;
 		}
@@ -104,34 +104,36 @@ namespace Arrow.Configuration
 		/// </summary>
 		/// <param name="path">The path to the section. May be null</param>
 		/// <returns>A collection of values, or null if path does not resolve to a location in the xml</returns>
-		public static NameValueCollection LegacyGetConfig(string path)
+		public static NameValueCollection? LegacyGetConfig(string path)
 		{
 			if(string.IsNullOrEmpty(path)) return null;
 			
-			XmlDocument doc=s_ConfigDocument;
+			var doc=s_ConfigDocument;
 			if(doc==null) return null;
 			
-			XmlNode section=doc.DocumentElement.SelectSingleNode(path);
+			var section=doc.DocumentElement!.SelectSingleNode(path);
 			if(section==null) return null;
 			
 			NameValueSectionHandler handler=new NameValueSectionHandler();
 			NameValueCollection data=new NameValueCollection();
 			
-			foreach(XmlNode node in section.SelectNodes("*"))
+			foreach(XmlNode? node in section.SelectNodesOrEmpty("*"))
 			{
+				if(node is null) continue;
+
 				switch(node.Name)
 				{
 					case "add":
 					{
-						string key=node.Attributes["key"].Value;
-						string value=node.Attributes["value"].Value;
+						string key=node.Attributes!["key"]!.Value!;
+						string value=node.Attributes!["value"]!.Value!;
 						data[key]=TokenExpander.ExpandText(value);
 						break;
 					}
 					
 					case "remove":
 					{
-						string key=node.Attributes["key"].Value;
+						string key=node.Attributes!["key"]!.Value!;
 						data.Remove(key);
 						break;
 					}
@@ -157,22 +159,22 @@ namespace Arrow.Configuration
 		/// <returns>The xml for the section, or null if not found</returns>
 		/// <exception cref="System.ArgumentNullException">system is null</exception>
 		/// <exception cref="System.ArgumentNullException">section is null</exception>
-		public static XmlNode GetSectionXml(string system, string sectionPath)
+		public static XmlNode? GetSectionXml(string system, string sectionPath)
 		{
 			if(system==null) throw new ArgumentNullException("system");
 			if(sectionPath==null) throw new ArgumentNullException("sectionPath");
 			
-			XmlDocument doc=s_ConfigDocument;
+			var doc=s_ConfigDocument;
 			if(doc==null) return null;
 			
-			XmlNode systemNode=doc.DocumentElement.SelectSingleNode(system);
+			var systemNode=doc.DocumentElement!.SelectSingleNode(system);
 			if(systemNode==null) return null;
 			
 			IConfigFile configFile=s_CurrentConfigFile;
-			XmlNode searchRoot=GetSearchRoot(systemNode,sectionPath,configFile.Uri);
+			var searchRoot=GetSearchRoot(systemNode,sectionPath,configFile.Uri);
 			if(searchRoot==null) return null;
 			
-			XmlNode node=searchRoot.SelectSingleNode(sectionPath);
+			var node=searchRoot.SelectSingleNode(sectionPath);
 			
 			return node;
 		}
@@ -183,14 +185,14 @@ namespace Arrow.Configuration
 		/// <param name="system">The system to access, for example Arrow</param>
 		/// <returns>The xml for the system, or null if not found</returns>
 		/// <exception cref="System.ArgumentNullException">system is null</exception>
-		public static XmlNode GetSystemXml(string system)
+		public static XmlNode? GetSystemXml(string system)
 		{
 			if(system==null) throw new ArgumentNullException("system");
 			
-			XmlDocument doc=s_ConfigDocument;
+			var doc=s_ConfigDocument;
 			if(doc==null) return null;
 			
-			XmlNode node=doc.DocumentElement.SelectSingleNode(system);			
+			var node=doc.DocumentElement!.SelectSingleNode(system);			
 			return node;
 		}
 		
@@ -205,8 +207,8 @@ namespace Arrow.Configuration
 		/// <exception cref="System.ArgumentNullException">section is null</exception>
 		public static T GetSectionObject<T>(string system, string sectionPath) where T:class
 		{
-			XmlNode node=GetSectionXml(system,sectionPath);			
-			if(node==null) return default(T);
+			var node=GetSectionXml(system,sectionPath);			
+			if(node==null) return default!;
 			
 			return XmlCreation.Create<T>(node);
 		}
@@ -223,10 +225,10 @@ namespace Arrow.Configuration
 		{
 			if(objectElementName==null) throw new ArgumentNullException("objectElementName");
 			
-			XmlNode node=GetSectionXml(system,sectionPath);
+			var node=GetSectionXml(system,sectionPath);
 			if(node==null) return new List<T>();
 		
-			return XmlCreation.CreateList<T>(node.SelectNodes(objectElementName));
+			return XmlCreation.CreateList<T>(node.SelectNodesOrEmpty(objectElementName));
 		}
 		
 		/// <summary>
@@ -239,9 +241,9 @@ namespace Arrow.Configuration
 		/// <returns>An object, or null if the section does not exist</returns>
 		/// <exception cref="System.ArgumentNullException">system is null</exception>
 		/// <exception cref="System.ArgumentNullException">section is null</exception>
-		public static object GetSectionForHandler<T>(string system, string sectionPath) where T:IConfigurationSectionHandler,new()
+		public static object? GetSectionForHandler<T>(string system, string sectionPath) where T:IConfigurationSectionHandler,new()
 		{
-			XmlNode node=GetSectionXml(system,sectionPath);			
+			var node=GetSectionXml(system,sectionPath);			
 			if(node==null) return null;
 			
 			IConfigurationSectionHandler handler=new T();
@@ -259,28 +261,28 @@ namespace Arrow.Configuration
 		/// <param name="sectionPath">The section path (eg Arrow.Configuration/Foo)</param>
 		/// <param name="baseUri">The uri of the current appconfig. This is used to resolve uris</param>
 		/// <returns>The root element to start the search from</returns>
-		private static XmlNode GetSearchRoot(XmlNode systemNode, string sectionPath, Uri baseUri)
+		private static XmlNode? GetSearchRoot(XmlNode systemNode, string sectionPath, Uri? baseUri)
 		{
 			// Work out which subsection we're looking at
 			string rootSection=sectionPath;			
 			int pivot=sectionPath.IndexOf('/');
 			if(pivot!=-1) rootSection=sectionPath.Substring(0,pivot);
 			
-			XmlNode rootSectionNode=systemNode.SelectSingleNode(rootSection);
+			var rootSectionNode=systemNode.SelectSingleNode(rootSection);
 			if(rootSectionNode==null) return systemNode;
 			
-			string location=rootSectionNode.Attributes.GetValueOrDefault("uri",null);
+			var location=rootSectionNode.Attributes!.GetValueOrDefault("uri",null);
 			if(location==null) return systemNode;
 			
 			location=TokenExpander.ExpandText(location);
 			Uri uri=Accessor.ResolveRelative(baseUri,location);
 			
-			string allowMissingString=rootSectionNode.Attributes.GetValueOrDefault("allowMissing","false");
+			string allowMissingString=rootSectionNode.Attributes!.GetValueOrDefault("allowMissing","false");
 			
 			bool allowMissing;
 			bool.TryParse(allowMissingString,out allowMissing);
 			
-			XmlNode searchRoot=null;
+			XmlNode? searchRoot=null;
 			
 			try
 			{

@@ -22,12 +22,12 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The name of the setting to get</param>
 		/// <returns>The value of the setting, if found, otherwise the default value</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
 			if(name==null) throw new ArgumentNullException("name");
 			
-			string defaultValue=null;
-			string setting=null;
+			string? defaultValue=null;
+			string? setting=null;
 			
 			char separator=SettingsManager.NamespaceSeparatorChar;
 			
@@ -50,8 +50,7 @@ namespace Arrow.Settings
 				setting=name.Substring(pivot+1);
 			}
 			
-			object value;
-			SettingsManager.TryGetSetting<object>(setting,out value);
+			SettingsManager.TryGetSetting<object>(setting,out var value);
 			
 			return value ?? defaultValue;
 		}

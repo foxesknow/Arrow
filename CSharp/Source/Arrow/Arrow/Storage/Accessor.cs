@@ -126,11 +126,11 @@ namespace Arrow.Storage
 		/// </summary>
 		/// <param name="obj">The right hand side of the comparison</param>
 		/// <returns>true if the two instances refer to the same item, otherwise false</returns>
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if(obj==null) return false;
 
-			Accessor rhs=obj as Accessor;
+			var rhs=obj as Accessor;
 			if(rhs==null) return false;
 
 			return m_Uri==rhs.m_Uri;

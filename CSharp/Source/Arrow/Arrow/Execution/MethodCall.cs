@@ -119,13 +119,13 @@ namespace Arrow.Execution
 		/// <param name="parameters">Any parameters to pass to the delegate</param>
 		/// <returns>Any value returned by the delegate</returns>
 		/// <exception cref="System.ArgumentNullException">delegateToCall is null</exception>
-		public static object Invoke(Delegate delegateToCall, params object[] parameters)
+		public static object? Invoke(Delegate delegateToCall, params object[] parameters)
 		{
 			if(delegateToCall==null) throw new ArgumentNullException("delegateToCall");
 			
-			ISynchronizeInvoke synchronizeInvoke=delegateToCall.Target as ISynchronizeInvoke;
+			var synchronizeInvoke=delegateToCall.Target as ISynchronizeInvoke;
 			
-			object result=null;
+			object? result=null;
 			
 			if(synchronizeInvoke!=null && synchronizeInvoke.InvokeRequired)
 			{
@@ -166,7 +166,7 @@ namespace Arrow.Execution
 		{
 			if(delegateToCall==null) throw new ArgumentNullException("delegateToCall");
 			
-			ISynchronizeInvoke synchronizeInvoke=delegateToCall.Target as ISynchronizeInvoke;
+			var synchronizeInvoke=delegateToCall.Target as ISynchronizeInvoke;
 			
 			if(synchronizeInvoke==null)
 			{

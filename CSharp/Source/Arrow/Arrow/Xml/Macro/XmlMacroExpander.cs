@@ -9,6 +9,8 @@ using Arrow.Text;
 using Arrow.Storage;
 using Arrow.Reflection;
 
+#nullable disable
+
 namespace Arrow.Xml.Macro
 {
 	/// <summary>

@@ -21,7 +21,7 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The filesystem setting name</param>
 		/// <returns>A string instance, or null if the setting does not exist</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
 			switch(name.ToLower())
 			{

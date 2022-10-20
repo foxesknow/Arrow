@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -29,7 +30,7 @@ namespace Arrow.Collections
 		/// </summary>
 		/// <param name="item">Set to a pooled item if available, otherwise the default for T</param>
 		/// <returns>true if an item was checked out, false if not</returns>
-		bool TryCheckout(out T item);
+		bool TryCheckout([MaybeNullWhen(false)]out T item);
 
 		/// <summary>
 		/// Returns the number of items available in the pool

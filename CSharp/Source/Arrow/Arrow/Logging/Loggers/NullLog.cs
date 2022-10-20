@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+#nullable disable
+
 namespace Arrow.Logging.Loggers
 {
 	/// <summary>
@@ -14,7 +16,30 @@ namespace Arrow.Logging.Loggers
 		/// </summary>
 		public static readonly ILog Instance=new NullLog();
 	
-		#region ILog Members
+		bool ILog.IsDebugEnabled
+		{
+			get{return false;}
+		}
+
+		bool ILog.IsInfoEnabled
+		{
+			get{return false;}
+		}
+
+		bool ILog.IsWarnEnabled
+		{
+			get{return false;}
+		}
+
+		bool ILog.IsErrorEnabled
+		{
+			get{return false;}
+		}
+
+		bool ILog.IsFatalEnabled
+		{
+			get{return false;}
+		}
 
 		void ILog.Debug(object message)
 		{
@@ -155,32 +180,5 @@ namespace Arrow.Logging.Loggers
 		void ILog.FatalFormat(IFormatProvider provider, string format, params object[] args)
 		{
 		}
-
-		bool ILog.IsDebugEnabled
-		{
-			get{return false;}
-		}
-
-		bool ILog.IsInfoEnabled
-		{
-			get{return false;}
-		}
-
-		bool ILog.IsWarnEnabled
-		{
-			get{return false;}
-		}
-
-		bool ILog.IsErrorEnabled
-		{
-			get{return false;}
-		}
-
-		bool ILog.IsFatalEnabled
-		{
-			get{return false;}
-		}
-
-		#endregion
 	}
 }

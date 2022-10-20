@@ -41,11 +41,11 @@ namespace Arrow.Reflection
 		/// </summary>
 		/// <param name="type">The type to check</param>
 		/// <returns>The name of the default member, or null if the type does not have one</returns>
-		public static string DefaultMemberName(this Type type)
+		public static string? DefaultMemberName(this Type type)
 		{
 			if(type==null) throw new ArgumentNullException("type");
 
-			string name=null;
+			string? name=null;
 
 			var attributes=type.CustomAttributes<DefaultMemberAttribute>(true);
 			if(attributes!=null && attributes.Length>0)
@@ -76,7 +76,7 @@ namespace Arrow.Reflection
                 all.Add(next);
 
                 var baseType=next.BaseType;
-                if(baseType!=null) types.Push(next.BaseType);
+                if(baseType!=null) types.Push(baseType);
                                
                 foreach(var @interface in next.GetInterfaces())
                 {
@@ -94,7 +94,7 @@ namespace Arrow.Reflection
 		/// <param name="propertyName">The name of the property to search for</param>
 		/// <param name="bindingFlags">How to lookup the property against a type</param>
 		/// <returns>The PropertyInfo instance for the property, or null if the property could not be found</returns>
-		public static PropertyInfo GetPropertyAndSearchInterfaces(this Type type, string propertyName, BindingFlags bindingFlags)
+		public static PropertyInfo? GetPropertyAndSearchInterfaces(this Type type, string propertyName, BindingFlags bindingFlags)
 		{
 			if(type==null) throw new ArgumentNullException("type");
 			
@@ -129,7 +129,7 @@ namespace Arrow.Reflection
 		/// <param name="bindingFlags">The binding flags for the lookup</param>
 		/// <param name="parameters">The types of the parameters for the method</param>
 		/// <returns>The method, if found, otherwise null</returns>
-		public static MethodInfo GetExactMethod(this Type type, string methodName, BindingFlags bindingFlags, params Type[] parameters)
+		public static MethodInfo? GetExactMethod(this Type type, string methodName, BindingFlags bindingFlags, params Type[] parameters)
 		{
 			if(type==null) throw new ArgumentNullException("type");
 

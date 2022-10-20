@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -21,7 +22,7 @@ namespace Arrow.Collections
 		/// <summary>
 		/// Initializes the instance with a default comparer
 		/// </summary>
-		public Heap() : this((IComparer<T>)null)
+		public Heap() : this((IComparer<T>?)null)
 		{		
 		}
 		
@@ -29,7 +30,7 @@ namespace Arrow.Collections
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="comparer">The comparer to use. If null a default is used</param>
-		public Heap(IComparer<T> comparer)
+		public Heap(IComparer<T>? comparer)
 		{
 			if(comparer==null) comparer=Comparer<T>.Default;
 			
@@ -49,7 +50,7 @@ namespace Arrow.Collections
 		/// </summary>
 		/// <param name="comparer">The comparer to use. If null a default is used</param>
 		/// <param name="data">The data to add to the heap</param>
-		public Heap(IComparer<T> comparer, IEnumerable<T> data) : this(comparer)
+		public Heap(IComparer<T>? comparer, IEnumerable<T> data) : this(comparer)
 		{
 			if(data==null) throw new ArgumentNullException("data");
 		
@@ -131,7 +132,7 @@ namespace Arrow.Collections
 		/// <param name="index">The index to start from</param>
 		/// <param name="value">On success the value to the left of index</param>
 		/// <returns>true if a value was found, false otherwise</returns>
-		public bool TryGetLeft(int index, out T value)
+		public bool TryGetLeft(int index, [MaybeNullWhen(false)] out T value)
 		{
 			if(index<0 || index>=m_Data.Count) throw new IndexOutOfRangeException("index");
 			
@@ -155,7 +156,7 @@ namespace Arrow.Collections
 		/// <param name="index">The index to start from</param>
 		/// <param name="value">On success the value to the right of index</param>
 		/// <returns>true if a value was found, false otherwise</returns>
-		public bool TryGetRight(int index, out T value)
+		public bool TryGetRight(int index, [MaybeNullWhen(false)] out T value)
 		{
 			if(index<0 || index>=m_Data.Count) throw new IndexOutOfRangeException("index");
 			
@@ -168,7 +169,7 @@ namespace Arrow.Collections
 			}
 			else
 			{
-				value=default(T);
+				value=default!;
 				return false;
 			}
 		}

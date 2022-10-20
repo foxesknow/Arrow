@@ -53,7 +53,7 @@ namespace Arrow.Threading
 		/// </summary>
 		/// <param name="location">The location to read</param>
 		/// <returns>The value at the location</returns>
-		public static object Read(ref object location)
+		public static object? Read(ref object? location)
 		{
 			return Interlocked.CompareExchange(ref location,null,null);
 		}
@@ -63,7 +63,7 @@ namespace Arrow.Threading
 		/// </summary>
 		/// <param name="location">The location to read</param>
 		/// <returns>The value at the location</returns>
-		public static T Read<T>(ref T location) where T:class
+		public static T? Read<T>(ref T? location) where T:class
 		{
 			return Interlocked.CompareExchange(ref location,null,null);
 		}

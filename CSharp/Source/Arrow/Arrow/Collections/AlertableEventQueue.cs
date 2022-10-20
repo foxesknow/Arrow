@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -75,7 +76,7 @@ namespace Arrow.Collections
 		/// </summary>
 		/// <param name="data">On success the item at the front, otherwise the default value for T</param>
 		/// <returns>true is an item was removed, otherwise false</returns>
-		public bool TryDequeue(out T data)
+		public bool TryDequeue([MaybeNullWhen(false)] out T data)
 		{
 			bool gotData=false;
 		

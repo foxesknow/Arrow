@@ -29,7 +29,7 @@ namespace Arrow.Configuration
 		/// Loads the XmlDocument from the location
 		/// </summary>
 		/// <returns>An xml document</returns>
-		public XmlDocument LoadConfig()
+		public XmlDocument? LoadConfig()
 		{
 			return StorageManager.Get(m_Location).ReadXmlDocument();
 		}
@@ -37,7 +37,7 @@ namespace Arrow.Configuration
 		/// <summary>
 		/// The location of the config file
 		/// </summary>
-		public Uri Uri
+		public Uri? Uri
 		{
 			get{return m_Location;}
 		}

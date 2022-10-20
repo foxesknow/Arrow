@@ -21,16 +21,16 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The name of the setting to retrieve</param>
 		/// <returns>The value of the setting, of null if it could not be found</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
-			object value=null;
+			object? value=null;
 		
 			List<string> stack=SettingsManager.NamespaceStack;
 			
 			for(int i=0; i<stack.Count && value==null; i++)
 			{
 				string @namespace=stack[i];
-				ISettings settings=SettingsManager.GetSettings(@namespace);
+				var settings=SettingsManager.GetSettings(@namespace);
 				
 				if(settings==null) continue;
 				

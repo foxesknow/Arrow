@@ -27,7 +27,7 @@ namespace Arrow.IO
 			string adjustedPath=filename.Replace('/','.');
 			adjustedPath=filename.Replace('\\','.');
 
-			return assembly.GetManifestResourceStream(adjustedPath);
+			return assembly.GetManifestResourceStream(adjustedPath)!;
 		}
 
 		/// <summary>

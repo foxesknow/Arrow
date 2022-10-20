@@ -37,7 +37,7 @@ namespace Arrow.IO
 			string[] parts=pathExpression.Split(DirectorySeparators,StringSplitOptions.RemoveEmptyEntries);
 
 			int startPart=0;
-			string root=null;
+			string? root=null;
 			
 			if(Path.IsPathRooted(parts[0])) 
 			{

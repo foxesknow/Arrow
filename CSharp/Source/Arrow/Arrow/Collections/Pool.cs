@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -82,7 +83,7 @@ namespace Arrow.Collections
 		/// </summary>
 		/// <param name="item">Set to a pooled item if available, otherwise the default for T</param>
 		/// <returns>true if an item was checked out, false if not</returns>
-		public bool TryCheckout(out T item)
+		public bool TryCheckout([MaybeNullWhen(false)] out T item)
 		{
 			lock(m_SyncRoot)
 			{
@@ -93,7 +94,7 @@ namespace Arrow.Collections
 				}
 				else
 				{
-					item=default(T);
+					item=default!;
 					return false;
 				}
 			}

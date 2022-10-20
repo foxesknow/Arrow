@@ -46,7 +46,7 @@ namespace Arrow.Threading
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
-		public TaskWorkQueue(IWorkDispatcher dispatcher) : this(dispatcher,8)
+		public TaskWorkQueue(IWorkDispatcher? dispatcher) : this(dispatcher,8)
 		{
 		}
 		
@@ -55,7 +55,7 @@ namespace Arrow.Threading
 		/// </summary>
 		/// <param name="dispatcher">A dispatcher that will place work into a thread pool. If null the default dispatcher is used</param>
 		/// <param name="initialCapacity">The initial capacity for the queue</param>
-		public TaskWorkQueue(IWorkDispatcher dispatcher, int initialCapacity)
+		public TaskWorkQueue(IWorkDispatcher? dispatcher, int initialCapacity)
 		{
 			if(initialCapacity<0) throw new ArgumentOutOfRangeException("initialCapacity");
 		
@@ -166,7 +166,7 @@ namespace Arrow.Threading
 		/// </summary>
 		public void Cancel()
 		{
-			List<IWork> workItems=null;
+			List<IWork>? workItems=null;
 
 			// Do the cancel outside the lock to allow re-entrancy on other threads
 			lock(m_SyncRoot)
@@ -206,7 +206,7 @@ namespace Arrow.Threading
 		/// Processes all the items in the queue
 		/// </summary>
 		/// <param name="state">Not used</param>
-		private void ProcessQueue(object state)
+		private void ProcessQueue(object? state)
 		{
 			lock(m_SyncRoot)
 			{

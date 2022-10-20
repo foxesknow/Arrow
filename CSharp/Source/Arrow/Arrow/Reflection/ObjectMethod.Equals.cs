@@ -70,9 +70,9 @@ namespace Arrow.Reflection
 
 			// We'll use the EqualityComparer to simplify things
 			var comparer=typeof(EqualityComparer<>).MakeGenericType(type);
-			var equalsMethod=comparer.GetMethod("Equals",new Type[]{type,type});
+			var equalsMethod=comparer.GetMethod("Equals",new Type[]{type,type})!;
 
-			var defaultProperty=comparer.GetProperty("Default",PublicStatic);
+			var defaultProperty=comparer.GetProperty("Default",PublicStatic)!;
 			var @default=Expression.Property(null,defaultProperty);
 
 			return Expression.Call(@default,equalsMethod,lValue,rValue);

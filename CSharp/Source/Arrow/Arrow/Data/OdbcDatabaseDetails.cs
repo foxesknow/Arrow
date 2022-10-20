@@ -12,26 +12,20 @@ namespace Arrow.Data
 	/// </summary>
 	public class OdbcDatabaseDetails : DatabaseDetails
 	{
-		private string m_ConnectionString;
-	
 		/// <summary>
 		/// Creates a database connection.
 		/// </summary>
 		/// <returns>A database connection</returns>
 		public override IDbConnection CreateConnection()
 		{
-			if(m_ConnectionString==null) throw new ArgumentNullException("connectionString");
+			if(this.ConnectionString==null) throw new ArgumentNullException("connectionString");
 			
-			return new OdbcConnection(m_ConnectionString);
+			return new OdbcConnection(this.ConnectionString);
 		}
 		
 		/// <summary>
 		/// The connection string to use to connect to an ODBC database
 		/// </summary>
-		public string ConnectionString
-		{
-			get{return m_ConnectionString;}
-			set{m_ConnectionString=value;}
-		}
+		public string? ConnectionString{get; set;}
 	}
 }

@@ -27,7 +27,7 @@ namespace Arrow.Factory
 		/// </summary>
 		public static void LoadTypesFromAppConfig()
 		{
-			XmlNode installerNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Factory/RegisteredTypeInstaller");
+			var installerNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Factory/RegisteredTypeInstaller");
 			if(installerNode!=null)
 			{
 				RegisteredTypeInstallerConfiguration config=RegisteredTypeInstallerConfiguration.FromXml(installerNode);
@@ -40,9 +40,9 @@ namespace Arrow.Factory
 		/// </summary>
 		/// <param name="assemblyFilename">The filename to load and scan</param>
 		/// <returns>The assembly that was loaded and scanned</returns>
-		public static Assembly LoadTypes(string assemblyFilename)
+		public static Assembly? LoadTypes(string assemblyFilename)
 		{
-			Assembly assembly=LoadAssembly(assemblyFilename);
+			var assembly=LoadAssembly(assemblyFilename);
 
             if(assembly!=null)
             {
@@ -95,7 +95,7 @@ namespace Arrow.Factory
 			Type factory=attribute.FactoryType;
 			string name=attribute.Name;
 			
-			MethodInfo registration=null;
+			MethodInfo? registration=null;
 			s_FactoryRegister.TryGetValue(factory,out registration);
 			if(registration==null)
 			{
@@ -117,7 +117,7 @@ namespace Arrow.Factory
 		/// Loads an assembly
 		/// </summary>
 		/// <param name="assemblyName">The assembly to load</param>
-		private static Assembly LoadAssembly(string assemblyName)
+		private static Assembly? LoadAssembly(string assemblyName)
 		{
 			try
 			{

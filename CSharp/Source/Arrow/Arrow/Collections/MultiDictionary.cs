@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+
+#nullable disable
 
 namespace Arrow.Collections
 {
@@ -11,7 +14,7 @@ namespace Arrow.Collections
 	/// <typeparam name="TKey">The type of the keys in the dictionary</typeparam>
 	/// <typeparam name="TValue">The type of the values in the dictionary</typeparam>
 	[Serializable]
-	public class MultiDictionary<TKey,TValue> : IDictionary<TKey,TValue>
+	public class MultiDictionary<TKey,TValue> : IDictionary<TKey,TValue> where TKey : notnull
 	{
 		private Dictionary<TKey,IList<TValue>> m_Data=new Dictionary<TKey,IList<TValue>>();
 
@@ -148,9 +151,8 @@ namespace Arrow.Collections
 			if(key==null) throw new ArgumentNullException("key");
 			
 			bool found=false;
-			IList<TValue> values;
 			
-			if(m_Data.TryGetValue(key,out values))
+			if(m_Data.TryGetValue(key,out var values))
 			{
 				if(values.Count!=0)
 				{
@@ -159,12 +161,12 @@ namespace Arrow.Collections
 				}
 				else
 				{
-					value=default(TValue);
+					value=default!;
 				}
 			}
 			else
 			{
-				value=default(TValue);
+				value=default!;
 			}
 			
 			return found;
@@ -211,8 +213,7 @@ namespace Arrow.Collections
 		{
 			if(key==null) throw new ArgumentNullException("key");
 			
-			IList<TValue> values;
-			if(m_Data.TryGetValue(key,out values)==false)
+			if(m_Data.TryGetValue(key,out var values)==false)
 			{
 				throw new KeyNotFoundException();
 			}
@@ -231,8 +232,7 @@ namespace Arrow.Collections
 			{
 				if(key==null) throw new ArgumentNullException("key");
 			
-				IList<TValue> values;
-				if(m_Data.TryGetValue(key,out values) && values.Count!=0)
+				if(m_Data.TryGetValue(key,out var values) && values.Count!=0)
 				{
 					return values[0];
 				}
@@ -282,8 +282,7 @@ namespace Arrow.Collections
 		{
 			if(key==null) throw new ArgumentNullException("key");
 			
-			IList<TValue> values;
-			if(m_Data.TryGetValue(key,out values))
+			if(m_Data.TryGetValue(key,out var values))
 			{
 				values.Clear();
 			}
@@ -298,8 +297,7 @@ namespace Arrow.Collections
 		{
 			bool found=false;
 			
-			IList<TValue> values;
-			if(m_Data.TryGetValue(item.Key,out values))
+			if(m_Data.TryGetValue(item.Key,out var values))
 			{
 				found=values.Contains(item.Value);
 			}
@@ -362,8 +360,7 @@ namespace Arrow.Collections
 		{
 			bool removed=false;
 			
-			IList<TValue> values;
-			if(m_Data.TryGetValue(item.Key,out values))
+			if(m_Data.TryGetValue(item.Key,out var values))
 			{
 				removed=values.Remove(item.Value);
 			}
@@ -413,8 +410,7 @@ namespace Arrow.Collections
 		
 		private IList<TValue> GetOrCreate(TKey key)
 		{
-			IList<TValue> values;
-			if(m_Data.TryGetValue(key,out values)==false)
+			if(m_Data.TryGetValue(key,out var values)==false)
 			{
 				values=new List<TValue>();
 				m_Data.Add(key,values);

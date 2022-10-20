@@ -20,7 +20,7 @@ namespace Arrow.Application.Service
 	public abstract class InteractiveServiceMain : ServiceMain
 	{
 		private readonly ILog Log=LogManager.GetDefaultLog();
-		private ManualResetEvent m_StopEvent;
+		private ManualResetEvent? m_StopEvent;
 
 		internal override void OnStart(string[] args)
 		{
@@ -33,7 +33,7 @@ namespace Arrow.Application.Service
 		{
 			try
 			{
-				m_StopEvent.Set();
+				m_StopEvent!.Set();
 				Stop();
 			}
 			catch(Exception e)
@@ -41,7 +41,7 @@ namespace Arrow.Application.Service
 				Log.Error("Error stopping interactive service",e);
 			}
 
-			m_StopEvent.Dispose();
+			m_StopEvent?.Dispose();
 			m_StopEvent=null;
 		}
 	}

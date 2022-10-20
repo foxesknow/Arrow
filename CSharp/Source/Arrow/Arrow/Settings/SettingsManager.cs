@@ -87,14 +87,13 @@ namespace Arrow.Settings
 		/// <param name="namespace">The namespace to look up</param>
 		/// <returns>The settings in the namespace, or null if one does not exist</returns>
 		/// <exception cref="System.ArgumentNullException">namespace is null</exception>
-		public static ISettings GetSettings(string @namespace)
+		public static ISettings? GetSettings(string @namespace)
 		{
 			if(@namespace==null) throw new ArgumentNullException("namespace");
 			
 			lock(s_Lock)
 			{
-				ISettings settings=null;
-				s_Namespaces.TryGetValue(@namespace,out settings);
+				s_Namespaces.TryGetValue(@namespace,out var settings);
 				return settings;
 			}
 		}
@@ -249,11 +248,10 @@ namespace Arrow.Settings
 		{
 			lock(s_Lock)
 			{
-				ISettings existingSettings=null;
-				if(s_Namespaces.TryGetValue(@namespace,out existingSettings))
+				if(s_Namespaces.TryGetValue(@namespace,out var existingSettings))
 				{
 					// There's already a setting, so aggregate it
-					SettingsCollection bundle=existingSettings as SettingsCollection;
+					var bundle=existingSettings as SettingsCollection;
 					if(bundle==null)
 					{
 						bundle=new SettingsCollection();
@@ -291,13 +289,13 @@ namespace Arrow.Settings
 			if(@namespace==null) throw new ArgumentNullException("namespace");
 			if(setting==null) throw new ArgumentNullException("setting");
 			
-			value=default(T);
+			value=default!;
 
 			bool success=false;
-			ISettings settings=GetSettings(@namespace);
+			var settings=GetSettings(@namespace);
 			if(settings!=null)
 			{
-				object o=settings.GetSetting(setting);
+				var o=settings.GetSetting(setting);
 				if(o!=null)
 				{
 					// The actual setting may be a boxed type (like an int).

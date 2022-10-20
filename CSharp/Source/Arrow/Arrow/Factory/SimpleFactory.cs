@@ -69,7 +69,7 @@ namespace Arrow.Factory
 		{
 			if(name==null) throw new ArgumentNullException("name");
 			
-			TypeInfo typeInfo=null;
+			TypeInfo? typeInfo=null;
 			
 			lock(this.SyncRoot)
 			{
@@ -81,7 +81,7 @@ namespace Arrow.Factory
 				throw new ArrowException(name+" is not a registered type");
 			}
 
-			return (T)typeInfo.Factory();
+			return (T)typeInfo.Factory!();
 		}
 		
 		/// <summary>
@@ -94,16 +94,16 @@ namespace Arrow.Factory
 		{
 			if(name==null)  throw new ArgumentNullException("name");
 			
-			TypeInfo typeInfo=null;
+			TypeInfo? typeInfo=null;
 			
 			lock(this.SyncRoot)
 			{
 				m_Types.TryGetValue(name,out typeInfo);
 			}
 			
-			if(typeInfo==null) return default(T);
+			if(typeInfo==null) return default!;
 			
-			return (T)typeInfo.Factory();
+			return (T)typeInfo.Factory!();
 		}
 		
 		/// <summary>
@@ -112,9 +112,9 @@ namespace Arrow.Factory
 		/// <param name="name">The registered name to get</param>
 		/// <param name="type">On exit is set to the type of the registered name, or null if the type could not be found</param>
 		/// <returns>true if the type is found, otherwise false</returns>
-		public bool TryGetType(string name, out Type type)
+		public bool TryGetType(string name, out Type? type)
 		{
-			TypeInfo typeInfo=null;
+			TypeInfo? typeInfo=null;
 
 			lock(this.SyncRoot)
 			{
@@ -156,12 +156,12 @@ namespace Arrow.Factory
 		/// </summary>
 		private Func<object> Compile(string name, Type type)
 		{
-			ConstructorInfo ctor=type.GetConstructor(Type.EmptyTypes);
+			var ctor=type.GetConstructor(Type.EmptyTypes);
 			if(ctor==null) throw new ArrowException(name+" does not have a default constructor");
 
 			var newExpression=Expression.New(ctor);
 			
-			Expression<Func<object>> function=null;
+			Expression<Func<object>>? function=null;
 
 			if(type.IsValueType)
 			{
@@ -178,8 +178,8 @@ namespace Arrow.Factory
 
 		class TypeInfo
 		{
-			public Type Type;
-			public Func<object> Factory;
+			public Type? Type;
+			public Func<object>? Factory;
 		}
 	}
 }

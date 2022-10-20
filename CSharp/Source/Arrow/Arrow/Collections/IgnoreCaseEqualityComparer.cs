@@ -21,7 +21,7 @@ namespace Arrow.Collections
 		/// <param name="x">The left side</param>
 		/// <param name="y">The right side</param>
 		/// <returns>true if equal, otherwise false</returns>
-		public bool Equals(string x, string y)
+		public bool Equals(string? x, string? y)
 		{
 			return string.Compare(x,y,true)==0;
 		}

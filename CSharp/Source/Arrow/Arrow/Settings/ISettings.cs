@@ -15,6 +15,6 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The name of the setting to get</param>
 		/// <returns>The value for the setting, or null if the setting does not exist</returns>
-		object GetSetting(string name);
+		object? GetSetting(string name);
 	}
 }

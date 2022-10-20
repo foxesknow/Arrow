@@ -54,7 +54,7 @@ namespace Arrow.Text
 		/// <param name="value">The string to expand</param>
 		/// <param name="unknownVariableLookup">A function to call if the variable cannot be resolved (may be null)</param>
 		/// <returns>An expanded version of the string</returns>
-		public static string ExpandText(string value, Func<string,object> unknownVariableLookup)
+		public static string ExpandText(string value, Func<string,object?> unknownVariableLookup)
 		{
 			return ExpandText(value,DefaultBeginToken,DefaultEndToken,unknownVariableLookup);
 		}
@@ -69,7 +69,7 @@ namespace Arrow.Text
 		/// <param name="endToken">The characters that mark the end of the token</param>
 		/// <param name="unknownVariableLookup">A function to call if the variable cannot be resolved (may be null)</param>
 		/// <returns>The expanded version of value</returns>
-		public static string ExpandText(string value, string beginToken, string endToken, Func<string,object> unknownVariableLookup)
+		public static string ExpandText(string value, string beginToken, string endToken, Func<string,object?>? unknownVariableLookup)
 		{
 			int beginMarkLength=beginToken.Length;
 			int endMarkLength=endToken.Length;
@@ -122,18 +122,18 @@ namespace Arrow.Text
 		/// <param name="unknownVariableLookup">The handler to call if the variable is not found or does not have a namespace qualifier</param>
 		/// <returns>The value for the token</returns>
 		/// <exception cref="System.ArgumentNullException">token is null</exception>
-		public static string ExpandToken(string token, Func<string,object> unknownVariableLookup)
+		public static string ExpandToken(string token, Func<string,object?>? unknownVariableLookup)
 		{
 			if(token==null) throw new ArgumentNullException("token");
 		
-			string result=null;
+			string? result=null;
 			
-			string @namespace=null;
-			string variable=null;
-			string property=null;
-			string formatting=null;
-			object value=null;
-			string action=null;
+			string? @namespace=null;
+			string? variable=null;
+			string? property=null;
+			string? formatting=null;
+			object? value=null;
+			string? action=null;
 			
 			// Split the pipeline apart to get the variable|formatting|action parts
 			string[] parts=token.Split(new char[]{'|'},4);
@@ -172,7 +172,7 @@ namespace Arrow.Text
 			else
 			{
 				// Get the variable from the namespace
-				ISettings settings=SettingsManager.GetSettings(@namespace);
+				ISettings? settings=SettingsManager.GetSettings(@namespace);
 				if(settings!=null)
 				{
 					value=settings.GetSetting(variable);
@@ -194,7 +194,7 @@ namespace Arrow.Text
 			// See if we're doing a property lookup on the value
 			if(string.IsNullOrEmpty(property)==false)
 			{
-				foreach(string propertyName in property.Split('.'))
+				foreach(string propertyName in property!.Split('.'))
 				{
 					if(value is ISettings)
 					{
@@ -205,10 +205,10 @@ namespace Arrow.Text
 					}
 					else
 					{
-						PropertyInfo info=value.GetType().GetProperty(propertyName,PropertyBindings);
+						var info=value!.GetType().GetProperty(propertyName,PropertyBindings);
 						if(info==null) throw new ArrowException("property not found: "+propertyName);
 						
-						MethodInfo method=info.GetGetMethod();
+						var method=info.GetGetMethod();
 						if(method==null) throw new ArrowException("property not readable: "+propertyName);
 						
 						value=method.Invoke(value,null);
@@ -219,11 +219,11 @@ namespace Arrow.Text
 			// Apply any formatting if the user has specified it
 			if(string.IsNullOrEmpty(formatting))
 			{
-				result=value.ToString();
+				result=value.ToString()!;
 			}
 			else
 			{
-				IFormattable formattable=value as IFormattable;
+				var formattable=value as IFormattable;
 				if(formattable!=null)
 				{
 					result=formattable.ToString(formatting,null);
@@ -231,14 +231,14 @@ namespace Arrow.Text
 				else
 				{
 					// As the object isn't formattable just return the value
-					result=value.ToString();
+					result=value.ToString()!;
 				}
 			}
 			
 			// Apply any actions
 			if(string.IsNullOrEmpty(action)==false)
 			{
-				switch(action.ToLower())
+				switch(action!.ToLower())
 				{
 					case "trim":
 						result=result.Trim();

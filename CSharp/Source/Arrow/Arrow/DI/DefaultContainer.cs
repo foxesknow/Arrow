@@ -17,7 +17,7 @@ namespace Arrow.DI
 		private readonly object m_SyncRoot=new object();
 		private readonly Dictionary<Type,Func<CreationContext,object>> m_Items=new Dictionary<Type,Func<CreationContext,object>>();
 
-		private readonly DefaultContainer m_Parent;
+		private readonly DefaultContainer? m_Parent;
 
 		/// <summary>
 		/// Initializes the instance
@@ -30,7 +30,7 @@ namespace Arrow.DI
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="parent">The parent container, if applicable</param>
-		internal DefaultContainer(DefaultContainer parent)
+		internal DefaultContainer(DefaultContainer? parent)
 		{
 			m_Parent=parent;
 		}
@@ -107,7 +107,7 @@ namespace Arrow.DI
 			EnsureTypeCompatible(exposedTypes,concreteType);
 			EnsureTypeConstraints(concreteType);
 
-			Func<CreationContext,object> lookup=null;
+			Func<CreationContext,object>? lookup=null;
 
 			if(lifetime==Lifetime.Transient)
 			{
@@ -122,8 +122,8 @@ namespace Arrow.DI
 			else if(lifetime==Lifetime.Singleton)
 			{
 				// We'll create the instance and the lock for it on demand
-				object instance=null;
-				object singletonLock=null;
+				object? instance=null;
+				object? singletonLock=null;
 				bool initialized=false;
 
 				lookup=context=>
@@ -134,7 +134,7 @@ namespace Arrow.DI
 						{
 							return CreateType(context,concreteType);
 						}
-					});
+					})!;
 				};
 			}
 			else
@@ -164,7 +164,7 @@ namespace Arrow.DI
 		{
 			if(factory==null) throw new ArgumentNullException("factory");
 
-			Func<CreationContext,object> lookup=null;
+			Func<CreationContext,object>? lookup=null;
 
 			if(lifetime==Lifetime.Transient)
 			{
@@ -176,8 +176,8 @@ namespace Arrow.DI
 			else if(lifetime==Lifetime.Singleton)
 			{
 				// We'll create the instance and the lock for it on demand
-				object instance=null;
-				object singletonLock=null;
+				object? instance=null;
+				object? singletonLock=null;
 				bool initialized=false;
 
 				lookup=context=>
@@ -185,7 +185,7 @@ namespace Arrow.DI
 					return LazyInitializer.EnsureInitialized(ref instance,ref initialized,ref singletonLock,()=>
 					{
 						return factory(this);
-					});
+					})!;
 				};
 			}
 			else
@@ -281,8 +281,7 @@ namespace Arrow.DI
 			// First, see if we've got an explicit lookup function for the type
 			lock(m_SyncRoot)
 			{
-				Func<CreationContext,object> lookup;
-				if(m_Items.TryGetValue(type,out lookup)) 
+				if(m_Items.TryGetValue(type,out var lookup)) 
 				{
 					return lookup(context);
 				}
@@ -311,7 +310,7 @@ namespace Arrow.DI
 		/// <returns></returns>
 		private ConstructorInfo SelectConstructor(Type typeInfo)
 		{
-			ConstructorInfo candidate=null;
+			ConstructorInfo? candidate=null;
 			bool ambigious=false;
 
 			foreach(var ctor in typeInfo.GetConstructors())

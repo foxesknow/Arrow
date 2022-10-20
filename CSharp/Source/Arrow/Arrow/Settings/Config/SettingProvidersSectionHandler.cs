@@ -7,6 +7,7 @@ using System.Xml;
 using Arrow.Xml.ObjectCreation;
 using Arrow.Storage;
 using Arrow.Text;
+using Arrow.Xml;
 
 namespace Arrow.Settings.Config
 {
@@ -42,15 +43,17 @@ namespace Arrow.Settings.Config
 		/// <param name="section">The xml to scan for "SettingScript" elements</param>
 		private void ProcessSettingScript(SettingProvidersConfiguration config, XmlNode section)
 		{
-			foreach(XmlNode settingScriptNode in section.SelectNodes("SettingScript"))
+			foreach(XmlNode? settingScriptNode in section.SelectNodesOrEmpty("SettingScript"))
 			{
-				XmlAttribute uriAttr=settingScriptNode.Attributes["uri"];
+				if(settingScriptNode is null) continue;
+
+				XmlAttribute? uriAttr=settingScriptNode.Attributes!["uri"];
 				if(uriAttr==null) continue;
 				
 				string uriText=TokenExpander.ExpandText(uriAttr.Value);
 				Uri uri=Accessor.CreateUri(uriText);
 				XmlDocument doc=StorageManager.Get(uri).ReadXmlDocument();
-				ProcessSettings(config,doc.DocumentElement);
+				ProcessSettings(config,doc.DocumentElement!);
 			}
 		}
 		
@@ -62,8 +65,10 @@ namespace Arrow.Settings.Config
 		private void ProcessSettings(SettingProvidersConfiguration config, XmlNode section)
 		{
 			// Each provider elements needs a "namespace" and "provider" value
-			foreach(XmlNode settingNode in section.SelectNodes("Setting"))
+			foreach(XmlNode? settingNode in section.SelectNodesOrEmpty("Setting"))
 			{
+				if(settingNode is null) continue;
+
 				ProviderInfo info=XmlCreation.Create<ProviderInfo>(typeof(ProviderInfo),settingNode);
 				config.Add(info);
 			}

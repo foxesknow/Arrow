@@ -44,9 +44,9 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The name of the setting</param>
 		/// <returns>The value of the setting, or null if the setting does not exist</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
-			object value=null;
+			object? value=null;
 			
 			// Search in reverse to give the most recent priority
 			for(int i=m_Settings.Count-1 ; i>=0 && value==null; i--)

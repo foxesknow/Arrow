@@ -12,7 +12,7 @@ namespace Arrow.Logging.Async
 	public static class AsyncLogWriter
 	{
 		private static readonly object s_Lock=new object();
-		private static Thread s_LogThread;
+		private static Thread? s_LogThread;
 		private static bool s_Running;
 		
 		private static List<ILogData> s_LogData=new List<ILogData>();

@@ -32,8 +32,7 @@ namespace Arrow.Settings
 			{
 				string value=args[i];
 				
-				CommandLineSwitch commandSwitch;
-				if(CommandLineSwitch.TryParse(value,out commandSwitch))
+				if(CommandLineSwitch.TryParse(value,out var commandSwitch))
 				{
 					string commandValue=commandSwitch.Value ?? "";
 					m_Args[commandSwitch.Name]=commandValue;
@@ -46,10 +45,9 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The commandline setting name</param>
 		/// <returns>A string instance, or null if the setting does not exist</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
-			object value;
-			m_Args.TryGetValue(name,out value);
+			m_Args.TryGetValue(name,out var value);
 			return value;
 		}
 

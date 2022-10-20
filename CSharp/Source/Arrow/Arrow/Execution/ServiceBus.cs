@@ -70,7 +70,7 @@ namespace Arrow.Execution
 				handlers.AddRange(m_Handlers[bucket].Events);
 				handlers.RemoveAll(e=>
 				{
-					EventHandler<T> other=e.Handler as EventHandler<T>;
+					var other=e.Handler as EventHandler<T>;
 					return other!=null && other==handler;
 				});
 				

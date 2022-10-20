@@ -5,6 +5,8 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Threading;
 
+#nullable disable
+
 namespace Arrow.Threading.Collections
 {
 	/// <summary>

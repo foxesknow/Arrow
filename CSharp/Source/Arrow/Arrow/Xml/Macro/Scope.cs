@@ -14,13 +14,13 @@ namespace Arrow.Xml.Macro
 		
 		private Stack<string> m_IncludeStack;
 	
-		private Scope m_Parent;
+		private Scope? m_Parent;
 		
 		/// <summary>
 		/// Initializes an instance
 		/// </summary>
 		/// <param name="parent">Any parent instance to defer to. This may be null</param>
-		public Scope(Scope parent)
+		public Scope(Scope? parent)
 		{
 			m_Parent=parent;
 			
@@ -49,9 +49,9 @@ namespace Arrow.Xml.Macro
 		/// </summary>
 		/// <param name="name">The name of the macro to fetch</param>
 		/// <returns>The specified macro, or null if it does not exist</returns>
-		public XmlNode GetMacro(string name)
+		public XmlNode? GetMacro(string name)
 		{
-			XmlNode node=null;
+			XmlNode? node=null;
 			
 			if(m_Macros.TryGetValue(name,out node)==false)
 			{

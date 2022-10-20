@@ -7,7 +7,8 @@ using System.IO;
 using Arrow.Collections;
 using Arrow.Configuration;
 using Arrow.Xml.ObjectCreation;
-using Arrow.Storage.Vfs;
+using Arrow.Xml;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Arrow.Storage
 {
@@ -26,7 +27,6 @@ namespace Arrow.Storage
 			s_Accessors["file"]=uri=>new FileAccessor(uri);
 			s_Accessors["http"]=uri=>new HttpAccessor(uri);
 			s_Accessors[ResourceAccessor.Scheme]=uri=>new ResourceAccessor(uri);
-			s_Accessors[GlobalVirtualFileSystemAccessor.Scheme]=uri=>new GlobalVirtualFileSystemAccessor(uri);
 
 			LoadFromAppConfig();
 		}
@@ -60,9 +60,7 @@ namespace Arrow.Storage
 		{
 			if(uri==null) throw new ArgumentNullException("uri");
 			
-			Accessor accessor=null;
-			
-			if(TryGetAcccessor(uri,out accessor))
+			if(TryGetAcccessor(uri,out var accessor))
 			{
 				return accessor;
 			}
@@ -79,11 +77,11 @@ namespace Arrow.Storage
 		/// <param name="accessor">On success the accessor, or null if no accessor is found</param>
 		/// <returns>true if the accessor is found, otherwise false</returns>
 		/// <exception cref="System.ArgumentNullException">uri is null</exception>
-		public static bool TryGetAcccessor(Uri uri, out Accessor accessor)
+		public static bool TryGetAcccessor(Uri uri, [NotNullWhen(true)] out Accessor? accessor)
 		{
 			if(uri==null) throw new ArgumentNullException("uri");
 
-			Func<Uri,Accessor> factory=null;
+			Func<Uri,Accessor>? factory=null;
 
 			lock(s_Lock)
 			{
@@ -123,40 +121,25 @@ namespace Arrow.Storage
 			var node=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Storage/StorageManager");
 			if(node==null) return;
 			
-			List<DataAccessInfo> accessors=XmlCreation.CreateList<DataAccessInfo>(node.SelectNodes("*"));
+			List<DataAccessInfo> accessors=XmlCreation.CreateList<DataAccessInfo>(node.SelectNodesOrEmpty("*"));
 			
 			lock(s_Lock)
 			{
 				foreach(var info in accessors)
 				{
-					if(s_Accessors.ContainsKey(info.Name)==false)
+					if(s_Accessors.ContainsKey(info.Name!)==false)
 					{
-						s_Accessors[info.Name]=info.Factory.Create;
+						s_Accessors[info.Name!]=info.Factory!.Create;
 					}
 				}
 			}
 		}
 
-		#region Helper classes
-		
 		class DataAccessInfo
 		{
-			private string m_Name;
-			private IAccessorFactory m_Factory;
-			
-			public string Name
-			{
-				get{return m_Name;}
-				set{m_Name=value;}
-			}
-			
-			public IAccessorFactory Factory
-			{
-				get{return m_Factory;}
-				set{m_Factory=value;}
-			}
+			public string? Name{get; set;}
+			public IAccessorFactory? Factory{get; set;}
 		}
 		
-		#endregion
 	}
 }

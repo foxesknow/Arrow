@@ -13,13 +13,13 @@ namespace Arrow.Xml.Macro
 	/// </summary>
 	class NameScope
 	{
-		private NameScope m_Previous;
+		private NameScope? m_Previous;
 		
 		private Dictionary<string,ScopedItem> m_Variables=new Dictionary<string,ScopedItem>(IgnoreCaseEqualityComparer.Instance);
 		
 		private bool m_Locked;
 		
-		private Dictionary<string,object> m_LanguageData=null;
+		private Dictionary<string,object>? m_LanguageData;
 		
 		private readonly object m_SyncRoot;
 		
@@ -63,8 +63,6 @@ namespace Arrow.Xml.Macro
 			return new NameScope(this);
 		}
 		
-	
-		
 		private NameScope GetRootScope()
 		{
 			NameScope current=this;
@@ -76,22 +74,19 @@ namespace Arrow.Xml.Macro
 			return current;
 		}
 		
-		
-
-		
 		/// <summary>
 		/// Returns the previous scope, or null if there is no previous scope
 		/// </summary>
-		protected internal NameScope Previous
+		protected internal NameScope? Previous
 		{
 			get{return m_Previous;}
 		}
 		
-		private ScopedItem FindItem(string name)
+		private ScopedItem? FindItem(string name)
 		{
-			ScopedItem item=null;
+			ScopedItem? item=null;
 			
-			for(NameScope scope=this; scope!=null && item==null; scope=scope.Previous)
+			for(NameScope? scope=this; scope!=null && item==null; scope=scope.Previous)
 			{
 				item=scope.FindInCurrentScope(name);
 			}
@@ -99,11 +94,9 @@ namespace Arrow.Xml.Macro
 			return item;
 		}
 		
-		private ScopedItem FindInCurrentScope(string name)
+		private ScopedItem? FindInCurrentScope(string name)
 		{
-			ScopedItem item=null;
-			m_Variables.TryGetValue(name,out item);
-			
+			m_Variables.TryGetValue(name,out var item);
 			return item;
 		}
 		
@@ -158,7 +151,7 @@ namespace Arrow.Xml.Macro
 			
 			lock(m_SyncRoot)
 			{
-				ScopedItem item=FindItem(name);
+				var item=FindItem(name);
 
 				if(item==null) throw new ArgumentException("variable not found: "+name);
 				return item.Value;
@@ -171,13 +164,13 @@ namespace Arrow.Xml.Macro
 		/// <param name="name">The name of the item to lookup</param>
 		/// <returns>The value for the item, or null if it could not be found</returns>
 		/// <exception cref="System.ArgumentNullException">name is null</exception>
-		public object Lookup(string name)
+		public object? Lookup(string name)
 		{
 			if(name==null) throw new ArgumentNullException("name");
 			
 			lock(m_SyncRoot)
 			{
-				ScopedItem item=FindItem(name);
+				var item=FindItem(name);
 				return item==null ? null : item.Value;
 			}
 		}
@@ -189,13 +182,13 @@ namespace Arrow.Xml.Macro
 		/// <param name="value">On success the value of the item</param>
 		/// <returns>true if the name as found, false otherwise</returns>
 		/// <exception cref="System.ArgumentNullException">name is null</exception>
-		public bool TryLookup(string name, out object value)
+		public bool TryLookup(string name, out object? value)
 		{
 			if(name==null) throw new ArgumentNullException("name");
 			
 			lock(m_SyncRoot)
 			{
-				ScopedItem item=FindItem(name);			
+				var item=FindItem(name);			
 				value=(item==null ? null : item.Value);
 				
 				return item!=null;
@@ -288,7 +281,7 @@ namespace Arrow.Xml.Macro
 			{
 				bool assigned=false;
 				
-				ScopedItem item=FindItem(name);
+				var item=FindItem(name);
 				if(item!=null && item.ScopedItemMode==ScopedItemMode.ReadWrite)
 				{
 					item.Value=value;
@@ -347,7 +340,7 @@ namespace Arrow.Xml.Macro
 			{
 				bool found=false;
 				
-				ScopedItem item=FindItem(name);
+				var item=FindItem(name);
 				if(item!=null)
 				{
 					found=true;
@@ -376,20 +369,20 @@ namespace Arrow.Xml.Macro
 		{
 			lock(m_SyncRoot)
 			{
-				ScopedItem item=FindItem(variableName);
+				var item=FindItem(variableName);
 				if(item==null) throw new XmlMacroExpanderException("variable not found: "+variableName);
 
 				return item.Value;
 			}
 		}
 
-		public bool TryGetVariable(string variableName, out object result)
+		public bool TryGetVariable(string variableName, out object? result)
 		{
 			result=null;
 
 			lock(m_SyncRoot)
 			{
-				ScopedItem item=FindItem(variableName);
+				var item=FindItem(variableName);
 				if(item!=null) result=item.Value;
 				return item!=null;
 			}
@@ -399,7 +392,7 @@ namespace Arrow.Xml.Macro
 		{
 			lock(m_SyncRoot)
 			{
-				ScopedItem item=FindItem(variableName);
+				var item=FindItem(variableName);
 				return item!=null;
 			}
 		}

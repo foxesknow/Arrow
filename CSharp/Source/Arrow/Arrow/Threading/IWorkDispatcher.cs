@@ -24,6 +24,6 @@ namespace Arrow.Threading
 		/// <param name="waitCallback">The delegate that will be called</param>
 		/// <param name="state">Any additional state information for the request</param>
 		/// <returns>true if the request was queued, false otherwise</returns>
-		bool QueueUserWorkItem(WaitCallback waitCallback, object state);
+		bool QueueUserWorkItem(WaitCallback waitCallback, object? state);
 	}
 }

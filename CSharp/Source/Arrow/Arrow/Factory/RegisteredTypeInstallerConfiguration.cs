@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-
+using Arrow.Xml;
 using Arrow.Xml.ObjectCreation;
 
 namespace Arrow.Factory
@@ -42,7 +42,7 @@ namespace Arrow.Factory
 		{
 			if(node==null) throw new ArgumentNullException("null");
 			
-			List<string> assemblies=XmlCreation.CreateList<string>(node.SelectNodes("Assembly"));
+			List<string> assemblies=XmlCreation.CreateList<string>(node.SelectNodesOrEmpty("Assembly"));
 			
 			RegisteredTypeInstallerConfiguration config=new RegisteredTypeInstallerConfiguration();
 			config.Assemblies.AddRange(assemblies);

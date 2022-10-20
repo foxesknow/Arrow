@@ -21,7 +21,7 @@ namespace Arrow.Collections
 		/// <param name="x">The left side</param>
 		/// <param name="y">The right side</param>
 		/// <returns>The outcome of the comparison</returns>
-		public int Compare(string x, string y)
+		public int Compare(string? x, string? y)
 		{
 			return string.Compare(x,y,true);
 		}

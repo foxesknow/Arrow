@@ -39,12 +39,12 @@ namespace Arrow.Storage
 		/// <exception cref="System.IO.IOException">The uri does not use the res scheme</exception>
 		public override Stream OpenRead()
 		{
-			string assemblyName=null;
-			string resourcePath=null;
+			string? assemblyName=null;
+			string? resourcePath=null;
 			
 			ExtractResourceInfo(this.Uri,out assemblyName,out resourcePath);
 			
-			Assembly assembly=null;
+			Assembly? assembly=null;
 			
 			try
 			{
@@ -55,7 +55,7 @@ namespace Arrow.Storage
 				throw new IOException(e.Message,e);
 			}
 			
-			Stream stream=assembly.GetManifestResourceStream(resourcePath);
+			Stream? stream=assembly.GetManifestResourceStream(resourcePath);
 			if(stream==null)
 			{
 				throw new IOException("could not find "+resourcePath);
@@ -79,15 +79,15 @@ namespace Arrow.Storage
 		/// <exception cref="System.ArgumentNullException">uri is null</exception>
 		public override bool Exists()
 		{
-			string assemblyName=null;
-			string resourcePath=null;
+			string? assemblyName=null;
+			string? resourcePath=null;
 			
 			ExtractResourceInfo(this.Uri,out assemblyName,out resourcePath);
 			
 			try
 			{
 				Assembly assembly=Assembly.Load(assemblyName);
-				ManifestResourceInfo info=assembly.GetManifestResourceInfo(resourcePath);
+				var info=assembly.GetManifestResourceInfo(resourcePath);
 				return info!=null;
 			}
 			catch(Exception)
@@ -119,7 +119,7 @@ namespace Arrow.Storage
 			if(absolutePath==null) throw new ArgumentNullException("absolutePath");
 
 			// We just want the assembly name (ie no version etc)
-			string host=assembly.GetName().Name;
+			string host=assembly.GetName().Name!;
 
 			UriBuilder builder=new UriBuilder();
 			builder.Scheme=Scheme;

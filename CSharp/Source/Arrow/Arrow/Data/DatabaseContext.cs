@@ -11,7 +11,7 @@ namespace Arrow.Data
 	/// </summary>
 	public class DatabaseContext
 	{	
-		internal DatabaseContext(IDbConnection connection, IDbTransaction transaction, DatabaseDetails details)
+		internal DatabaseContext(IDbConnection connection, IDbTransaction? transaction, DatabaseDetails details)
 		{
 			this.Connection=connection;
 			this.Transaction=transaction;
@@ -34,7 +34,7 @@ namespace Arrow.Data
 		/// <summary>
 		/// The transaction in use, if applicable
 		/// </summary>
-		public IDbTransaction Transaction{get;private set;}
+		public IDbTransaction? Transaction{get;private set;}
 		
 		/// <summary>
 		/// The details of the database

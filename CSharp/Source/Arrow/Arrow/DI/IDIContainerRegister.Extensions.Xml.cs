@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Arrow.Reflection;
+using Arrow.Xml;
 using Arrow.Xml.ObjectCreation;
+
+#nullable disable
 
 namespace Arrow.DI
 {
@@ -33,7 +36,7 @@ namespace Arrow.DI
 		{
 			if(root==null) throw new ArgumentNullException("root");
 			
-			var registerNodes=root.SelectNodes("Register|RegisterBundles|RegisterBundlesInAssembly");
+			var registerNodes=root.SelectNodesOrEmpty("Register|RegisterBundles|RegisterBundlesInAssembly");
 			foreach(XmlNode node in registerNodes)
 			{
 				switch(node.Name)
@@ -105,18 +108,18 @@ namespace Arrow.DI
 
 			public void InitializeObject(XmlNode rootNode, CustomXmlCreation factory)
 			{
-				foreach(XmlNode node in rootNode.SelectNodes("Concrete"))
+				foreach(XmlNode node in rootNode.SelectNodesOrEmpty("Concrete"))
 				{
 					this.ConcreteType=factory.CreateType(node);
 				}
 
-				foreach(XmlNode node in rootNode.SelectNodes("Expose"))
+				foreach(XmlNode node in rootNode.SelectNodesOrEmpty("Expose"))
 				{
 					var type=factory.CreateType(node);
 					this.ExposedTypes.Add(type);
 				}
 
-				foreach(XmlNode node in rootNode.SelectNodes("Lifetime|@lifetime"))
+				foreach(XmlNode node in rootNode.SelectNodesOrEmpty("Lifetime|@lifetime"))
 				{
 					var lifetime=factory.Create<Lifetime>(node);
 					this.Lifetime=lifetime;

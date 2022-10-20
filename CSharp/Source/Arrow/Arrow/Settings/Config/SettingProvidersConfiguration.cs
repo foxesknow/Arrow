@@ -27,7 +27,7 @@ namespace Arrow.Settings.Config
 		{
 			foreach(ProviderInfo info in m_ProviderInfo)
 			{
-				SettingsManager.Register(info.Namespace,info.Settings);
+				SettingsManager.Register(info.Namespace!,info.Settings!);
 			}
 		}
 	}

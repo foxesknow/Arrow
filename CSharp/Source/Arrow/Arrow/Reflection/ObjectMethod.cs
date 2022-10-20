@@ -21,7 +21,7 @@ namespace Arrow.Reflection
 		private static readonly Expression TrueExpression=Expression.Constant(true);
 		private static readonly Expression FalseExpression=Expression.Constant(false);
 
-		private static MethodInfo ReferenceEqualsMethod=typeof(object).GetMethod("ReferenceEquals",PublicStatic);
+		private static MethodInfo ReferenceEqualsMethod=typeof(object).GetMethod("ReferenceEquals",PublicStatic)!;
 
 		private static IEnumerable<T> AsSequence<T>(params T[] expressions) where T:Expression
 		{

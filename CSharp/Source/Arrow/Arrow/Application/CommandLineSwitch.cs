@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Arrow.Application
@@ -13,7 +14,7 @@ namespace Arrow.Application
 	public class CommandLineSwitch
 	{
 		private string m_Name;
-		private string m_Value;
+		private string? m_Value;
 		
 		/// <summary>
 		/// Initializes the instance
@@ -21,7 +22,7 @@ namespace Arrow.Application
 		/// <param name="name">The name of the switch</param>
 		/// <param name="value">The value for the switch. May be null</param>
 		/// <exception cref="System.ArgumentNullException">name is null</exception>
-		public CommandLineSwitch(string name, string value)
+		public CommandLineSwitch(string name, string? value)
 		{
 			if(name==null) throw new ArgumentNullException("name");
 			
@@ -40,7 +41,7 @@ namespace Arrow.Application
 		/// <summary>
 		/// The value for the switch. May be null
 		/// </summary>
-		public string Value
+		public string? Value
 		{
 			get{return m_Value;}
 			set{m_Value=value;}
@@ -97,8 +98,7 @@ namespace Arrow.Application
 		/// <exception cref="System.FormatException">text is not a valid switch</exception>
 		public static CommandLineSwitch Parse(string text)
 		{
-			CommandLineSwitch s;
-			if(TryParse(text,out s)==false) throw new FormatException(text);
+			if(TryParse(text,out var s)==false) throw new FormatException(text);
 			
 			return s;
 		}
@@ -110,7 +110,7 @@ namespace Arrow.Application
 		/// <param name="commandSwitch">A CommandSwitch instance on success, otherwise null</param>
 		/// <returns>true if a swithc could be parsed, false otherwise</returns>
 		/// <exception cref="System.ArgumentNullException">text is null</exception>
-		public static bool TryParse(string text, out CommandLineSwitch commandSwitch)
+		public static bool TryParse(string text, [NotNullWhen(true)] out CommandLineSwitch? commandSwitch)
 		{
 			if(text==null) throw new ArgumentNullException("text");
 			
@@ -122,8 +122,8 @@ namespace Arrow.Application
 			
 			text=text.Substring(1);
 			
-			string name=null;
-			string value=null;
+			string? name=null;
+			string? value=null;
 			
 			// Extract the optional value
 			int pivot=text.IndexOf(':');

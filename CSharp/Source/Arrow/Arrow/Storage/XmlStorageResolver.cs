@@ -13,7 +13,7 @@ namespace Arrow.Storage
 	/// </summary>
 	public class XmlStorageResolver : XmlResolver
 	{
-		private ICredentials m_Credentials;
+		private ICredentials m_Credentials = default!;
 
 		/// <summary>
 		/// Stores any credentials
@@ -30,7 +30,7 @@ namespace Arrow.Storage
 		/// <param name="role">Not used</param>
 		/// <param name="ofObjectToReturn">The type to return. Must be System.IO.Stream</param>
 		/// <returns>A Stream object to resource</returns>
-		public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
+		public override object GetEntity(Uri absoluteUri, string? role, Type? ofObjectToReturn)
 		{
 			if(ofObjectToReturn!=null && ofObjectToReturn!=typeof(Stream))
 			{

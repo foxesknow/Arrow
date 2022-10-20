@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 
 using Arrow.Collections;
+using Arrow.Xml;
 using Arrow.Xml.ObjectCreation;
 
 namespace Arrow.Settings
@@ -31,17 +32,16 @@ namespace Arrow.Settings
 	{
 		private Dictionary<string,object> m_Settings=new Dictionary<string,object>(IgnoreCaseEqualityComparer.Instance);
 	
-		object ISettings .GetSetting(string name)
+		object? ISettings.GetSetting(string name)
 		{
-			object value=null;
-			m_Settings.TryGetValue(name,out value);
+			m_Settings.TryGetValue(name,out var value);
 			
 			return value;
 		}
 
 		void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, CustomXmlCreation factory)
 		{
-			XmlNodeList nodes=rootNode.SelectNodes("*");
+			XmlNodeList nodes=rootNode.SelectNodesOrEmpty("*");
 			factory.PopulateDictionary(m_Settings,nodes);
 		}
 	}

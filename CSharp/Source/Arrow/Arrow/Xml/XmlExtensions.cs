@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -21,9 +22,10 @@ namespace Arrow.Xml
 		/// <param name="name">The qualified name of the attribute</param>
 		/// <param name="defaultValue">The value to return if the attribute does not exist</param>
 		/// <returns>A value</returns>
-		public static string GetValueOrDefault(this XmlAttributeCollection attributes, string name, string defaultValue)
+		[return: NotNullIfNotNull("defaultValue")]
+		public static string? GetValueOrDefault(this XmlAttributeCollection attributes, string name, string? defaultValue)
 		{
-			XmlAttribute attr=attributes[name];
+			var attr=attributes[name];
 			return attr!=null ? attr.Value : defaultValue;
 		}
 		
@@ -35,9 +37,10 @@ namespace Arrow.Xml
 		/// <param name="namespaceURI">The namespace URI of the attribute</param>
 		/// <param name="defaultValue">The value to return if the attribute does not exist</param>
 		/// <returns>A value</returns>
-		public static string GetValueOrDefault(this XmlAttributeCollection attributes, string localName, string namespaceURI, string defaultValue)
+		[return: NotNullIfNotNull("defaultValue")]
+		public static string? GetValueOrDefault(this XmlAttributeCollection attributes, string localName, string namespaceURI, string? defaultValue)
 		{
-			XmlAttribute attr=attributes[localName,namespaceURI];
+			var attr=attributes[localName,namespaceURI];
 			return attr!=null ? attr.Value : defaultValue;
 		}
 
@@ -67,7 +70,7 @@ namespace Arrow.Xml
 		/// <param name="node"></param>
 		/// <param name="xpath"></param>
 		/// <returns></returns>
-		public static XmlNodeList SelectNodeOrEmpty(this XmlNode node, string xpath)
+		public static XmlNodeList SelectNodesOrEmpty(this XmlNode node, string xpath)
 		{
 			return node.SelectNodes(xpath) ?? s_EmptyXmlNodeList;
 		}

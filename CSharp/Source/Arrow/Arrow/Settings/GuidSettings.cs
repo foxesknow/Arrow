@@ -29,7 +29,7 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The guid setting to retrieve</param>
 		/// <returns>A guid instance, or null if the setting does not exist</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
 			switch(name.ToLower())
 			{

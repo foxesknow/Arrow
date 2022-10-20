@@ -12,7 +12,7 @@ namespace Arrow.Configuration
 	/// </summary>
 	public class AppDomainConfigFile : IConfigFile
 	{
-		private string m_Filename;
+		private string? m_Filename;
 		
 		/// <summary>
 		/// Initializes the instance
@@ -32,13 +32,13 @@ namespace Arrow.Configuration
 		/// Loads the config file
 		/// </summary>
 		/// <returns>The config file, or null if the file could not be sourced</returns>
-		public XmlDocument LoadConfig()
+		public XmlDocument? LoadConfig()
 		{
 			
 			
 			try
 			{
-				XmlDocument doc=null;
+				XmlDocument? doc=null;
 				if(m_Filename!=null && File.Exists(m_Filename))
 				{
 					doc=new XmlDocument();
@@ -56,7 +56,7 @@ namespace Arrow.Configuration
 		/// <summary>
 		/// Returns a uri to the file location of the config
 		/// </summary>
-		public Uri Uri
+		public Uri? Uri
 		{
 			get{return m_Filename==null ? null : new Uri(m_Filename);}
 		}

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
+#nullable disable
+
 namespace Arrow.IO
 {
 	/// <summary>

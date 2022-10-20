@@ -6,6 +6,8 @@ using System.IO;
 
 using Arrow.Storage;
 
+#nullable disable
+
 namespace Arrow.Xml.ObjectCreation
 {
 	public partial class CustomXmlCreation

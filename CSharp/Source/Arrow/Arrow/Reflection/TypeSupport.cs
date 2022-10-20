@@ -17,7 +17,7 @@ namespace Arrow.Reflection
         /// <param name="lhs">The first type to check</param>
         /// <param name="rhs">The second type to check</param>
         /// <returns></returns>
-        public static Type MostSpecificType(Type lhs, Type rhs)
+        public static Type? MostSpecificType(Type lhs, Type rhs)
         {
 			if(lhs==null) throw new ArgumentNullException("lhs");
 			if(rhs==null) throw new ArgumentNullException("rhs");
@@ -32,7 +32,7 @@ namespace Arrow.Reflection
 			// There'll always be at least one (ie object)
             var common=allLhs.Intersect(allRhs);
 
-            Type candidate=null;
+            Type? candidate=null;
 
             foreach(var type in common)
             {

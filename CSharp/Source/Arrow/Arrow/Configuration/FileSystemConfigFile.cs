@@ -30,9 +30,9 @@ namespace Arrow.Configuration
 		/// Loads the config file
 		/// </summary>
 		/// <returns>The config file, or null if the file could not be sourced</returns>
-		public XmlDocument LoadConfig()
+		public XmlDocument? LoadConfig()
 		{
-			XmlDocument doc=null;
+			XmlDocument? doc=null;
 			
 			try
 			{
@@ -53,7 +53,7 @@ namespace Arrow.Configuration
 		/// <summary>
 		/// Returns the location of the file
 		/// </summary>
-		public Uri Uri
+		public Uri? Uri
 		{
 			get{return new Uri(m_Filename);}
 		}

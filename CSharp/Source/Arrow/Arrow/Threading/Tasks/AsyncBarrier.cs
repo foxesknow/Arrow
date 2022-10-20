@@ -38,7 +38,7 @@ namespace Arrow.Threading.Tasks
         /// <returns></returns>
         public Task SignalAndWait()
         {
-            AsyncEventWaitHandle handle = null;
+            AsyncEventWaitHandle? handle = null;
 
             lock(m_SyncRoot)
             {

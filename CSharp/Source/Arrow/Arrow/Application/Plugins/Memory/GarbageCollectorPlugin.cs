@@ -11,7 +11,7 @@ namespace Arrow.Application.Plugins.Memory
 	/// </summary>
 	public class GarbageCollectorPlugin : PausablePlugin, IDisposable
 	{
-		private Timer m_Timer;
+		private Timer? m_Timer;
 		
 		/// <summary>
 		/// Initializes the instance
@@ -29,7 +29,7 @@ namespace Arrow.Application.Plugins.Memory
 		/// <summary>
 		/// How often to garbage collect. The default is every minute
 		/// </summary>
-		private void TimerElapsed(object sender, ElapsedEventArgs e)
+		private void TimerElapsed(object? sender, ElapsedEventArgs e)
 		{
 			GC.Collect();
 		}

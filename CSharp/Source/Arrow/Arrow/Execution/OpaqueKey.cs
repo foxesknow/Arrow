@@ -38,7 +38,7 @@ namespace Arrow.Execution
         /// </summary>
         /// <param name="obj">The object to compare against for equality</param>
         /// <returns>true if the objects are equal, otherwise false</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as OpaqueKey);
         }
@@ -48,7 +48,7 @@ namespace Arrow.Execution
         /// </summary>
         /// <param name="other">The object to compare against for equality</param>
         /// <returns>true if the objects are equal, otherwise false</returns>
-        public bool Equals(OpaqueKey other)
+        public bool Equals(OpaqueKey? other)
         {
             if(other==null) return false;
 
@@ -60,7 +60,7 @@ namespace Arrow.Execution
         /// </summary>
         /// <param name="other">The object to compare against</param>
         /// <returns>0 if equal, a negative number if this instance if less than the other, oterwise a positive number</returns>
-        public int CompareTo(OpaqueKey other)
+        public int CompareTo(OpaqueKey ?other)
         {
             if(other==null) return -1;
 

@@ -35,7 +35,7 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The process setting name</param>
 		/// <returns>The process setting</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
 			switch(name.ToLower())
 			{
@@ -46,16 +46,16 @@ namespace Arrow.Settings
 					return Process.GetCurrentProcess().Id.ToString();
 					
 				case "version":
-					return GetAssemblyName().Version.ToString();
+					return GetAssemblyName()?.Version?.ToString();
 					
 				case "assemblyname":
-					return GetAssemblyName().Name;
+					return GetAssemblyName()?.Name;
 					
 				case "starttime":
 					return Process.GetCurrentProcess().StartTime;
 					
 				case "startupdir":
-					string dir=AppDomain.CurrentDomain.BaseDirectory;
+					string dir=AppDomain.CurrentDomain!.BaseDirectory!;
 					if(dir.EndsWith("\\")) dir=dir.Substring(0,dir.Length-1);
 					return dir;
 					
@@ -73,12 +73,12 @@ namespace Arrow.Settings
 		/// <returns>The name of the process</returns>
 		private string GetProcessName()
 		{
-			string process=null;
+			string? process=null;
 			
 			try
 			{
-				Assembly assembly=Assembly.GetEntryAssembly();
-				if(!(assembly is System.Reflection.Emit.AssemblyBuilder))
+				var assembly=Assembly.GetEntryAssembly();
+				if(assembly is not null &&  !(assembly is System.Reflection.Emit.AssemblyBuilder))
 				{
 					if(IsAssemblyInGAC(assembly)==false)
 					{
@@ -104,11 +104,13 @@ namespace Arrow.Settings
 		/// Determines the name of the entry assembly
 		/// </summary>
 		/// <returns>The name of the entry assembly</returns>
-		private AssemblyName GetAssemblyName()
+		private AssemblyName? GetAssemblyName()
 		{
 			try
 			{
-				Assembly assembly=Assembly.GetEntryAssembly();
+				var assembly=Assembly.GetEntryAssembly();
+				if(assembly is null) return null;
+
 				if(!(assembly is System.Reflection.Emit.AssemblyBuilder))
 				{
 					if(IsAssemblyInGAC(assembly)==false)

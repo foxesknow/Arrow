@@ -21,14 +21,14 @@ namespace Arrow.Logging
 		/// <summary>
 		/// Raises to tell log subsystems that logging should stop (because the app is closing)
 		/// </summary>
-		public static event EventHandler<EventArgs> StopLogging;
+		public static event EventHandler<EventArgs>? StopLogging;
 	
 		private static readonly object s_Sync=new object();
 		
 		private static bool s_TriedToReadAppConfig;
-		private static DelayedCreator s_LogInstanceCreator;
+		private static DelayedCreator? s_LogInstanceCreator;
 		
-		private static ILog s_UnnamedLog;
+		private static ILog? s_UnnamedLog;
 		
 		private static readonly Dictionary<string,ILog> s_Loggers=new Dictionary<string,ILog>(IgnoreCaseEqualityComparer.Instance);
 		
@@ -41,9 +41,9 @@ namespace Arrow.Logging
 		public static ILog GetLog()
 		{
 			StackTrace stackTrace=new StackTrace(1,false);
-			StackFrame frame=stackTrace.GetFrame(0);
-			MethodBase method=frame.GetMethod();
-			Type type=method.DeclaringType;
+			var frame=stackTrace.GetFrame(0);
+			var method=frame?.GetMethod();
+			var type=method?.DeclaringType;
 			return GetLog(type);
 		}
 		
@@ -62,9 +62,9 @@ namespace Arrow.Logging
 		/// </summary>
 		/// <param name="type">The type that wants a log. The FullName is used to look up the log</param>
 		/// <returns>A log</returns>
-		public static ILog GetLog(Type type)
+		public static ILog GetLog(Type? type)
 		{
-			string name=(type==null ? null : type.FullName);
+			var name=(type==null ? null : type.FullName);
 			return DoGetLog(name);
 		}
 		
@@ -75,7 +75,7 @@ namespace Arrow.Logging
 		/// <returns>A log</returns>
 		public static ILog GetLog<T>()
 		{
-			string name=typeof(T).FullName;
+			var name=typeof(T).FullName;
 			return DoGetLog(name);
 		}
 		
@@ -94,11 +94,11 @@ namespace Arrow.Logging
 		/// </summary>
 		/// <param name="name">The name of the log to get</param>
 		/// <returns>The log for the name</returns>
-		private static ILog DoGetLog(string name)
+		private static ILog DoGetLog(string? name)
 		{
 			lock(s_Sync)
 			{
-				ILog log=null;
+				ILog? log=null;
 				
 				// If we've already got a named logger then return it
 				if(name!=null && s_Loggers.TryGetValue(name,out log)) return log;
@@ -109,8 +109,8 @@ namespace Arrow.Logging
 				try
 				{
 					log=CreateLogInstance();
-					ILogInitializer logInitializer=log as ILogInitializer;
-					if(logInitializer!=null) logInitializer.Initialize(name);
+					var logInitializer=log as ILogInitializer;
+					if(logInitializer!=null) logInitializer.Initialize(name!);
 				}
 				catch
 				{
@@ -143,7 +143,7 @@ namespace Arrow.Logging
 			{
 				try
 				{
-					XmlNode node=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Logging/Logger");
+					var node=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Logging/Logger");
 					if(node!=null)
 					{
 						s_LogInstanceCreator=XmlCreation.DelayedCreate<ILog>(node);
@@ -161,7 +161,7 @@ namespace Arrow.Logging
 			// have gone wrong when trying to create an instance
 			if(s_LogInstanceCreator==null) return NullLog.Instance;
 			
-			ILog log=null;
+			ILog? log=null;
 			
 			try
 			{

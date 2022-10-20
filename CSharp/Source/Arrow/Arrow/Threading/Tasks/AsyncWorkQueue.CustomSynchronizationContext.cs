@@ -23,12 +23,12 @@ namespace Arrow.Threading.Tasks
                 return new CustomSynchronizationContext(m_Queue);
             }
 
-            public override void Post(SendOrPostCallback d, object state)
+            public override void Post(SendOrPostCallback d, object? state)
             {
                 m_Queue.ContextEnqueueAsync(d, state);
             }
 
-            public override void Send(SendOrPostCallback d, object state)
+            public override void Send(SendOrPostCallback d, object? state)
             {
                 if(m_Queue.ID == AsyncWorkQueue.ActiveID)
                 {

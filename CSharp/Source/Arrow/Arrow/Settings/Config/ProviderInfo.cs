@@ -9,25 +9,14 @@ namespace Arrow.Settings.Config
 	/// </summary>
 	class ProviderInfo
 	{
-		private string m_Namespace;
-		private ISettings m_Settings;
-		
 		/// <summary>
 		/// The namespace to register the setting provider under
 		/// </summary>
-		public string Namespace
-		{
-			get{return m_Namespace;}
-			set{m_Namespace=value;}
-		}
+		public string? Namespace{get; set;}
 		
 		/// <summary>
 		/// The settings provider to register
 		/// </summary>
-		public ISettings Settings
-		{
-			get{return m_Settings;}
-			set{m_Settings=value;}
-		}
+		public ISettings? Settings{get; set;}
 	}
 }

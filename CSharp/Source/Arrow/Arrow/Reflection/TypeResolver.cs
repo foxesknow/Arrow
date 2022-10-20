@@ -47,7 +47,7 @@ namespace Arrow.Reflection
 		/// data may contain a string of values seperated by |
 		/// </para>
 		/// </remarks>
-		public static object CoerceToType(Type type, object data)
+		public static object? CoerceToType(Type type, object? data)
 		{
 			if(data==null)
 			{
@@ -69,7 +69,7 @@ namespace Arrow.Reflection
 		
 			if(type.IsEnum)
 			{
-				object value=ExpandEnum(type,data.ToString());
+				object value=ExpandEnum(type,data.ToString()!);
 				return value; // NOTE: Early return
 			}
 			
@@ -78,7 +78,7 @@ namespace Arrow.Reflection
 				return data;
 			}
 			
-			object parameter;
+			object? parameter;
 			
 			// Use the type converter framework to convert the value.
 			// If there isn't a converter to do the convesion then fall back to the Convert class
@@ -150,7 +150,7 @@ namespace Arrow.Reflection
 			string[] parts=typeName.Split(new char[]{','},2);
 			
 			string name=parts[0];
-			string assemblyName=(parts.Length==2 ? parts[1] : null);
+			string? assemblyName=(parts.Length==2 ? parts[1] : null);
 			
 			Type type=GetEncodedType(name,assemblyName);
 			
@@ -164,9 +164,9 @@ namespace Arrow.Reflection
 		/// <param name="typeName">The name of the type to fetch</param>
 		/// <param name="assemblyName">The assembly that contains the type</param>
 		/// <returns>The requested type</returns>
-		public static Type GetEncodedType(string typeName, string assemblyName)
+		public static Type GetEncodedType(string typeName, string? assemblyName)
 		{
-			Type type=null;
+			Type? type=null;
 			if(s_TypeAlias.TryGetValue(typeName,out type))
 			{
 				// There's an alias for the type
@@ -208,7 +208,7 @@ namespace Arrow.Reflection
 		{
 			if(assemblyName==null) throw new ArgumentNullException("assemblyName");
 		
-			Assembly assembly=null;
+			Assembly? assembly=null;
 			
 			if(assemblyName.IndexOf(',')!=-1)
 			{
@@ -223,7 +223,7 @@ namespace Arrow.Reflection
 				#pragma warning restore 618
 			}
 			
-			return assembly;
+			return assembly!;
 		}
 	}
 }

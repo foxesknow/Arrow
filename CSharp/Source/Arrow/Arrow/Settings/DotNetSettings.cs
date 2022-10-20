@@ -20,7 +20,7 @@ namespace Arrow.Settings
 		/// </summary>
 		/// <param name="name">The name of the property on the Environment object</param>
 		/// <returns>The value of the property</returns>
-		public object GetSetting(string name)
+		public object? GetSetting(string name)
 		{
 			switch(name.ToLower())
 			{

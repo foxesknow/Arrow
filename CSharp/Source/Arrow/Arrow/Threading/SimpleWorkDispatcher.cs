@@ -33,7 +33,7 @@ namespace Arrow.Threading
 		/// <param name="waitCallback">The delegate that will be called</param>
 		/// <param name="state">Any additional state information for the request</param>
 		/// <returns>true if the request was queued, false otherwise</returns>
-        public bool QueueUserWorkItem(WaitCallback waitCallback, object state)
+        public bool QueueUserWorkItem(WaitCallback waitCallback, object? state)
         {
             if(waitCallback == null) throw new ArgumentNullException(nameof(waitCallback));
 
@@ -55,7 +55,7 @@ namespace Arrow.Threading
         {
             while(true)
             {
-                Action action = null;
+                Action? action = null;
                 
                 lock(m_Lock)
                 {

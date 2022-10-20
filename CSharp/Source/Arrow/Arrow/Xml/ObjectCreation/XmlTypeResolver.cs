@@ -27,7 +27,7 @@ namespace Arrow.Xml.ObjectCreation
 		{
 			if(typeNode==null) throw new ArgumentNullException("typeNode");
 			
-			string typeName=ExtractTypeName(typeNode,typeNode.Value);
+			string typeName=ExtractTypeName(typeNode,typeNode.Value!);
 			return TypeResolver.GetEncodedType(typeName);
 		}
 	
@@ -41,7 +41,7 @@ namespace Arrow.Xml.ObjectCreation
 		/// <exception cref="System.ArgumentNullException">typeNode is null</exception>
 		public static string ExtractTypeName(XmlNode typeNode)
 		{
-			return ExtractTypeName(typeNode,typeNode.Value);
+			return ExtractTypeName(typeNode,typeNode.Value!);
 		}		
 			
 		/// <summary>

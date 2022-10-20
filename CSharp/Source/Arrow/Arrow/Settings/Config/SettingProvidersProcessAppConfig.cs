@@ -25,7 +25,7 @@ namespace Arrow.Settings.Config
 				{
 					s_DoneInit=true;
 					
-					SettingProvidersConfiguration config=AppConfig.GetSectionForHandler<SettingProvidersSectionHandler>(ArrowSystem.Name,"Arrow.Settings") as SettingProvidersConfiguration;			
+					var config=AppConfig.GetSectionForHandler<SettingProvidersSectionHandler>(ArrowSystem.Name,"Arrow.Settings") as SettingProvidersConfiguration;			
 					if(config!=null)
 					{
 						config.Apply();

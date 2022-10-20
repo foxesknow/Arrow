@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -10,7 +11,7 @@ namespace Arrow.Collections
 	/// </summary>
 	/// <typeparam name="K">The key of the resource</typeparam>
 	/// <typeparam name="V">The type of the resource</typeparam>
-	public class ReferenceCountedResource<K,V> where V:class
+	public class ReferenceCountedResource<K,V> where V:class where K : notnull
 	{
 		private readonly object m_SyncRoot=new object();
 		
@@ -27,7 +28,7 @@ namespace Arrow.Collections
 		/// Initializes the instance using a specific key comparer
 		/// </summary>
 		/// <param name="equalityComparer">The key comparer. If null then the default is used</param>
-		public ReferenceCountedResource(IEqualityComparer<K> equalityComparer)
+		public ReferenceCountedResource(IEqualityComparer<K>? equalityComparer)
 		{
 			m_Data=new Dictionary<K,ReferenceData>(equalityComparer);
 		}
@@ -53,19 +54,18 @@ namespace Arrow.Collections
 		/// <param name="key">The key of the resource to checkout</param>
 		/// <param name="resource">On success the requested resource</param>
 		/// <returns>true if the resource was checked out, otherwise false</returns>
-		public bool TryCheckout(K key, out V resource)
+		public bool TryCheckout(K key, [MaybeNullWhen(false)] out V resource)
 		{
 			lock(m_SyncRoot)
 			{
-				ReferenceData data;
-				if(m_Data.TryGetValue(key,out data))
+				if(m_Data.TryGetValue(key,out var data))
 				{
 					data.AddRef();
 					resource=data.Value;
 					return true;
 				}
 				
-				resource=default(V);
+				resource=default!;
 				return false;
 			}
 		}

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
+#nullable disable
+
 namespace Arrow.Threading.Collections
 {
 	/// <summary>

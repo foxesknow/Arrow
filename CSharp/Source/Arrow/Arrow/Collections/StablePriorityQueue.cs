@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#nullable disable
+
 namespace Arrow.Collections
 {
 	/// <summary>
@@ -12,7 +14,7 @@ namespace Arrow.Collections
 	/// <typeparam name="P">The type of the priority</typeparam>
 	/// <typeparam name="V">The type of the value</typeparam>
 	[Serializable]
-	public class StablePriorityQueue<P,V> : IPriorityQueue<P,V>
+	public class StablePriorityQueue<P,V> : IPriorityQueue<P,V> where P : notnull
 	{
 		private SortedList<P,Queue<V>> m_Data;
 		
@@ -53,9 +55,7 @@ namespace Arrow.Collections
 		/// <param name="value">The value to add</param>
 		public void Enqueue(P priority,V value)
 		{
-			Queue<V> queue;
-			
-			if(m_Data.TryGetValue(priority,out queue)==false)
+			if(m_Data.TryGetValue(priority,out var queue)==false)
 			{
 				queue=new Queue<V>();
 				m_Data.Add(priority,queue);
@@ -96,8 +96,8 @@ namespace Arrow.Collections
 		{
 			if(m_Count==0)
 			{
-				priority=default(P);
-				value=default(V);
+				priority=default!;
+				value=default!;
 				return false;
 			}
 			
@@ -167,7 +167,7 @@ namespace Arrow.Collections
 			public int Compare(P x, P y)
 			{
 				// NOTE: we negate/invert the result so that the "largest" comes first
-				return 0-Outer.Compare(x,y);
+				return 0-Outer!.Compare(x,y);
 			}
 		}
 	}

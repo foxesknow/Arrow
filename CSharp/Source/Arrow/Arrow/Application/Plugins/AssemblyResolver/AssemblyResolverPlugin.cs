@@ -9,6 +9,8 @@ using System.IO;
 using Arrow.Logging;
 using Arrow.Xml.ObjectCreation;
 
+#nullable disable
+
 namespace Arrow.Application.Plugins.AssemblyResolver
 {
 	/// <summary>

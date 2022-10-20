@@ -15,7 +15,7 @@ namespace Arrow.Configuration
 		/// Returns null
 		/// </summary>
 		/// <returns>Returns null</returns>
-		public XmlDocument LoadConfig()
+		public XmlDocument? LoadConfig()
 		{
 			return null;
 		}
@@ -23,7 +23,7 @@ namespace Arrow.Configuration
 		/// <summary>
 		/// Returns null
 		/// </summary>
-		public Uri Uri
+		public Uri? Uri
 		{
 			get{return null;}
 		}

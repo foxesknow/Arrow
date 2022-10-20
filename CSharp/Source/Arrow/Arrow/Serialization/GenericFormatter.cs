@@ -6,6 +6,8 @@ using System.IO;
 
 #pragma warning disable SYSLIB0011
 
+#nullable disable
+
 namespace Arrow.Serialization
 {
 	/// <summary>

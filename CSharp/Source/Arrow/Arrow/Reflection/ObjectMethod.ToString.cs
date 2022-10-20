@@ -25,8 +25,8 @@ namespace Arrow.Reflection
 			var stringBuilder=Expression.Variable(typeof(StringBuilder));
 			body.Add(Expression.Assign(stringBuilder,Expression.New(typeof(StringBuilder))));
 
-			var appendString=typeof(StringBuilder).GetExactMethod("Append",PublicInstance,typeof(string));
-			var appendObject=typeof(StringBuilder).GetExactMethod("Append",PublicInstance,typeof(object));
+			var appendString=typeof(StringBuilder).GetExactMethod("Append",PublicInstance,typeof(string))!;
+			var appendObject=typeof(StringBuilder).GetExactMethod("Append",PublicInstance,typeof(object))!;
 
 			bool appendComma=false;
 
@@ -44,7 +44,7 @@ namespace Arrow.Reflection
 					Expression.Call(stringBuilder,appendString,Expression.Constant(property.Name+"="))
 				);
 
-				Expression append=null;
+				Expression? append=null;
 
 				if(property.PropertyType.IsValueType)
 				{
@@ -84,7 +84,7 @@ namespace Arrow.Reflection
 			}
 
 			// That's all the properties, so now we call StringBuilder.ToString() to get the result
-			var toString=typeof(StringBuilder).GetExactMethod("ToString",PublicInstance);
+			var toString=typeof(StringBuilder).GetExactMethod("ToString",PublicInstance)!;
 			body.Add(Expression.Call(stringBuilder,toString));
 
 			var block=Expression.Block(AsSequence(stringBuilder),body);

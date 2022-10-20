@@ -11,7 +11,7 @@ namespace Arrow.Data
 	/// </summary>
 	public class SqlServerDatabaseDetails : DatabaseDetails
 	{
-		private string m_ConnectionString;
+		private string? m_ConnectionString;
 		
 		/// <summary>
 		/// Initializes the instance with no connection string
@@ -24,7 +24,7 @@ namespace Arrow.Data
 		/// Initializes the instance
 		/// </summary>
 		/// <param name="connectionString">A connection string</param>
-		public SqlServerDatabaseDetails(string connectionString)
+		public SqlServerDatabaseDetails(string? connectionString)
 		{
 			m_ConnectionString=connectionString;
 		}
@@ -32,7 +32,7 @@ namespace Arrow.Data
 		/// <summary>
 		/// The connection string to use
 		/// </summary>
-		public string ConnectionString
+		public string? ConnectionString
 		{
 			get{return m_ConnectionString;}
 			set{m_ConnectionString=value;}
