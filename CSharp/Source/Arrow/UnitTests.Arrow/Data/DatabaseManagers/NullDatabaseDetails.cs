@@ -9,11 +9,14 @@ using Arrow.Data;
 
 namespace UnitTests.Arrow.Data.DatabaseManagers
 {
-    internal class NullDatabaseDetails : DatabaseDetails
+    public class NullDatabaseDetails : DatabaseDetails
     {
         public override IDbConnection CreateConnection()
         {
-            return new NullConnection();
+            IDbConnection c = new NullConnection();
+            c.ConnectionString = this.ConnectionString;
+
+            return c;
         }
 
         public string ConnectionString{get; set;}
