@@ -20,5 +20,11 @@ namespace Arrow.Data.DatabaseManagers
 
             return connection;
         }
+
+        protected void ValidateDatabaseName(string? databaseName)
+        {
+            if(databaseName is null) throw new ArgumentNullException(nameof(databaseName));
+            if(string.IsNullOrEmpty(databaseName)) throw new ArgumentException("invalid name", nameof(databaseName));
+        }
     }
 }

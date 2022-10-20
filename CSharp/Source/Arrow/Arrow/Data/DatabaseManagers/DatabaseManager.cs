@@ -14,13 +14,12 @@ namespace Arrow.Data.DatabaseManagers
     {
         private readonly Dictionary<string, Details> m_Details = new(StringComparer.OrdinalIgnoreCase);        
 
-        public void Add(string name, TransactionMode mode, DatabaseDetails databaseDetails)
+        public void Add(string databaseName, TransactionMode mode, DatabaseDetails databaseDetails)
         {
-            if(name is null) throw new ArgumentNullException(nameof(name));
-            if(string.IsNullOrEmpty(name)) throw new ArgumentException("invalid name", nameof(name));
+            ValidateDatabaseName(databaseName);
             if(databaseDetails is null) throw new ArgumentNullException(nameof(databaseDetails));
 
-            if(m_Details.ContainsKey(name)) throw new ArgumentException($"database already exists: {name}");
+            if(m_Details.ContainsKey(databaseName)) throw new ArgumentException($"database already exists: {databaseName}");
 
             var details = new Details
             {
@@ -28,16 +27,15 @@ namespace Arrow.Data.DatabaseManagers
                 DatabaseDetails = databaseDetails
             };
 
-            m_Details.Add(name, details);
+            m_Details.Add(databaseName, details);
         }
 
-        public void AddDynamic(string name, TransactionMode mode, Func<IReadOnlyDictionary<string, object>, DatabaseDetails> factory)
+        public void AddDynamic(string databaseName, TransactionMode mode, Func<IReadOnlyDictionary<string, object>, DatabaseDetails> factory)
         {
-            if(name is null) throw new ArgumentNullException(nameof(name));
-            if(string.IsNullOrEmpty(name)) throw new ArgumentException("invalid name", nameof(name));
+            ValidateDatabaseName(databaseName);
             if(factory is null) throw new ArgumentNullException(nameof(factory));
 
-            if(m_Details.ContainsKey(name)) throw new ArgumentException($"database already exists: {name}");
+            if(m_Details.ContainsKey(databaseName)) throw new ArgumentException($"database already exists: {databaseName}");
 
             var details = new Details
             {
@@ -45,13 +43,12 @@ namespace Arrow.Data.DatabaseManagers
                 Factory = factory
             };
 
-            m_Details.Add(name, details);
+            m_Details.Add(databaseName, details);
         }
 
         ConnectionInfo IDatabaseManager.GetConnectionInfo(string databaseName)
         {
-            if(databaseName is null) throw new ArgumentNullException(nameof(databaseName));
-            if(string.IsNullOrEmpty(databaseName)) throw new ArgumentException("invalid name", nameof(databaseName));
+            ValidateDatabaseName(databaseName);
 
             if(m_Details.TryGetValue(databaseName, out var details)) return details.ConnectionInfo;
 
@@ -60,8 +57,7 @@ namespace Arrow.Data.DatabaseManagers
 
         IDbConnection IDatabaseManager.OpenConnection(string databaseName)
         {
-            if(databaseName is null) throw new ArgumentNullException(nameof(databaseName));
-            if(string.IsNullOrEmpty(databaseName)) throw new ArgumentException("invalid name", nameof(databaseName));
+            ValidateDatabaseName(databaseName);
 
             IDatabaseManager self = this;
             if(self.IsDynamic(databaseName)) throw new DataException($"database is dynamic: {databaseName}");
@@ -76,8 +72,7 @@ namespace Arrow.Data.DatabaseManagers
 
         IDbConnection IDatabaseManager.OpenDynamicConnection(string databaseName, IReadOnlyDictionary<string, object> arguments)
         {
-            if(databaseName is null) throw new ArgumentNullException(nameof(databaseName));
-            if(string.IsNullOrEmpty(databaseName)) throw new ArgumentException("invalid name", nameof(databaseName));
+            ValidateDatabaseName(databaseName);
             if(arguments is null) throw new ArgumentNullException(nameof(arguments));
 
             IDatabaseManager self = this;

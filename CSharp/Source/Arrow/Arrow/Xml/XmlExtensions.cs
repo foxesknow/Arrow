@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,8 @@ namespace Arrow.Xml
 	/// </summary>
 	public static class XmlExtensions
 	{
+		private static readonly XmlNodeList s_EmptyXmlNodeList = new EmptyXmlNodeList();
+
 		/// <summary>
 		/// Looks up an attribute, returning the value it holds, or defaultValue if not found
 		/// </summary>
@@ -56,6 +59,35 @@ namespace Arrow.Xml
 		public static IEnumerable<XmlNode> AsEnumerable(this XmlNodeList nodes)
 		{
 			return nodes.Cast<XmlNode>();
+		}
+
+		/// <summary>
+		/// Returns a list of xml nodes that match the given path
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="xpath"></param>
+		/// <returns></returns>
+		public static XmlNodeList SelectNodeOrEmpty(this XmlNode node, string xpath)
+		{
+			return node.SelectNodes(xpath) ?? s_EmptyXmlNodeList;
+		}
+
+		private class EmptyXmlNodeList : XmlNodeList
+		{
+			public override XmlNode Item(int index)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override IEnumerator GetEnumerator()
+			{
+				return Array.Empty<object>().GetEnumerator();
+			}
+
+			public override int Count 
+			{
+				get{return 0;}
+			}
 		}
 	}
 }
