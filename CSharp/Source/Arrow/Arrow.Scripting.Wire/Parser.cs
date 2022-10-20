@@ -25,20 +25,20 @@ namespace Arrow.Scripting.Wire
 
 		private Expression ParseExpression()
 		{
-			var expression=Conditional();
+			var expression=Ternary();
 			return expression;
 		}
 
-		private Expression Conditional()
+		private Expression Ternary()
 		{
 			Expression expression=NullCoalesce();
 
 			while(m_Tokenizer.TryAccept(TokenID.Question))
 			{
 				// Call ourself to associate to the right
-				Expression ifTrue=Conditional();
+				Expression ifTrue=Ternary();
 				m_Tokenizer.Expect(TokenID.Colon);
-				Expression ifFalse=Conditional();
+				Expression ifFalse=Ternary();
 
 				expression=m_ExpressionFactory.Ternary(expression,ifTrue,ifFalse);
 			}
