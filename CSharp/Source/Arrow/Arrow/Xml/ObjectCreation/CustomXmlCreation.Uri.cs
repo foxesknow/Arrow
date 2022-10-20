@@ -5,6 +5,7 @@ using System.Xml;
 using System.IO;
 
 using Arrow.Storage;
+using Arrow.Net;
 
 #nullable disable
 

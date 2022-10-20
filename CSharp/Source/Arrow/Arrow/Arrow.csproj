@@ -48,8 +48,4 @@
 		<Compile Update="Application\Service\ServiceMainHost.cs" />
 		<Compile Update="Application\Service\InteractiveServiceBase.cs" />
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <Folder Include="Net\" />
-	</ItemGroup>
 </Project>
