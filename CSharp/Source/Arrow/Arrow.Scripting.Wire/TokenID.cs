@@ -61,5 +61,8 @@ namespace Arrow.Scripting.Wire
 		public const int Select=195;
 		public const int Default=196;
 		public const int LeadsTo=197;
+		
+		public const int BitwiseOr=198;
+		public const int BitwiseAnd=199;
 	}
 }

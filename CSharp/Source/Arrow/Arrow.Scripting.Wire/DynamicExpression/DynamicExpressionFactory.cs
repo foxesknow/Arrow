@@ -35,6 +35,16 @@ namespace Arrow.Scripting.Wire.DynamicExpression
 			return Expression.OrElse(lhs,rhs);
 		}
 
+		public override Expression BitwiseAnd(Expression lhs, Expression rhs)
+		{
+			return Binder.Binary(ExpressionType.And, lhs, rhs);
+		}
+
+		public override Expression BitwiseOr(Expression lhs, Expression rhs)
+		{
+			return Binder.Binary(ExpressionType.Or, lhs, rhs);
+		}
+
 		public override Expression NullCoalesce(Expression lhs, Expression rhs)
 		{
 			lhs=lhs.ConvertTo<object>();

@@ -41,6 +41,16 @@ namespace Arrow.Scripting.Wire.StaticExpression
 			return Expression.OrElse(lhs,rhs);
 		}
 
+		public override Expression BitwiseAnd(Expression lhs, Expression rhs)
+		{
+			return Expression.And(lhs, rhs);
+		}
+
+		public override Expression BitwiseOr(Expression lhs, Expression rhs)
+		{
+			return Expression.Or(lhs, rhs);
+		}
+
 		public override Expression NullCoalesce(Expression lhs, Expression rhs)
 		{
 			NormalizeBinaryExpression(ref lhs,ref rhs);

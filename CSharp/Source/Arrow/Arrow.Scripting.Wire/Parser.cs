@@ -81,12 +81,38 @@ namespace Arrow.Scripting.Wire
 		/// <returns></returns>
 		private Expression LogicalAnd()
 		{
-			Expression expression=Equality();
+			Expression expression=BitwiseOr();
 
 			while(m_Tokenizer.TryAccept(TokenID.LogicalAnd))
 			{
-				Expression rhs=Equality();
+				Expression rhs=BitwiseOr();
 				expression=m_ExpressionFactory.LogicalAnd(expression,rhs);
+			}
+
+			return expression;
+		}
+
+		private Expression BitwiseOr()
+		{
+			Expression expression=BitwiseAnd();
+
+			while(m_Tokenizer.TryAccept(TokenID.BitwiseOr))
+			{
+				Expression rhs=BitwiseAnd();
+				expression=m_ExpressionFactory.BitwiseOr(expression,rhs);
+			}
+
+			return expression;
+		}
+
+		private Expression BitwiseAnd()
+		{
+			Expression expression=Equality();
+
+			while(m_Tokenizer.TryAccept(TokenID.BitwiseAnd))
+			{
+				Expression rhs=Equality();
+				expression=m_ExpressionFactory.BitwiseAnd(expression,rhs);
 			}
 
 			return expression;

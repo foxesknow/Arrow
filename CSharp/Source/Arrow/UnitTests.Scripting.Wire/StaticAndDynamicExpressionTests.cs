@@ -25,6 +25,18 @@ namespace UnitTests.Scripting.Wire
 		private static readonly IVariableRead s_DynamicScope=CreateDynamicScope();
 
 		[Test]
+		public void StaticBitwise()
+		{
+			ScriptRunner.RunStaticExpressions("Bitwise.script",s_StaticContext,s_StaticArguments);
+		}
+
+		[Test]
+		public void DynamicBitwise()
+		{
+			ScriptRunner.RunDynamicExpressions("Bitwise.script",s_DynamicContext,s_DynamicScope);
+		}
+
+		[Test]
 		public void StaticArithmetic()
 		{
 			ScriptRunner.RunStaticExpressions("Arithmetic.script",s_StaticContext,s_StaticArguments);

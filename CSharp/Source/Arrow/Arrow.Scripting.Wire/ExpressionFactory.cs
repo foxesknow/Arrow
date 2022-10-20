@@ -31,6 +31,9 @@ namespace Arrow.Scripting.Wire
 		public abstract Expression LogicalOr(Expression lhs, Expression rhs);
 		public abstract Expression NullCoalesce(Expression lhs, Expression rhs);
 
+		public abstract Expression BitwiseAnd(Expression lhs, Expression rhs);
+		public abstract Expression BitwiseOr(Expression lhs, Expression rhs);
+
 		public abstract Expression Equal(CaseMode caseMode, Expression lhs, Expression rhs);
 		public abstract Expression NotEqual(CaseMode caseMode, Expression lhs, Expression rhs);
 		public abstract Expression RegexEqual(Expression lhs, Expression rhs);
