@@ -47,7 +47,7 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
 			get{return m_Location;}
 		}
 		
-		void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, CustomXmlCreation factory)
+		void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, ICustomXmlCreation factory)
 		{
 			m_Age=factory.Create<int>(rootNode.SelectSingleNode("Age|@Age"));
 			m_Location=factory.Create<string>(rootNode.SelectSingleNode("Location|@Location"));

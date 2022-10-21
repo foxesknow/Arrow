@@ -102,7 +102,7 @@ namespace Arrow.Application.Plugins.AssemblyResolver
 			get{return "AssemblyResolver";}
 		}
 
-		void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, CustomXmlCreation factory)
+		void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, ICustomXmlCreation factory)
 		{
 			factory.Apply(this,rootNode);
 			

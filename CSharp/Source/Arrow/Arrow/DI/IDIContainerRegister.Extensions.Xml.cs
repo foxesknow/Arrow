@@ -106,7 +106,7 @@ namespace Arrow.DI
 			public Lifetime Lifetime{get;set;}
 
 
-			public void InitializeObject(XmlNode rootNode, CustomXmlCreation factory)
+			public void InitializeObject(XmlNode rootNode, ICustomXmlCreation factory)
 			{
 				foreach(XmlNode node in rootNode.SelectNodesOrEmpty("Concrete"))
 				{

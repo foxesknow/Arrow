@@ -99,7 +99,7 @@ namespace Arrow.Net
             return FromXml(node);
         }
 
-        private void DoFromXml(XmlNode node, CustomXmlCreation factory)
+        private void DoFromXml(XmlNode node, ICustomXmlCreation factory)
         {
             if(node is null) throw new ArgumentNullException(nameof(node));
 
@@ -248,7 +248,7 @@ namespace Arrow.Net
             if(!string.IsNullOrWhiteSpace(source.Path)) builder.Path = source.Path;
         }
 
-        void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, CustomXmlCreation factory)
+        void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, ICustomXmlCreation factory)
         {
             DoFromXml(rootNode, factory);
         }

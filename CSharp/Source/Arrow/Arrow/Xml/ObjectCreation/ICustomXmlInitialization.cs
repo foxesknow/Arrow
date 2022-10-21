@@ -16,6 +16,6 @@ namespace Arrow.Xml.ObjectCreation
 		/// </summary>
 		/// <param name="rootNode">The root xml definition of the object</param>
 		/// <param name="factory">The factory to use if creating child objects</param>
-		void InitializeObject(XmlNode rootNode, CustomXmlCreation factory);
+		void InitializeObject(XmlNode rootNode, ICustomXmlCreation factory);
 	}
 }

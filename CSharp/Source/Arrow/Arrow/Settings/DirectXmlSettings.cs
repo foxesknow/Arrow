@@ -39,7 +39,7 @@ namespace Arrow.Settings
 			return value;
 		}
 
-		void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, CustomXmlCreation factory)
+		void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, ICustomXmlCreation factory)
 		{
 			XmlNodeList nodes=rootNode.SelectNodesOrEmpty("*");
 			factory.PopulateDictionary(m_Settings,nodes);
