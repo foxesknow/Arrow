@@ -70,7 +70,11 @@ namespace Arrow.Net
             return m_Uris.TryGetValue(name, out uri);
         }
 
-        public IUriManager FromAppConfig()
+        /// <summary>
+        /// Loads the uri manager stores in the app.config
+        /// </summary>
+        /// <returns></returns>
+        public static IUriManager FromAppConfig()
         {
             return s_FromAppConfig.Value;
         }

@@ -70,7 +70,7 @@ namespace Arrow.Net
 
             public Uri? Uri{get; set;}
 
-            public List<EndpointParameter> Query = new();
+            public List<EndpointParameter> Query{get; set;} = new();
         }
     }
 }
