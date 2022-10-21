@@ -8,8 +8,6 @@ using System.ComponentModel;
 using Arrow.Collections;
 using Arrow.Reflection;
 
-#nullable disable
-
 namespace Arrow.Xml.ObjectCreation
 {
 	public partial class CustomXmlCreation
@@ -45,9 +43,9 @@ namespace Arrow.Xml.ObjectCreation
 		/// </summary>
 		/// <param name="node">The node to check for a type attribute</param>
 		/// <returns>The type attribute, or null if one does not exist</returns>
-		internal static XmlAttribute GetTypeAttribute(XmlNode node)
+		internal static XmlAttribute? GetTypeAttribute(XmlNode node)
 		{
-			XmlAttribute typeNode=(node.Attributes[Typename,FactoryNS] ?? node.Attributes[Typename]);
+			XmlAttribute? typeNode=(node.Attributes![Typename,FactoryNS] ?? node.Attributes[Typename]);
 			return typeNode;
 		}
 
@@ -58,9 +56,9 @@ namespace Arrow.Xml.ObjectCreation
 		/// </summary>
 		/// <param name="node">The node to check for a typeof attribute</param>
 		/// <returns>The typeof attribute, or null if one does not exist</returns>
-		internal static XmlAttribute GetTypeofAttribute(XmlNode node)
+		internal static XmlAttribute? GetTypeofAttribute(XmlNode node)
 		{
-			XmlAttribute typeofNode=node.Attributes[Typeof,FactoryNS];
+			XmlAttribute? typeofNode=node.Attributes![Typeof,FactoryNS];
 			return typeofNode;
 		}
 			
@@ -68,7 +66,7 @@ namespace Arrow.Xml.ObjectCreation
 		{
 			if(type.IsGenericTypeDefinition)
 			{
-				XmlNode genericsNode=node["Generics",FactoryNS];
+				XmlNode? genericsNode=node["Generics",FactoryNS];
 				if(genericsNode==null) throw new XmlCreationException("generic types require a generics element");
 				
 				type=BuildGenericType(type,genericsNode);
@@ -85,9 +83,11 @@ namespace Arrow.Xml.ObjectCreation
 			ns.AddNamespace("obj",FactoryNS);
 			
 			// We need to extract the generic arguments
-			foreach(XmlNode generic in node.SelectNodes("obj:Generic",ns))
+			foreach(XmlNode? generic in node.SelectNodesOrEmpty("obj:Generic",ns))
 			{
-				XmlNode typeNode=GetTypeAttribute(generic);
+				if(generic is null) continue;
+
+				var typeNode=GetTypeAttribute(generic);
 				if(typeNode==null) throw new XmlCreationException("generic type required type element");
 				Type genericArgument=XmlTypeResolver.GetEncodedType(typeNode);
 				

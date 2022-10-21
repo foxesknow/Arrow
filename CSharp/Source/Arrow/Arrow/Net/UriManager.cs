@@ -214,9 +214,9 @@ namespace Arrow.Net
             {
                 if(string.IsNullOrWhiteSpace(templateName)) return;
 
-                if(templates.TryGetValue(templateName, out var template))
+                if(templates.TryGetValue(templateName!, out var template))
                 {
-                    if(seenSoFar.Add(templateName) == false) throw new ArrowException($"circular template reference encountere when processing {templateName}");
+                    if(seenSoFar.Add(templateName!) == false) throw new ArrowException($"circular template reference encountere when processing {templateName}");
                     RecursiveBuild(templates, template.Template, acc, seenSoFar);
                     ApplyTemplate(acc, template);
                 }

@@ -6,8 +6,6 @@ using System.Reflection;
 
 using Arrow.Reflection;
 
-#nullable disable
-
 namespace Arrow.Xml.ObjectCreation
 {
 	public partial class CustomXmlCreation
@@ -24,14 +22,15 @@ namespace Arrow.Xml.ObjectCreation
 		private void ProcessGenericCollectionProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
 		{
 			// We need to get the collection
-			MethodInfo getter=propertyInfo.GetGetMethod();
+			var getter=propertyInfo.GetGetMethod();
 			if(getter==null) throw new XmlCreationException("could not find property getter: "+propertyInfo.Name);
 			
-			object collection=getter.Invoke(theObject,null);
+			var collection=getter.Invoke(theObject,null);
 			if(collection==null) throw new XmlCreationException("property returned a null collection: "+propertyInfo.Name);
 			
-			foreach(XmlNode containedNode in node.SelectNodes("*"))
+			foreach(XmlNode? containedNode in node.SelectNodesOrEmpty("*"))
 			{
+				if(containedNode is null) continue;
 				ProcessGenericCollection(collection,containedNode);
 			}
 		}
@@ -47,12 +46,12 @@ namespace Arrow.Xml.ObjectCreation
 				containedType=genericTypes[0];
 			}
 			
-			MethodInfo addMethod=collection.GetType().GetMethod("Add",new Type[]{containedType});
+			var addMethod=collection.GetType().GetMethod("Add",new Type[]{containedType});
 			if(addMethod==null) throw new XmlCreationException("could not find Add method");
 			
-			object obj=CreateObject(item,containedType);
+			var obj=CreateObject(item,containedType);
 			obj=TypeResolver.CoerceToType(containedType,obj);
-			addMethod.Invoke(collection,new object[]{obj});
+			addMethod.Invoke(collection,new object?[]{obj});
 		}
 		
 		/// <summary>
@@ -64,25 +63,26 @@ namespace Arrow.Xml.ObjectCreation
 		private void ProcessValueAdderProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
 		{
 			// We need to get the collection
-			MethodInfo getter=propertyInfo.GetGetMethod();
+			var getter=propertyInfo.GetGetMethod();
 			if(getter==null) throw new XmlCreationException("could not find property getter: "+propertyInfo.Name);
 			
-			object collection=getter.Invoke(theObject,null);
+			var collection=getter.Invoke(theObject,null);
 			if(collection==null) throw new XmlCreationException("property returned a null collection: "+propertyInfo.Name);
 			
 			Type propertyType=propertyInfo.PropertyType;
 			Type[] genericTypes=propertyType.GetGenericArguments();
 			Type containedType=genericTypes[0];
-			MethodInfo addMethod=null;
 			
-			addMethod=collection.GetType().GetMethod("Add",new Type[]{containedType});
+			var addMethod=collection.GetType().GetMethod("Add",new Type[]{containedType});
 			if(addMethod==null) throw new XmlCreationException("could not find Add method");
 			
-			foreach(XmlNode containedNode in node.SelectNodes("*"))
+			foreach(XmlNode? containedNode in node.SelectNodesOrEmpty("*"))
 			{
-				object obj=CreateObject(containedNode,containedType);
+				if(containedNode is null) continue;
+
+				var obj=CreateObject(containedNode,containedType);
 				obj=TypeResolver.CoerceToType(containedType,obj);
-				addMethod.Invoke(collection,new object[]{obj});
+				addMethod.Invoke(collection,new object?[]{obj});
 			}
 		}
 		
@@ -102,14 +102,16 @@ namespace Arrow.Xml.ObjectCreation
 		private void ProcessListProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
 		{
 			// We need to get the collection
-			MethodInfo getter=propertyInfo.GetGetMethod();
+			var getter=propertyInfo.GetGetMethod();
 			if(getter==null) throw new XmlCreationException("could not find property getter: "+propertyInfo.Name);
 			
-			object list=getter.Invoke(theObject,null);
+			var list=getter.Invoke(theObject,null);
 			if(list==null) throw new XmlCreationException("property returned a null list: "+propertyInfo.Name);
 			
-			foreach(XmlNode item in node.SelectNodes("*"))
+			foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
 			{
+				if(item is null) continue;
+
 				ProcessList(list,item);
 			}
 		}
@@ -118,7 +120,6 @@ namespace Arrow.Xml.ObjectCreation
 		{
 			Type listType=list.GetType();
 			Type containedType=typeof(object);
-			MethodInfo addMethod=null;
 			
 			if(listType.IsGenericType)
 			{
@@ -126,12 +127,12 @@ namespace Arrow.Xml.ObjectCreation
 				containedType=genericTypes[0];
 			}
 			
-			addMethod=listType.GetMethod("Add",new Type[]{containedType});
+			var addMethod=listType.GetMethod("Add",new Type[]{containedType});
 			if(addMethod==null) throw new XmlCreationException("could not find Add method");
 			
-			object obj=CreateObject(item,containedType);
+			var obj=CreateObject(item,containedType);
 			obj=TypeResolver.CoerceToType(containedType,obj);
-			addMethod.Invoke(list,new object[]{obj});
+			addMethod.Invoke(list,new object?[]{obj});
 		}
 		
 		/// <summary>
@@ -152,14 +153,16 @@ namespace Arrow.Xml.ObjectCreation
 		private void ProcessDictionaryProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
 		{
 			// We need to get the collection
-			MethodInfo getter=propertyInfo.GetGetMethod();
+			var getter=propertyInfo.GetGetMethod();
 			if(getter==null) throw new XmlCreationException("could not find property getter: "+propertyInfo.Name);
 			
-			object dictionary=getter.Invoke(theObject,null);
+			var dictionary=getter.Invoke(theObject,null);
 			if(dictionary==null) throw new XmlCreationException("property returned a null list: "+propertyInfo.Name);
 			
-			foreach(XmlNode pairNode in node.SelectNodes("*"))
+			foreach(XmlNode? pairNode in node.SelectNodesOrEmpty("*"))
 			{
+				if(pairNode is null) continue;
+
 				ProcessDictionary(dictionary,pairNode);
 			}
 		}
@@ -178,20 +181,20 @@ namespace Arrow.Xml.ObjectCreation
 				valueType=genericTypes[1];
 			}
 			
-			MethodInfo addMethod=dictionary.GetType().GetMethod("Add",new Type[]{keyType,valueType});
+			var addMethod=dictionary.GetType().GetMethod("Add",new Type[]{keyType,valueType});
 			if(addMethod==null) throw new XmlCreationException("could not find Add method");
 			
-			XmlNode keyNode=pairNode.SelectSingleNode("Key|@key");
+			var keyNode=pairNode.SelectSingleNode("Key|@key");
 			if(keyNode==null) throw new XmlCreationException("dictionary entry needs a key");
-			object key=CreateObject(keyNode,keyType);
+			var key=CreateObject(keyNode,keyType);
 			key=TypeResolver.CoerceToType(keyType,key);
 			
-			XmlNode valueNode=pairNode.SelectSingleNode("Value|@value");
+			var valueNode=pairNode.SelectSingleNode("Value|@value");
 			if(valueNode==null) throw new XmlCreationException("dictionary entry needs a value");
-			object value=CreateObject(valueNode,valueType);
+			var value=CreateObject(valueNode,valueType);
 			value=TypeResolver.CoerceToType(valueType,value);
 			
-			addMethod.Invoke(dictionary,new object[]{key,value});
+			addMethod.Invoke(dictionary,new object?[]{key,value});
 		}
 		
 		/// <summary>

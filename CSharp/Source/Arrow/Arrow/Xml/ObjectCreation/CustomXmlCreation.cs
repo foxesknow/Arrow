@@ -325,7 +325,7 @@ namespace Arrow.Xml.ObjectCreation
 			if(node==null) throw new ArgumentNullException("node");
 			
 			// Defer to obj:typeof before obj:type
-			XmlAttribute typeNode=GetTypeofAttribute(node) ?? GetTypeAttribute(node);
+			var typeNode=GetTypeofAttribute(node) ?? GetTypeAttribute(node);
 			if(typeNode==null) return DefaultNodeType;
 			
 			// The user has specified a different type
@@ -441,7 +441,7 @@ namespace Arrow.Xml.ObjectCreation
 			// See if the object node has overridden the actual type
 			if(objectNode.Attributes!=null)
 			{
-				XmlAttribute typeofNode=GetTypeofAttribute(objectNode);
+				var typeofNode=GetTypeofAttribute(objectNode);
 				if(typeofNode!=null)
 				{
 					// The user is interested in getting a System.Type instance,
@@ -451,7 +451,7 @@ namespace Arrow.Xml.ObjectCreation
 
 				// NOTE: We support type in or out of the namespace.
 				// The non-namespace support is deprecated and will be removed
-				XmlAttribute typeNode=GetTypeAttribute(objectNode);
+				var typeNode=GetTypeAttribute(objectNode);
 				if(typeNode!=null)
 				{
 					// The user has specified a different type

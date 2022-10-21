@@ -75,6 +75,18 @@ namespace Arrow.Xml
 			return node.SelectNodes(xpath) ?? s_EmptyXmlNodeList;
 		}
 
+		/// <summary>
+		/// Returns a list of xml nodes that match the given path
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="xpath"></param>
+		/// <param name="nsmgr"></param>
+		/// <returns></returns>
+		public static XmlNodeList SelectNodesOrEmpty(this XmlNode node, string xpath, XmlNamespaceManager nsmgr)
+		{
+			return node.SelectNodes(xpath, nsmgr) ?? s_EmptyXmlNodeList;
+		}
+
 		private class EmptyXmlNodeList : XmlNodeList
 		{
 			public override XmlNode Item(int index)

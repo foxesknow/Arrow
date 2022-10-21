@@ -7,8 +7,6 @@ using System.IO;
 using Arrow.Storage;
 using Arrow.Net;
 
-#nullable disable
-
 namespace Arrow.Xml.ObjectCreation
 {
 	public partial class CustomXmlCreation
@@ -38,7 +36,7 @@ namespace Arrow.Xml.ObjectCreation
 			if(uri==null) throw new ArgumentNullException("uri");
 			
 			// See if the user want to select a node
-			string select=null;
+			string? select=null;
 			ProcessUri(ref uri,out select);
 			
 			using(Stream stream=StorageManager.Get(uri).OpenRead())
@@ -46,7 +44,7 @@ namespace Arrow.Xml.ObjectCreation
 				XmlDocument doc=new XmlDocument();
 				doc.Load(stream);
 				
-				XmlNode objectNode=doc.DocumentElement;
+				XmlNode? objectNode=doc.DocumentElement!;
 				if(select!=null)
 				{
 					objectNode=doc.SelectSingleNode(select);
@@ -69,7 +67,7 @@ namespace Arrow.Xml.ObjectCreation
 			if(uri==null) throw new ArgumentNullException("uri");
 			
 			// See if the user want to select a node
-			string select=null;
+			string? select=null;
 			ProcessUri(ref uri,out select);
 			
 			using(Stream stream=StorageManager.Get(uri).OpenRead())
@@ -77,10 +75,10 @@ namespace Arrow.Xml.ObjectCreation
 				XmlDocument doc=new XmlDocument();
 				doc.Load(stream);
 				
-				XmlNodeList nodes=null;
+				XmlNodeList? nodes=null;
 				if(select==null)
 				{
-					nodes=doc.DocumentElement.SelectNodes("*");
+					nodes=doc.DocumentElement!.SelectNodes("*");
 				}
 				else
 				{
@@ -88,7 +86,7 @@ namespace Arrow.Xml.ObjectCreation
 					if(nodes==null) throw new XmlCreationException("select does not select any nodes: "+select);
 				}
 				
-				return CreateList<T>(nodes,uri);
+				return CreateList<T>(nodes!,uri);
 			}
 		}
 		
@@ -107,7 +105,7 @@ namespace Arrow.Xml.ObjectCreation
 			if(uri==null) throw new ArgumentNullException("uri");
 			
 			// See if the user want to select a node
-			string select=null;
+			string? select=null;
 			ProcessUri(ref uri,out select);
 			
 			using(Stream stream=StorageManager.Get(uri).OpenRead())
@@ -115,10 +113,10 @@ namespace Arrow.Xml.ObjectCreation
 				XmlDocument doc=new XmlDocument();
 				doc.Load(stream);
 				
-				XmlNodeList nodes=null;
+				XmlNodeList? nodes=null;
 				if(select==null)
 				{
-					nodes=doc.DocumentElement.SelectNodes("*");
+					nodes=doc.DocumentElement!.SelectNodes("*");
 				}
 				else
 				{
@@ -126,7 +124,7 @@ namespace Arrow.Xml.ObjectCreation
 					if(nodes==null) throw new XmlCreationException("select does not select any nodes: "+select);
 				}
 				
-				PopulateDictionary(dictionary,nodes,uri);
+				PopulateDictionary(dictionary,nodes!,uri);
 			}
 		}
 		
@@ -135,13 +133,13 @@ namespace Arrow.Xml.ObjectCreation
 		/// </summary>
 		/// <param name="uri"></param>
 		/// <param name="select"></param>
-		private void ProcessUri(ref Uri uri, out string select)
+		private void ProcessUri(ref Uri uri, out string? select)
 		{
 			// See if the user want to select a node
 			select=null;			
 			if(string.IsNullOrEmpty(uri.Query)==false)
 			{
-				Dictionary<string,string> query=uri.ParseQuery();
+				var query=uri.ParseQuery();
 				if(query.ContainsKey(SelectArg)) select=query[SelectArg];
 			}
 			
