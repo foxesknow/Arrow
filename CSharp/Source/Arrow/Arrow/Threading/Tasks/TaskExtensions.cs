@@ -52,7 +52,7 @@ namespace Arrow.Threading.Tasks
         /// <typeparam name="T"></typeparam>
         /// <param name="task"></param>
         /// <returns></returns>
-        public static ConfiguredValueTaskAwaitable<T> ConfiguredValueTaskAwaitable<T>(this ValueTask<T> task)
+        public static ConfiguredValueTaskAwaitable<T> ContinueOnAnyContext<T>(this ValueTask<T> task)
         {
             return task.ConfigureAwait(false);
         }
