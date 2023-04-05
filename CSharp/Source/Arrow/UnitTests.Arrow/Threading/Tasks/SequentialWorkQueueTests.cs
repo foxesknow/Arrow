@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Arrow.Threading;
 using Arrow.Threading.Tasks;
 
 using NUnit.Framework;

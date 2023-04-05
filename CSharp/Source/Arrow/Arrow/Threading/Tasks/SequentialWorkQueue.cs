@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Arrow.Threading.Tasks
 {
-	/// <summary>
-	/// Executes asynchronous functions on a work queue, waiting for the function to complete
-	/// before running the next function.
-	/// </summary>
+    /// <summary>
+    /// Executes asynchronous functions on a work queue, waiting for the function to complete
+    /// before running the next function.
+    /// </summary>
     public sealed class SequentialWorkQueue : IWorkQueue<Func<ValueTask>>
     {
         private readonly object m_SyncRoot=new object();
