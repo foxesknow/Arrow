@@ -8,7 +8,14 @@ using System.Threading.Tasks;
 
 namespace Arrow.Threading.Tasks
 {
-    public partial class AsyncWorkQueue : IDisposable
+	/// <summary>
+	/// A work queue that supports asynchronous methods.
+	/// 
+	/// The queue implements its own synchronization context to ensure that when a scheduled function
+	/// resumes after an await it comes back onto this queu, given queue-affinity to anything run on
+	/// this queue.
+	/// </summary>
+    public sealed partial class AsyncWorkQueue : IDisposable
     {
         public static readonly long NoActiveQueue = 0;
 
