@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -14,7 +15,8 @@ namespace Arrow.Settings
 		/// Returns the value for a named setting
 		/// </summary>
 		/// <param name="name">The name of the setting to get</param>
-		/// <returns>The value for the setting, or null if the setting does not exist</returns>
-		object? GetSetting(string name);
+		/// <param name="value">On success the value for the setting, null if the setting does not exist</param>
+		/// <returns>true if the setting exists, otherwise false</returns>
+		bool TryGetSetting(string name, [NotNullWhen(true)]out object? value);
 	}
 }

@@ -1,57 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
 namespace Arrow.Settings
 {
-	/// <summary>
-	/// Setting from properties on the Environment object
-	/// </summary>
-	public class DotNetSettings : ISettings
-	{
-		/// <summary>
-		/// An instance that may be shared
-		/// </summary>		
-		public static readonly ISettings Instance=new DotNetSettings();
+    /// <summary>
+    /// Setting from properties on the Environment object
+    /// </summary>
+    public class DotNetSettings : ISettings
+    {
+        /// <summary>
+        /// An instance that may be shared
+        /// </summary>		
+        public static readonly ISettings Instance = new DotNetSettings();
 
-		/// <summary>
-		/// Retrieves an environment setting
-		/// </summary>
-		/// <param name="name">The name of the property on the Environment object</param>
-		/// <returns>The value of the property</returns>
-		public object? GetSetting(string name)
-		{
-			switch(name.ToLower())
-			{
-				case "cmdline":
-				case "commandline":
-					return Environment.CommandLine;
+        /// <inheritdoc/>
+        public bool TryGetSetting(string name, [NotNullWhen(true)] out object? value)
+        {
+            switch(name.ToLower())
+            {
+                case "cmdline":
+                case "commandline":
+                    value = Environment.CommandLine;
+                    return true;
 
-				case "osversion":
-					return Environment.OSVersion;
+                case "osversion":
+                    value = Environment.OSVersion;
+                    return true;
 
-				case "processorcount":
-					return Environment.ProcessorCount;
+                case "processorcount":
+                    value = Environment.ProcessorCount;
+                    return true;
 
-				case "tickcount":
-					return Environment.TickCount;
+                case "tickcount":
+                    value = Environment.TickCount;
+                    return true;
 
-				case "userinteractive":
-					return Environment.TickCount;
+                case "userinteractive":
+                    value = Environment.UserInteractive;
+                    return true;
 
-				case "username":
-					return Environment.UserName;
+                case "username":
+                    value = Environment.UserName;
+                    return true;
 
-				case "version":
-					return Environment.Version;
+                case "version":
+                    value = Environment.Version;
+                    return true;
 
-				case "workingset":
-					return Environment.WorkingSet;
+                case "workingset":
+                    value = Environment.WorkingSet;
+                    return true;
 
-				default:
-					return null;
-			}
-		}
-	}
+                default:
+                    value = null;
+                    return false;
+            }
+        }
+    }
 }

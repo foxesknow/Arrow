@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Arrow.Settings
 {
@@ -16,26 +17,26 @@ namespace Arrow.Settings
 		/// </summary>
 		public static readonly ISettings Instance=new FileSystemSettings();
 	
-		/// <summary>
-		/// Retrieves a filesystem setting.
-		/// </summary>
-		/// <param name="name">The filesystem setting name</param>
-		/// <returns>A string instance, or null if the setting does not exist</returns>
-		public object? GetSetting(string name)
+		/// <inheritdoc/>
+		public bool TryGetSetting(string name, [NotNullWhen(true)] out object? value)
 		{
 			switch(name.ToLower())
 			{
 				case "cwd":
-					return Directory.GetCurrentDirectory();
+					value = Directory.GetCurrentDirectory();
+					return true;
 					
 				case "tempdir":
-					return Path.GetTempPath();
+					value = Path.GetTempPath();
+					return true;
 					
 				case "randomname":
-					return Path.GetRandomFileName();
+					value = Path.GetRandomFileName();
+					return true;
 			
 				default:
-					return null;
+					value = null;
+					return false;
 			}
 		}
 	}

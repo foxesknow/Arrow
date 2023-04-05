@@ -10,26 +10,25 @@ using NUnit.Framework.Constraints;
 
 namespace UnitTests.Arrow.Settings
 {
-	[TestFixture]
-	public class EnvironmentSettingsTests
-	{
-		[Test]
-		public void Test()
-		{
-			ISettings p=CreateProvider();
-			
-			object value=null;
-			value=p.GetSetting("username");
-			Assert.IsNotNull(value);
-			Assert.That(value.ToString().Length,Is.GreaterThan(0));
-			
-			value=p.GetSetting("foo");
-			Assert.IsNull(value);
-		}
-		
-		internal static ISettings CreateProvider()
-		{
-			return EnvironmentSettings.Instance;
-		}
-	}
+    [TestFixture]
+    public class EnvironmentSettingsTests
+    {
+        [Test]
+        public void Test()
+        {
+            ISettings p = CreateProvider();
+
+            p.TryGetSetting("username", out var value);
+            Assert.IsNotNull(value);
+            Assert.That(value.ToString().Length, Is.GreaterThan(0));
+
+            p.TryGetSetting("foo", out value);
+            Assert.IsNull(value);
+        }
+
+        internal static ISettings CreateProvider()
+        {
+            return EnvironmentSettings.Instance;
+        }
+    }
 }

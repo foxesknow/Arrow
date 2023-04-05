@@ -188,7 +188,8 @@ namespace Arrow.ObjectAccess
 			// Treat setting providers as a bucket of properties
 			if(@object is ISettings)
 			{
-				return ((ISettings)@object).GetSetting(name);
+				((ISettings)@object).TryGetSetting(name, out var value);
+				return value;
 			}
 		
 			// We'll resolve in property/field/method order as 
