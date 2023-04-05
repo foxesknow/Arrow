@@ -22,8 +22,8 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="ArgumentNullException"></exception>
         public static async Task CancelAndWait(CancellationTokenSource cts, Task task)
         {
-            if (cts is null) throw new ArgumentNullException(nameof(cts));
-            if (task is null) throw new ArgumentNullException(nameof(task));
+            if(cts is null) throw new ArgumentNullException(nameof(cts));
+            if(task is null) throw new ArgumentNullException(nameof(task));
 
             cts.Cancel();
 

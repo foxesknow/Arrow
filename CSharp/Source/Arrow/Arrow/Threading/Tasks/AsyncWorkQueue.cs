@@ -162,8 +162,7 @@ namespace Arrow.Threading.Tasks
 		/// <exception cref="ArgumentNullException"></exception>
 		public bool TryEnqueue<TState>(TState state, Func<TState, Task> function)
 		{
-			if(function is null) throw new ArgumentNullException(nameof(function));
-			
+			if(function is null) throw new ArgumentNullException(nameof(function));			
 
 			lock(m_SyncRoot)
 			{

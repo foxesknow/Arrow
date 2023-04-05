@@ -19,7 +19,7 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="ArgumentNullException"></exception>
         public static ConfiguredTaskAwaitable ContinueOnAnyContext(this Task task)
         {
-            if (task is null) throw new ArgumentNullException(nameof(task));
+            if(task is null) throw new ArgumentNullException(nameof(task));
             return task.ConfigureAwait(false);
         }
 
@@ -32,7 +32,7 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="ArgumentNullException"></exception>
         public static ConfiguredTaskAwaitable<T> ContinueOnAnyContext<T>(this Task<T> task)
         {
-            if (task is null) throw new ArgumentNullException(nameof(task));
+            if(task is null) throw new ArgumentNullException(nameof(task));
             return task.ConfigureAwait(false);
         }
 
@@ -67,13 +67,13 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="TimeoutException">Thrown if the timeout expires</exception>
         public static Task TimeoutAfter(this Task task, TimeSpan timeout)
         {
-            if (task is null) throw new ArgumentNullException(nameof(task));
+            if(task is null) throw new ArgumentNullException(nameof(task));
 
             return DoTimeoutAfter(task, timeout);
 
             static async Task DoTimeoutAfter(Task task, TimeSpan timeout)
             {
-                if (await task.TryWaitFor(timeout).ContinueOnAnyContext() == false)
+                if(await task.TryWaitFor(timeout).ContinueOnAnyContext() == false)
                 {
                     throw new TimeoutException("the operation has timed out");
                 }
@@ -91,7 +91,7 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="TimeoutException"></exception>
         public static Task<T> TimeoutAfter<T>(this Task<T> task, TimeSpan timeout)
         {
-            if (task is null) throw new ArgumentNullException(nameof(task));
+            if(task is null) throw new ArgumentNullException(nameof(task));
 
             return DoTimeoutAfter(task, timeout);
 
@@ -99,7 +99,7 @@ namespace Arrow.Threading.Tasks
             {
                 var result = await task.TryWaitFor(timeout).ContinueOnAnyContext();
 
-                if (result.Success)
+                if(result.Success)
                 {
                     return result.Value;
                 }
@@ -119,7 +119,7 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="ArgumentNullException"></exception>
         public static Task<bool> TryWaitFor(this Task task, TimeSpan timeout)
         {
-            if (task is null) throw new ArgumentNullException(nameof(task));
+            if(task is null) throw new ArgumentNullException(nameof(task));
 
             return DoTimeoutAfter(task, timeout);
 
@@ -128,7 +128,7 @@ namespace Arrow.Threading.Tasks
                 using (var cts = new CancellationTokenSource())
                 {
                     var completedTask = await Task.WhenAny(task, Task.Delay(timeout, cts.Token)).ContinueOnAnyContext();
-                    if (completedTask == task)
+                    if(completedTask == task)
                     {
                         // Stop the delay...
                         cts.Cancel();
@@ -148,16 +148,16 @@ namespace Arrow.Threading.Tasks
 
         public static Task<Result<T>> TryWaitFor<T>(this Task<T> task, TimeSpan timeout)
         {
-            if (task is null) throw new ArgumentNullException(nameof(task));
+            if(task is null) throw new ArgumentNullException(nameof(task));
 
             return DoTimeoutAfter(task, timeout);
 
             static async Task<Result<T>> DoTimeoutAfter(Task<T> task, TimeSpan timeout)
             {
-                using (var cts = new CancellationTokenSource())
+                using(var cts = new CancellationTokenSource())
                 {
                     var completedTask = await Task.WhenAny(task, Task.Delay(timeout, cts.Token)).ContinueOnAnyContext();
-                    if (completedTask == task)
+                    if(completedTask == task)
                     {
                         // Stop the delay...
                         cts.Cancel();
