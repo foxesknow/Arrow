@@ -115,6 +115,33 @@ namespace Arrow.Xml.ObjectCreation
 				ProcessList(list,item);
 			}
 		}
+
+		/// <summary>
+		/// Handles populating a readonly list property.
+		/// To do this we need the property to have a setter which we will set to a 
+		/// concrete list implementation.
+		/// </summary>
+		/// <param name="theObject"></param>
+		/// <param name="node"></param>
+		/// <param name="propertyInfo"></param>
+		/// <exception cref="XmlCreationException"></exception>
+		private void ProcessReadOnlyListProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
+		{
+			var setter = propertyInfo.GetSetMethod();
+			if(setter is null) throw new XmlCreationException($"could not find setter method for {propertyInfo.Name}");
+		
+			var readonlyType = propertyInfo.PropertyType;
+			var genericArguments = readonlyType.GetGenericArguments();
+			var concreteType = typeof(List<>).MakeGenericType(genericArguments);
+
+			var list = CreateInstance(concreteType, null);
+			foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
+			{
+				ProcessList(list, item!);
+			}
+
+			setter.Invoke(theObject, new[]{list});
+		}
 		
 		private void ProcessList(object list, XmlNode item)
 		{
@@ -134,7 +161,7 @@ namespace Arrow.Xml.ObjectCreation
 			obj=TypeResolver.CoerceToType(containedType,obj);
 			addMethod.Invoke(list,new object?[]{obj});
 		}
-		
+
 		/// <summary>
 		/// Populates a dictionary
 		/// </summary>
@@ -165,6 +192,24 @@ namespace Arrow.Xml.ObjectCreation
 
 				ProcessDictionary(dictionary,pairNode);
 			}
+		}
+
+		private void ProcessReadOnlyDictionaryProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
+		{
+			var setter = propertyInfo.GetSetMethod();
+			if(setter==null) throw new XmlCreationException("could not find property setter: "+propertyInfo.Name);
+
+			var readonlyType = propertyInfo.PropertyType;
+			var genericArguments = readonlyType.GetGenericArguments();
+			var concreteType = typeof(Dictionary<,>).MakeGenericType(genericArguments);
+
+			var dictionary = CreateInstance(concreteType, null);
+			foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
+			{
+				ProcessDictionary(dictionary, item!);
+			}
+
+			setter.Invoke(theObject, new[]{dictionary});
 		}
 		
 		private void ProcessDictionary(object dictionary, XmlNode pairNode)
@@ -232,6 +277,16 @@ namespace Arrow.Xml.ObjectCreation
 		private bool IsGenericCollection(Type type)
 		{
 			return IsGenericTypeImplemented(type,typeof(ICollection<>));
+		}
+
+		private bool IsReadOnlyList(Type type)
+		{
+			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IReadOnlyList<>);
+		}
+
+		private bool IsReadOnlyDictionary(Type type)
+		{
+			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>);
 		}
 	}
 }

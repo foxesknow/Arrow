@@ -867,9 +867,17 @@ namespace Arrow.Xml.ObjectCreation
 			{
 				ProcessListProperty(theObject, propertyNode, propertyInfo);
 			}
+			else if(IsReadOnlyList(propertyType))
+			{
+				ProcessReadOnlyListProperty(theObject, propertyNode, propertyInfo);
+			}
 			else if(IsDictionary(propertyType))
 			{
 				ProcessDictionaryProperty(theObject, propertyNode, propertyInfo);
+			}
+			else if(IsReadOnlyDictionary(propertyType))
+			{
+				ProcessReadOnlyDictionaryProperty(theObject, propertyNode, propertyInfo);
 			}
 			else if(IsGenericCollection(propertyType))
 			{
@@ -922,7 +930,7 @@ namespace Arrow.Xml.ObjectCreation
 				{
 					ProcessList(theObject, propertyNode);
 					processed = true;
-				}
+				}				
 				else if(IsDictionary(type))
 				{
 					ProcessDictionary(theObject, propertyNode);
