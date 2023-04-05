@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Arrow.Threading.Tasks;
-
+using Arrow.Threading.Tasks.Streaming;
 using NUnit.Framework;
 
-namespace UnitTests.Arrow.Threading.Tasks
+namespace UnitTests.Arrow.Threading.Tasks.Streaming
 {
     [TestFixture]
     public class DataBufferTests
@@ -97,7 +97,7 @@ namespace UnitTests.Arrow.Threading.Tasks
             var buffer = new DataBuffer<string>();
             var wait1 = buffer.WaitFor(static s => s == "Ben");
             var wait2 = buffer.WaitFor(static s => s == "Ben");
-            var peek1= buffer.PeekFor(static s => s == "Ben");
+            var peek1 = buffer.PeekFor(static s => s == "Ben");
             var peek2 = buffer.PeekFor(static s => s == "Ben");
 
             Assert.That(buffer.Cancel(wait1), Is.True);
@@ -117,10 +117,10 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task Cancel_After_Data()
         {
             var buffer = new DataBuffer<string>();
-            
+
             var wait1 = buffer.WaitFor(static s => s == "Ben");
             buffer.Publish("Ben");
-            
+
             Assert.That(buffer.Cancel(wait1), Is.False);
             Assert.That(await wait1, Is.EqualTo("Ben"));
         }
@@ -129,15 +129,15 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task WaitMultiple()
         {
             var buffer = new DataBuffer<string>();
-            
+
             var wait1 = buffer.WaitFor(static s => s == "Ben");
             var wait2 = buffer.WaitFor(static s => s == "Ben");
-            
+
             buffer.Publish("Jack");
             buffer.Publish("Ben");
 
             await Task.WhenAll(wait1, wait2);
-            
+
             Assert.That(await wait1, Is.EqualTo("Ben"));
             Assert.That(await wait2, Is.EqualTo("Ben"));
 
@@ -149,15 +149,15 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task WaitMultiple_SameDataItem()
         {
             var buffer = new DataBuffer<string>();
-            
+
             var wait1 = buffer.WaitFor(static s => s == "Ben");
             var wait2 = buffer.WaitFor(static s => s == "Ben");
-            
+
             buffer.Publish("Ben");
             buffer.Publish("Ben");
 
             await Task.WhenAll(wait1, wait2);
-            
+
             Assert.That(await wait1, Is.EqualTo("Ben"));
             Assert.That(await wait2, Is.EqualTo("Ben"));
 
@@ -169,7 +169,7 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task WaitThenPublish()
         {
             var buffer = new DataBuffer<string>();
-            
+
             var waitForBenTask = buffer.WaitFor(static s => s == "Ben");
             buffer.Publish("Jack");
             buffer.Publish("Ben");
@@ -181,7 +181,7 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task WaitFor_ZeroTimeout_1()
         {
             var buffer = new DataBuffer<string>();
-            
+
             buffer.Publish("Jack");
             buffer.Publish("Ben");
 
@@ -193,7 +193,7 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task WaitFor_ZeroTimeout_2()
         {
             var buffer = new DataBuffer<string>();
-            
+
             buffer.Publish("Ben");
             buffer.Publish("Jack");
 
@@ -205,7 +205,7 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task WaitFor_ZeroTimeout_Action_1()
         {
             var buffer = new DataBuffer<string>();
-            
+
             buffer.Publish("Ben");
             buffer.Publish("Jack");
 
@@ -223,13 +223,13 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task WaitFor_ZeroTimeout_Action_2()
         {
             var buffer = new DataBuffer<string>();
-            
+
             buffer.Publish("Ben");
             buffer.Publish("Jack");
 
             var gotBen = false;
             var gotJack = false;
-            
+
             Assert.That(await buffer.WaitFor(TimeSpan.Zero, static s => s == "Jack", s => gotJack = true), Is.EqualTo("Jack"));
             Assert.That(gotJack, Is.True);
 
@@ -241,7 +241,7 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task Wait_Timeout_DataAwaitable()
         {
             var buffer = new DataBuffer<string>();
-            
+
             var publishTask = Task.Run(async () =>
             {
                 await Task.Delay(1000);
@@ -263,7 +263,7 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task PeekFor_1()
         {
             var buffer = new DataBuffer<string>();
-            
+
             buffer.Publish("Jack");
             buffer.Publish("Ben");
 
@@ -280,7 +280,7 @@ namespace UnitTests.Arrow.Threading.Tasks
         public async Task PeekFor_2()
         {
             var buffer = new DataBuffer<string>();
-            
+
             buffer.Publish("Ben");
             buffer.Publish("Jack");
 
@@ -297,7 +297,7 @@ namespace UnitTests.Arrow.Threading.Tasks
 
             var peek1 = buffer.PeekFor(static s => s == "Ben");
             var peek2 = buffer.PeekFor(static s => s == "Ben");
-            
+
             buffer.Publish("Jack");
             buffer.Publish("Ben");
 
@@ -346,11 +346,11 @@ namespace UnitTests.Arrow.Threading.Tasks
             var buffer = new DataBuffer<string>();
             buffer.Publish("Ben");
 
-            using(buffer.StartActivity())
+            using (buffer.StartActivity())
             {
                 Assert.That(buffer.HasData, Is.False);
 
-                var publishTask = Task.Run(async() =>
+                var publishTask = Task.Run(async () =>
                 {
                     await Task.Delay(1000);
                     buffer.Publish("Jack");
@@ -379,11 +379,11 @@ namespace UnitTests.Arrow.Threading.Tasks
 
             Task hurleyTask = null;
 
-            using(buffer.StartActivity())
+            using (buffer.StartActivity())
             {
                 Assert.That(buffer.HasData, Is.False);
 
-                var publishTask = Task.Run(async() =>
+                var publishTask = Task.Run(async () =>
                 {
                     await Task.Delay(1000);
                     buffer.Publish("Jack");
@@ -413,11 +413,11 @@ namespace UnitTests.Arrow.Threading.Tasks
             Task benTask = null;
             Task lockeTask = null;
 
-            using(buffer.StartActivity())
+            using (buffer.StartActivity())
             {
                 Assert.That(buffer.HasData, Is.False);
 
-                var publishTask = Task.Run(async() =>
+                var publishTask = Task.Run(async () =>
                 {
                     await Task.Delay(1000);
                     buffer.Publish("Jack");
@@ -446,8 +446,8 @@ namespace UnitTests.Arrow.Threading.Tasks
         {
             var buffer = new DataBuffer<int>();
             buffer.Publish(0);
-            
-            Assert.CatchAsync(() => buffer.PeekFor(i => (10 / i) == 2));
+
+            Assert.CatchAsync(() => buffer.PeekFor(i => 10 / i == 2));
         }
 
         [Test]
@@ -455,8 +455,8 @@ namespace UnitTests.Arrow.Threading.Tasks
         {
             var buffer = new DataBuffer<int>();
             buffer.Publish(0);
-            
-            Assert.CatchAsync(() => buffer.PeekFor(i => (10 / i) == 2));
+
+            Assert.CatchAsync(() => buffer.PeekFor(i => 10 / i == 2));
         }
     }
 }

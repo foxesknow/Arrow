@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Threading.Tasks
+namespace Arrow.Threading.Tasks.Streaming
 {
     public static class DataTimeout
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Threading.Tasks
+namespace Arrow.Threading.Tasks.Streaming
 {
     /// <summary>
     /// A receiver is a type that is given data and allows someone to receive that data
@@ -15,7 +15,7 @@ namespace Arrow.Threading.Tasks
         /// <summary>
         /// How long to wait is a specific timeout is not specified
         /// </summary>
-        public TimeSpan DefaultTimeout{get;}
+        public TimeSpan DefaultTimeout { get; }
 
         /// <summary>
         /// Waits for the condition to be satisfied and then execites an action.
@@ -32,7 +32,7 @@ namespace Arrow.Threading.Tasks
     {
         private static class EmptyThen<T>
         {
-            public static readonly Action<T> Instance = static d => {};
+            public static readonly Action<T> Instance = static d => { };
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="ArgumentNullException"></exception>
         public static Task<TData> WaitFor<TData>(this IReceiver<TData> receiver, Func<TData, bool> ifCondition)
         {
-            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.WaitFor(receiver.DefaultTimeout, ifCondition, EmptyThen<TData>.Instance);
         }
@@ -61,7 +61,7 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="ArgumentNullException"></exception>
         public static Task<TData> WaitFor<TData>(this IReceiver<TData> receiver, TimeSpan timeout, Func<TData, bool> ifCondition)
         {
-            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.WaitFor(timeout, ifCondition, EmptyThen<TData>.Instance);
         }
@@ -78,9 +78,9 @@ namespace Arrow.Threading.Tasks
         /// <exception cref="ArgumentNullException"></exception>
         public static Task<TData> WaitFor<TData>(this IReceiver<TData> receiver, TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then)
         {
-            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
 
-            return receiver.WaitFor(timeout, ifCondition,then);
+            return receiver.WaitFor(timeout, ifCondition, then);
         }
     }
 }

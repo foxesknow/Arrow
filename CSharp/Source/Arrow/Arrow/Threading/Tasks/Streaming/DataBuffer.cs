@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Arrow.Execution;
+using Arrow.Threading.Tasks.Streaming;
 
 namespace Arrow.Threading.Tasks
 {
@@ -14,7 +15,7 @@ namespace Arrow.Threading.Tasks
     /// A class that holds data and will notify anyone waiting for data matching data to be added
     /// </summary>
     /// <typeparam name="TData"></typeparam>
-    public sealed partial class DataBuffer<TData> : IPeekableReceiver<TData>
+    public sealed partial class DataBuffer<TData> : IPeekableReceiver<TData>, IPublisher<TData>
     {
         private readonly object m_SyncRoot = new object();
 

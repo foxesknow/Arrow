@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Threading.Tasks
+namespace Arrow.Threading.Tasks.Streaming
 {
     /// <summary>
     /// A peekable receiver is a type that is given data and allows someone to receive that data,
@@ -16,35 +16,35 @@ namespace Arrow.Threading.Tasks
     {
         Task<TData> PeekFor(TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then);
 
-        public bool TryPeek([MaybeNullWhen(false)]out TData data, Func<TData, bool> condition);
+        public bool TryPeek([MaybeNullWhen(false)] out TData data, Func<TData, bool> condition);
     }
 
     public static class PeekableReceiverExtensions
     {
         private static class EmptyThen<T>
         {
-            public static readonly Action<T> Instance = static d => {};
+            public static readonly Action<T> Instance = static d => { };
         }
 
         public static Task<TData> PeekFor<TData>(this IPeekableReceiver<TData> receiver, Func<TData, bool> ifCondition)
         {
-            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.PeekFor(receiver.DefaultTimeout, ifCondition, EmptyThen<TData>.Instance);
         }
 
         public static Task<TData> PeekFor<TData>(this IPeekableReceiver<TData> receiver, TimeSpan timeout, Func<TData, bool> ifCondition)
         {
-            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.PeekFor(timeout, ifCondition, EmptyThen<TData>.Instance);
         }
 
         public static Task<TData> PeekFor<TData>(this IPeekableReceiver<TData> receiver, TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then)
         {
-            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
 
-            return receiver.PeekFor(timeout, ifCondition,then);
+            return receiver.PeekFor(timeout, ifCondition, then);
         }
     }
 }
