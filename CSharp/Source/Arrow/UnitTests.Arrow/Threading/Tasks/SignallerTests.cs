@@ -321,5 +321,48 @@ namespace UnitTests.Arrow.Threading.Tasks
             Assert.That(signalResult.Failed, Is.EqualTo(0));
             Assert.That(signalResult.Threw, Is.EqualTo(1));
         }
+
+        [Test]
+        public void MakeConditionalSteps()
+        {
+            var signaller = new Signaller<string>();
+            var steps = signaller.MakeConditionalSteps
+            (
+                name => name == "Jack",
+                name => name == "Sawyer"
+            );
+
+            Assert.That(steps, Is.Not.Null);
+            Assert.That(steps("Fred"), Is.False);
+            Assert.That(steps("Jack"), Is.False);
+            Assert.That(steps("Dave"), Is.False);
+            Assert.That(steps("Sawyer"), Is.True);
+
+            Assert.Catch(() => steps("foo"));
+        }
+
+        [Test]
+        public async Task When_MacroCondition()
+        {
+            var signaller = new Signaller<string>();
+
+            var steps = signaller.MakeConditionalSteps
+            (
+                name => name == "Jack",
+                name => name == "Sawyer"
+            );
+
+            var task = signaller.When(steps);
+            
+            var inserterTask = Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                signaller.Signal("Jack");
+                signaller.Signal("Sawyer");
+            });
+
+            var name = await task;
+            Assert.That(name, Is.EqualTo("Sawyer"));
+        }
     }
 }
