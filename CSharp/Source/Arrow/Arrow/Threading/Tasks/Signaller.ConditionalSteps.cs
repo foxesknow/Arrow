@@ -44,7 +44,7 @@ namespace Arrow.Threading.Tasks
             return DoMakeConditionalSteps(first, rest.ToArray());
         }
 
-        private static Func<T, bool> DoMakeConditionalSteps<T>(Func<T, bool> first, IReadOnlyList<Func<T, bool>> rest)
+        private static Func<T, bool> DoMakeConditionalSteps(Func<T, bool> first, IReadOnlyList<Func<T, bool>> rest)
         {
             Func<T, bool>? activeFunction = first;
             var nextIndex = 0;
