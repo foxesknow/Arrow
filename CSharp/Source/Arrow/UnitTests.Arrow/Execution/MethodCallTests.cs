@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Arrow.Execution;
 
 using NUnit.Framework;
@@ -13,6 +13,48 @@ namespace UnitTests.Arrow.Execution
 	public class MethodCallTests
 	{
 		delegate void BinaryHandler<T>(T first, T second);
+
+		[Test]
+		public void AllowFailAsync_NoMethod()
+		{
+			Assert.Catch(() => MethodCall.AllowFailAsync(null));
+			Assert.Catch(() => MethodCall.AllowFailAsync(10, null));
+		}
+
+		[Test]
+		public void AllowFailAsync_NoExceptions()
+		{
+			Assert.DoesNotThrow(() => MethodCall.AllowFailAsync(async () => await Task.CompletedTask));
+			Assert.DoesNotThrow(() => MethodCall.AllowFailAsync(10, async state => await Task.CompletedTask));
+		}
+
+		[Test]
+		public async Task AllowFailAsync_NoState_NoMethod()
+		{
+			var called = false;
+
+			await MethodCall.AllowFailAsync(async () =>
+			{
+				await Task.Delay(100);
+				called = true;
+			});
+
+			Assert.That(called, Is.True);
+		}
+
+		[Test]
+		public async Task AllowFailAsync_State_NoMethod()
+		{
+			var flag = 0;
+
+			await MethodCall.AllowFailAsync(42, async state =>
+			{
+				await Task.Delay(100);
+				flag = state;
+			});
+
+			Assert.That(flag, Is.EqualTo(42));
+		}
 	
 		[Test]
 		public void TestAllowFail()

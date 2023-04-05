@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace Arrow.Execution
 {
@@ -72,6 +73,58 @@ namespace Arrow.Execution
 				if(exceptionHandler!=null)
 				{
 					exceptionHandler(e);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Executes a methods and ignores any exceptions thrown by it
+		/// </summary>
+		/// <param name="function"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static Task AllowFailAsync(Func<Task> function)
+		{
+			if(function is null) throw new ArgumentNullException(nameof(function));
+
+			return Execute(function);
+
+			static async Task Execute(Func<Task> function)
+			{
+				try
+				{
+					await function();
+				}
+				catch
+				{
+					// Ignore it
+				}
+			}
+		}
+
+		/// <summary>
+		/// Executes a methods and ignores any exceptions thrown by it
+		/// </summary>
+		/// <typeparam name="TState"></typeparam>
+		/// <param name="state"></param>
+		/// <param name="function"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static Task AllowFailAsync<TState>(TState state, Func<TState, Task> function)
+		{
+			if(function is null) throw new ArgumentNullException(nameof(function));
+
+			return Execute(state,function);
+
+			static async Task Execute(TState state, Func<TState, Task> function)
+			{
+				try
+				{
+					await function(state);
+				}
+				catch
+				{
+					// Ignore it
 				}
 			}
 		}

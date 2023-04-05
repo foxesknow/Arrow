@@ -47,7 +47,7 @@ namespace Arrow.Threading.Tasks
             }
 
             lockAcquired = false;
-            return NullDisposable.Instance;
+            return Disposable.Null;
         }
 
         private sealed class Releaser : IDisposable

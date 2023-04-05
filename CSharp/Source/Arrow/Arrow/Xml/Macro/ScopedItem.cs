@@ -19,8 +19,8 @@ namespace Arrow.Xml.Macro
 		/// <param name="mode">It's mode</param>
 		public ScopedItem(object value, ScopedItemMode mode)
 		{
-			m_Value=value;
-			m_Mode=mode;
+			m_Value = value;
+			m_Mode = mode;
 		}
 		
 		/// <summary>
@@ -29,7 +29,7 @@ namespace Arrow.Xml.Macro
 		public object Value
 		{
 			get{return m_Value;}
-			set{m_Value=value;}
+			set{m_Value = value;}
 		}
 		
 		/// <summary>
@@ -38,7 +38,7 @@ namespace Arrow.Xml.Macro
 		public ScopedItemMode ScopedItemMode
 		{
 			get{return m_Mode;}
-			internal set{m_Mode=value;}
+			internal set{m_Mode = value;}
 		}
 	}
 }

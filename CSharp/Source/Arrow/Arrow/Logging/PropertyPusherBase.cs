@@ -15,9 +15,9 @@ namespace Arrow.Logging
         /// <inheritdoc/>
         public IDisposable Push(IEnumerable<(string Name, object? Value)> properties)
         {
-            if(properties is null) return NullDisposable.Instance;
+            if(properties is null) return Disposable.Null;
 
-            var head = NullDisposable.Instance;
+            var head = Disposable.Null;
 
             foreach(var (name, value) in properties)
             {

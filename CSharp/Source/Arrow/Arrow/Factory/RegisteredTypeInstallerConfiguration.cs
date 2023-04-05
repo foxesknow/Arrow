@@ -12,7 +12,7 @@ namespace Arrow.Factory
 	/// </summary>
 	public class RegisteredTypeInstallerConfiguration
 	{
-		private List<string> m_Assemblies=new List<string>();
+		private readonly List<string> m_Assemblies = new List<string>();
 		
 		/// <summary>
 		///  The assemblies to register
@@ -40,14 +40,14 @@ namespace Arrow.Factory
 		/// <returns>A RegisteredTypeInstallerConfiguration instance</returns>
 		public static RegisteredTypeInstallerConfiguration FromXml(XmlNode node)
 		{
-			if(node==null) throw new ArgumentNullException("null");
-			
-			List<string> assemblies=XmlCreation.CreateList<string>(node.SelectNodesOrEmpty("Assembly"));
-			
-			RegisteredTypeInstallerConfiguration config=new RegisteredTypeInstallerConfiguration();
-			config.Assemblies.AddRange(assemblies);
-			
-			return config;
-		}
+            if(node == null) throw new ArgumentNullException("null");
+
+            List<string> assemblies = XmlCreation.CreateList<string>(node.SelectNodesOrEmpty("Assembly"));
+
+            RegisteredTypeInstallerConfiguration config = new RegisteredTypeInstallerConfiguration();
+            config.Assemblies.AddRange(assemblies);
+
+            return config;
+        }
 	}
 }

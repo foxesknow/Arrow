@@ -39,8 +39,8 @@ namespace Arrow.Logging
 
         private static IDisposable DoPush(ILog log, IEnumerable<(string Name, object? value)> properties)
         {
-            if(log is null) return NullDisposable.Instance;
-            if(properties is null) return NullDisposable.Instance;
+            if(log is null) return Disposable.Null;
+            if(properties is null) return Disposable.Null;
 
             if(log is IPropertyContext context)
             {
@@ -48,11 +48,11 @@ namespace Arrow.Logging
                 if(pusher is not null)
                 {
                     var disposer = pusher.Push(properties);
-                    return disposer ?? NullDisposable.Instance;
+                    return disposer ?? Disposable.Null;
                 }
             }
 
-            return NullDisposable.Instance;
+            return Disposable.Null;
         }
     }
 }

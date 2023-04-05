@@ -22,7 +22,7 @@ namespace Arrow.Xml.ObjectCreation
         /// <param name="object"></param>
         /// <param name="node"></param>
         void ApplyNodeAttributes(object @object, XmlNode node);
-        
+
         /// <summary>
         /// Applies the sequence of nodes to an existing object
         /// </summary>
@@ -118,7 +118,7 @@ namespace Arrow.Xml.ObjectCreation
 
         DelayedCreator DelayedCreate<T>(XmlNode node);
         DelayedCreator DelayedCreate<T>(XmlNode node, Uri? baseLocation);
-        
+
         /// <summary>
         /// Initializes an object via ISupportInitialize
         /// </summary>

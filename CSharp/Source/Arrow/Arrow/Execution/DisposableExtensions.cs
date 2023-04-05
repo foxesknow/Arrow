@@ -12,7 +12,7 @@ namespace Arrow.Execution
     {
         /// <summary>
         /// Combines 2 disposables into 1.
-        /// The head will be dispose first, followed by the tail
+        /// The head will be disposed first, followed by the tail
         /// </summary>
         /// <param name="head"></param>
         /// <param name="tail"></param>
@@ -52,5 +52,50 @@ namespace Arrow.Execution
                 }
             }
         }
+
+#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
+        /// <summary>
+        /// Combines 2 disposables into 1.
+        /// The head will be disposed first, followed by the tail
+        /// </summary>
+        /// <param name="head"></param>
+        /// <param name="tail"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IAsyncDisposable Cons(this IAsyncDisposable head, IAsyncDisposable tail)
+        {
+            if(head is null) throw new ArgumentNullException(nameof(head));
+            if(tail is null) throw new ArgumentNullException(nameof(tail));
+
+            return new AsyncDisposableNode(head, tail);
+        }
+
+        private sealed class AsyncDisposableNode : IAsyncDisposable
+        {
+            private IAsyncDisposable? m_Head;
+            private IAsyncDisposable? m_Tail;
+
+            public AsyncDisposableNode(IAsyncDisposable head, IAsyncDisposable tail)
+            {
+                m_Head = head;
+                m_Tail = tail;
+            }
+
+            public async ValueTask DisposeAsync()
+            {
+                if(m_Head is not null)
+                {
+                    await m_Head.DisposeAsync();
+                    m_Head = null;
+                }
+
+                if(m_Tail is not null)
+                {
+                    await m_Tail.DisposeAsync();
+                    m_Tail = null;
+                }
+            }
+        }
+#endif
     }
 }
