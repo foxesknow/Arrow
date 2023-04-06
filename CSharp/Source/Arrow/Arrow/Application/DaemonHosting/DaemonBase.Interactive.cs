@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Arrow.Application.Daemon
+namespace Arrow.Application.DaemonHosting
 {
     public abstract partial class DaemonBase
     {
@@ -52,9 +52,10 @@ namespace Arrow.Application.Daemon
             yield return new("Cls", "Clears the screen", Commands.Cls);
             yield return new("Filters", "Displays the filters available", part => Commands.FilterHelp(part, m_Filters));
             yield return new("Now", "Displays the application time", Commands.Now);
-            yield return new("GetSetting", "Displays the arrow setting", Commands.GetSetting);
+            yield return new("GetSetting", "settingName", "Displays the arrow setting", Commands.GetSetting);
             yield return new("Echo", "Echoes back its arguments", Commands.Echo);
             yield return new("Exit", "Exits the application", part => Commands.Exit(part, this));
+            yield return new("Motivate", "number", "Says something motivational", Commands.Motivate);
         }
 
         /// <summary>

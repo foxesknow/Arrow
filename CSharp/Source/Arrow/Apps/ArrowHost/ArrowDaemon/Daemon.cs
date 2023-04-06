@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Arrow.Application.Daemon;
+using Arrow.Application.DaemonHosting;
 
 namespace ArrowDaemon
 {
-    internal class ApplicationDaemon : DaemonBase
+    internal class Daemon : DaemonBase
     {
         protected override void StartDaemon(string[] args)
         {

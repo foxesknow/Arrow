@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Application.Daemon
+namespace Arrow.Application.DaemonHosting
 {
     /// <summary>
     /// Converts a line into a series of pipeline parts

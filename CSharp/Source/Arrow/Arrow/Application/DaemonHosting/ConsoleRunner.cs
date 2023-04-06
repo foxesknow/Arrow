@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Application.Daemon
+namespace Arrow.Application.DaemonHosting
 {
     /// <summary>
-    /// Hosts a daemon that can read from the console
+    /// Runs a daemon that can read from the console
     /// </summary>
-    public class ConsoleDaemon<TDaemon> where TDaemon : DaemonBase, new()
+    public class ConsoleRunner<TDaemon> : IDaemonRunner where TDaemon : DaemonBase, new()
     {
-        /// <summary>
-        /// Runs the daemon
-        /// </summary>
-        /// <param name="args">And command line arguments to the application</param>
+        /// <inheritdoc/>
         public void Run(string[] args)
         {
             var daemon = new TDaemon();

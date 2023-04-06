@@ -5,19 +5,16 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Arrow.Application.Daemon
+namespace Arrow.Application.DaemonHosting
 {
     /// <summary>
     /// Hosts a deamon that does not allow the user to enter text.
     /// This is useful when the daemon is hosted in Docker
     /// </summary>
     /// <typeparam name="TDaemon"></typeparam>
-    public sealed class HeadlessDaemon<TDaemon> where TDaemon : DaemonBase, new()
+    public sealed class HeadlessRunner<TDaemon> : IDaemonRunner where TDaemon : DaemonBase, new()
     {
-        /// <summary>
-        /// Runs the daemon
-        /// </summary>
-        /// <param name="args"></param>
+        /// <inheritdoc/>
         public void Run(string[] args)
         {
             var daemon = new TDaemon();

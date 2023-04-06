@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Arrow.Application.Daemon;
+using Arrow.Application.DaemonHosting;
 
 using NUnit.Framework;
 
-namespace UnitTests.Arrow.Application.Daemon
+namespace UnitTests.Arrow.Application.DaemonHosting
 {
     [TestFixture]
     public class InteractiveCommandTests

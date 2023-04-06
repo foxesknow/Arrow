@@ -1,5 +1,5 @@
 ﻿using Arrow.Application;
-using Arrow.Application.Daemon;
+using Arrow.Application.DaemonHosting;
 
 namespace ArrowDaemon
 {
@@ -15,8 +15,8 @@ namespace ArrowDaemon
 
 		static void Run(string[] args)
 		{
-			var daemon = new ConsoleDaemon<ApplicationDaemon>();
-			daemon.Run(args);
+			var runner = new ConsoleRunner<Daemon>();
+			runner.Run(args);
 		}
     }
 }

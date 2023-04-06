@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Application.Daemon
+namespace Arrow.Application.DaemonHosting
 {
     /// <summary>
     /// Holds the information about each part of the pipeline.

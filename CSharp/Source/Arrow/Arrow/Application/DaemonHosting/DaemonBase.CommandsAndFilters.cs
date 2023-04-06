@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 using Arrow.Calendar;
 using Arrow.Logging;
 using Arrow.Settings;
-using System.Linq.Expressions;
 using Arrow.Text;
 
-namespace Arrow.Application.Daemon
+namespace Arrow.Application.DaemonHosting
 {
     public abstract partial class DaemonBase
     {
@@ -35,6 +34,19 @@ namespace Arrow.Application.Daemon
         /// </summary>
         private static class Commands
         {
+            private static readonly string[] Motivations =
+            {
+                "Donald Knuth respects your code",
+                "Wow, that's fast",
+                "You don't look a day over 21",
+                "You don't need Resharper!",
+                "I bet you've never needed more that 640K",
+                "Nice hair ;-)",
+                "Elon Musk would never sack you",
+                "Impressive, most impressive",
+                "You know where the any-key is"
+            };
+
             public static IEnumerable<object?> Exit(PipelinePart part, DaemonBase daemonBase)
             {
                 daemonBase.KeepRunning = false;
@@ -96,6 +108,37 @@ namespace Arrow.Application.Daemon
                                              filter.Description);
 
                     yield return line;
+                }
+            }
+
+            public static IEnumerable<string> Motivate(PipelinePart part)
+            {
+                var arg = (part.HasArguments ? part.Arguments[0] : "1");
+                if(int.TryParse(arg, out var count) == false)
+                {
+                    yield return "That's not a number. Try and focus!";
+                }
+                else
+                {
+                    if(count == 0)
+                    {
+                        yield return "You seem confused";
+                    }
+                    else if(count < 0)
+                    {
+                        yield return "You're looking for negative motivation..?";
+                    }
+                    else if(count > 1)
+                    {
+                        yield return "Wow, how much motivation do you really need?";
+                    }
+                    else
+                    {
+                        var random = new Random(Guid.NewGuid().GetHashCode());
+                        var index = random.Next(Motivations.Length);
+                        yield return Motivations[index];
+                    }
+
                 }
             }
         }
