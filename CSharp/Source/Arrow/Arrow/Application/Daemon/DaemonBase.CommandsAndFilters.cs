@@ -62,7 +62,7 @@ namespace Arrow.Application.Daemon
             {
                 foreach(var setting in part.Arguments)
                 {
-                    var value = TokenExpander.ExpandText(setting);
+                    var value = TokenExpander.ExpandToken(setting);
                     yield return value ?? "";
                 }
             }

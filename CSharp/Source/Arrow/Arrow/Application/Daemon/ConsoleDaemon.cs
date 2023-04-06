@@ -22,6 +22,7 @@ namespace Arrow.Application.Daemon
 
             try
             {
+                WaitForShutdown(daemon, args);
             }
             finally
             {
