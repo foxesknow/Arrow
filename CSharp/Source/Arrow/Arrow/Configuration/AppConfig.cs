@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.IO;
 using System.Xml;
 using System.Configuration;
 using System.Collections.Specialized;
@@ -44,6 +44,12 @@ namespace Arrow.Configuration
 	{
 		private static XmlDocument? s_ConfigDocument;
 		private static IConfigFile s_CurrentConfigFile = default!;
+
+		private static object s_AppSettingsSyncRoot = new object();
+		private static NameValueCollection? s_AllAppSettings;
+		private static Exception? s_AppSettingsException;
+
+		private static Lazy<ConnectionStringSettingsCollection> s_LazyConnectionStringSettings;
 		
 		static AppConfig()
 		{
@@ -57,6 +63,8 @@ namespace Arrow.Configuration
 			{
 				s_ConfigDocument=null;
 			}
+
+			s_LazyConnectionStringSettings = ResetDynamicState();
 		}
 		
 		/// <summary>
@@ -83,11 +91,11 @@ namespace Arrow.Configuration
 		/// <exception cref="System.ArgumentNullException">configFile is null</exception>
 		public static void ReplaceConfig(IConfigFile configFile)
 		{
-			if(configFile==null) throw new ArgumentNullException("configFile");
+			if(configFile is null) throw new ArgumentNullException(nameof(configFile));
 			
-			var newDoc=configFile.LoadConfig();
-			s_ConfigDocument=newDoc;
-			s_CurrentConfigFile=configFile;
+			s_ConfigDocument = configFile.LoadConfig();
+			s_CurrentConfigFile = configFile;
+			s_LazyConnectionStringSettings = ResetDynamicState();
 		}
 		
 		/// <summary>
@@ -97,26 +105,85 @@ namespace Arrow.Configuration
 		{
 			get{return s_CurrentConfigFile;}
 		}
-		
+
+		/// <summary>
+		/// Returns the connectionString collection from the app.config.
+		/// NOTE: No variable expansion takes place on any of the values in the collection.
+		/// </summary>
+		public static ConnectionStringSettingsCollection ConnectionStrings
+		{
+			get{return s_LazyConnectionStringSettings.Value;}
+		}
+
+		/// <summary>
+		/// Returns the appSettings collection.
+		/// NOTE: No variable expansion takes place on the values in the collection.
+		/// </summary>
+		public static NameValueCollection AppSettings
+		{
+			get{return NewAppSettings();}
+		}
+
 		/// <summary>
 		/// Reads an "old-style" NameValueSectionHandler style configuration section.
 		/// This method is intended to ease the transition to the other methods in this class
+		/// NOTE: The collection WILL have variable expansion applied to its values
 		/// </summary>
-		/// <param name="path">The path to the section. May be null</param>
-		/// <returns>A collection of values, or null if path does not resolve to a location in the xml</returns>
+		/// <returns></returns>
 		public static NameValueCollection? LegacyGetConfig(string path)
 		{
-			if(string.IsNullOrEmpty(path)) return null;
-			
-			var doc=s_ConfigDocument;
-			if(doc==null) return null;
-			
-			var section=doc.DocumentElement!.SelectSingleNode(path);
-			if(section==null) return null;
-			
-			NameValueSectionHandler handler=new NameValueSectionHandler();
-			NameValueCollection data=new NameValueCollection();
-			
+			return DoLegacyGetConfig(path, true);
+		}
+
+		private static NameValueCollection NewAppSettings()
+		{
+			lock(s_AppSettingsSyncRoot)
+			{
+				// If we've tried before then return the results
+				if(s_AppSettingsException is not null) throw s_AppSettingsException;
+				if(s_AllAppSettings is not null) return s_AllAppSettings;
+
+				try
+				{
+					// These are the baseline values.
+					// By setting this here any includes will be able to refer to them.
+					s_AllAppSettings = LoadAppSettings();
+
+					// Now layer on any additional includes
+					s_AllAppSettings = LoadIncludes(s_AllAppSettings);
+
+					return s_AllAppSettings;
+				}
+				catch(Exception e)
+				{
+					s_AppSettingsException = e;
+					throw;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Returns the appSettings section from a configuration file.
+		/// The values will not have variable expansion applied in order to be compatible with ConfigurationManager.AppSettings
+		/// </summary>
+		/// <returns></returns>
+		private static NameValueCollection LoadAppSettings()
+		{
+			var settings = DoLegacyGetConfig("appSettings", false);
+			return settings ?? new NameValueCollection();
+		}
+
+		private static ConnectionStringSettingsCollection LoadConnectionStrings()
+		{
+			var settings = new ConnectionStringSettingsCollection();
+
+			XmlDocument? doc = s_ConfigDocument;
+			if(doc is null || doc.DocumentElement is null) return settings;
+
+			// It's optional
+			XmlNode? section = doc.DocumentElement.SelectSingleNode("connectionStrings");
+			if(section is null) return settings;
+
 			foreach(XmlNode? node in section.SelectNodesOrEmpty("*"))
 			{
 				if(node is null) continue;
@@ -125,30 +192,36 @@ namespace Arrow.Configuration
 				{
 					case "add":
 					{
-						string key=node.Attributes!["key"]!.Value!;
-						string value=node.Attributes!["value"]!.Value!;
-						data[key]=TokenExpander.ExpandText(value);
+						var name = node.Attributes!.GetValueOrDefault("name", null);
+						if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("invalid name in connectionString");
+						if(settings[name] is not null) throw new ArgumentException($"database already exists: {name}");
+
+						var providerName = node.Attributes!.GetValueOrDefault("providerName", "");
+						var connectionString = node.Attributes!.GetValueOrDefault("connectionString", "");
+						settings.Add(new(name, connectionString, providerName));
+
 						break;
 					}
-					
+
 					case "remove":
 					{
-						string key=node.Attributes!["key"]!.Value!;
-						data.Remove(key);
+						var name = node.Attributes!.GetValueOrDefault("name", null);
+						if(name is not null) settings.Remove(name);
 						break;
 					}
-					
+
 					case "clear":
-						data.Clear();
+					{
+						settings.Clear();
 						break;
-						
+					}
+
 					default:
 						break;
-					
 				}
 			}
-						
-			return data;
+
+			return settings;
 		}
 		
 		/// <summary>
@@ -187,14 +260,14 @@ namespace Arrow.Configuration
 		/// <exception cref="System.ArgumentNullException">system is null</exception>
 		public static XmlNode? GetSystemXml(string system)
 		{
-			if(system==null) throw new ArgumentNullException("system");
-			
-			var doc=s_ConfigDocument;
-			if(doc==null) return null;
-			
-			var node=doc.DocumentElement!.SelectSingleNode(system);			
-			return node;
-		}
+            if(system == null) throw new ArgumentNullException("system");
+
+            var doc = s_ConfigDocument;
+            if(doc == null) return null;
+
+            var node = doc.DocumentElement!.SelectSingleNode(system);
+            return node;
+        }
 		
 		/// <summary>
 		/// Creates an object from a section
@@ -223,13 +296,13 @@ namespace Arrow.Configuration
 		/// <returns>A list of object. If nothing is found an empty list is returned</returns>
 		public static List<T> GetSectionObjects<T>(string system, string sectionPath, string objectElementName) where T:class
 		{
-			if(objectElementName==null) throw new ArgumentNullException("objectElementName");
-			
-			var node=GetSectionXml(system,sectionPath);
-			if(node==null) return new List<T>();
-		
-			return XmlCreation.CreateList<T>(node.SelectNodesOrEmpty(objectElementName));
-		}
+            if(objectElementName == null) throw new ArgumentNullException("objectElementName");
+
+            var node = GetSectionXml(system, sectionPath);
+            if(node == null) return new List<T>();
+
+            return XmlCreation.CreateList<T>(node.SelectNodesOrEmpty(objectElementName));
+        }
 		
 		/// <summary>
 		/// Returns an object created by an IConfigurationSectionHandler instance.
@@ -243,14 +316,14 @@ namespace Arrow.Configuration
 		/// <exception cref="System.ArgumentNullException">section is null</exception>
 		public static object? GetSectionForHandler<T>(string system, string sectionPath) where T:IConfigurationSectionHandler,new()
 		{
-			var node=GetSectionXml(system,sectionPath);			
-			if(node==null) return null;
-			
-			IConfigurationSectionHandler handler=new T();
-			object obj=handler.Create(null,null,node);
-			
-			return obj;
-		}
+            var node = GetSectionXml(system, sectionPath);
+            if(node == null) return null;
+
+            IConfigurationSectionHandler handler = new T();
+            object obj = handler.Create(null, null, node);
+
+            return obj;
+        }
 		
 		/// <summary>
 		/// Works out where to get the section from by examining the xpath for the section.
@@ -263,49 +336,178 @@ namespace Arrow.Configuration
 		/// <returns>The root element to start the search from</returns>
 		private static XmlNode? GetSearchRoot(XmlNode systemNode, string sectionPath, Uri? baseUri)
 		{
-			// Work out which subsection we're looking at
-			string rootSection=sectionPath;			
-			int pivot=sectionPath.IndexOf('/');
-			if(pivot!=-1) rootSection=sectionPath.Substring(0,pivot);
-			
-			var rootSectionNode=systemNode.SelectSingleNode(rootSection);
-			if(rootSectionNode==null) return systemNode;
-			
-			var location=rootSectionNode.Attributes!.GetValueOrDefault("uri",null);
-			if(location==null) return systemNode;
-			
-			location=TokenExpander.ExpandText(location);
-			Uri uri=Accessor.ResolveRelative(baseUri,location);
-			
-			string allowMissingString=rootSectionNode.Attributes!.GetValueOrDefault("allowMissing","false");
-			
-			bool allowMissing;
-			bool.TryParse(allowMissingString,out allowMissing);
-			
-			XmlNode? searchRoot=null;
-			
+            // Work out which subsection we're looking at
+            string rootSection = sectionPath;
+            int pivot = sectionPath.IndexOf('/');
+            if(pivot != -1) rootSection = sectionPath.Substring(0, pivot);
+
+            var rootSectionNode = systemNode.SelectSingleNode(rootSection);
+            if(rootSectionNode == null) return systemNode;
+
+            var location = rootSectionNode.Attributes!.GetValueOrDefault("uri", null);
+            if(location == null) return systemNode;
+
+            location = TokenExpander.ExpandText(location);
+            Uri uri = Accessor.ResolveRelative(baseUri, location);
+
+            string allowMissingString = rootSectionNode.Attributes!.GetValueOrDefault("allowMissing", "false");
+
+            bool allowMissing;
+            bool.TryParse(allowMissingString, out allowMissing);
+
+            XmlNode? searchRoot = null;
+
+            try
+            {
+                var accessor = StorageManager.Get(uri);
+
+                if(allowMissing && accessor.CanExists && accessor.Exists() == false)
+                {
+                    // The resource is allowed to be missing and we were able 
+                    // to explicitly check that it wasn't there
+                    searchRoot = null;
+                }
+                else
+                {
+                    XmlDocument resolvedDoc = StorageManager.Get(uri).ReadXmlDocument();
+                    searchRoot = resolvedDoc.DocumentElement;
+                }
+            }
+            catch
+            {
+                if(allowMissing == false) throw;
+            }
+
+            return searchRoot;
+        }
+
+		private static NameValueCollection? DoLegacyGetConfig(String path, bool expandValue)
+		{
+			if(string.IsNullOrWhiteSpace(path)) return null;
+
+			XmlDocument? doc = s_ConfigDocument;
+			if(doc is null || doc.DocumentElement is null) return null;
+
+			var section = doc.DocumentElement.SelectSingleNode(path);
+			if(section is null) return null;
+
+			var data = new NameValueCollection();
+			Apply(data, section, expandValue);
+
+			return data;
+		}
+
+		private static void Apply(NameValueCollection target, XmlNode section, bool expandValue)
+		{
+			foreach(XmlNode? node in section.SelectNodesOrEmpty("*"))
+			{
+				if(node is null) continue;
+
+				switch(node.Name)
+				{
+					case "add":
+					{
+						var key = node.Attributes!.GetValueOrDefault("key", null);
+						if(key is null) throw new ArrowException("key is null");
+
+						var value=node.Attributes!.GetValueOrDefault("value", null);
+						if(value is null) throw new ArrowException("value is null");
+
+						if(expandValue) value = TokenExpander.ExpandText(value);
+						target[key] = value;
+						break;
+					}
+					
+					case "remove":
+					{
+						var key = node.Attributes!.GetValueOrDefault("key", null);
+						if(key is null) throw new ArrowException("key is null");
+						
+						target.Remove(key);
+						break;
+					}
+					
+					case "clear":
+						target.Clear();
+						break;
+						
+					default:
+						break;
+					
+				}
+			}
+		}
+
+		private static NameValueCollection LoadIncludes(NameValueCollection startingPoint)
+		{
+			// We need to work with a copy to preservide the baseline
+			var target = new NameValueCollection(startingPoint);
+			ApplyAdditionalAppSettings(target);
+
+			return target;
+		}
+
+		private static void ApplyAdditionalAppSettings(NameValueCollection target)
+		{
+			var node = GetSectionXml(ArrowSystem.Name, "Arrow.Configuration/AppSettings");
+			if(node is null) return;
+
+			var includeNodes = node.SelectNodesOrEmpty("Include");
+			foreach(XmlNode? includeNode in includeNodes)
+			{
+				if(includeNode is null) continue;
+
+				// By default we'll assume the user wants the file
+				var optionalText = includeNode.Attributes!.GetValueOrDefault("optional", "false");
+				if(bool.TryParse(optionalText, out var optional) == false) optional = false;
+
+				var filename = includeNode.Attributes!.GetValueOrDefault("filename", null);
+				if(filename is null) throw new ArrowException("no filename specified");
+
+				var select = includeNode.Attributes!.GetValueOrDefault("select", null);
+
+				// It's safe to do this, even if the filename uses a variable in the appSettings namespace.
+				// However, the user will only see the variables from the app.config at this point
+				var expandedFilename = TokenExpander.ExpandText(filename);
+				ApplyFile(expandedFilename, optional, select, target, true);
+			}
+		}
+
+		private static void ApplyFile(string filename, bool optional, string? select, NameValueCollection target, bool expandValue)
+		{
+			if(File.Exists(filename) == false && optional) return;
+
 			try
 			{
-				var accessor=StorageManager.Get(uri);
-				
-				if(allowMissing && accessor.CanExists && accessor.Exists()==false)
+				var document = new XmlDocument();
+				document.Load(filename);
+
+				XmlNode? root = document.DocumentElement;
+				if(root is null) throw new ArrowException($"no root element in {filename}");
+
+				if(string.IsNullOrWhiteSpace(select) == false)
 				{
-					// The resource is allowed to be missing and we were able 
-					// to explicitly check that it wasn't there
-					searchRoot=null;
+					root = root.SelectSingleNode(select);
+					if(root is null) throw new ArrowException($"select ({select}) did not find an element in {filename}");
 				}
-				else
-				{			
-					XmlDocument resolvedDoc=StorageManager.Get(uri).ReadXmlDocument();
-					searchRoot=resolvedDoc.DocumentElement;
-				}
+
+				Apply(target, root, expandValue);
 			}
-			catch
+			catch(FileNotFoundException)
 			{
-				if(allowMissing==false) throw;
+				if(optional == false) throw;
 			}
-			
-			return searchRoot;
+		}
+
+		private static Lazy<ConnectionStringSettingsCollection> ResetDynamicState()
+		{
+			lock(s_AppSettingsSyncRoot)
+			{
+				s_AllAppSettings = null;
+				s_AppSettingsException = null;
+			}
+
+			return new(() => LoadConnectionStrings());
 		}
 	}
 }

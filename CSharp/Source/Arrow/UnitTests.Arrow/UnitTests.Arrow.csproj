@@ -97,6 +97,17 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Arrow\Arrow.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Update="AdditionalAppSettings.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="App.config">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
+	  <None Update="LoopedInConfig.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 
 	<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
 		<Copy SourceFiles="app.config" DestinationFiles="$(OutDir)\testhost.dll.config" />

@@ -1,0 +1,8 @@
+﻿<Outer>
+	<Data>
+		<appSettings>
+			<add key="LoopedName" value="Jack" />
+			<remove key="ToDelete" />
+		</appSettings>
+	</Data>
+</Outer>

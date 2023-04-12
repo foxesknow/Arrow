@@ -44,6 +44,7 @@ namespace Arrow.Settings
             // These settings aren't stacked
             DoRegister("def", DefaultSettings.Instance, false);
             DoRegister("any", AnySettings.Instance, false);
+            DoRegister("appsettings", new AppSettingsProvider(), false);
 
             // Load any registered setting providers
             Arrow.Settings.Config.SettingProvidersProcessAppConfig.Process();
