@@ -38,6 +38,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Oracle", "Arrow.Oracl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.AlertableData", "Arrow.AlertableData\Arrow.AlertableData.csproj", "{2B923670-6C11-4C11-86A4-5BA13E761716}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Arrow.AlertableData", "UnitTests.Arrow.AlertableData\UnitTests.Arrow.AlertableData.csproj", "{8AA56AF2-4703-4FD2-BFC4-F9AF03F5EB7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,10 @@ Global
 		{2B923670-6C11-4C11-86A4-5BA13E761716}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B923670-6C11-4C11-86A4-5BA13E761716}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B923670-6C11-4C11-86A4-5BA13E761716}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AA56AF2-4703-4FD2-BFC4-F9AF03F5EB7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AA56AF2-4703-4FD2-BFC4-F9AF03F5EB7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AA56AF2-4703-4FD2-BFC4-F9AF03F5EB7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AA56AF2-4703-4FD2-BFC4-F9AF03F5EB7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -18,7 +18,6 @@ namespace Arrow.AlertableData
         protected AlertableDataBase(ILockPolicy<TKey> lockPolicy, IEqualityComparer<TKey>? comparer)
         {
             if(lockPolicy is null) throw new ArgumentNullException(nameof(lockPolicy));
-            if(comparer is null) throw new ArgumentNullException(nameof(comparer));
 
             this.Comparer = (comparer ?? EqualityComparer<TKey>.Default);
             this.LockPolicy = lockPolicy;
