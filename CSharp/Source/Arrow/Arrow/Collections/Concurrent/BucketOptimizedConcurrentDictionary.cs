@@ -13,7 +13,7 @@ namespace Arrow.Collections.Concurrent
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public sealed class BucketOptimizedConcurrentDictionary<TKey, TValue> : IOptimizedConcurrentDictionary<TKey, TValue> where TKey : notnull
+    internal sealed class BucketOptimizedConcurrentDictionary<TKey, TValue> : IOptimizedConcurrentDictionary<TKey, TValue> where TKey : notnull
     {
         private readonly IOptimizedConcurrentDictionary<TKey, TValue>[] m_Buckets;
         private readonly int m_NumberOfBuckets;
