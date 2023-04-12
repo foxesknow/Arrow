@@ -18,7 +18,7 @@ namespace Arrow.Data
 		/// <returns>A database connection</returns>
 		public override IDbConnection CreateConnection()
 		{
-			if(this.ConnectionString==null) throw new ArgumentNullException("connectionString");
+			if(this.ConnectionString == null) throw new ArgumentNullException(nameof(ConnectionString));
 			
 			return new OdbcConnection(this.ConnectionString);
 		}

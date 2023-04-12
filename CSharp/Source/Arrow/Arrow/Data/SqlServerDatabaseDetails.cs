@@ -35,7 +35,7 @@ namespace Arrow.Data
 		public string? ConnectionString
 		{
 			get{return m_ConnectionString;}
-			set{m_ConnectionString=value;}
+			set{m_ConnectionString = value;}
 		}
 		
 		/// <summary>
@@ -44,6 +44,8 @@ namespace Arrow.Data
 		/// <returns>A database connection</returns>
 		public override IDbConnection CreateConnection()
 		{
+			if(this.ConnectionString == null) throw new ArgumentNullException(nameof(ConnectionString));
+
 			return new SqlConnection(m_ConnectionString);
 		}
 	}

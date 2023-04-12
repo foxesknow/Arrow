@@ -21,17 +21,17 @@ namespace Arrow.Data
 		/// <returns>The parameter</returns>
 		public static IDbDataParameter CreateParameter(this IDbCommand command, DbType type, string name, object value)
 		{
-			IDbDataParameter parameter=command.CreateParameter();
-			
-			// Map nulls to the correct database null
-			if(value==null) value=DBNull.Value;
-			
-			parameter.DbType=type;
-			parameter.ParameterName=name;			
-			parameter.Value=value;
-			
-			return parameter;
-		}
+            IDbDataParameter parameter = command.CreateParameter();
+
+            // Map nulls to the correct database null
+            if(value == null) value = DBNull.Value;
+
+            parameter.DbType = type;
+            parameter.ParameterName = name;
+            parameter.Value = value;
+
+            return parameter;
+        }
 		
 		/// <summary>
 		/// Creates and adds a parameter to a command
@@ -43,9 +43,9 @@ namespace Arrow.Data
 		/// <returns>The parameter</returns>
 		public static IDbDataParameter AddParameter(this IDbCommand command, DbType type, string name, object value)
 		{
-			IDbDataParameter parameter=command.CreateParameter(type,name,value);
-			command.Parameters.Add(parameter);
-			return parameter;
-		}
-	}
+            IDbDataParameter parameter = command.CreateParameter(type, name, value);
+            command.Parameters.Add(parameter);
+            return parameter;
+        }
+    }
 }
