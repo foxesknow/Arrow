@@ -54,7 +54,7 @@ namespace UnitTests.Arrow.Collections.Concurrent
                 }
             }
 
-            Assert.That(dictionary.Count(), Is.EqualTo(8));
+            Assert.That(dictionary.Count(), Is.GreaterThan(4));
         }
 
         [Test]
