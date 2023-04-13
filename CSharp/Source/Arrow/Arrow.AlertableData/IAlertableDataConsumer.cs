@@ -24,11 +24,24 @@ namespace Arrow.AlertableData
         /// </summary>
         /// <typeparam name="TState"></typeparam>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="state"></param>
-        /// <param name="reader"></param>
-        /// <returns></returns>
+        /// <param name="key">The item to read</param>
+        /// <param name="state">And state data to pass to the reader</param>
+        /// <param name="reader">A function that will take the data and transform it into a result</param>
+        /// <returns>(true, result) if the data existed and the reader was called, otherwise (false, default)</returns>
         public (bool Succeeded, TResult Data) TryRead<TState, TResult>(TKey key, TState state, DataReader<TKey, TState, TData, TResult> reader);
+        
+        /// <summary>
+        /// Attempts to read alertable data.
+        /// NOTE: The consumer is not reentrant, so do not call back into it from the dataReader
+        /// </summary>
+        /// <typeparam name="TState"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="key">The item to read</param>
+        /// <param name="state">And state data to pass to the reader</param>
+        /// <param name="result">A reference to where the reader should store the result</param>
+        /// <param name="reader">A function that will take the data and transform it into a result</param>
+        /// <returns>True if the data existed and the reader was called, otherwise false</returns>
+        public bool TryReadByRef<TState, TResult>(TKey key, TState state, ref TResult result, DataReaderByRef<TKey, TState, TData, TResult> reader);
 
         /// <summary>
         /// Reads from the consumer.

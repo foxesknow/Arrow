@@ -40,5 +40,11 @@ namespace Arrow.AlertableData
         {
             return (false, default!);
         }
+
+        /// <inheritdoc/>
+        public bool TryReadByRef<TState, TResult>(TKey key, TState state, ref TResult result, DataReaderByRef<TKey, TState, TData, TResult> reader)
+        {
+            return false;
+        }
     }
 }

@@ -24,26 +24,27 @@ namespace Arrow.AlertableData
 
         private sealed class MonitorLock : IDataLock
         {
-            private readonly object m_Sync = new object();
+            // NOTE: We'll use "this" to avoid needless garbage.
+            // Kids, don't do this at home :-)
 
             public void EnterRead(ref bool lockTaken)
             {
-                Monitor.Enter(m_Sync, ref lockTaken);
+                Monitor.Enter(this, ref lockTaken);
             }
 
             public void ExitRead(bool lockTaken)
             {
-                if(lockTaken) Monitor.Exit(m_Sync);
+                if(lockTaken) Monitor.Exit(this);
             }
 
             public void EnterWrite(ref bool lockTaken)
             {
-                Monitor.Enter(m_Sync, ref lockTaken);
+                Monitor.Enter(this, ref lockTaken);
             }
 
             public void ExitWrite(bool lockTaken)
             {
-                if(lockTaken) Monitor.Exit(m_Sync);
+                if(lockTaken) Monitor.Exit(this);
             }
         }
     }

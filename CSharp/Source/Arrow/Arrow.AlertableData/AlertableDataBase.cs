@@ -127,6 +127,32 @@ namespace Arrow.AlertableData
             }
         }
 
+        /// <inheritdoc/>
+        public bool TryReadByRef<TState, TResult>(TKey key, TState state, ref TResult result, DataReaderByRef<TKey, TState, TData, TResult> reader)
+        {
+            if(TryGetStateData(key, out var stateData) == false) 
+            {
+                return false;
+            }
+
+            var lockTaken = false;
+
+            try
+            {
+                stateData.Sync.EnterRead(ref lockTaken);
+
+                var data = stateData.Data;
+                if(data is null) return false;
+
+                reader(key, state, data, ref result);
+                return true;
+            }
+            finally
+            {
+                stateData.Sync.ExitRead(lockTaken);
+            }
+        }
+
         /// <summary>
         /// Returns all state data managed by a derived class
         /// </summary>
