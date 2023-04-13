@@ -12,7 +12,9 @@ namespace UnitTests.Arrow.AlertableData
             {
                 LockMode.Monitor            => new MonitorLockPolicy<TKey>(),
                 LockMode.ReadWrite          => new ReadWriteLockPolicy<TKey>(),
-                LockMode.BucketReadWrite    => new BucketReadWriteLockPolicy<TKey>(37),
+                LockMode.BucketMonitor      => new BucketLockPolicy<TKey>(37, new MonitorLockPolicy<TKey>()),
+                LockMode.BucketReadWrite    => new BucketLockPolicy<TKey>(37, new ReadWriteLockPolicy<TKey>()),
+                LockMode.SpinLock           => new SpinLockPolicy<TKey>(),
                 _                           => throw new Exception($"unexpected lock mode: {lockMode}")
             };
         }

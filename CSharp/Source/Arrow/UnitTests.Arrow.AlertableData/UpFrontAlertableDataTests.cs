@@ -12,7 +12,9 @@ namespace UnitTests.Arrow.AlertableData
 {
     [TestFixture(LockMode.Monitor)]
     [TestFixture(LockMode.BucketReadWrite)]
+    [TestFixture(LockMode.BucketMonitor)]
     [TestFixture(LockMode.ReadWrite)]
+    [TestFixture(LockMode.SpinLock)]
     public class UpFrontAlertableDataTests
     {
         private const int SymbolCount = 200;

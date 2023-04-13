@@ -10,6 +10,8 @@ namespace UnitTests.Arrow.AlertableData
     {
         Monitor,
         ReadWrite,
+        BucketMonitor,
         BucketReadWrite,
+        SpinLock
     }
 }

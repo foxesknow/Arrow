@@ -15,7 +15,6 @@ namespace UnitTests.Arrow.AlertableData
     {
         [Test]
         [TestCase(LockMode.ReadWrite)]
-        [TestCase(LockMode.BucketReadWrite)]
         public void RecursiveReadFails(LockMode lockMode)
         {
             using(var alertableData = Make<string, MarketData>(lockMode))
@@ -66,13 +65,7 @@ namespace UnitTests.Arrow.AlertableData
 
         private OnDemandAlertableData<TKey, TData> Make<TKey, TData>(LockMode lockMode) where TData : class
         {
-            ILockPolicy<TKey> lockPolicy = lockMode switch
-            {
-                LockMode.BucketReadWrite => new BucketReadWriteLockPolicy<TKey>(29),
-                LockMode.ReadWrite       => new ReadWriteLockPolicy<TKey>(),
-                _                        => throw new Exception("lock mode not supported")
-            };
-
+            ILockPolicy<TKey> lockPolicy = LockPolicyFactory.Make<TKey>(lockMode);
             return new(lockPolicy);
         }
     }
