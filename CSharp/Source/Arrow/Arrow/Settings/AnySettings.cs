@@ -9,7 +9,7 @@ namespace Arrow.Settings
     /// <summary>
     /// Looks through the settings stack for a particular setting
     /// </summary>
-    public class AnySettings : ISettings
+    public sealed class AnySettings : ISettings
     {
         /// <summary>
         /// A shared instance

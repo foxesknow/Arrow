@@ -9,7 +9,7 @@ namespace Arrow.Settings
     /// <summary>
     /// Groups multiple settings into one
     /// </summary>
-    public class SettingsCollection : ISettings
+    public sealed class SettingsCollection : ISettings
     {
         private readonly List<ISettings> m_Settings = new List<ISettings>();
 
@@ -27,7 +27,13 @@ namespace Arrow.Settings
         public SettingsCollection(IEnumerable<ISettings> settings)
         {
             if(settings == null) throw new ArgumentNullException("settings");
-            m_Settings.AddRange(settings);
+
+            foreach(var setting in settings)
+            {
+                if(setting is null) throw new ArgumentException("null setting in sequence", nameof(settings));
+
+                m_Settings.Add(setting);
+            }
         }
 
         /// <summary>

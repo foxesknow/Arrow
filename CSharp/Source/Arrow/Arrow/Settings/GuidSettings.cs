@@ -16,7 +16,7 @@ namespace Arrow.Settings
     ///		<item>new - generates a new guid</item>
     ///	</list>
     /// </remarks>
-    public class GuidSettings : ISettings
+    public sealed class GuidSettings : ISettings
     {
         private static Guid s_AppGuid = Guid.NewGuid();
 

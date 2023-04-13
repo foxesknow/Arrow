@@ -9,7 +9,7 @@ namespace Arrow.Settings
     /// <summary>
     /// Provides access to settings stored in environmental variables
     /// </summary>
-    public class EnvironmentSettings : ISettings
+    public sealed class EnvironmentSettings : ISettings
     {
         /// <summary>
         /// An instance that may be shared

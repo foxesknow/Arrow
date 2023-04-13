@@ -15,7 +15,7 @@ namespace Arrow.Settings
     ///		hostname
     ///		ipaddress
     /// </remarks>
-    public class NetworkSettings : ISettings
+    public sealed class NetworkSettings : ISettings
     {
         /// <summary>
         /// An instance that may be shared

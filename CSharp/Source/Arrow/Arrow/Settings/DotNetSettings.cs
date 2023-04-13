@@ -9,7 +9,7 @@ namespace Arrow.Settings
     /// <summary>
     /// Setting from properties on the Environment object
     /// </summary>
-    public class DotNetSettings : ISettings
+    public sealed class DotNetSettings : ISettings
     {
         /// <summary>
         /// An instance that may be shared

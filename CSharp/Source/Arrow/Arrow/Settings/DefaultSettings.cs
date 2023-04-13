@@ -10,7 +10,7 @@ namespace Arrow.Settings
     /// Allows another setting lookup to occur, and if that setting does
     /// not exist then a default value is returned
     /// </summary>
-    public class DefaultSettings : ISettings
+    public sealed class DefaultSettings : ISettings
     {
         /// <summary>
         /// A shared instance

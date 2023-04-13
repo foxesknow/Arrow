@@ -12,7 +12,7 @@ namespace Arrow.Settings
     /// <summary>
     /// Parses the command line and creates setting for any switches on the command line
     /// </summary>
-    public class CommandLineSettings : ISettings
+    public sealed class CommandLineSettings : ISettings
     {
         /// <summary>
         /// An instance of the class that may be shared

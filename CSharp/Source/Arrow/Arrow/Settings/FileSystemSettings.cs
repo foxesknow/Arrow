@@ -10,7 +10,7 @@ namespace Arrow.Settings
 	/// <summary>
 	/// Provides settings about the file system
 	/// </summary>
-	public class FileSystemSettings : ISettings
+	public sealed class FileSystemSettings : ISettings
 	{
 		/// <summary>
 		/// An instance of the class that may be shared

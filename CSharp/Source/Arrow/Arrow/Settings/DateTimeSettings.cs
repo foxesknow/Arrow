@@ -11,7 +11,7 @@ namespace Arrow.Settings
     /// <summary>
     /// Retrieves either Now or UtcNow
     /// </summary>
-    public class DateTimeSettings : ISettings
+    public sealed class DateTimeSettings : ISettings
     {
         /// <summary>
         /// An instance that may be shared

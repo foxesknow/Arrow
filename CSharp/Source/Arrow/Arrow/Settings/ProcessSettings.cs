@@ -24,7 +24,7 @@ namespace Arrow.Settings
     ///		this			The Process object for the current app
     /// 
     /// </remarks>
-    public class ProcessSettings : ISettings
+    public sealed class ProcessSettings : ISettings
     {
         /// <summary>
         /// An instance that may be shared

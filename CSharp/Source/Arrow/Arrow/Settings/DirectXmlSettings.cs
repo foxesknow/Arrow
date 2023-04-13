@@ -29,7 +29,7 @@ namespace Arrow.Settings
     /// 
     /// ]]>
     /// </summary>
-    public class DirectXmlSettings : ISettings, ICustomXmlInitialization
+    public sealed class DirectXmlSettings : ISettings, ICustomXmlInitialization
     {
         private readonly Dictionary<string, object> m_Settings = new Dictionary<string, object>(IgnoreCaseEqualityComparer.Instance);
 
