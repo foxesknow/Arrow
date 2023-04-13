@@ -61,7 +61,7 @@ namespace UnitTests.Arrow.AlertableData
                 data.Subscribe("VOD.L", null);
                 var state = (BidSize: 20m, BidPrice: 100.5m, AskSize: 30m, AskPrice: 102m);
 
-                var published = data.Publish("VOD.L", state, (key, state, current) =>
+                var published = data.Publish("VOD.L", state, static (key, state, current) =>
                 {
                     Assert.That(current, Is.Null);
 
@@ -78,7 +78,7 @@ namespace UnitTests.Arrow.AlertableData
 
                 Assert.That(published, Is.True);
 
-                var result = data.TryRead("VOD.L", NoState.Data, (key, state, current) =>
+                var result = data.TryRead("VOD.L", NoState.Data, static (key, state, current) =>
                 {
                     Assert.That(current, Is.Not.Null);
                     return (current.BidSize, current.BidPrice);
@@ -95,7 +95,7 @@ namespace UnitTests.Arrow.AlertableData
         {
             using(var data = MakeAlertableData<string, MarketData>())
             {
-                var published = data.Publish("VOD.L", NoState.Data, (key, state, current) =>
+                var published = data.Publish("VOD.L", NoState.Data, static (key, state, current) =>
                 {
                     Assert.Fail("The publish lambda should not be called");
                     return current;
@@ -113,7 +113,7 @@ namespace UnitTests.Arrow.AlertableData
                 data.Subscribe("VOD.L", null);
                 var state = (BidSize: 20m, BidPrice: 100.5m, AskSize: 30m, AskPrice: 102m);
 
-                var published = data.Publish("VOD.L", state, (key, state, current) =>
+                var published = data.Publish("VOD.L", state, static (key, state, current) =>
                 {
                     Assert.That(current, Is.Null);
 
@@ -154,7 +154,7 @@ namespace UnitTests.Arrow.AlertableData
                 data.Subscribe("VOD.L", null);
                 var state = (BidSize: 20m, BidPrice: 100.5m, AskSize: 30m, AskPrice: 102m);
 
-                var published = data.Publish("VOD.L", state, (key, state, current) =>
+                var published = data.Publish("VOD.L", state, static (key, state, current) =>
                 {
                     return  new MarketData()
                     {
@@ -169,7 +169,7 @@ namespace UnitTests.Arrow.AlertableData
 
                 decimal bidSize = 0;
 
-                var succeeded = data.TryReadByRef("VOD.L", NoState.Data, ref bidSize, (string key, NoState state, MarketData current, ref decimal result) =>
+                var succeeded = data.TryReadByRef("VOD.L", NoState.Data, ref bidSize, static (string key, NoState state, MarketData current, ref decimal result) =>
                 {
                     Assert.That(current, Is.Not.Null);
                     result = current.BidSize;
