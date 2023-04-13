@@ -45,6 +45,11 @@ namespace Arrow.Settings
             DoRegister("def", DefaultSettings.Instance, false);
             DoRegister("any", AnySettings.Instance, false);
             DoRegister("appsettings", new AppSettingsProvider(), false);
+            DoRegister("first-of", new FirstOfSettings(), false);
+            DoRegister("string", new StringSettings(), false);
+            DoRegister("slurp", new SlurpSettings(), false);
+            DoRegister("literal", new LiteralSettings(), false);
+
 
             // Load any registered setting providers
             Arrow.Settings.Config.SettingProvidersProcessAppConfig.Process();
