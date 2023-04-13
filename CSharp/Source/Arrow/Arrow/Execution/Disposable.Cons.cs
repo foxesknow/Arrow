@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Arrow.Threading.Tasks;
+
 namespace Arrow.Execution
 {
     public static partial class Disposable
@@ -83,13 +85,13 @@ namespace Arrow.Execution
             {
                 if(m_Head is not null)
                 {
-                    await m_Head.DisposeAsync();
+                    await m_Head.DisposeAsync().ContinueOnAnyContext();
                     m_Head = null;
                 }
 
                 if(m_Tail is not null)
                 {
-                    await m_Tail.DisposeAsync();
+                    await m_Tail.DisposeAsync().ContinueOnAnyContext();
                     m_Tail = null;
                 }
             }

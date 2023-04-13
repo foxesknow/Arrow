@@ -121,6 +121,11 @@ namespace UnitTests.Arrow.Execution
 
             await asyncDisposer.DisposeAsync();
             Assert.That(name, Is.EqualTo("Jack"));
+
+            // Make sure it only ever runs once
+            name = null;
+            await asyncDisposer.DisposeAsync();
+            Assert.That(name, Is.Null);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Arrow.Execution
 
         private sealed class SyncToAsyncDisposer : IAsyncDisposable
         {
-            private IDisposable m_Outer;
+            private IDisposable? m_Outer;
 
             public SyncToAsyncDisposer(IDisposable outer)
             {
@@ -38,6 +38,7 @@ namespace Arrow.Execution
                 if(m_Outer is not null)
                 {
                     m_Outer.Dispose();
+                    m_Outer = null;
                 }
 
                 return default;

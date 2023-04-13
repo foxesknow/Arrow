@@ -8,7 +8,7 @@ namespace Arrow.Xml.ObjectCreation
     /// <summary>
     /// Delays creates an instance of an object froman xml description until required
     /// </summary>
-    public class DelayedCreator
+    public sealed class DelayedCreator
     {
         private CustomXmlCreation m_Factory;
         private XmlNode m_Node;
