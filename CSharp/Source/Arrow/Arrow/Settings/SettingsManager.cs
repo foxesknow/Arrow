@@ -28,7 +28,7 @@ namespace Arrow.Settings
         private static readonly object s_Lock = new object();
 
         private static readonly Dictionary<string, ISettings> s_Namespaces = new Dictionary<string, ISettings>(IgnoreCaseEqualityComparer.Instance);
-        private static LinkedList<string> s_NameStack = new LinkedList<string>();
+        private static readonly LinkedList<string> s_NameStack = new LinkedList<string>();
 
         static SettingsManager()
         {
@@ -108,7 +108,7 @@ namespace Arrow.Settings
         /// Returns all the namespaces that are registered
         /// </summary>
         /// <value>A list of namespace names</value>
-        public static List<string> Namespaces
+        public static IReadOnlyList<string> Namespaces
         {
             get
             {
@@ -123,7 +123,7 @@ namespace Arrow.Settings
         /// Returns the namespaces names as a list
         /// with the most recently added namespaces near the beginning of the list
         /// </summary>
-        public static List<string> NamespaceStack
+        public static IReadOnlyList<string> NamespaceStack
         {
             get
             {
@@ -217,8 +217,7 @@ namespace Arrow.Settings
         /// <exception cref="System.ArgumentNullException">scopedName is null</exception>
         public static T Setting<T>(string qualifiedName, T defaultValue)
         {
-            T value;
-            if(TryGetSetting(qualifiedName, out value) == false)
+            if(TryGetSetting<T>(qualifiedName, out var value) == false)
             {
                 value = defaultValue;
             }
@@ -238,8 +237,7 @@ namespace Arrow.Settings
         {
             if(qualifiedName == null) throw new ArgumentNullException("qualifiedName");
 
-            string @namespace, setting;
-            CrackQualifiedName(qualifiedName, out @namespace, out setting);
+            CrackQualifiedName(qualifiedName, out var @namespace, out var setting);
 
             return TryGetSetting(@namespace, setting, out value);
         }
@@ -256,21 +254,9 @@ namespace Arrow.Settings
             {
                 if(s_Namespaces.TryGetValue(@namespace, out var existingSettings))
                 {
-                    // There's already a setting, so aggregate it
-                    var bundle = existingSettings as SettingsCollection;
-                    if(bundle == null)
-                    {
-                        bundle = new SettingsCollection();
-                        bundle.Add(existingSettings);
-                        bundle.Add(settings);
-
-                        // We need to replace the existing one with the bundle
-                        s_Namespaces[@namespace] = bundle;
-                    }
-                    else
-                    {
-                        bundle.Add(settings);
-                    }
+                    // We'll combine them, with the newest getting priority
+                    var cons = new ConsSetting(settings, existingSettings);
+                    s_Namespaces[@namespace] = cons;
                 }
                 else
                 {

@@ -27,7 +27,7 @@ namespace Arrow.Settings
         {
             value = null;
 
-            List<string> stack = SettingsManager.NamespaceStack;
+            var stack = SettingsManager.NamespaceStack;
 
             for(int i = 0; i < stack.Count && value == null; i++)
             {

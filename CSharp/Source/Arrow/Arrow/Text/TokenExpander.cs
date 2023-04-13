@@ -223,8 +223,7 @@ namespace Arrow.Text
             }
             else
             {
-                var formattable = value as IFormattable;
-                if(formattable != null)
+                if(value is IFormattable formattable)
                 {
                     result = formattable.ToString(formatting, null);
                 }
@@ -238,31 +237,15 @@ namespace Arrow.Text
             // Apply any actions
             if(string.IsNullOrEmpty(action) == false)
             {
-                switch(action!.ToLower())
+                result = action!.ToLower() switch
                 {
-                    case "trim":
-                        result = result.Trim();
-                        break;
-
-                    case "trimstart":
-                        result = result.TrimStart();
-                        break;
-
-                    case "trimend":
-                        result = result.TrimEnd();
-                        break;
-
-                    case "toupper":
-                        result = result.ToUpper();
-                        break;
-
-                    case "tolower":
-                        result = result.ToLower();
-                        break;
-
-                    default:
-                        throw new ArrowException("invalid action " + token);
-                }
+                    "trim"      => result.Trim(),
+                    "trimstart" => result.TrimStart(),
+                    "trimend"   => result.TrimEnd(),
+                    "toupper"   => result.ToUpper(),
+                    "tolower"   => result.ToLower(),
+                    _           => throw new ArrowException("invalid action " + token)
+                };
             }
 
             return result;

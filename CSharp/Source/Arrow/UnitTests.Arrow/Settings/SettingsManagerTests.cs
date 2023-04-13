@@ -16,19 +16,19 @@ namespace UnitTests.Arrow.Settings
 		[Test]
 		public void TestSettingAccess()
 		{
-			DateTime now=SettingsManager.Setting<DateTime>("datetime:now");
-			Assert.That(SettingsManager.TryGetSetting<DateTime>("datetime:now",out now),Is.True);
-			
-			// proc:pid is a string. This will test type conversion
-			int pid=SettingsManager.Setting<int>("proc:pid");
-			Assert.IsTrue(pid!=0);
-			Assert.IsTrue(SettingsManager.TryGetSetting<int>("proc:pid",out pid));
-			
-			string d=SettingsManager.Setting<string>("foo:bar","default");
-			Assert.IsNotNull(d);
-			Assert.IsTrue(d=="default");
-			Assert.IsFalse(SettingsManager.TryGetSetting<string>("foo:bar",out d));
-		}
+            DateTime now = SettingsManager.Setting<DateTime>("datetime:now");
+            Assert.That(SettingsManager.TryGetSetting<DateTime>("datetime:now", out now), Is.True);
+
+            // proc:pid is a string. This will test type conversion
+            int pid = SettingsManager.Setting<int>("proc:pid");
+            Assert.IsTrue(pid != 0);
+            Assert.IsTrue(SettingsManager.TryGetSetting<int>("proc:pid", out pid));
+
+            string d = SettingsManager.Setting<string>("foo:bar", "default");
+            Assert.IsNotNull(d);
+            Assert.IsTrue(d == "default");
+            Assert.IsFalse(SettingsManager.TryGetSetting<string>("foo:bar", out d));
+        }
 		
 		[Test]
 		public void TestProviderLookup()
@@ -40,13 +40,13 @@ namespace UnitTests.Arrow.Settings
 		[Test]
 		public void TestNamespaces()
 		{
-			List<string> n=SettingsManager.Namespaces;
-			Assert.IsNotNull(n);
-			Assert.IsNotEmpty(n);
+			var namespaces = SettingsManager.Namespaces;
+			Assert.That(namespaces, Is.Not.Null);
+			Assert.That(namespaces.Count, Is.Not.EqualTo(0));
 		
-			Assert.Contains("datetime",n);
-			Assert.Contains("proc",n);
-			Assert.IsFalse(n.Contains("foo"));
+			Assert.That(namespaces.Contains("datetime"), Is.True);
+			Assert.That(namespaces.Contains("proc"), Is.True);
+			Assert.That(namespaces.Contains("foo"), Is.False);
 		}
 	}
 }

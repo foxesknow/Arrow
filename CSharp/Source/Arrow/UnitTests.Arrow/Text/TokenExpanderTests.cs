@@ -6,7 +6,6 @@ using System.Text;
 using Arrow.Text;
 
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 
 namespace UnitTests.Arrow.Text
 {
@@ -16,27 +15,26 @@ namespace UnitTests.Arrow.Text
 		[Test]
 		public void TestExpandText()
 		{
-			string text="hello there {env:username} the date is {datetime:now||yyyyMMdd}";
-			string expanded=TokenExpander.ExpandText(text,"{","}");
-			
-			Assert.IsTrue(expanded!=null);
-			Assert.IsTrue(expanded.Length!=0);
-		}
+            string text = "hello there {env:username} the date is {datetime:now||yyyyMMdd}";
+            string expanded = TokenExpander.ExpandText(text, "{", "}");
+
+            Assert.That(expanded, Is.Not.Null & Has.Length.GreaterThan(0));
+        }
 		
 		[Test]
 		public void TestExpandTextLookup()
 		{
-			string text="hello there ${test:username|||toupper}$ your id is ${test:id}$";
-			string expanded=TokenExpander.ExpandText(text,"${","}$",(string name)=>
-			{
-				if(name=="test:username") return "sean";
-				if(name=="test:id") return "1";
-				throw new ApplicationException();
-			});
-			
-			Assert.IsTrue(expanded!=null);
-			Assert.IsTrue(expanded=="hello there SEAN your id is 1");
-		}
+            string text = "hello there ${test:username|||toupper}$ your id is ${test:id}$";
+            string expanded = TokenExpander.ExpandText(text, "${", "}$", (string name) =>
+            {
+                if(name == "test:username") return "sean";
+                if(name == "test:id") return "1";
+                throw new ApplicationException();
+            });
+
+            Assert.That(expanded, Is.Not.Null );
+            Assert.That(expanded, Is.EqualTo("hello there SEAN your id is 1"));
+        }
 		
 		[Test]
 		public void TestPropertyLookup()
