@@ -25,7 +25,7 @@ namespace UnitTests.Arrow.Settings
             Assert.That(location, Is.Null);
         }
 
-        private static object? GetSettings(string name)
+        private static object GetSettings(string name)
         {
             return name.ToLower() switch
             {

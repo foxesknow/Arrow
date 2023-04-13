@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#nullable enable
-
 namespace Arrow.Execution
 {
-    public static class DisposableExtensions
+    public static partial class Disposable
     {
         /// <summary>
         /// Combines 2 disposables into 1.
@@ -18,7 +16,7 @@ namespace Arrow.Execution
         /// <param name="tail"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IDisposable Cons(this IDisposable head, IDisposable tail)
+        public static IDisposable Cons(IDisposable head, IDisposable tail)
         {
             if(head is null) throw new ArgumentNullException(nameof(head));
             if(tail is null) throw new ArgumentNullException(nameof(tail));
@@ -62,7 +60,7 @@ namespace Arrow.Execution
         /// <param name="tail"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IAsyncDisposable Cons(this IAsyncDisposable head, IAsyncDisposable tail)
+        public static IAsyncDisposable Cons(IAsyncDisposable head, IAsyncDisposable tail)
         {
             if(head is null) throw new ArgumentNullException(nameof(head));
             if(tail is null) throw new ArgumentNullException(nameof(tail));

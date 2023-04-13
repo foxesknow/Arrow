@@ -26,7 +26,7 @@ namespace Arrow.Logging
                 var newHead = PushProperty(name, value);
                 if(newHead is not null)
                 {
-                    head = newHead.Cons(head);
+                    head = Disposable.Cons(newHead, head);
                 }
             }
 

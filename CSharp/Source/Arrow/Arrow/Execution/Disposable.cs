@@ -9,7 +9,7 @@ namespace Arrow.Execution
     /// <summary>
     /// Useful disposable stuff
     /// </summary>
-    public static class Disposable
+    public static partial class Disposable
     {
         /// <summary>
         /// A disposer that does nothing
