@@ -12,10 +12,10 @@ namespace Arrow.IO
 	/// <summary>
 	/// Allows part of an array to be used as a stream
 	/// </summary>
-	public class ByteSegmentStream : Stream
+	public sealed class ByteSegmentStream : Stream
 	{
 		private readonly ArraySegment<byte> m_Segment;
-		private long m_Position=0;
+		private long m_Position = 0;
 
 		/// <summary>
 		/// Initializes the instance
@@ -41,7 +41,7 @@ namespace Arrow.IO
 		/// <param name="segment">The array segment to use</param>
 		public ByteSegmentStream(ArraySegment<byte> segment)
 		{
-			m_Segment=segment;
+			m_Segment = segment;
 		}
 
 		/// <summary>
@@ -49,7 +49,7 @@ namespace Arrow.IO
 		/// </summary>
 		public int AvailableSpace
 		{
-			get{return (int)(m_Segment.Count-m_Position);}
+			get{return (int)(m_Segment.Count - m_Position);}
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace Arrow.IO
 			get{return m_Position;}
 			set
 			{
-				Seek(value,SeekOrigin.Begin);
+				Seek(value, SeekOrigin.Begin);
 			}
 		}
 
@@ -112,25 +112,25 @@ namespace Arrow.IO
 		/// <returns>The number of bytes read</returns>
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			if(buffer==null) throw new ArgumentNullException("buffer");
-			if(offset<0) throw new ArgumentOutOfRangeException("offset");
-			if(count<0) throw new ArgumentOutOfRangeException("count");
-			if(offset+count>buffer.Length) throw new ArgumentException("read beyond buffer");
+            if(buffer == null) throw new ArgumentNullException("buffer");
+            if(offset < 0) throw new ArgumentOutOfRangeException("offset");
+            if(count < 0) throw new ArgumentOutOfRangeException("count");
+            if(offset + count > buffer.Length) throw new ArgumentException("read beyond buffer");
 
-			int available=Math.Max(0,m_Segment.Count-(int)m_Position);
-			int bytesToRead=Math.Min(count,available);
+            int available = Math.Max(0, m_Segment.Count - (int)m_Position);
+            int bytesToRead = Math.Min(count, available);
 
-			var underlying=m_Segment.Array;
-			int underlyingOffset=m_Segment.Offset;
+            var underlying = m_Segment.Array;
+            int underlyingOffset = m_Segment.Offset;
 
-			for(int i=0; i<bytesToRead; i++)
-			{
-				buffer[offset+i]=underlying[underlyingOffset+m_Position];
-				m_Position++;
-			}
+            for(int i = 0; i < bytesToRead; i++)
+            {
+                buffer[offset + i] = underlying[underlyingOffset + m_Position];
+                m_Position++;
+            }
 
-			return bytesToRead;
-		}
+            return bytesToRead;
+        }
 
 		/// <summary>
 		/// Seeks to a new position in the array
@@ -140,31 +140,31 @@ namespace Arrow.IO
 		/// <returns>The new position in the stream</returns>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			long newPosition=0;
+            long newPosition = 0;
 
-			switch(origin)
-			{
-				case SeekOrigin.Begin:
-					newPosition=offset;
-					break;
+            switch(origin)
+            {
+                case SeekOrigin.Begin:
+                    newPosition = offset;
+                    break;
 
-				case SeekOrigin.Current:
-					newPosition=m_Position+offset;
-					break;
+                case SeekOrigin.Current:
+                    newPosition = m_Position + offset;
+                    break;
 
-				case SeekOrigin.End:
-					newPosition=m_Segment.Count+offset;
-					break;
+                case SeekOrigin.End:
+                    newPosition = m_Segment.Count + offset;
+                    break;
 
-				default:
-					throw new IOException("unsupported origin: "+origin.ToString());
-			}
+                default:
+                    throw new IOException("unsupported origin: " + origin.ToString());
+            }
 
-			//if(newPosition<0 || newPosition>=m_Segment.Count) throw new IOException("cannot seek beyond segment");
+            //if(newPosition<0 || newPosition>=m_Segment.Count) throw new IOException("cannot seek beyond segment");
 
-			m_Position=newPosition;
-			return m_Position;
-		}
+            m_Position = newPosition;
+            return m_Position;
+        }
 
 		/// <summary>
 		/// Not implemented
@@ -183,21 +183,21 @@ namespace Arrow.IO
 		/// <param name="count">The number of bytes to write</param>
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			if(buffer==null) throw new ArgumentNullException("buffer");
-			if(offset<0) throw new ArgumentOutOfRangeException("offset");
-			if(count<0) throw new ArgumentOutOfRangeException("count");
-			if(offset+count>buffer.Length) throw new ArgumentException("write beyond buffer");
+            if(buffer == null) throw new ArgumentNullException("buffer");
+            if(offset < 0) throw new ArgumentOutOfRangeException("offset");
+            if(count < 0) throw new ArgumentOutOfRangeException("count");
+            if(offset + count > buffer.Length) throw new ArgumentException("write beyond buffer");
 
-			if(m_Position+count>m_Segment.Count) throw new IOException("not enough space");
+            if(m_Position + count > m_Segment.Count) throw new IOException("not enough space");
 
-			var underlying=m_Segment.Array;
-			int underlyingOffset=m_Segment.Offset;
+            var underlying = m_Segment.Array;
+            int underlyingOffset = m_Segment.Offset;
 
-			for(int i=0; i<count; i++)
-			{
-				underlying[underlyingOffset+m_Position]=buffer[offset+i];
-				m_Position++;
-			}
-		}
-	}
+            for(int i = 0; i < count; i++)
+            {
+                underlying[underlyingOffset + m_Position] = buffer[offset + i];
+                m_Position++;
+            }
+        }
+    }
 }
