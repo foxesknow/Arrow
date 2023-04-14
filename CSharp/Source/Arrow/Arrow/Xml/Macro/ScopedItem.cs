@@ -9,7 +9,7 @@ namespace Arrow.Xml.Macro
 	/// </summary>
 	class ScopedItem
 	{
-		private object m_Value;
+		private object? m_Value;
 		private ScopedItemMode m_Mode;
 			
 		/// <summary>
@@ -17,7 +17,7 @@ namespace Arrow.Xml.Macro
 		/// </summary>
 		/// <param name="value">The value the item was</param>
 		/// <param name="mode">It's mode</param>
-		public ScopedItem(object value, ScopedItemMode mode)
+		public ScopedItem(object? value, ScopedItemMode mode)
 		{
 			m_Value = value;
 			m_Mode = mode;
@@ -26,7 +26,7 @@ namespace Arrow.Xml.Macro
 		/// <summary>
 		/// The value of the scoped item
 		/// </summary>
-		public object Value
+		public object? Value
 		{
 			get{return m_Value;}
 			set{m_Value = value;}

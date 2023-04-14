@@ -5,6 +5,7 @@ using System.Reflection;
 
 using Arrow.Settings;
 using Arrow.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Arrow.Xml.Macro
 {
@@ -145,7 +146,7 @@ namespace Arrow.Xml.Macro
         /// </summary>
         /// <param name="name">The name of the variable</param>
         /// <returns>The value of the variable</returns>
-        public object GetValue(string name)
+        public object? GetValue(string name)
         {
             if(name == null) throw new ArgumentNullException("name");
 
@@ -203,7 +204,7 @@ namespace Arrow.Xml.Macro
         /// <param name="value">The value for the variable</param>
         /// <returns>true if the variable was declared, false otherwise</returns>
         /// <exception cref="System.ArgumentNullException">name is null</exception>
-        public bool Declare(string name, object value)
+        public bool Declare(string name, object? value)
         {
             return Declare(name, value, ScopedItemMode.ReadWrite);
         }
@@ -217,7 +218,7 @@ namespace Arrow.Xml.Macro
         /// <param name="mode">The mode for the value</param>
         /// <returns>true if the variable was declared, false otherwise</returns>
         /// <exception cref="System.ArgumentNullException">name is null</exception>
-        public bool Declare(string name, object value, ScopedItemMode mode)
+        public bool Declare(string name, object? value, ScopedItemMode mode)
         {
             if(name == null) throw new ArgumentNullException("name");
 
@@ -239,7 +240,7 @@ namespace Arrow.Xml.Macro
         /// <param name="name">The name of the variable</param>
         /// <param name="value">The value for the variable</param>
         /// <returns>true is declared or assigned, false otherwise</returns>
-        public bool DeclareOrAssign(string name, object value)
+        public bool DeclareOrAssign(string name, object? value)
         {
             return DeclareOrAssign(name, value, ScopedItemMode.ReadWrite);
         }
@@ -251,7 +252,7 @@ namespace Arrow.Xml.Macro
         /// <param name="value">The value for the variable</param>
         /// <param name="mode">The mode for the value</param>
         /// <returns>true is declared or assigned, false otherwise</returns>
-        public bool DeclareOrAssign(string name, object value, ScopedItemMode mode)
+        public bool DeclareOrAssign(string name, object? value, ScopedItemMode mode)
         {
             lock(m_SyncRoot)
             {
@@ -273,7 +274,7 @@ namespace Arrow.Xml.Macro
         /// <param name="value">The value to assign to the variable</param>
         /// <returns>true if the variable was changed, false otherwise</returns>
         /// <exception cref="System.ArgumentNullException">name is null</exception>
-        public bool Assign(string name, object value)
+        public bool Assign(string name, object? value)
         {
             if(name == null) throw new ArgumentNullException("name");
 
@@ -365,7 +366,7 @@ namespace Arrow.Xml.Macro
             return scope;
         }
 
-        public object GetVariable(string variableName)
+        public object? GetVariable(string variableName)
         {
             lock(m_SyncRoot)
             {

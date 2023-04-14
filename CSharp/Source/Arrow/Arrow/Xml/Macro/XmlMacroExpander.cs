@@ -9,8 +9,6 @@ using Arrow.Text;
 using Arrow.Storage;
 using Arrow.Reflection;
 
-#nullable disable
-
 namespace Arrow.Xml.Macro
 {
     /// <summary>
@@ -59,29 +57,31 @@ namespace Arrow.Xml.Macro
         /// <summary>
         /// The commands available
         /// </summary>
-        private Dictionary<string, MacroCommand> m_Commands = new Dictionary<string, MacroCommand>();
+        private readonly Dictionary<string, MacroCommand> m_Commands = new();
 
         /// <summary>
         /// An xml namespace manager to use for xpath queries
         /// </summary>
-        XmlNamespaceManager m_NamespaceManager;
+        private readonly XmlNamespaceManager m_NamespaceManager;
 
         /// <summary>
         /// The maximum include depth. This can be overridden by a pragma
         /// </summary>
         private int m_MaximumIncludeDepth = 20;
 
-        private NameScope m_InitialScope = NameScope.CreateScriptNameScope();
+        private readonly NameScope m_InitialScope = NameScope.CreateScriptNameScope();
 
         private bool m_Strict;
 
-        private Dictionary<string, object> m_AdditionalVariables = new Dictionary<string, object>();
+        private Dictionary<string, object> m_AdditionalVariables = new();
 
         /// <summary>
         /// Initializes an instance
         /// </summary>
         public XmlMacroExpander()
         {
+            m_NamespaceManager = CreateNamespaceManager();
+
             Initialize();
         }
 
@@ -104,7 +104,7 @@ namespace Arrow.Xml.Macro
         /// <exception cref="System.ArgumentNullException">name is null</exception>
         public void AddVariable(string name, object value)
         {
-            if(name == null) throw new ArgumentNullException("name");
+            if(name == null) throw new ArgumentNullException(nameof(name));
 
             m_AdditionalVariables.Add(name, value);
         }
@@ -116,7 +116,7 @@ namespace Arrow.Xml.Macro
         /// <exception cref="System.ArgumentNullException">variables is null</exception>
         public void AddVariables(IDictionary<string, object> variables)
         {
-            if(variables == null) throw new ArgumentNullException("variables");
+            if(variables == null) throw new ArgumentNullException(nameof(variables));
 
             foreach(KeyValuePair<string, object> pair in variables)
             {
@@ -143,7 +143,7 @@ namespace Arrow.Xml.Macro
         /// <exception cref="System.ArgumentNullException">uri is null</exception>
         public XmlDocument Expand(Uri uri)
         {
-            if(uri == null) throw new ArgumentNullException("uri");
+            if(uri == null) throw new ArgumentNullException(nameof(uri));
 
             XmlDocument doc = StorageManager.Get(uri).ReadXmlDocument();
             return Expand(doc, uri);
@@ -156,13 +156,13 @@ namespace Arrow.Xml.Macro
         /// <param name="sourceUri">The uri for the document being expanded</param>
         /// <returns>A new document holding the expanded version of source</returns>
         /// <exception cref="System.ArgumentNullException">source is null</exception>
-        public XmlDocument Expand(XmlDocument source, Uri sourceUri)
+        public XmlDocument Expand(XmlDocument source, Uri? sourceUri)
         {
-            if(source == null) throw new ArgumentNullException("source");
+            if(source == null) throw new ArgumentNullException(nameof(source));
 
             // Create the target document
             XmlDocument destination = new XmlDocument();
-            XmlElement destinationRoot = destination.CreateElement(source.DocumentElement.Name, source.DocumentElement.NamespaceURI);
+            XmlElement destinationRoot = destination.CreateElement(source.DocumentElement!.Name, source.DocumentElement.NamespaceURI);
             destination.AppendChild(destinationRoot);
 
             NameScope variables = m_InitialScope;
@@ -186,9 +186,7 @@ namespace Arrow.Xml.Macro
         /// Performs common initialization for the class
         /// </summary>
         private void Initialize()
-        {
-            m_NamespaceManager = CreateNamespaceManager();
-
+        {            
             m_Commands["Define"] = Define;
             m_Commands["Declare"] = Declare;
             m_Commands["TryDeclare"] = TryDeclare;
@@ -211,7 +209,7 @@ namespace Arrow.Xml.Macro
         /// <param name="destination">Where to store the compiled xml</param>
         /// <param name="variables">The current variables</param>
         /// <param name="scope">The current scope</param>
-        private void DoCompile(XmlNode source, XmlNode destination, NameScope variables, Scope scope)
+        private void DoCompile(XmlNode source, XmlNode destination, NameScope variables, Scope? scope)
         {
             DoCompile(source, destination, variables, scope, ScopeRule.CreateNew);
         }
@@ -224,14 +222,18 @@ namespace Arrow.Xml.Macro
         /// <param name="variables">The current variables</param>
         /// <param name="scope">The current scope</param>
         /// <param name="scopeRule">The scoping rules</param>
-        private void DoCompile(XmlNode source, XmlNode destination, NameScope variables, Scope scope, ScopeRule scopeRule)
+        private void DoCompile(XmlNode source, XmlNode destination, NameScope variables, Scope? scope, ScopeRule scopeRule)
         {
             if(scopeRule == ScopeRule.CreateNew)
             {
                 scope = new Scope(scope);
             }
+            else
+            {
+                if(scope is null) throw new ArrowException("scope should not be null");
+            }
 
-            foreach(XmlNode node in source.ChildNodes)
+            foreach(XmlNode node in source.ChildNodes.NonNullNodes())
             {
                 if(node.NodeType == XmlNodeType.Element)
                 {
@@ -241,8 +243,7 @@ namespace Arrow.Xml.Macro
                     {
                         string name = sourceElement.LocalName;
 
-                        MacroCommand command = null;
-                        if(m_Commands.TryGetValue(name, out command))
+                        if(m_Commands.TryGetValue(name, out var command))
                         {
                             command(node, destination, variables, scope);
                         }
@@ -254,7 +255,7 @@ namespace Arrow.Xml.Macro
                     else
                     {
                         // If it's not a macro command then it's either an expansion or a regular element
-                        XmlNode macroNode = null;
+                        XmlNode? macroNode = null;
                         string name = sourceElement.Name;
 
                         if(sourceElement.NamespaceURI == ExpandNS)
@@ -272,7 +273,7 @@ namespace Arrow.Xml.Macro
                         }
                         else
                         {
-                            XmlNode root = destination.OwnerDocument.CreateElement(name, sourceElement.NamespaceURI);
+                            XmlNode root = destination.OwnerDocument!.CreateElement(name, sourceElement.NamespaceURI);
                             CopyAttributes(sourceElement, root, variables);
                             DoCompile(node, root, variables.CreateChildScope(), scope);
                             destination.AppendChild(root);
@@ -288,7 +289,7 @@ namespace Arrow.Xml.Macro
                     else
                     {
                         // For any other node just import them
-                        XmlNode destinationNode = destination.OwnerDocument.ImportNode(node.Clone(), true);
+                        XmlNode destinationNode = destination.OwnerDocument!.ImportNode(node.Clone(), true);
                         destination.AppendChild(destinationNode);
                     }
                 }
@@ -297,11 +298,11 @@ namespace Arrow.Xml.Macro
 
         private void AddCharacterData(XmlCharacterData charData, XmlNode destination, NameScope variables)
         {
-            string data = ApplySubstitutions(charData.Value, variables);
+            string data = ApplySubstitutions(charData.Value!, variables);
 
             XmlNode destinationNode = charData.CloneNode(true);
             destinationNode.Value = data;
-            destinationNode = destination.OwnerDocument.ImportNode(destinationNode, true);
+            destinationNode = destination.OwnerDocument!.ImportNode(destinationNode, true);
             destination.AppendChild(destinationNode);
         }
 
@@ -314,13 +315,13 @@ namespace Arrow.Xml.Macro
         /// <param name="destination">Where to store the compiled xml</param>
         /// <param name="variables">The current variables</param>
         /// <param name="scope">The current scope</param>
-        private void ExpandMacro(string instanceName, XmlNode macroNode, XmlNode source, XmlNode destination, NameScope variables, Scope scope)
+        private void ExpandMacro(string? instanceName, XmlNode macroNode, XmlNode source, XmlNode destination, NameScope variables, Scope scope)
         {
             variables = variables.CreateChildScope();
             variables.Declare(ExpandingNode, source);
 
             // Install any arguments
-            foreach(XmlAttribute attr in source.Attributes)
+            foreach(XmlAttribute attr in source.AllAttributes())
             {
                 if(attr.NamespaceURI == "")
                 {
@@ -339,8 +340,7 @@ namespace Arrow.Xml.Macro
                     string name = attr.LocalName;
                     string requiredVariable = attr.Value;
 
-                    object value = null;
-                    if(variables.TryLookup(requiredVariable, out value))
+                    if(variables.TryLookup(requiredVariable, out var value))
                     {
                         // We need to declare/assign the variable
                         variables.DeclareOrAssign(name, value);
@@ -354,10 +354,10 @@ namespace Arrow.Xml.Macro
 
             // See if there are any argument elements.
             // These allow you to pass structured xml as arguments
-            foreach(XmlNode argNode in source.SelectNodes("m:Arg", m_NamespaceManager))
+            foreach(XmlNode argNode in source.SelectNodesOrEmpty("m:Arg", m_NamespaceManager))
             {
                 RequireAttributes(source.Name, argNode, "name");
-                string name = argNode.Attributes["name"].Value;
+                string name = argNode.Attributes!["name"]!.Value;
 
                 XmlNode expandedArg = ExpandXmlArgument(argNode, variables, scope);
 
@@ -378,7 +378,7 @@ namespace Arrow.Xml.Macro
         private XmlNode ExpandXmlArgument(XmlNode argNode, NameScope variables, Scope scope)
         {
             // NOTE: Although we create an element we never actually add it to the document
-            XmlElement element = argNode.OwnerDocument.CreateElement(argNode.Name, argNode.NamespaceURI);
+            XmlElement element = argNode.OwnerDocument!.CreateElement(argNode.Name, argNode.NamespaceURI);
             CopyAttributes(argNode, element, variables);
 
             variables = variables.CreateChildScope();
@@ -396,15 +396,15 @@ namespace Arrow.Xml.Macro
         /// <param name="variables">The current variables</param>
         private void CopyAttributes(XmlNode source, XmlNode destination, NameScope variables)
         {
-            foreach(XmlAttribute attr in source.Attributes)
+            foreach(XmlAttribute attr in source.AllAttributes())
             {
                 // Ignore anything in the macro namespace
                 if(attr.NamespaceURI == NS) continue;
 
                 string value = ApplySubstitutions(attr.Value, variables);
-                XmlAttribute newAttr = destination.OwnerDocument.CreateAttribute(attr.Name, attr.NamespaceURI);
+                XmlAttribute newAttr = destination.OwnerDocument!.CreateAttribute(attr.Name, attr.NamespaceURI);
                 newAttr.Value = value;
-                destination.Attributes.Append(newAttr);
+                destination.Attributes!.Append(newAttr);
             }
         }
 
@@ -418,14 +418,14 @@ namespace Arrow.Xml.Macro
             // Expand the mandatory tokens
             value = TokenExpander.ExpandText(value, "@{", "}", delegate (string name)
             {
-                object obj = variables.Lookup(name);
+                object? obj = variables.Lookup(name);
                 return obj;
             });
 
             // Expand the optional tokens
             value = TokenExpander.ExpandText(value, "@[", "]", delegate (string name)
             {
-                object obj = variables.Lookup(name);
+                var obj = variables.Lookup(name);
                 return obj == null ? "" : obj;
             });
 
@@ -443,7 +443,7 @@ namespace Arrow.Xml.Macro
         /// <param name="scope">The current scope</param>
         private void DoInclude(string filename, XmlNode destination, NameScope variables, Scope scope)
         {
-            Uri currentSource = variables.Lookup(CurrentFile) as Uri;
+            Uri? currentSource = variables.Lookup(CurrentFile) as Uri;
             Uri newSource = DetermineUri(currentSource, filename);
 
             XmlDocument source = new XmlDocument();
@@ -457,13 +457,13 @@ namespace Arrow.Xml.Macro
 
             scope.PushInclude(filename);
             // NOTE: We use ScopeRule.UseExisting to add any macros to our scope
-            DoCompile(source.DocumentElement, destination, variables, scope, ScopeRule.UseExisting);
+            DoCompile(source.DocumentElement!, destination, variables, scope, ScopeRule.UseExisting);
             scope.PopInclude();
 
             variables.Assign(CurrentFile, currentSource);
         }
 
-        private Uri DetermineUri(Uri currentSource, string newSource)
+        private Uri DetermineUri(Uri? currentSource, string newSource)
         {
             if(currentSource == null) return Accessor.CreateUri(newSource);
             return Accessor.ResolveRelative(currentSource, newSource);
@@ -481,8 +481,8 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("Define", source, "name");
 
-            XmlNode nameAttr = source.Attributes.GetNamedItem("name");
-            string name = nameAttr.Value;
+            XmlNode nameAttr = source.Attributes!.GetNamedItem("name")!;
+            string name = nameAttr.Value!;
             scope.Add(name, source);
         }
 
@@ -498,10 +498,10 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("Declare", source, "name");
 
-            XmlNode nameAttr = source.Attributes.GetNamedItem("name");
+            XmlNode nameAttr = source.Attributes!.GetNamedItem("name")!;
 
-            string name = nameAttr.Value;
-            object value = CreateVariableValue(source, variables, scope);
+            string name = nameAttr.Value!;
+            var value = CreateVariableValue(source, variables, scope);
 
             if(variables.Declare(name, value) == false)
             {
@@ -521,8 +521,8 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("TryDeclare", source, "name");
 
-            XmlNode nameAttr = source.Attributes.GetNamedItem("name");
-            string name = nameAttr.Value;
+            XmlNode nameAttr = source.Attributes!.GetNamedItem("name")!;
+            string name = nameAttr.Value!;
 
             string declarationScope = GetDeclarationScope("TryDeclare", source);
 
@@ -534,11 +534,10 @@ namespace Arrow.Xml.Macro
             else
             {
                 // Only declare if there's no variable present at any scope
-                object temp;
-                if(variables.TryLookup(name, out temp)) return;
+                if(variables.TryLookup(name, out var _)) return;
             }
 
-            object value = CreateVariableValue(source, variables, scope);
+            var value = CreateVariableValue(source, variables, scope);
             variables.Declare(name, value);
         }
 
@@ -555,10 +554,10 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("Assign", source, "name");
 
-            XmlNode nameAttr = source.Attributes.GetNamedItem("name");
+            XmlNode nameAttr = source.Attributes!.GetNamedItem("name")!;
 
-            string name = nameAttr.Value;
-            object value = CreateVariableValue(source, variables, scope);
+            string name = nameAttr.Value!;
+            var value = CreateVariableValue(source, variables, scope);
 
             if(variables.Assign(name, value) == false)
             {
@@ -573,11 +572,11 @@ namespace Arrow.Xml.Macro
         /// <param name="variables">The current variables</param>
         /// <param name="scope">The current scope</param>
         /// <returns>The value for the variable</returns>
-        private object CreateVariableValue(XmlNode source, NameScope variables, Scope scope)
+        private object? CreateVariableValue(XmlNode source, NameScope variables, Scope scope)
         {
-            object value = null;
+            object? value = null;
 
-            XmlAttribute typeNode = source.Attributes["type"];
+            XmlAttribute? typeNode = source.Attributes!["type"];
             if(typeNode != null && typeNode.Value == "xml")
             {
                 // Leave it as xml. This allows the user to create "data islands"
@@ -612,7 +611,7 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("Require", source, "name");
 
-            string name = source.Attributes.GetNamedItem("name").Value;
+            string name = source.Attributes!.GetNamedItem("name")!.Value!;
             string declarationScope = GetDeclarationScope("Require", source);
 
             bool found = false;
@@ -623,8 +622,7 @@ namespace Arrow.Xml.Macro
             }
             else
             {
-                object value;
-                found = variables.TryLookup(name, out value);
+                found = variables.TryLookup(name, out var _);
             }
 
             if(found == false) throw new XmlMacroExpanderException("required variable not declared: " + name);
@@ -635,7 +633,7 @@ namespace Arrow.Xml.Macro
             return GetAttributeValue(construct, node, "scope", "local", "local", "any");
         }
 
-        private object ConvertToType(string value, XmlNode typeNode)
+        private object? ConvertToType(string value, XmlNode typeNode)
         {
             string type = XmlTypeResolver.ExtractTypeName(typeNode);
             Type actualType = TypeResolver.GetEncodedType(type);
@@ -655,18 +653,18 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("ForEach", source, "name", "values");
 
-            XmlNode nameNode = source.Attributes["name"];
-            XmlNode valuesNode = source.Attributes["values"];
+            XmlNode nameNode = source.Attributes!["name"]!;
+            XmlNode valuesNode = source.Attributes!["values"]!;
 
             char split = ',';
-            XmlNode splitNode = source.Attributes["split"];
-            if(splitNode != null && splitNode.Value.Length != 0)
+            XmlNode? splitNode = source.Attributes!["split"];
+            if(splitNode != null && splitNode.Value!.Length != 0)
             {
                 split = splitNode.Value[0];
             }
 
-            string[] names = ApplySubstitutions(nameNode.Value, variables).Split(',');
-            string[] values = ApplySubstitutions(valuesNode.Value, variables).Split(split);
+            string[] names = ApplySubstitutions(nameNode.Value!, variables).Split(',');
+            string[] values = ApplySubstitutions(valuesNode.Value!, variables).Split(split);
 
             for(int i = 0; i + names.Length <= values.Length; i += names.Length)
             {
@@ -703,8 +701,8 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("Pragma", source, "name", "value");
 
-            string variable = source.Attributes["name"].Value;
-            string value = source.Attributes["value"].Value;
+            string variable = source.Attributes!["name"]!.Value;
+            string value = source.Attributes!["value"]!.Value;
 
             switch(variable.Trim().ToLower())
             {
@@ -743,12 +741,12 @@ namespace Arrow.Xml.Macro
 
         private void RemoveMacroNamespaces(XmlNode node)
         {
-            XmlDocument doc = node.OwnerDocument;
-            XmlNode root = doc.DocumentElement;
+            XmlDocument doc = node.OwnerDocument!;
+            XmlNode root = doc.DocumentElement!;
 
             List<XmlAttribute> toRemove = new List<XmlAttribute>();
 
-            foreach(XmlAttribute attrNode in root.Attributes)
+            foreach(XmlAttribute attrNode in root.AllAttributes())
             {
                 if(attrNode.Value == NS || attrNode.Value == ExpandNS)
                 {
@@ -758,12 +756,9 @@ namespace Arrow.Xml.Macro
 
             foreach(XmlAttribute attrNode in toRemove)
             {
-                root.Attributes.Remove(attrNode);
+                root.Attributes!.Remove(attrNode);
             }
         }
-
-
-
 
         /// <summary>
         /// Passes all children through without expanding them
@@ -775,9 +770,9 @@ namespace Arrow.Xml.Macro
         /// <param name="scope">The current scope</param>
         private void Pass(XmlNode source, XmlNode destination, NameScope variables, Scope scope)
         {
-            foreach(XmlNode node in source.ChildNodes)
+            foreach(XmlNode node in source.ChildNodes.NonNullNodes())
             {
-                XmlNode destinationNode = destination.OwnerDocument.ImportNode(node.Clone(), true);
+                XmlNode destinationNode = destination.OwnerDocument!.ImportNode(node.Clone(), true);
                 destination.AppendChild(destinationNode);
             }
         }
@@ -810,7 +805,7 @@ namespace Arrow.Xml.Macro
             // Does nothing!
             bool copy = false;
 
-            XmlAttribute copyAttr = source.Attributes["copy"];
+            XmlAttribute? copyAttr = source.Attributes!["copy"];
             if(copyAttr != null) bool.TryParse(copyAttr.Value, out copy);
 
             if(copy)
@@ -831,17 +826,16 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("InjectXml", source, "name");
 
-            string variable = source.Attributes["name"].Value;
+            string variable = source.Attributes!["name"]!.Value;
 
-            object value;
-            if(variables.TryLookup(variable, out value) == false)
+            if(variables.TryLookup(variable, out var value) == false)
             {
                 throw new XmlMacroExpanderException("InjectXml: variable not found: " + variable);
             }
 
-            string select = null;
-            XmlAttribute selectAttr = source.Attributes["select"];
-            XmlAttribute selectSingleAttr = source.Attributes["selectSingle"];
+            string? select = null;
+            XmlAttribute? selectAttr = source.Attributes!["select"];
+            XmlAttribute? selectSingleAttr = source.Attributes!["selectSingle"];
             if(selectAttr != null) select = selectAttr.Value;
 
             // If there's a select then it's against the variable
@@ -868,7 +862,7 @@ namespace Arrow.Xml.Macro
             if(value is XmlDocument)
             {
                 XmlDocument doc = (XmlDocument)value;
-                CopyElement(doc.DocumentElement, destination, variables, scope);
+                CopyElement(doc.DocumentElement!, destination, variables, scope);
             }
             else if(value is XmlElement)
             {
@@ -877,7 +871,7 @@ namespace Arrow.Xml.Macro
             else if(value is XmlNodeList)
             {
                 XmlNodeList nodes = (XmlNodeList)value;
-                foreach(XmlNode node in nodes)
+                foreach(XmlNode node in nodes.NonNullNodes())
                 {
                     if(node is XmlElement)
                     {
@@ -898,7 +892,7 @@ namespace Arrow.Xml.Macro
 
         private void CopyElement(XmlElement sourceElement, XmlNode destination, NameScope variables, Scope scope)
         {
-            XmlElement element = destination.OwnerDocument.CreateElement(sourceElement.Name, sourceElement.NamespaceURI);
+            XmlElement element = destination.OwnerDocument!.CreateElement(sourceElement.Name, sourceElement.NamespaceURI);
             CopyAttributes(sourceElement, element, variables);
             DoCompile(sourceElement, element, variables.CreateChildScope(), scope);
             destination.AppendChild(element);
@@ -912,7 +906,7 @@ namespace Arrow.Xml.Macro
                 // expand it as it may fail. We need an explicit check here
                 // as XmlComment derives from XmlCharacterData and would pass
                 // the test below
-                XmlNode destinationNode = destination.OwnerDocument.ImportNode(node.Clone(), true);
+                XmlNode destinationNode = destination.OwnerDocument!.ImportNode(node.Clone(), true);
                 destination.AppendChild(destinationNode);
             }
             else
@@ -940,8 +934,8 @@ namespace Arrow.Xml.Macro
 
             RequireAttributes("Include", source, "uri");
 
-            XmlNode filenameNode = source.Attributes["uri"];
-            string filename = ApplySubstitutions(filenameNode.Value, variables);
+            XmlNode filenameNode = source.Attributes!["uri"]!;
+            string filename = ApplySubstitutions(filenameNode.Value!, variables);
 
             DoInclude(filename, destination, variables, scope);
         }
@@ -959,11 +953,11 @@ namespace Arrow.Xml.Macro
         {
             RequireAttributes("LoadXml", source, "name", "uri");
 
-            string name = source.Attributes["name"].Value;
-            string uriString = source.Attributes["uri"].Value;
+            string name = source.Attributes!["name"]!.Value;
+            string uriString = source.Attributes!["uri"]!.Value;
             uriString = ApplySubstitutions(uriString, variables);
 
-            Uri currentSource = variables.Lookup(CurrentFile) as Uri;
+            Uri? currentSource = variables.Lookup(CurrentFile) as Uri;
             Uri uri = DetermineUri(currentSource, uriString);
 
             XmlDocument document = new XmlDocument();
@@ -973,19 +967,19 @@ namespace Arrow.Xml.Macro
             }
 
             // If there's a select clause then process it
-            XmlAttribute selectAttr = source.Attributes["select"];
-            XmlAttribute selectSingleAttr = source.Attributes["selectSingle"];
+            XmlAttribute? selectAttr = source.Attributes!["select"];
+            XmlAttribute? selectSingleAttr = source.Attributes!["selectSingle"];
 
             if(selectAttr != null)
             {
                 string xpath = ApplySubstitutions(selectAttr.Value, variables);
-                XmlNodeList nodes = document.SelectNodes(xpath);
+                XmlNodeList? nodes = document.SelectNodes(xpath);
                 variables.Assign(name, nodes);
             }
             else if(selectSingleAttr != null)
             {
                 string xpath = ApplySubstitutions(selectSingleAttr.Value, variables);
-                XmlNode node = document.SelectSingleNode(xpath);
+                XmlNode? node = document.SelectSingleNode(xpath);
                 if(node == null) throw new XmlMacroExpanderException("LoadXml could not select a single node with " + xpath);
                 variables.Assign(name, node);
             }
@@ -1006,14 +1000,14 @@ namespace Arrow.Xml.Macro
         {
             for(int i = 0; i < names.Length; i++)
             {
-                XmlNode attrNode = node.Attributes[names[i]];
+                XmlNode? attrNode = node.Attributes![names[i]];
                 if(attrNode == null) throw new XmlMacroExpanderException(construct + " required attribute " + names[i]);
             }
         }
 
         private string GetAttributeValue(string construct, XmlNode node, string name, string defaultValue, params string[] validValues)
         {
-            XmlAttribute attr = node.Attributes[name];
+            XmlAttribute? attr = node.Attributes![name];
             if(attr == null) return defaultValue;
 
             string value = attr.Value;

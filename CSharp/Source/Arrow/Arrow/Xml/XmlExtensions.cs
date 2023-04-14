@@ -76,18 +76,60 @@ namespace Arrow.Xml
         }
 
         /// <summary>
+        /// Given an xml node list only yields the items that are not null
+        /// </summary>
+        /// <param name="xmlNodeList"></param>
+        /// <returns></returns>
+        public static IEnumerable<XmlNode> NonNullNodes(this XmlNodeList xmlNodeList)
+        {
+            if(xmlNodeList.Count != 0)
+            {
+                foreach(XmlNode? node in xmlNodeList)
+                {
+                    if(node is not null) yield return node;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns all the attributes on the given node, if present
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static IEnumerable<XmlAttribute> AllAttributes(this XmlNode node)
+        {
+            var attributeCollection = node.Attributes;
+
+            if(attributeCollection is not null && attributeCollection.Count != 0)
+            {
+                foreach(XmlAttribute? attribute in attributeCollection)
+                {
+                    if(attribute is not null) yield return attribute;
+                }
+            }
+        }
+
+        /// <summary>
         /// Returns a list of xml nodes that match the given path
         /// </summary>
         /// <param name="node"></param>
         /// <param name="xpath"></param>
         /// <param name="nsmgr"></param>
         /// <returns></returns>
-        public static XmlNodeList SelectNodesOrEmpty(this XmlNode node, string xpath, XmlNamespaceManager nsmgr)
+        public static IEnumerable<XmlNode> SelectNodesOrEmpty(this XmlNode node, string xpath, XmlNamespaceManager nsmgr)
         {
-            return node.SelectNodes(xpath, nsmgr) ?? s_EmptyXmlNodeList;
+            var nodes = node.SelectNodes(xpath, nsmgr);
+
+            if(nodes is not null)
+            {
+                foreach(XmlNode? n in nodes)
+                {
+                    if(n is not null) yield return n;
+                }
+            }
         }
 
-        private class EmptyXmlNodeList : XmlNodeList
+        private sealed class EmptyXmlNodeList : XmlNodeList
         {
             public override XmlNode Item(int index)
             {

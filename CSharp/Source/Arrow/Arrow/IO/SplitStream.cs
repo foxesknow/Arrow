@@ -152,20 +152,6 @@ namespace Arrow.IO
         }
 
         /// <inheritdoc/>
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            ThrowIfDisposed();
-            return m_Read.BeginRead(buffer, offset, count, callback, state);
-        }
-
-        /// <inheritdoc/>
-        public override int EndRead(IAsyncResult asyncResult)
-        {
-            ThrowIfDisposed();
-            return m_Read.EndRead(asyncResult);
-        }
-
-        /// <inheritdoc/>
         public override void WriteByte(byte value)
         {
             ThrowIfDisposed();
@@ -184,20 +170,6 @@ namespace Arrow.IO
         {
             ThrowIfDisposed();
             return m_Write.WriteAsync(buffer, offset, count, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            ThrowIfDisposed();
-            return m_Write.BeginWrite(buffer, offset, count, callback, state);
-        }
-
-        /// <inheritdoc/>
-        public override void EndWrite(IAsyncResult asyncResult)
-        {
-            ThrowIfDisposed();
-            m_Write.EndWrite(asyncResult);
         }
 
         /// <inheritdoc/>
