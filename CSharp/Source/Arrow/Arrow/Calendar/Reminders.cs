@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,120 +11,171 @@ namespace Arrow.Calendar
 {
     /// <summary>
     /// Schedules one-shot reminders for a future date.
-    /// Reminders are not guaranteed to run on any particular thread
+    /// The reminders are not guaranteed to run on any particular thread
+    /// 
+    /// The Clock class is used to determine the current time.
+    /// If you alter/replace the clock then you can call
+    /// Reschedule to take any time changes into account.
     /// </summary>
-    public class Reminders : IDisposable
+    public sealed partial class Reminders : IDisposable
     {
-        private readonly object m_SyncRoot = new object();
+        private static readonly IComparer<Job> s_JobComparer = new JobComparer();
+
+        private readonly object m_SyncRoot = new();
 
         private Timer? m_Timer;
+        private readonly List<Job> m_Jobs = new();
+        
+        private readonly Action<object?> m_CallViaState;
 
-        private readonly List<ScheduledAction> m_ScheduledActions = new List<ScheduledAction>();
+
+        /// <summary>
+        /// Raised after the timer has fired
+        /// </summary>
+        public event EventHandler<RemindersNotifiedEventArgs>? RaisedReminders;
 
         /// <summary>
         /// Initializes the instance
         /// </summary>
         public Reminders()
         {
-            m_Timer = new Timer(HandlerTimer);
+            m_CallViaState = CallViaState;
+            m_Timer = new Timer(HandleTimer);
         }
 
-        /// <summary>
-        /// Adds a new reminder.
-        /// If the time to run the reminder is in the past then the reminder will trigger immediately
-        /// </summary>
-        /// <param name="when">When to perform the action. The time should be convertible to utc</param>
-        /// <param name="reminder">What the action is</param>
-        /// <exception cref="System.ArgumentNullException">reminder is null</exception>
-        public void Add(DateTime when, Action reminder)
+        /// <inheritdoc/>
+        public void Dispose()
         {
-            if(reminder == null) throw new ArgumentNullException("reminder");
-
-            when = MassageDateTime(when);
-
             lock(m_SyncRoot)
             {
-                bool changeSchedule = false;
-
-                if(m_ScheduledActions.Count == 0)
+                if(m_Timer is not null)
                 {
-                    // The first item all requires a schedule change
-                    changeSchedule = true;
-                }
-                else if(when < m_ScheduledActions[0].When)
-                {
-                    changeSchedule = true;
-                }
-
-                m_ScheduledActions.Add(new ScheduledAction(when, reminder));
-                SortTasks();
-
-                if(changeSchedule) ScheduleTimer();
-            }
-        }
-
-        /// <summary>
-        /// Removes a reminder
-        /// </summary>
-        /// <param name="reminder">The reminder action</param>
-        /// <returns>true if the action was found and removed, otherwise false</returns>
-        /// <exception cref="System.ArgumentNullException">reminder is null</exception>
-        public bool Remove(Action reminder)
-        {
-            if(reminder == null) throw new ArgumentNullException("reminder");
-
-            bool removed = false;
-
-            lock(m_SyncRoot)
-            {
-                int index = m_ScheduledActions.FindIndex(task => task.Reminder == reminder);
-
-                if(index != -1)
-                {
-                    m_ScheduledActions.RemoveAt(index);
-                    removed = true;
-
-                    if(index == 0) ScheduleTimer();
+                    m_Timer.Dispose();
+                    m_Jobs.Clear();
+                    m_Timer = null; 
                 }
             }
-
-            return removed;
         }
 
         /// <summary>
-        /// Removes all instances of 
+        /// Returns the number of pending reminders
         /// </summary>
-        /// <param name="reminder">The reminder to remove</param>
-        /// <returns>The number of reminders removed</returns>
-        /// <exception cref="System.ArgumentNullException">reminder is null</exception>
-        public int RemoveAll(Action reminder)
+        public int Count
         {
-            if(reminder == null) throw new ArgumentNullException("reminder");
-
-            lock(m_SyncRoot)
+            get
             {
-                int removed = m_ScheduledActions.RemoveAll(task => task.Reminder == reminder);
-
-                if(removed != 0) ScheduleTimer();
-
-                return removed;
+                lock(m_SyncRoot)
+                {
+                    return m_Jobs.Count;
+                }
             }
         }
 
         /// <summary>
-        /// Checks to see if a reminder is present
+        /// Adds a new reminder
         /// </summary>
-        /// <param name="reminder">The reminder to check for</param>
-        /// <returns>true if the reminder is present, false otherwise</returns>
-        /// <exception cref="System.ArgumentNullException">reminder is null</exception>
-        public bool Contains(Action reminder)
+        /// <param name="when"></param>
+        /// <param name="reminder"></param>
+        /// <returns>A unique identifier for the reminder</returns>
+        public ReminderID Add(DateTime when, Action reminder)
         {
-            if(reminder == null) throw new ArgumentNullException("reminder");
+            if(reminder is null) throw new ArgumentNullException(nameof(reminder));
+
+            return Add(when, reminder, CallViaState);
+        }
+
+        /// <summary>
+        /// Adds a new reminder
+        /// </summary>
+        /// <param name="when"></param>
+        /// <param name="state">Any additional state to pass to the reminder</param>
+        /// <param name="reminder"></param>
+        /// <returns>A unique identifier for the reminder</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public ReminderID Add(DateTime when, object? state, Action<object?> reminder)
+        {
+            if(reminder is null) throw new ArgumentNullException(nameof(reminder));
+
+            var id = ReminderID.Allocate();
+            when = Normalize(when);
 
             lock(m_SyncRoot)
             {
-                int index = m_ScheduledActions.FindIndex(task => task.Reminder == reminder);
-                return index != -1;
+                var changedSchedule = false;
+
+                if(m_Jobs.Count == 0)
+                {
+                    changedSchedule = true;
+                }
+                else if(when < m_Jobs[m_Jobs.Count - 1].When)
+                {
+                    // The new job is the new earliest to run
+                    changedSchedule = true;
+                }
+
+                
+                m_Jobs.Add(new(id, when, state, reminder));
+                SortJobs();
+
+                if(changedSchedule) ScheduleTimer();
+            }
+
+            return id;
+        }
+
+        /// <summary>
+        /// Attempts to cancel a reminder
+        /// </summary>
+        /// <param name="id">The ID of the reminder to cancel</param>
+        /// <returns>true if the reminder was cancelled, otherwise false</returns>
+        public bool Cancel(ReminderID id)
+        {
+            if(id == ReminderID.None) return false;
+
+            lock(m_SyncRoot)
+            {
+                var index = -1;
+
+                // NOTE: Loop rather than Linq to avoid a closure
+                for(var i = 0; i < m_Jobs.Count; i++)
+                {
+                    if(m_Jobs[i].ID == id)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if(index == -1) return false;
+
+                // We'll only need to reschedule if we're removing the next job
+                // to run, which is at the end of the list
+                var needToReschedule = (index == m_Jobs.Count - 1);
+
+                m_Jobs.RemoveAt(index);
+                if(needToReschedule) ScheduleTimer();
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Reschedules any reminders due to an external change in the clock
+        /// </summary>
+        public void Reschedule()
+        {
+            RescheduleOutcome outcome;
+
+            lock(m_SyncRoot)
+            {
+                outcome = ScheduleTimer();
+            }
+
+            if(outcome == RescheduleOutcome.RunScheduled)
+            {
+                // There are jobs to be run in the future.
+                // Let any subscribers know that nothing was done as part of the reschedule.
+                RaiseRaisedReminders(0);
             }
         }
 
@@ -134,155 +186,151 @@ namespace Arrow.Calendar
         {
             lock(m_SyncRoot)
             {
-                m_ScheduledActions.Clear();
+                m_Jobs.Clear();
                 ScheduleTimer();
             }
         }
 
         /// <summary>
-        /// Returns the number of reminders
+        /// Works out when the timer should next fire
         /// </summary>
-        public int Count
+        /// <returns></returns>
+        private RescheduleOutcome ScheduleTimer()
         {
-            get
-            {
-                lock(m_SyncRoot)
-                {
-                    return m_ScheduledActions.Count;
-                }
-            }
-        }
+            if(m_Timer is null) return RescheduleOutcome.NotRunning;
 
-        /// <summary>
-        /// Works out when the next timer event should occur
-        /// </summary>
-        private void ScheduleTimer()
-        {
-            if(m_Timer == null) return;
-
-            if(m_ScheduledActions.Count == 0)
+            if(m_Jobs.Count == 0)
             {
                 m_Timer.Change(Timeout.Infinite, Timeout.Infinite);
+                return RescheduleOutcome.NothingToRun;
             }
-            else
+
+            var outcome = RescheduleOutcome.RunScheduled;
+            var now = Clock.UtcNow;
+            var next = m_Jobs[m_Jobs.Count - 1].When;
+            long dueTime = (long)(next - now).TotalMilliseconds;
+
+            if(dueTime <= 0)
             {
-                DateTime now = Clock.UtcNow;
-                DateTime when = m_ScheduledActions[0].When;
-                long dueTime = (long)(when - now).TotalMilliseconds;
+                // The next item to run should have happened in the past!
+                // We'll schedule to run immediately
+                dueTime = 0;
+                outcome = RescheduleOutcome.RanImmediate;
+            }
 
-                // If the due time is negative it means the next time
-                // is a time in the past. In this case we'll schedule
-                // the timer to trigger immediately
-                if(dueTime < 0) dueTime = 0;
-                m_Timer.Change(dueTime, Timeout.Infinite);
+            m_Timer.Change(dueTime, Timeout.Infinite);
+            
+            return outcome;
+        }
+
+        private void HandleTimer(object? state)
+        {
+            List<Job>? tasksToRun = null;
+
+            var now = Clock.UtcNow;
+
+            // We run the jobs outside of the lock to allow the
+            // reminders to call back in without having to worry about threading issues.
+            lock(m_SyncRoot)
+            {
+                // The jobs are sorted so that the next job to run is at the end of the list
+                while(m_Jobs.Count != 0)
+                {
+                    var nextJobIndex = m_Jobs.Count - 1;
+
+                    var job = m_Jobs[nextJobIndex];
+                    if(job.When > now) break;
+
+                    if(tasksToRun is null) tasksToRun = new();
+                    tasksToRun.Add(job);
+
+                    m_Jobs.RemoveAt(nextJobIndex);
+                }
+            }
+
+            if(tasksToRun is not null)
+            {
+                for(var i = 0; i < tasksToRun.Count; i++)
+                {
+                    MethodCall.AllowFail(tasksToRun[i], static job => job.Reminder(job.State));
+                }
+
+                RaiseRaisedReminders(tasksToRun.Count);
+            }
+
+            lock(m_SyncRoot)
+            {
+                ScheduleTimer();
+            }
+        }
+
+        private void RaiseRaisedReminders(int jobCount)
+        {
+            var callback = RaisedReminders;
+            if(callback is not null)
+            {
+                MethodCall.AllowFail((Self: this, jobCount, callback), static state =>
+                {
+                    state.callback(state.Self, new RemindersNotifiedEventArgs(state.jobCount));
+                });
             }
         }
 
         /// <summary>
-        /// Sorts the tasks
-        /// </summary>
-        private void SortTasks()
-        {
-            // Sort the tasks so the smallest comes first
-            m_ScheduledActions.Sort((lhs, rhs) => lhs.When.CompareTo(rhs.When));
-        }
-
-        /// <summary>
-        /// Massages a date into the correct format.
-        /// Dates must be in UTC format, or be convertible to UTC
+        /// Converts the date to UTC, which is what we'll use for scheduling
         /// </summary>
         /// <param name="when"></param>
         /// <returns></returns>
-        private DateTime MassageDateTime(DateTime when)
+        /// <exception cref="ArgumentException"></exception>
+        private DateTime Normalize(DateTime when)
         {
-            when = when.ToUniversalTime();
-            if(when.Kind != DateTimeKind.Utc) throw new ArgumentException("when cannot be converted to UTC");
+            var normalizedWhen = when.ToUniversalTime();
+            if(normalizedWhen.Kind != DateTimeKind.Utc) throw new ArgumentException("when cannot be converted to UTC");
 
-            return when;
+            return normalizedWhen;
         }
 
         /// <summary>
-        /// Called when the timer triggers
+        /// Sorts the jobs from latest to earliest.
+        /// This means when we remove jobs that of run we'll do so from the end of the
+        /// array which doesn't requiring moving items to fill the gaps.
+        /// </summary>
+        private void SortJobs()
+        {
+            // We could have used the delegate version of sort, but it wraps the delegate
+            // in a IComparer<> which causes a memory allocation.
+            m_Jobs.Sort(s_JobComparer);
+        }
+
+        /// <summary>
+        /// Calls the action passed in via the state parameter.
+        /// This is used to call Action instances that don't have any state data.
         /// </summary>
         /// <param name="state"></param>
-        private void HandlerTimer(object? state)
+        private void CallViaState(object? state)
         {
-            // We'll run the tasks outside of the sync root
-            // so that the actions can call back into the 
-            // Reminder instance to re-register without having 
-            // to worry about thread issues
-            var tasksToRun = new List<ScheduledAction>();
+            var action = (Action)state!;
+            action();
+        }
 
-            lock(m_SyncRoot)
+        private sealed class JobComparer : IComparer<Job>
+        {
+            int IComparer<Job>.Compare(Job lhs, Job rhs)
             {
-                DateTime now = Clock.UtcNow;
-
-                for(int i = 0; i < m_ScheduledActions.Count; i++)
-                {
-                    ScheduledAction task = m_ScheduledActions[i];
-                    if(task.When > now) break;
-
-                    tasksToRun.Add(task);
-                }
-
-                m_ScheduledActions.RemoveRange(0, tasksToRun.Count);
-            }
-
-            foreach(ScheduledAction task in tasksToRun)
-            {
-                MethodCall.AllowFail(task.Reminder);
-            }
-
-            lock(m_SyncRoot)
-            {
-                ScheduleTimer();
+                // Sort the jobs so that the latest job goes to the front and the earliest goes to the end.
+                // This will make it easier to remove then when we run the timer as we'll just be taking
+                // from the end and avoiding copying bits of the underling array
+                return rhs.When.CompareTo(lhs.When);
             }
         }
 
-        /// <summary>
-        /// Stops scheduling reminders and releases any resources
-        /// </summary>
-        public void Dispose()
+
+        enum RescheduleOutcome
         {
-            lock(m_SyncRoot)
-            {
-                if(m_Timer != null)
-                {
-                    m_Timer.Dispose();
-                    m_Timer = null;
-                    m_ScheduledActions.Clear();
-                }
-            }
-        }
-
-        class ScheduledAction : IEquatable<ScheduledAction>
-        {
-            public ScheduledAction(DateTime when, Action reminder)
-            {
-                this.When = when;
-                this.Reminder = reminder;
-            }
-
-            public DateTime When { get; private set; }
-            public Action Reminder { get; private set; }
-
-            public override bool Equals(object? obj)
-            {
-                var rhs = obj as ScheduledAction;
-                if(rhs == null) return false;
-
-                return Equals(rhs);
-            }
-
-            public override int GetHashCode()
-            {
-                return this.When.GetHashCode();
-            }
-
-            public bool Equals(ScheduledAction? other)
-            {
-                return other is not null && this.When == other.When;
-            }
+            NotRunning,
+            NothingToRun,
+            RanImmediate,
+            RunScheduled
         }
     }
 }

@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace Arrow.Calendar
 {
-    public partial class ReschedulableReminders
+    public partial class Reminders
     {
         private readonly struct Job : IEquatable<Job>
         {
-            public Job(DateTime when, object? state, Action<object?> reminder)
+            public Job(ReminderID id, DateTime when, object? state, Action<object?> reminder)
             {
+                this.ID = id;
                 this.When = when;
                 this.State = state;
                 this.Reminder = reminder;                
             }
+
+            public ReminderID ID{get;}
 
             public DateTime When{get;}
             
