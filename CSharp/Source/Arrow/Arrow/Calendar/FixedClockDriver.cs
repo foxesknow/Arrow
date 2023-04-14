@@ -8,7 +8,7 @@ namespace Arrow.Calendar
     /// <summary>
     /// A clock that always returns the same time
     /// </summary>
-    public class FixedClock : IClock
+    public class FixedClockDriver : IClockDriver
     {
         private readonly DateTime m_Local;
         private readonly DateTime m_Utc;
@@ -17,7 +17,7 @@ namespace Arrow.Calendar
         /// Initializes the instance
         /// </summary>
         /// <param name="dateTime">The date and time to always return</param>
-        public FixedClock(DateTime dateTime)
+        public FixedClockDriver(DateTime dateTime)
         {
             m_Local = dateTime.ToLocalTime();
             m_Utc = dateTime.ToUniversalTime();

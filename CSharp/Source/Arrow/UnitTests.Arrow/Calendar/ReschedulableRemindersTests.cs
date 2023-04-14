@@ -72,7 +72,7 @@ namespace UnitTests.Arrow.Calendar
                         runEvent2.Set();
                     });
 
-                    using(SwitchClock.To(new BaselineClock(Clock.Now.AddHours(1))))
+                    using(SwitchClock.To(new BaselineClockDriver(Clock.Now.AddHours(1))))
                     {
                         reminders.Reschedule();
 

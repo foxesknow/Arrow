@@ -8,7 +8,7 @@ namespace Arrow.Calendar
     /// <summary>
     /// A clock that always returns a time relative to a baseline time.
     /// </summary>
-    public class BaselineClock : IClock
+    public class BaselineClockDriver : IClockDriver
     {
         private readonly DateTime m_UtcBaseline;
         private readonly TimeSpan m_Delta;
@@ -17,7 +17,7 @@ namespace Arrow.Calendar
         /// Initializes the instance
         /// </summary>
         /// <param name="baseline">The date and time that will be the basis of time</param>
-        public BaselineClock(DateTime baseline)
+        public BaselineClockDriver(DateTime baseline)
         {
             m_UtcBaseline = baseline.ToUniversalTime();
             m_Delta = DateTime.UtcNow - m_UtcBaseline;

@@ -16,7 +16,7 @@ namespace Arrow.Calendar
     /// </summary>
     public static class Clock
     {
-        private static IClock s_Clock = new SystemClock();
+        private static IClockDriver s_Clock = new SystemClockDriver();
 
         /// <summary>
         /// Returns the current date time
@@ -37,7 +37,7 @@ namespace Arrow.Calendar
         /// <summary>
         /// The current clock being used
         /// </summary>
-        public static IClock ClockDriver
+        public static IClockDriver ClockDriver
         {
             get{return s_Clock;}
             set

@@ -8,7 +8,7 @@ namespace Arrow.Calendar
 	/// <summary>
 	/// Returns the current date/time
 	/// </summary>
-	public class SystemClock : IClock
+	public class SystemClockDriver : IClockDriver
 	{
 		/// <summary>
 		/// Returns DateTime.Now

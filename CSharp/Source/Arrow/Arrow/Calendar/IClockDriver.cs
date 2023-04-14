@@ -8,7 +8,7 @@ namespace Arrow.Calendar
     /// <summary>
     /// Defines a clock that returns the current time
     /// </summary>
-    public interface IClock
+    public interface IClockDriver
     {
         /// <summary>
         /// Returns the local time

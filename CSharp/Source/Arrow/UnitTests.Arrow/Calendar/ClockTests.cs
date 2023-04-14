@@ -12,7 +12,7 @@ namespace UnitTests.Arrow.Calendar
     [TestFixture]
     public class ClockTests
     {
-        private IClock m_Clock;
+        private IClockDriver m_Clock;
 
         [SetUp]
         public void Init()
@@ -44,7 +44,7 @@ namespace UnitTests.Arrow.Calendar
         {
             // We always want the same value back
             DateTime dateTime = new DateTime(1973, 2, 22);
-            FixedClock fixedClock = new FixedClock(dateTime);
+            FixedClockDriver fixedClock = new FixedClockDriver(dateTime);
             Clock.ClockDriver = fixedClock;
 
             DateTime now2 = Clock.Now;

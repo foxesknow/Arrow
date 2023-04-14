@@ -19,7 +19,7 @@ namespace Arrow.Calendar.Testing
         /// </summary>
         /// <param name="clock"></param>
         /// <returns></returns>
-        public static IDisposable To(IClock clock)
+        public static IDisposable To(IClockDriver clock)
         {
             var currentClock = Clock.ClockDriver;
             Clock.ClockDriver = clock;
