@@ -28,20 +28,18 @@ namespace Arrow.Text.Json
 
         private static dynamic? Walk(JsonElement element)
         {
-            dynamic item = element.ValueKind switch
+            return element.ValueKind switch
             {
-                JsonValueKind.Undefined     => null!,
-                JsonValueKind.Null          => null!,
+                JsonValueKind.Undefined     => null,
+                JsonValueKind.Null          => null,
                 JsonValueKind.False         => false,
                 JsonValueKind.True          => true,
-                JsonValueKind.String        => element.GetString()!,
+                JsonValueKind.String        => element.GetString(),
                 JsonValueKind.Number        => ExtractNumber(element),
                 JsonValueKind.Array         => WalkArray(element),
                 JsonValueKind.Object        => WalkObject(element),
                 _                           => throw new InvalidOperationException($"unexpected value: {element.ValueKind}")
             };
-
-            return item;
         }
 
         private static dynamic WalkObject(JsonElement element)
