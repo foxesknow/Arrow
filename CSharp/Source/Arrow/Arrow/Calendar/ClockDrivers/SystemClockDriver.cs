@@ -6,9 +6,9 @@ using System.Text;
 namespace Arrow.Calendar.ClockDrivers
 {
     /// <summary>
-    /// Returns the current date/time
+    /// Returns the current date/time from the DateTime class
     /// </summary>
-    public class SystemClockDriver : IClockDriver
+    public sealed class SystemClockDriver : IClockDriver
     {
         /// <summary>
         /// Returns DateTime.Now
@@ -24,6 +24,11 @@ namespace Arrow.Calendar.ClockDrivers
         public DateTime UtcNow
         {
             get { return DateTime.UtcNow; }
+        }
+
+        public override string ToString()
+        {
+            return "SystemClock";
         }
     }
 }

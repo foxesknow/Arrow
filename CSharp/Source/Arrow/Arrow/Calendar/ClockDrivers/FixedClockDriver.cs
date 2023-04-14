@@ -8,7 +8,7 @@ namespace Arrow.Calendar.ClockDrivers
     /// <summary>
     /// A clock that always returns the same time
     /// </summary>
-    public class FixedClockDriver : IClockDriver
+    public sealed class FixedClockDriver : IClockDriver
     {
         private readonly DateTime m_Local;
         private readonly DateTime m_Utc;

@@ -8,7 +8,7 @@ namespace Arrow.Calendar.ClockDrivers
     /// <summary>
     /// A clock that always returns a time relative to a baseline time.
     /// </summary>
-    public class BaselineClockDriver : IClockDriver
+    public sealed class BaselineClockDriver : IClockDriver
     {
         private readonly DateTime m_UtcBaseline;
         private readonly TimeSpan m_Delta;

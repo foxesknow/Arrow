@@ -89,7 +89,7 @@ namespace Arrow.Calendar
         /// and will be "greater" than previous allocated identifiers.
         /// </summary>
         /// <returns></returns>
-        internal static ReminderID Allocate()
+        public static ReminderID Allocate()
         {
             var id = unchecked((ulong)Interlocked.Increment(ref s_NextID));
             return new(id);

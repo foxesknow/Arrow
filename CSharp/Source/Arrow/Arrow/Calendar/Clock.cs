@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Arrow.Calendar.ClockDrivers;
 
 namespace Arrow.Calendar
@@ -37,14 +36,14 @@ namespace Arrow.Calendar
         }
 
         /// <summary>
-        /// The current clock being used
+        /// The current clock driver being used
         /// </summary>
         public static IClockDriver ClockDriver
         {
             get{return s_Clock;}
             set
             {
-                if(value == null) throw new ArgumentNullException("value");
+                if(value is null) throw new ArgumentNullException("value");
                 s_Clock = value;
             }
         }

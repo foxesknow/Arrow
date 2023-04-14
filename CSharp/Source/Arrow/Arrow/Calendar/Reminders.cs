@@ -17,7 +17,7 @@ namespace Arrow.Calendar
     /// If you alter/replace the clock then you can call
     /// Reschedule to take any time changes into account.
     /// </summary>
-    public sealed partial class Reminders : IDisposable
+    public sealed partial class Reminders : IReminders, IDisposable
     {
         private static readonly IComparer<Job> s_JobComparer = new JobComparer();
 
@@ -71,12 +71,7 @@ namespace Arrow.Calendar
             }
         }
 
-        /// <summary>
-        /// Adds a new reminder
-        /// </summary>
-        /// <param name="when"></param>
-        /// <param name="reminder"></param>
-        /// <returns>A unique identifier for the reminder</returns>
+        /// <inheritdoc>
         public ReminderID Add(DateTime when, Action reminder)
         {
             if(reminder is null) throw new ArgumentNullException(nameof(reminder));
@@ -84,14 +79,7 @@ namespace Arrow.Calendar
             return Add(when, reminder, CallViaState);
         }
 
-        /// <summary>
-        /// Adds a new reminder
-        /// </summary>
-        /// <param name="when"></param>
-        /// <param name="state">Any additional state to pass to the reminder</param>
-        /// <param name="reminder"></param>
-        /// <returns>A unique identifier for the reminder</returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <inheritdoc>
         public ReminderID Add(DateTime when, object? state, Action<object?> reminder)
         {
             if(reminder is null) throw new ArgumentNullException(nameof(reminder));
@@ -123,11 +111,7 @@ namespace Arrow.Calendar
             return id;
         }
 
-        /// <summary>
-        /// Attempts to cancel a reminder
-        /// </summary>
-        /// <param name="id">The ID of the reminder to cancel</param>
-        /// <returns>true if the reminder was cancelled, otherwise false</returns>
+        /// <inheritdoc>
         public bool Cancel(ReminderID id)
         {
             if(id == ReminderID.None) return false;

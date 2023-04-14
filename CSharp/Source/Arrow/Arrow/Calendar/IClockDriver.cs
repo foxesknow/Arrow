@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Arrow.Calendar.ClockDrivers
+namespace Arrow.Calendar
 {
     /// <summary>
     /// Defines a clock that returns the current time
