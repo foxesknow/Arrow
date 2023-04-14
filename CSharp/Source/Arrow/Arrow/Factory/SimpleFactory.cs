@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Linq.Expressions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Arrow.Factory
 {
@@ -44,8 +45,8 @@ namespace Arrow.Factory
         /// <exception cref="System.ArgumentNullException">type is null</exception>
         public void Register(string name, Type type)
         {
-            if(name == null) throw new ArgumentNullException("name");
-            if(type == null) throw new ArgumentNullException("type");
+            if(name == null) throw new ArgumentNullException(nameof(name));
+            if(type == null) throw new ArgumentNullException(nameof(type));
 
             if(typeof(T).IsAssignableFrom(type) == false)
             {
@@ -56,7 +57,7 @@ namespace Arrow.Factory
 
             lock(this.SyncRoot)
             {
-                m_Types[name] = new TypeInfo() { Type = type, Factory = factory };
+                m_Types[name] = new TypeInfo(type, factory);
             }
         }
 
@@ -67,7 +68,7 @@ namespace Arrow.Factory
         /// <exception cref="System.ArgumentNullException">name is null</exception>
         public T Create(string name)
         {
-            if(name == null) throw new ArgumentNullException("name");
+            if(name == null) throw new ArgumentNullException(nameof(name));
 
             TypeInfo? typeInfo = null;
 
@@ -92,7 +93,7 @@ namespace Arrow.Factory
         /// <returns>An instance of the registered type, or the default value for T if the object could not be created</returns>
         public T TryCreate(string name)
         {
-            if(name == null) throw new ArgumentNullException("name");
+            if(name == null) throw new ArgumentNullException(nameof(name));
 
             TypeInfo? typeInfo = null;
 
@@ -112,7 +113,7 @@ namespace Arrow.Factory
         /// <param name="name">The registered name to get</param>
         /// <param name="type">On exit is set to the type of the registered name, or null if the type could not be found</param>
         /// <returns>true if the type is found, otherwise false</returns>
-        public bool TryGetType(string name, out Type? type)
+        public bool TryGetType(string name, [NotNullWhen(true)] out Type? type)
         {
             TypeInfo? typeInfo = null;
 
@@ -123,7 +124,7 @@ namespace Arrow.Factory
             }
 
             type = (typeInfo == null ? null : typeInfo.Type);
-            return typeInfo != null;
+            return type != null;
         }
 
         /// <summary>
@@ -152,7 +153,7 @@ namespace Arrow.Factory
 
         /// <summary>
         /// Creates a function that will create an instance of the specified type.
-        /// This is to avoid a reflectio call to the constructor for each invocation.
+        /// This is to avoid a reflection call to the constructor for each invocation.
         /// </summary>
         private Func<object> Compile(string name, Type type)
         {
@@ -176,10 +177,16 @@ namespace Arrow.Factory
             return function.Compile();
         }
 
-        class TypeInfo
+        sealed class TypeInfo
         {
-            public Type? Type;
-            public Func<object>? Factory;
+            public TypeInfo(Type type, Func<object> factory)
+            {
+                this.Type = type;
+                this.Factory = factory;
+            }
+
+            public Type Type{get;}
+            public Func<object> Factory{get;}
         }
     }
 }

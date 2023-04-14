@@ -48,6 +48,7 @@ namespace Arrow.Factory
             {
                 LoadTypes(assembly);
             }
+
             return assembly;
         }
 
@@ -58,7 +59,7 @@ namespace Arrow.Factory
         /// <exception cref="System.ArgumentNullException">assembly is null</exception>
         public static void LoadTypes(Assembly assembly)
         {
-            if(assembly == null) throw new ArgumentNullException("assembly");
+            if(assembly == null) throw new ArgumentNullException(nameof(assembly));
 
             lock(s_SyncRoot)
             {
@@ -95,8 +96,7 @@ namespace Arrow.Factory
             Type factory = attribute.FactoryType;
             string name = attribute.Name;
 
-            MethodInfo? registration = null;
-            s_FactoryRegister.TryGetValue(factory, out registration);
+            s_FactoryRegister.TryGetValue(factory, out var registration);
             if(registration == null)
             {
                 // We need to get a handle to the static registration method on the class
@@ -126,14 +126,12 @@ namespace Arrow.Factory
             }
             catch(FileNotFoundException)
             {
-                // There's no progmatic way to detect the absence of 
-                // an assembly, so we'll need to catch the exception
+                // There's no progmatic way to detect the absence of an assembly, so we'll need to catch the exception
                 return null;
             }
             catch(FileLoadException)
             {
-                // Bizarrly, this exception can also be thrown when
-                // an assembly cannot be located
+                // Bizarrely, this exception can also be thrown when an assembly cannot be located
                 return null;
             }
         }

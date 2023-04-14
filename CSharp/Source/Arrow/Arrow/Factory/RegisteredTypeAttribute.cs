@@ -11,9 +11,6 @@ namespace Arrow.Factory
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public class RegisteredTypeAttribute : Attribute
     {
-        private readonly Type m_FactoryType;
-        private readonly string m_Name;
-
         /// <summary>
         /// Initializes an instance
         /// </summary>
@@ -23,29 +20,23 @@ namespace Arrow.Factory
         /// <exception cref="System.ArgumentNullException">name is null</exception>
         public RegisteredTypeAttribute(Type factoryType, string name)
         {
-            if(factoryType == null) throw new ArgumentNullException("factoryType");
-            if(name == null) throw new ArgumentNullException("name");
+            if(factoryType == null) throw new ArgumentNullException(nameof(factoryType));
+            if(name == null) throw new ArgumentNullException(nameof(name));
 
-            m_FactoryType = factoryType;
-            m_Name = name;
+            this.FactoryType = factoryType;
+            this.Name = name;
         }
 
         /// <summary>
         /// Returns the type of the factory that will manufacture the type
         /// </summary>
         /// <value>The type of the factory</value>
-        public Type FactoryType
-        {
-            get{return m_FactoryType;}
-        }
+        public Type FactoryType{get;}
 
         /// <summary>
         /// Returns the name that the type should be registered under
         /// </summary>
         /// <value>The name to register</value>
-        public string Name
-        {
-            get{return m_Name;}
-        }
+        public string Name{get;}
     }
 }

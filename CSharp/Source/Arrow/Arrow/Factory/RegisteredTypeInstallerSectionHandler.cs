@@ -11,8 +11,6 @@ namespace Arrow.Factory
 	/// </summary>
 	public class RegisteredTypeInstallerSectionHandler : IConfigurationSectionHandler
 	{
-		#region IConfigurationSectionHandler Members
-
 		/// <summary>
 		/// Creates a <b>RegisteredTypeInstallerConfiguration</b> instance
 		/// </summary>
@@ -24,7 +22,5 @@ namespace Arrow.Factory
 		{
 			return RegisteredTypeInstallerConfiguration.FromXml(section);
 		}
-
-		#endregion
 	}
 }

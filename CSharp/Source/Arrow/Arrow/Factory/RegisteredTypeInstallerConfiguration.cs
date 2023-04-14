@@ -40,7 +40,7 @@ namespace Arrow.Factory
 		/// <returns>A RegisteredTypeInstallerConfiguration instance</returns>
 		public static RegisteredTypeInstallerConfiguration FromXml(XmlNode node)
 		{
-            if(node == null) throw new ArgumentNullException("null");
+            if(node == null) throw new ArgumentNullException(nameof(node));
 
             List<string> assemblies = XmlCreation.CreateList<string>(node.SelectNodesOrEmpty("Assembly"));
 
