@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Arrow.Calendar
+namespace Arrow.Calendar.ClockDrivers
 {
     /// <summary>
     /// Defines a clock that returns the current time
@@ -13,11 +13,11 @@ namespace Arrow.Calendar
         /// <summary>
         /// Returns the local time
         /// </summary>
-        DateTime Now{get;}
+        DateTime Now { get; }
 
         /// <summary>
         /// Returns the utc time
         /// </summary>
-        DateTime UtcNow{get;}
+        DateTime UtcNow { get; }
     }
 }

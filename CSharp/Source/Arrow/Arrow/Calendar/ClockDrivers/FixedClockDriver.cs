@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Arrow.Calendar
+namespace Arrow.Calendar.ClockDrivers
 {
     /// <summary>
     /// A clock that always returns the same time
@@ -28,7 +28,7 @@ namespace Arrow.Calendar
         /// </summary>
         public DateTime Now
         {
-            get{return m_Local;}
+            get { return m_Local; }
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Arrow.Calendar
         /// </summary>
         public DateTime UtcNow
         {
-            get{return m_Utc;}
+            get { return m_Utc; }
         }
 
         /// <summary>

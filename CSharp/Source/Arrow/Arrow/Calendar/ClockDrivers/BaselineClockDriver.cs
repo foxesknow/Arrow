@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Arrow.Calendar
+namespace Arrow.Calendar.ClockDrivers
 {
     /// <summary>
     /// A clock that always returns a time relative to a baseline time.
@@ -30,7 +30,7 @@ namespace Arrow.Calendar
         {
             get
             {
-                return this.UtcNow.ToLocalTime();
+                return UtcNow.ToLocalTime();
             }
         }
 
