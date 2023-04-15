@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace UnitTests.Arrow.Text.Json.Serialization
 {
     [TestFixture]
-    public class JsonAsRawTextConverterTests
+    public class JsonAsRawTextConverterTests : JsonTestBase
     {
         [Test]
         public void ValueIsNull()
@@ -67,11 +67,6 @@ namespace UnitTests.Arrow.Text.Json.Serialization
             Assert.That(data, Is.Not.Null);
             Assert.That(data.Name, Is.EqualTo("Jack"));
             Assert.That(data.Value, Is.EqualTo("{\"Age\" : 42}"));
-        }
-
-        private string ToJson(string value)
-        {
-            return value.Replace('\'', '"');
         }
 
         private JsonSerializerOptions MakeOptions()

@@ -13,6 +13,8 @@ namespace Arrow.Text
     /// </summary>
     public static class TokenExpander
     {
+        private static readonly char[] TokenPipelineSeparator = new char[]{'|'};
+
         /// <summary>
         /// A default begin token to use
         /// </summary>
@@ -91,7 +93,7 @@ namespace Arrow.Text
 
                     if(tokenValue == null)
                     {
-                        throw new ArrowException("could not resolve " + token);
+                        throw new ArrowException($"could not resolve {token}");
                     }
 
                     string leftPart = value.Substring(0, index);
@@ -116,7 +118,7 @@ namespace Arrow.Text
         }
 
         /// <summary>
-        /// Expands a token of the form namespace:variable|formatting|action
+        /// Expands a token of the form namespace:variable|property|formatting|action
         /// </summary>
         /// <param name="token">The token to expand</param>
         /// <param name="unknownVariableLookup">The handler to call if the variable is not found or does not have a namespace qualifier</param>
@@ -124,23 +126,16 @@ namespace Arrow.Text
         /// <exception cref="System.ArgumentNullException">token is null</exception>
         public static string ExpandToken(string token, Func<string, object?>? unknownVariableLookup)
         {
-            if(token == null) throw new ArgumentNullException("token");
+            if(token == null) throw new ArgumentNullException(nameof(token));            
 
-            string? result = null;
+            string? @namespace = null;            
 
-            string? @namespace = null;
-            string? variable = null;
-            string? property = null;
-            string? formatting = null;
-            object? value = null;
-            string? action = null;
-
-            // Split the pipeline apart to get the variable|formatting|action parts
-            string[] parts = token.Split(new char[] { '|' }, 4);
-            if(parts.Length > 0) variable = parts[0];
-            if(parts.Length > 1) property = parts[1];
-            if(parts.Length > 2) formatting = parts[2];
-            if(parts.Length > 3) action = parts[3];
+            // Split the pipeline apart to get the variable|property|formatting|action parts
+            string[] parts = token.Split(TokenPipelineSeparator, 4);
+            var variable = (parts.Length > 0 ? parts[0] : null);
+            var property = (parts.Length > 1 ? parts[1] : null);
+            var formatting = (parts.Length > 2 ? parts[2] : null);
+            var action = (parts.Length > 3 ? parts[3] : null);
 
             if(variable == null) throw new ArrowException("token does not contain a variable: " + token);
 
@@ -161,6 +156,8 @@ namespace Arrow.Text
                 variable = variable.Substring(pivot + 1);
             }
 
+            object? value = null;
+
             if(@namespace == null)
             {
                 // If no namespace pass it to the unknown lookup
@@ -179,8 +176,7 @@ namespace Arrow.Text
                 }
                 else
                 {
-                    // If it's not a namespace from the global settings then
-                    // give the caller a change to look up the value
+                    // If it's not a namespace from the global settings then give the caller a change to look up the value
                     if(unknownVariableLookup != null)
                     {
                         value = unknownVariableLookup(originalVariable);
@@ -189,66 +185,82 @@ namespace Arrow.Text
             }
 
             // We need a value
-            if(value == null) throw new ArrowException(token + " could not be resolved");
+            if(value == null) throw new ArrowException($"{token} could not be resolved");
 
-            // See if we're doing a property lookup on the value
-            if(string.IsNullOrEmpty(property) == false)
+            value = ApplyProperty(property, value);
+
+            string result = ApplyFormatting(formatting, value);
+            result = ApplyAction(action, result);
+
+            return result;
+        }
+
+        private static object ApplyProperty(string? property, object value)
+        {
+            if (string.IsNullOrEmpty(property)) return value;
+
+            object? resolvedValue = value;
+                
+            foreach(string propertyName in property!.Split('.'))
             {
-                foreach(string propertyName in property!.Split('.'))
+                if(resolvedValue is ISettings)
                 {
-                    if(value is ISettings)
-                    {
-                        // Since a settings is just a bag of values it
-                        // makes sense to treat is as effectivly a bunch of properties
-                        ISettings settings = (ISettings)value;
-                        settings.TryGetSetting(propertyName, out value);
-                    }
-                    else
-                    {
-                        var info = value!.GetType().GetProperty(propertyName, PropertyBindings);
-                        if(info == null) throw new ArrowException("property not found: " + propertyName);
+                    // Since a settings is just a bag of values it makes sense to treat is as effectivly a bunch of properties
+                    ISettings settings = (ISettings)resolvedValue;
+                    settings.TryGetSetting(propertyName, out resolvedValue);
+                }
+                else
+                {
+                    if(resolvedValue is null) throw new ArrowException($"cannot get property {propertyName} on a null instance");
 
-                        var method = info.GetGetMethod();
-                        if(method == null) throw new ArrowException("property not readable: " + propertyName);
+                    var info = resolvedValue.GetType().GetProperty(propertyName, PropertyBindings);
+                    if(info == null) throw new ArrowException($"property not found: {propertyName}");
 
-                        value = method.Invoke(value, null);
-                    }
+                    var method = info.GetGetMethod();
+                    if(method == null) throw new ArrowException($"property not readable: {propertyName}");
+
+                    resolvedValue = method.Invoke(resolvedValue, null);
                 }
             }
 
-            // Apply any formatting if the user has specified it
+            if(resolvedValue is null) throw new ArrowException("property lookup of {property} resolved to a null value");
+
+            return resolvedValue;
+        }
+
+        private static string ApplyFormatting(string? formatting, object value)
+        {
             if(string.IsNullOrEmpty(formatting))
             {
-                result = value.ToString()!;
+                return value.ToString()!;
             }
             else
             {
                 if(value is IFormattable formattable)
                 {
-                    result = formattable.ToString(formatting, null);
+                    return formattable.ToString(formatting, null);
                 }
                 else
                 {
                     // As the object isn't formattable just return the value
-                    result = value.ToString()!;
+                    return value.ToString()!;
                 }
             }
+        }
 
-            // Apply any actions
-            if(string.IsNullOrEmpty(action) == false)
+        private static string ApplyAction(string? action, string value)
+        {
+            if(string.IsNullOrEmpty(action)) return value;
+
+            return action.ToLower() switch
             {
-                result = action!.ToLower() switch
-                {
-                    "trim"      => result.Trim(),
-                    "trimstart" => result.TrimStart(),
-                    "trimend"   => result.TrimEnd(),
-                    "toupper"   => result.ToUpper(),
-                    "tolower"   => result.ToLower(),
-                    _           => throw new ArrowException("invalid action " + token)
-                };
-            }
-
-            return result;
+                "trim"      => value.Trim(),
+                "trimstart" => value.TrimStart(),
+                "trimend"   => value.TrimEnd(),
+                "toupper"   => value.ToUpper(),
+                "tolower"   => value.ToLower(),
+                _           => throw new ArrowException($"invalid action {action}")
+            };
         }
     }
 }

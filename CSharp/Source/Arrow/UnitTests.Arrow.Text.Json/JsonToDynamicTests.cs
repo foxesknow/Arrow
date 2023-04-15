@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace UnitTests.Arrow.Text.Json
 {
     [TestFixture]
-    public class JsonToDynamicTests
+    public class JsonToDynamicTests : JsonTestBase
     {
         [Test]
         [TestCase("1", 1)]
@@ -113,11 +113,6 @@ namespace UnitTests.Arrow.Text.Json
 
             Assert.That(data.Name, Is.EqualTo("Kate"));
             Assert.That(data.Location.Name, Is.EqualTo("The Island"));
-        }
-
-        private string ToJson(string value)
-        {
-            return value.Replace('\'', '"');
         }
     }
 }
