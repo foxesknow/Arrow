@@ -16,6 +16,9 @@ namespace Arrow.Calendar
     /// The Clock class is used to determine the current time.
     /// If you alter/replace the clock then you can call
     /// Reschedule to take any time changes into account.
+    /// 
+    /// NOTE: If 2 or more jobs are scheduled to run at the same time then
+    /// they are run in the order they werre registered.
     /// </summary>
     public sealed partial class Reminders : IReminders, IDisposable
     {
@@ -54,6 +57,17 @@ namespace Arrow.Calendar
                     m_Jobs.Clear();
                     m_Timer = null; 
                 }
+            }
+        }
+
+        /// <summary>
+        /// This method is for testing
+        /// </summary>
+        internal IReadOnlyList<ReminderID> GetRemindersIDs()
+        {
+            lock(m_SyncRoot)
+            {
+                return m_Jobs.Select(job => job.ID).ToArray();
             }
         }
 
@@ -304,7 +318,15 @@ namespace Arrow.Calendar
                 // Sort the jobs so that the latest job goes to the front and the earliest goes to the end.
                 // This will make it easier to remove then when we run the timer as we'll just be taking
                 // from the end and avoiding copying bits of the underling array
-                return rhs.When.CompareTo(lhs.When);
+                // We'll also sort by ID so that if 2 jobs have the same When then the first to be registered is run.
+                var result = rhs.When.CompareTo(lhs.When);
+
+                if(result == 0)
+                {
+                    result = rhs.ID.CompareTo(lhs.ID);
+                }
+
+                return result;
             }
         }
 

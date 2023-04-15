@@ -223,5 +223,51 @@ namespace UnitTests.Arrow.Calendar
                 }
             }
         }
+
+        [Test]
+        public void CheckOrdering_1()
+        {
+            using(var reminders = new Reminders())
+            {
+                var date = DateTime.UtcNow.AddHours(5);
+
+                var job1 = reminders.Add(date, () => {});
+                var job2 = reminders.Add(date, () => {});
+                var job3 = reminders.Add(date, () => {});
+                var job4 = reminders.Add(date, () => {});
+                var job5 = reminders.Add(date, () => {});
+
+                var ids = reminders.GetRemindersIDs();
+
+                Assert.That(ids[0], Is.EqualTo(job5));
+                Assert.That(ids[1], Is.EqualTo(job4));
+                Assert.That(ids[2], Is.EqualTo(job3));
+                Assert.That(ids[3], Is.EqualTo(job2));
+                Assert.That(ids[4], Is.EqualTo(job1));
+            }
+        }
+
+        [Test]
+        public void CheckOrdering_2()
+        {
+            using(var reminders = new Reminders())
+            {
+                var date = DateTime.UtcNow.AddHours(5);
+
+                var job1 = reminders.Add(date.AddHours(1), () => {});
+                var job2 = reminders.Add(date.AddHours(2), () => {});
+                var job3 = reminders.Add(date.AddHours(1), () => {});
+                var job4 = reminders.Add(date.AddHours(2), () => {});
+                var job5 = reminders.Add(date.AddHours(1), () => {});
+
+                var ids = reminders.GetRemindersIDs();
+
+                Assert.That(ids[0], Is.EqualTo(job4));
+                Assert.That(ids[1], Is.EqualTo(job2));
+                Assert.That(ids[2], Is.EqualTo(job5));
+                Assert.That(ids[3], Is.EqualTo(job3));
+                Assert.That(ids[4], Is.EqualTo(job1));
+            }
+        }
     }
 }

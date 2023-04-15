@@ -25,6 +25,8 @@ namespace Arrow.Settings
         /// </summary>
         public static readonly char NamespaceSeparatorChar = ':';
 
+        private static readonly char[] s_NamespaceSeparatorCharArray = new char[]{NamespaceSeparatorChar};
+
         private static readonly object s_Lock = new object();
 
         private static readonly Dictionary<string, ISettings> s_Namespaces = new Dictionary<string, ISettings>(StringComparer.OrdinalIgnoreCase);
@@ -143,7 +145,7 @@ namespace Arrow.Settings
         /// <param name="setting">The setting part of the scoped name</param>
         public static void CrackQualifiedName(string qualifiedName, out string @namespace, out string setting)
         {
-            string[] parts = qualifiedName.Split(new char[] { NamespaceSeparatorChar }, 2);
+            var parts = qualifiedName.Split(s_NamespaceSeparatorCharArray, 2);
             if(parts.Length != 2) throw new ArgumentException("qualifiedName not in the format namespace:settingName");
 
             @namespace = parts[0];
