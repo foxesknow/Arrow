@@ -14,66 +14,66 @@ namespace Arrow.Collections
 	/// </summary>
 	/// <typeparam name="T">The type of item to store in the queue</typeparam>
 	[Serializable]
-	public class RollingQueue<T> : IEnumerable<T>, System.Collections.ICollection
+	public sealed class RollingQueue<T> : IEnumerable<T>, System.Collections.ICollection
 	{
-		private int m_MaxCount;
-		private Queue<T> m_Queue;
-		
-		private object m_SyncRoot;
-	
-		/// <summary>
-		/// Initializes a queue with the specified maximum number of items
-		/// </summary>
-		/// <param name="maxCount">The maximum number of items to hold</param>
-		/// <exception cref="System.ArgumentException">maxCount is less than 1</exception>
-		public RollingQueue(int maxCount)
-		{
-			if(maxCount<1) throw new ArgumentException("maxCount");
-			
-			m_MaxCount=maxCount;
-			m_Queue=new Queue<T>(maxCount);
-		}
-		
-		/// <summary>
-		/// Adds a new item to the end of the queue.
-		/// If the number of items in the queue is MaxSize then the oldest item is removed
-		/// </summary>
-		/// <param name="item">The item to add to the queue</param>
-		public void Enqueue(T item)
-		{
-			if(m_Queue.Count==m_MaxCount)
-			{
-				m_Queue.Dequeue();
-			}
-			
-			m_Queue.Enqueue(item);
-		}
-		
-		/// <summary>
-		/// Removes the item from the beginning of the queue
-		/// </summary>
-		/// <returns>The item at the beginning of the queue</returns>
-		/// <exception cref="System.InvalidOperationException">The queue is empty</exception>
-		public T Dequeue()
-		{
-			return m_Queue.Dequeue();
-		}
-		
-		/// <summary>
-		/// Returns the item at the beginning of the queue without removing it
-		/// </summary>
-		/// <returns>The item at the beginning of the queue</returns>
-		/// <exception cref="System.InvalidOperationException">The queue is empty</exception>
-		public T Peek()
-		{
-			return m_Queue.Peek();
-		}
-		
-		/// <summary>
-		/// The number of items in the queue
-		/// </summary>
-		/// <value>The number of items in the queue</value>
-		public int Count
+        private int m_MaxCount;
+        private Queue<T> m_Queue;
+
+        private object m_SyncRoot;
+
+        /// <summary>
+        /// Initializes a queue with the specified maximum number of items
+        /// </summary>
+        /// <param name="maxCount">The maximum number of items to hold</param>
+        /// <exception cref="System.ArgumentException">maxCount is less than 1</exception>
+        public RollingQueue(int maxCount)
+        {
+            if(maxCount < 1) throw new ArgumentException("maxCount");
+
+            m_MaxCount = maxCount;
+            m_Queue = new Queue<T>(maxCount);
+        }
+
+        /// <summary>
+        /// Adds a new item to the end of the queue.
+        /// If the number of items in the queue is MaxSize then the oldest item is removed
+        /// </summary>
+        /// <param name="item">The item to add to the queue</param>
+        public void Enqueue(T item)
+        {
+            if(m_Queue.Count == m_MaxCount)
+            {
+                m_Queue.Dequeue();
+            }
+
+            m_Queue.Enqueue(item);
+        }
+
+        /// <summary>
+        /// Removes the item from the beginning of the queue
+        /// </summary>
+        /// <returns>The item at the beginning of the queue</returns>
+        /// <exception cref="System.InvalidOperationException">The queue is empty</exception>
+        public T Dequeue()
+        {
+            return m_Queue.Dequeue();
+        }
+
+        /// <summary>
+        /// Returns the item at the beginning of the queue without removing it
+        /// </summary>
+        /// <returns>The item at the beginning of the queue</returns>
+        /// <exception cref="System.InvalidOperationException">The queue is empty</exception>
+        public T Peek()
+        {
+            return m_Queue.Peek();
+        }
+
+        /// <summary>
+        /// The number of items in the queue
+        /// </summary>
+        /// <value>The number of items in the queue</value>
+        public int Count
 		{
 			get{return m_Queue.Count;}
 		}
@@ -105,7 +105,6 @@ namespace Arrow.Collections
 			m_Queue.Clear();
 		}
 
-		#region IEnumerable<T> Members
 
 		/// <summary>
 		/// Returns an enumerator to the items in the queue
@@ -116,10 +115,6 @@ namespace Arrow.Collections
 			return m_Queue.GetEnumerator();
 		}
 
-		#endregion
-
-		#region IEnumerable Members
-
 		/// <summary>
 		/// Returns an enumerator to the items in the queue
 		/// </summary>
@@ -129,9 +124,6 @@ namespace Arrow.Collections
 			return this.GetEnumerator();
 		}
 
-		#endregion
-
-		#region ICollection Members
 
 		/// <summary>
 		/// Copies the entire queue to an array
@@ -142,7 +134,7 @@ namespace Arrow.Collections
 		/// <exception cref="System.ArgumentException">arrayIndex is less that 0</exception>
 		public void CopyTo(Array array, int index)
 		{
-			(m_Queue as System.Collections.ICollection).CopyTo(array,index);
+			(m_Queue as System.Collections.ICollection).CopyTo(array, index);
 		}
 
 		/// <summary>
@@ -162,15 +154,13 @@ namespace Arrow.Collections
 		{
 			get
 			{
-				if(m_SyncRoot==null)
-				{
-					Interlocked.CompareExchange(ref m_SyncRoot,new object(),null);
-				}
-				
-				return m_SyncRoot;
-			}
-		}
+                if(m_SyncRoot == null)
+                {
+                    Interlocked.CompareExchange(ref m_SyncRoot, new object(), null);
+                }
 
-		#endregion
+                return m_SyncRoot;
+            }
+		}
 	}
 }

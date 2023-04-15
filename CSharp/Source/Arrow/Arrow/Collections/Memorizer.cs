@@ -41,58 +41,57 @@ namespace Arrow.Collections
 	/// </code>
 	/// </remarks>
 	[Serializable]
-	public class Memorizer<FROM,TO> : IEnumerable<KeyValuePair<FROM,TO>> where FROM : notnull
+	public sealed class Memorizer<FROM,TO> : IEnumerable<KeyValuePair<FROM,TO>> where FROM : notnull
 	{
-		private Dictionary<FROM,TO> m_Values;
-		
-		private Func<FROM,TO> m_LookupFunction;
-		
-		/// <summary>
-		/// Initializes a new instance
-		/// </summary>
-		/// <param name="lookupFunction">A function that can map from one value to another</param>
-		/// <exception cref="System.ArgumentNullException">lookupFunction is null</exception>
-		public Memorizer(Func<FROM,TO> lookupFunction) : this(lookupFunction,null)
-		{
-		}
-		
-		/// <summary>
-		/// Initializes a new instance
-		/// </summary>
-		/// <param name="lookupFunction">A function that can map from one value to another</param>
-		/// <param name="equalityComparer">A comparer that will check for equality of "from" values</param>
-		/// <exception cref="System.ArgumentNullException">lookupFunction is null</exception>
-		public Memorizer(Func<FROM,TO> lookupFunction, IEqualityComparer<FROM>? equalityComparer)
-		{
-			if(lookupFunction==null) throw new ArgumentNullException("lookupFunction");
-			
-			m_LookupFunction=lookupFunction;
-			m_Values=new Dictionary<FROM,TO>(equalityComparer);
-		}
-		
-		/// <summary>
-		/// Retrieves a value from the memorizer, doing a lookup if the value has not yet been requested
-		/// </summary>
-		/// <param name="from">The value to map from</param>
-		/// <returns>The value that "from" maps to</returns>
-		public TO Lookup(FROM from)
-		{
-			if(m_Values.TryGetValue(from,out var to)==false)
-			{
-				// The value hasn't been looked up yet, so fetch in
-				to=m_LookupFunction(from);
-				m_Values.Add(from,to);
-			}
-			
-			return to;
-		}
-		
-		
-		/// <summary>
-		/// The number of cached values
-		/// </summary>
-		/// <value>The numbber of cached values</value>
-		public int Count
+        private Dictionary<FROM, TO> m_Values;
+
+        private Func<FROM, TO> m_LookupFunction;
+
+        /// <summary>
+        /// Initializes a new instance
+        /// </summary>
+        /// <param name="lookupFunction">A function that can map from one value to another</param>
+        /// <exception cref="System.ArgumentNullException">lookupFunction is null</exception>
+        public Memorizer(Func<FROM, TO> lookupFunction) : this(lookupFunction, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance
+        /// </summary>
+        /// <param name="lookupFunction">A function that can map from one value to another</param>
+        /// <param name="equalityComparer">A comparer that will check for equality of "from" values</param>
+        /// <exception cref="System.ArgumentNullException">lookupFunction is null</exception>
+        public Memorizer(Func<FROM, TO> lookupFunction, IEqualityComparer<FROM>? equalityComparer)
+        {
+            if(lookupFunction == null) throw new ArgumentNullException("lookupFunction");
+
+            m_LookupFunction = lookupFunction;
+            m_Values = new Dictionary<FROM, TO>(equalityComparer);
+        }
+
+        /// <summary>
+        /// Retrieves a value from the memorizer, doing a lookup if the value has not yet been requested
+        /// </summary>
+        /// <param name="from">The value to map from</param>
+        /// <returns>The value that "from" maps to</returns>
+        public TO Lookup(FROM from)
+        {
+            if(m_Values.TryGetValue(from, out var to) == false)
+            {
+                // The value hasn't been looked up yet, so fetch in
+                to = m_LookupFunction(from);
+                m_Values.Add(from, to);
+            }
+
+            return to;
+        }
+
+        /// <summary>
+        /// The number of cached values
+        /// </summary>
+        /// <value>The numbber of cached values</value>
+        public int Count
 		{
 			get{return m_Values.Count;}
 		}

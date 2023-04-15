@@ -54,11 +54,11 @@ namespace Arrow.Collections.Extensions
 		/// <param name="additionalValues">The values to add to the dictionary</param>
 		public static void Extend<TKey,TValue>(this IDictionary<TKey,TValue> dictionary, IDictionary<TKey,TValue> additionalValues)
 		{
-			if(additionalValues==null) throw new ArgumentNullException("additionalValues");
+			if(additionalValues == null) throw new ArgumentNullException("additionalValues");
 
 			foreach(var pair in additionalValues)
 			{
-				dictionary[pair.Key]=pair.Value;
+				dictionary[pair.Key] = pair.Value;
 			}
 		}
 	}

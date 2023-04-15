@@ -25,7 +25,7 @@ namespace Arrow.Net
             if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("invalid name", nameof(name));
 
             var parameters = uri.QueryParameters()
-                                .AddToEnd((name, value));
+                                .Append((name, value));
 
             var builder = new UriBuilder(uri);
             builder.Query = FlattenQueryParameters(parameters);
