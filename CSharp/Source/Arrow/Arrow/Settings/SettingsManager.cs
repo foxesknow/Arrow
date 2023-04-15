@@ -27,7 +27,7 @@ namespace Arrow.Settings
 
         private static readonly object s_Lock = new object();
 
-        private static readonly Dictionary<string, ISettings> s_Namespaces = new Dictionary<string, ISettings>(IgnoreCaseEqualityComparer.Instance);
+        private static readonly Dictionary<string, ISettings> s_Namespaces = new Dictionary<string, ISettings>(StringComparer.OrdinalIgnoreCase);
         private static readonly LinkedList<string> s_NameStack = new LinkedList<string>();
 
         static SettingsManager()

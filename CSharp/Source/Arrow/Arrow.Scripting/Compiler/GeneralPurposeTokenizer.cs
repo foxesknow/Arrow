@@ -60,8 +60,8 @@ namespace Arrow.Compiler
 			}
 			else
 			{
-				comparer=IgnoreCaseEqualityComparer.Instance;
-				m_Comparer=IgnoreCaseComparer.Instance;
+				comparer=StringComparer.OrdinalIgnoreCase;
+				m_Comparer=StringComparer.OrdinalIgnoreCase;
 			}
 
 			m_Keywords=new Dictionary<string,int>(this.Keywords,comparer);

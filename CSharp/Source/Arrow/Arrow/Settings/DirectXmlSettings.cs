@@ -31,7 +31,7 @@ namespace Arrow.Settings
     /// </summary>
     public sealed class DirectXmlSettings : ISettings, ICustomXmlInitialization
     {
-        private readonly Dictionary<string, object> m_Settings = new Dictionary<string, object>(IgnoreCaseEqualityComparer.Instance);
+        private readonly Dictionary<string, object> m_Settings = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         public bool TryGetSetting(string name, [NotNullWhen(true)] out object? value)
         {

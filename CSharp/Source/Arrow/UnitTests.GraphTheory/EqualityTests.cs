@@ -26,7 +26,7 @@ namespace UnitTests.Arrow.GraphTheory
 		[Test]
 		public void IgnoreCase()
 		{
-			DirectedGraph<string> graph=new DirectedGraph<string>(IgnoreCaseEqualityComparer.Instance);
+			DirectedGraph<string> graph=new DirectedGraph<string>(StringComparer.OrdinalIgnoreCase);
 			graph.Add("socks","shoes");
 			graph.Add("Socks","Shoes");
 			

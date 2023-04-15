@@ -30,7 +30,7 @@ namespace Arrow.Dynamic
 		public TypeCache(CaseMode caseMode)
 		{
 			IEqualityComparer<string>? comparer=null;
-			if(caseMode==CaseMode.Insensitive) comparer=IgnoreCaseEqualityComparer.Instance;
+			if(caseMode==CaseMode.Insensitive) comparer=StringComparer.OrdinalIgnoreCase;
 
 			m_Types=new Dictionary<string,Type>(comparer);
 		}

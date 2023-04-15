@@ -23,7 +23,7 @@ namespace Arrow.Scripting
 		private static readonly BindingFlags BindFlags=BindingFlags.Public|BindingFlags.Instance;
 
 		private readonly static Dictionary<string,Func<T,object>> s_LookupCache=new Dictionary<string,Func<T,object>>();
-		private readonly static Dictionary<string,Func<T,object>> s_InsensitveLookupCache=new Dictionary<string,Func<T,object>>(IgnoreCaseEqualityComparer.Instance);
+		private readonly static Dictionary<string,Func<T,object>> s_InsensitveLookupCache=new Dictionary<string,Func<T,object>>(StringComparer.OrdinalIgnoreCase);
 
 		private readonly Dictionary<string,Func<T,object>> m_Lookup;
 		private readonly T m_Instance;

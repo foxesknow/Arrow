@@ -13,7 +13,7 @@ namespace Arrow.Reflection
 	/// </summary>
 	public static class TypeResolver
 	{
-		private static Dictionary<string,Type> s_TypeAlias=new Dictionary<string,Type>(IgnoreCaseEqualityComparer.Instance);
+		private static Dictionary<string,Type> s_TypeAlias=new Dictionary<string,Type>(StringComparer.OrdinalIgnoreCase);
 		
 		static TypeResolver()
 		{

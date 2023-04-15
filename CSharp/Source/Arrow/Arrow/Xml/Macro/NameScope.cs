@@ -16,7 +16,7 @@ namespace Arrow.Xml.Macro
     {
         private NameScope? m_Previous;
 
-        private Dictionary<string, ScopedItem> m_Variables = new Dictionary<string, ScopedItem>(IgnoreCaseEqualityComparer.Instance);
+        private Dictionary<string, ScopedItem> m_Variables = new Dictionary<string, ScopedItem>(StringComparer.OrdinalIgnoreCase);
 
         private bool m_Locked;
 

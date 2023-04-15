@@ -30,7 +30,7 @@ namespace Arrow.Logging
 
         private static ILog? s_UnnamedLog;
 
-        private static readonly Dictionary<string, ILog> s_Loggers = new Dictionary<string, ILog>(IgnoreCaseEqualityComparer.Instance);
+        private static readonly Dictionary<string, ILog> s_Loggers = new Dictionary<string, ILog>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the log for the caller.

@@ -31,7 +31,7 @@ namespace Arrow.Scripting
 		public LightweightScope(CaseMode caseMode)
 		{
 			IEqualityComparer<string>? comparer=null;
-			if(caseMode==CaseMode.Insensitive) comparer=IgnoreCaseEqualityComparer.Instance;
+			if(caseMode==CaseMode.Insensitive) comparer=StringComparer.OrdinalIgnoreCase;
 
 			m_Variables=new Dictionary<string,object>(comparer);
 		}

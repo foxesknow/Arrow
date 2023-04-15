@@ -252,7 +252,7 @@ namespace Arrow.Text
         {
             if(string.IsNullOrEmpty(action)) return value;
 
-            return action.ToLower() switch
+            return action!.ToLower() switch
             {
                 "trim"      => value.Trim(),
                 "trimstart" => value.TrimStart(),

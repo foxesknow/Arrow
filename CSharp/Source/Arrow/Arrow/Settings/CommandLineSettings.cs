@@ -19,7 +19,7 @@ namespace Arrow.Settings
         /// </summary>
         public static readonly ISettings Instance = new CommandLineSettings();
 
-        private readonly Dictionary<string, object> m_Args = new Dictionary<string, object>(IgnoreCaseEqualityComparer.Instance);
+        private readonly Dictionary<string, object> m_Args = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Initializes the instance

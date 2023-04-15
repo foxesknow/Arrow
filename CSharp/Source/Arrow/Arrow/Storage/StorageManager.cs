@@ -18,7 +18,7 @@ namespace Arrow.Storage
 	/// </summary>
 	public static partial class StorageManager
 	{
-		private static Dictionary<string,Func<Uri,Accessor>> s_Accessors=new Dictionary<string,Func<Uri,Accessor>>(IgnoreCaseEqualityComparer.Instance);
+		private static Dictionary<string,Func<Uri,Accessor>> s_Accessors=new Dictionary<string,Func<Uri,Accessor>>(StringComparer.OrdinalIgnoreCase);
 
 		private static readonly object s_Lock=new object();
 
