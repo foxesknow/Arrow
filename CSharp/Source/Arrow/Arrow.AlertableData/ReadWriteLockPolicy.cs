@@ -42,7 +42,7 @@ namespace Arrow.AlertableData
             return "ReadWriteLock";
         }
 
-        private class Lock : IDataLock, IDisposable
+        private sealed class Lock : IDataLock, IDisposable
         {
             private readonly ReaderWriterLockSlim m_Lock = new();
             private bool m_Disposed;
