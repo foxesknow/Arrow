@@ -5,6 +5,7 @@ using System.Text;
 
 using Arrow.Calendar;
 using Arrow.Calendar.ClockDrivers;
+
 using NUnit.Framework;
 
 namespace UnitTests.Arrow.Calendar
@@ -17,13 +18,13 @@ namespace UnitTests.Arrow.Calendar
         [SetUp]
         public void Init()
         {
-            m_Clock = Clock.ClockDriver;
+            m_Clock = GlobalClockDriverManager.Current();
         }
 
         [TearDown]
         public void TidyUp()
         {
-            Clock.ClockDriver = m_Clock;
+            GlobalClockDriverManager.Install(m_Clock);
         }
 
         [Test]
@@ -45,7 +46,7 @@ namespace UnitTests.Arrow.Calendar
             // We always want the same value back
             DateTime dateTime = new DateTime(1973, 2, 22);
             FixedClockDriver fixedClock = new FixedClockDriver(dateTime);
-            Clock.ClockDriver = fixedClock;
+            GlobalClockDriverManager.Install(fixedClock);
 
             DateTime now2 = Clock.Now;
 
@@ -61,7 +62,7 @@ namespace UnitTests.Arrow.Calendar
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                Clock.ClockDriver = null;
+                GlobalClockDriverManager.Install(null);
             });
         }
     }

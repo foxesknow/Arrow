@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Arrow.Execution;
 
+using Arrow.Calendar.ClockDrivers;
+
 namespace Arrow.Calendar.Testing
 {
     /// <summary>
@@ -20,10 +22,9 @@ namespace Arrow.Calendar.Testing
         /// <returns></returns>
         public static IDisposable To(IClockDriver clock)
         {
-            var currentClock = Clock.ClockDriver;
-            Clock.ClockDriver = clock;
-
-            return Disposer.Make(() => Clock.ClockDriver = currentClock);
+            var currentClock = GlobalClockDriverManager.Install(clock);
+            
+            return Disposer.Make(() => GlobalClockDriverManager.Install(currentClock));
         }
     }
 }

@@ -36,16 +36,21 @@ namespace Arrow.Calendar
         }
 
         /// <summary>
-        /// The current clock driver being used
+        /// Installs a new clock driver
         /// </summary>
-        public static IClockDriver ClockDriver
+        /// <param name="clockDriver"></param>
+        /// <returns></returns>
+        internal static IClockDriver Install(IClockDriver clockDriver)
+        {
+            var current = s_Clock;
+            s_Clock = clockDriver;
+
+            return current;
+        }
+
+        internal static IClockDriver Driver
         {
             get{return s_Clock;}
-            set
-            {
-                if(value is null) throw new ArgumentNullException("value");
-                s_Clock = value;
-            }
         }
     }
 }
