@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Arrow.Calendar.ClockDrivers
 {
+    /// <summary>
+    /// Manages the global clock exposed by the Clock class
+    /// </summary>
     public static class GlobalClockDriverManager
     {
         /// <summary>

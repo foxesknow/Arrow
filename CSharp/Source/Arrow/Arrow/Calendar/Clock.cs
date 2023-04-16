@@ -48,6 +48,9 @@ namespace Arrow.Calendar
             return current;
         }
 
+        /// <summary>
+        /// The current cock
+        /// </summary>
         internal static IClockDriver Driver
         {
             get{return s_Clock;}
