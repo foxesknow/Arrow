@@ -24,7 +24,7 @@ namespace Arrow.Execution
     /// void Foo<T>(T value) where T : class{}
     /// ]]>
     /// </example>
-    public sealed class RequireStruct<T> where T : class
+    public sealed class RequireStruct<T> where T : struct
     {
         private RequireStruct()
         {
