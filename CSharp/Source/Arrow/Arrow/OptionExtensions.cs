@@ -16,7 +16,7 @@ namespace Arrow
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>
         /// <returns></returns>
-        public static Option<T> Flatten<T>(in this Option<Option<T>> self) where T : notnull
+        public static Option<T> Flatten<T>(in this Option<Option<T>> self)
         {
             return self.ValueOr(Option.None);
         }
@@ -66,7 +66,7 @@ namespace Arrow
         /// <param name="self"></param>
         /// <param name="other"></param>
         /// <returns></returns>
-        public static Option<T> OrElse<T>(in this Option<T> self, in Option<T> other) where T : notnull
+        public static Option<T> OrElse<T>(in this Option<T> self, in Option<T> other)
         {
             return self.IsSome ? self : other;
         }
@@ -79,7 +79,7 @@ namespace Arrow
         /// <param name="function"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static Option<T> OrElse<T>(in this Option<T> self, Func<Option<T>> function) where T : notnull
+        public static Option<T> OrElse<T>(in this Option<T> self, Func<Option<T>> function)
         {
             if(function is null) throw new ArgumentNullException(nameof(function));
 
@@ -96,7 +96,7 @@ namespace Arrow
         /// <param name="function"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static Option<T> OrElse<T, TState>(in this Option<T> self, TState state, Func<TState, Option<T>> function) where T : notnull
+        public static Option<T> OrElse<T, TState>(in this Option<T> self, TState state, Func<TState, Option<T>> function)
         {
             if(function is null) throw new ArgumentNullException(nameof(function));
 

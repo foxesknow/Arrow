@@ -8,6 +8,8 @@ using Arrow;
 
 using NUnit.Framework;
 
+#nullable enable
+
 namespace UnitTests.Arrow
 {
     [TestFixture]
@@ -41,15 +43,22 @@ namespace UnitTests.Arrow
         public void Initialization_ForceNull()
         {
             Option<string> option = new(null!);
-            Assert.That(option.IsSome, Is.False);
-            Assert.That(option.IsNone, Is.True);
+            Assert.That(option.IsSome, Is.True);
+            Assert.That(option.IsNone, Is.False);
         }
 
         [Test]
         public void Implicit_Reference()
         {
-            Option<string> name = null;
-            Assert.That(name, Is.EqualTo(Option.None));
+            Option<string> name = null!;
+            Assert.That(name.IsSome, Is.True);
+        }
+
+        [Test]
+        public void Implicit_Reference_Nullable()
+        {
+            Option<string?> name = null;
+            Assert.That(name.IsSome, Is.True);
         }
 
         [Test]

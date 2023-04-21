@@ -14,11 +14,11 @@ namespace Arrow
         /// <summary>
         /// True if the option has some value, otherwise false
         /// </summary>
-        public bool IsSome{get;}
+        internal bool IsSome{get;}
 
         /// <summary>
         /// True if the option is none, otherwise false
         /// </summary>
-        public bool IsNone{get;}
+        internal bool IsNone{get;}
     }
 }

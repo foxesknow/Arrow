@@ -20,7 +20,7 @@ namespace UnitTests.Arrow
             Unit rhs = new();
 
             Assert.That(lhs.Equals(rhs), Is.True);
-            Assert.That(lhs.Equals((object?)rhs), Is.True);
+            Assert.That(lhs.Equals((object)rhs), Is.True);
             
             Assert.That(lhs.Equals(null), Is.False);
         }

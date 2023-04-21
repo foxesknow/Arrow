@@ -8,6 +8,8 @@ using Arrow;
 
 using NUnit.Framework;
 
+#nullable enable
+
 namespace UnitTests.Arrow
 {
     [TestFixture]
