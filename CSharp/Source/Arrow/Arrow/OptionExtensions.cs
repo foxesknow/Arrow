@@ -110,12 +110,20 @@ namespace Arrow
         /// <typeparam name="U"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="self"></param>
-        /// <param name="k"></param>
-        /// <param name="s"></param>
+        /// <param name="optionSelector"></param>
+        /// <param name="resultSelector"></param>
         /// <returns></returns>
-        public static Option<TResult> SelectMany<T, U, TResult>(in this Option<T> self, Func<T, Option<U>> k, Func<T, U, TResult> s)  
+        public static Option<TResult> SelectMany<T, U, TResult>(in this Option<T> self, Func<T, Option<U>> optionSelector, Func<T, U, TResult> resultSelector)  
         {
-            return self.Bind((k, s), static (t, state) => state.k(t).Select((state.s, t), static (u, state) => state.s(state.t, u)));
+            return self.Bind
+            (
+                (optionSelector, resultSelector), 
+                static (t, state) => state.optionSelector(t).Select
+                (
+                    (state.resultSelector, t), 
+                    static (u, state) => state.resultSelector(state.t, u)
+                )
+            );
         } 
     }
 }
