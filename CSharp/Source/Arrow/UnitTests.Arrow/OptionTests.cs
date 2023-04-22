@@ -391,45 +391,45 @@ namespace UnitTests.Arrow
         public void AsString_Some()
         {
             Option<string> name = new("Hello");
-            Assert.That(name.ToString(), Is.EqualTo("Hello"));
+            Assert.That(name.ToString(), Is.EqualTo("Some(Hello)"));
         }
 
         [Test]
         public void AsString_None()
         {
             Option<string> name = default;
-            Assert.That(name.ToString(), Is.EqualTo("none"));
+            Assert.That(name.ToString(), Is.EqualTo("None"));
         }
 
         [Test]
-        public void From_Value_HasValue()
+        public void TreatNullAsNone_Value_HasValue()
         {
             int? id = 10;
-            var value = Option.From(id);
+            var value = Option.TreatNullAsNone(id);
             Assert.That(value.ValueOr(-1), Is.EqualTo(10));
         }
 
         [Test]
-        public void From_Value_IsNull()
+        public void TreatNullAsNone_Value_IsNull()
         {
             int? id = null;
-            var value = Option.From(id);
+            var value = Option.TreatNullAsNone(id);
             Assert.That(value.ValueOr(-1), Is.EqualTo(-1));
         }
 
         [Test]
-        public void From_Reference_HasValue()
+        public void TreatNullAsNone_Reference_HasValue()
         {
             var name = "Bob";
-            var value = Option.From(name);
+            var value = Option.TreatNullAsNone(name);
             Assert.That(value.ValueOr("Fred"), Is.EqualTo("Bob"));
         }
 
         [Test]
-        public void From_Reference_IsNull()
+        public void TreatNullAsNone_Reference_IsNull()
         {
             string? name = null;
-            var value = Option.From(name);
+            var value = Option.TreatNullAsNone(name);
             Assert.That(value.ValueOr("Fred"), Is.EqualTo("Fred"));
         }
 

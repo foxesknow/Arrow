@@ -114,9 +114,6 @@ namespace Arrow
         /// <param name="s"></param>
         /// <returns></returns>
         public static Option<TResult> SelectMany<T, U, TResult>(in this Option<T> self, Func<T, Option<U>> k, Func<T, U, TResult> s)  
-            where T : notnull 
-            where U : notnull 
-            where TResult : notnull
         {
             return self.Bind((k, s), static (t, state) => state.k(t).Select((state.s, t), static (u, state) => state.s(state.t, u)));
         } 

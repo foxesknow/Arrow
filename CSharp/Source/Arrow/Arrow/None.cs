@@ -53,7 +53,7 @@ namespace Arrow
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "none";
+            return "None";
         }
     }
 }
