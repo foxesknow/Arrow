@@ -1,0 +1,5 @@
+﻿<Script>
+	<Group name="Greetings">
+		<WriteLine message="Hello, world" />
+	</Group>
+</Script>

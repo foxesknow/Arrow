@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Tango.JobRunner
+{
+    public sealed class RunConfig
+    {
+        private RunConfig(RunMode runMode, string groupName)
+        {
+            this.RunMode = runMode;
+            this.GroupName = groupName;
+        }
+
+        public RunMode RunMode{get;}
+
+        public string GroupName{get;}
+
+        public override string ToString()
+        {
+            return this.RunMode switch
+            {
+                RunMode.All => $"RunMode = {RunMode}",
+                _           =>  $"RunMode = {RunMode}, GroupName = {GroupName}"
+            };            
+        }
+
+        public static RunConfig All()
+        {
+            return new(RunMode.All, "");
+        }        
+
+        public static RunConfig Single(string groupName)
+        {
+            if(groupName is null) throw new ArgumentNullException(nameof(groupName));
+            if(string.IsNullOrWhiteSpace(groupName)) throw new ArgumentException("invalid group name", nameof(groupName));
+
+            return new(RunMode.Single, groupName);
+        }
+
+        public static RunConfig From(string groupName)
+        {
+            if(groupName is null) throw new ArgumentNullException(nameof(groupName));
+            if(string.IsNullOrWhiteSpace(groupName)) throw new ArgumentException("invalid group name", nameof(groupName));
+
+            return new(RunMode.From, groupName);
+        }
+    }
+}

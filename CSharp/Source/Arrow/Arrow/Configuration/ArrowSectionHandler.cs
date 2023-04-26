@@ -12,8 +12,6 @@ namespace Arrow.Configuration
 	/// </summary>
 	public class ArrowSectionHandler : IConfigurationSectionHandler
 	{
-		#region IConfigurationSectionHandler Members
-
 		/// <summary>
 		/// Returns the xml within a section
 		/// </summary>
@@ -25,7 +23,5 @@ namespace Arrow.Configuration
 		{
 			return section;
 		}
-
-		#endregion
 	}
 }
