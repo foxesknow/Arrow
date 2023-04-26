@@ -15,7 +15,7 @@ namespace ScriptRunner
 {
     internal class RunnerJobContext : JobContext
     {
-        private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[Context] ");
+        private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[Context]");
 
         private readonly Dictionary<string, IDbConnection> m_Connections = new(StringComparer.OrdinalIgnoreCase);
         

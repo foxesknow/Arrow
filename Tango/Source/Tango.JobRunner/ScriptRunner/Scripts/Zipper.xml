@@ -1,0 +1,12 @@
+﻿<Script>
+	<Group name="Archive">
+		<ZipDirectory goBack="0" daysToCheck="10">
+			<Directories>
+				<Zip>
+					<From>C:\Code\Test\Logs\$(yyyymmdd)</From>
+					<To>C:\Code\Test\Archive\$(yyyymmdd)\archive.zip</To>
+				</Zip>
+			</Directories>
+		</ZipDirectory>
+	</Group>
+</Script>

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Arrow.Logging;
+using Arrow.Logging.Loggers;
 
 namespace Tango.JobRunner
 {
@@ -24,9 +25,25 @@ namespace Tango.JobRunner
         public ILog Log{get; private set;} = s_RootLog;
 
         /// <summary>
+        /// A log for verbose output, if verbose is enabled
+        /// </summary>
+        protected ILog VerboseLog
+        {
+            get
+            {
+                return this.Verbose ? this.Log : NullLog.Instance;
+            }
+        }
+
+        /// <summary>
         ///  A user defined name for the job
         /// </summary>
         public string? Name{get; set;}
+
+        /// <summary>
+        /// True if the job should be verbose with its logging
+        /// </summary>
+        public bool Verbose{get; set;}
 
         /// <summary>
         /// The score for the current job
@@ -51,14 +68,14 @@ namespace Tango.JobRunner
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private  ILog MakeLog(string? name)
+        private ILog MakeLog(string? name)
         {
             if(string.IsNullOrEmpty(name))
             {
                 return s_RootLog;
             }
 
-            var prefix = $"[{name}] ";
+            var prefix = $"[{name}]";
             return new PrefixLog(s_RootLog, prefix);
         }
     }

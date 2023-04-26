@@ -1,5 +1,6 @@
 ﻿<Script>
 	<Group name="Greetings">
 		<WriteLine message="Hello, world" />
+		<Log name="foo" message="Hello, world" />
 	</Group>
 </Script>

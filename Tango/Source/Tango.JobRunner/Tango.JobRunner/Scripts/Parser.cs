@@ -55,13 +55,15 @@ namespace Tango.JobRunner.Scripts
             var transactional = ParseFlag(groupElement, "transactional", "true");
             var enabled = ParseFlag(groupElement, "enabled", "true");
             var allowFail = ParseFlag(groupElement, "allowFail", "false");
+            var verbose = ParseFlag(groupElement, "verbose", "false");
 
             var group = new Group(runSheet)
             {
                 Name = groupElement.Attributes.GetValueOrDefault("name", "No name"),
                 Enabled = enabled,
                 Transactional = transactional,
-                AllowFail = allowFail
+                AllowFail = allowFail,
+                Verbose = verbose
             };
 
             foreach(XmlElement jobElement in groupElement.SelectNodesOrEmpty("*"))
@@ -70,8 +72,10 @@ namespace Tango.JobRunner.Scripts
                 
                 var job = m_JobFactory.Make(jobName);
                 XmlCreation.Apply(job, jobElement);
+                if(job.Name is null) job.Name = jobName;
+                if(verbose) job.Verbose = true;
 
-                var logName = MakeLogName(group.Name, (job.Name ?? jobName));
+                var logName = MakeLogName(group.Name, job.Name);
                 job.SetLogName(logName);
 
                 group.Jobs.Add(job);
@@ -99,7 +103,7 @@ namespace Tango.JobRunner.Scripts
         {
             if(jobName is null) jobName = "No job name";
 
-            return $"{groupName} : {jobName}";
+            return $"{groupName}:{jobName}";
         }
     }
 }

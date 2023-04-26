@@ -34,6 +34,11 @@ namespace Tango.JobRunner
 
         public List<Job> Jobs{get;} = new();
 
+        // <summary>
+        /// True if the group and its jobs should be verbose with their logging
+        /// </summary>
+        public bool Verbose{get; init;}
+
         public async ValueTask<(bool Succeeded, Scorecard Scorecard)> Run()
         {
             var succeeded = false;
@@ -133,7 +138,7 @@ namespace Tango.JobRunner
         private ILog MakeLog()
         {
             var log = LogManager.GetDefaultLog();
-            return new PrefixLog(log, $"[{Name}] ");
+            return new PrefixLog(log, $"[{Name}]");
         }
     }
 }

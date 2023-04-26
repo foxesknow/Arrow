@@ -23,7 +23,7 @@ namespace ScriptRunner
 {
     internal class Runner
     {
-        private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[Runner] ");
+        private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[Runner]");
 
         private string? m_ScriptFilename;
         private RunConfig m_RunConfig = RunConfig.All();

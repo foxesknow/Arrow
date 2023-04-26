@@ -15,7 +15,7 @@ namespace ScriptRunner
 {
     internal class RunnerRunSheet : RunSheet
     {
-        private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[RunSheet] ");
+        private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[RunSheet]");
 
         private readonly List<Group> m_Groups = new();
 

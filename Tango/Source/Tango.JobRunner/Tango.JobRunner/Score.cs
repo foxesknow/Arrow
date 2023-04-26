@@ -63,6 +63,21 @@ namespace Tango.JobRunner
             m_Errors.Add(error);
         }
 
+        public void ReportError(Exception exception)
+        {
+            if(exception is AggregateException aggregate)
+            {
+                foreach(var e in aggregate.InnerExceptions)
+                {
+                    ReportError(e);
+                }
+            }
+            else
+            {
+                ReportError(exception.Message);
+            }
+        }
+
         public void ReportWarning(string warning)
         {
             m_Warnings.Add(warning);
