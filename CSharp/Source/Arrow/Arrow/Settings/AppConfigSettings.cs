@@ -10,7 +10,7 @@ using Arrow.Text;
 
 namespace Arrow.Settings
 {
-    public sealed class AppSettingsProvider : ISettings
+    public sealed class AppConfigSettings : ISettings
     {
         bool ISettings.TryGetSetting(string name, [NotNullWhen(true)] out object? value)
         {

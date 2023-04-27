@@ -46,11 +46,12 @@ namespace Arrow.Settings
             // These settings aren't stacked
             DoRegister("def", DefaultSettings.Instance, false);
             DoRegister("any", AnySettings.Instance, false);
-            DoRegister("appsettings", new AppSettingsProvider(), false);
+            DoRegister("appsettings", new AppConfigSettings(), false);
             DoRegister("first-of", new FirstOfSettings(), false);
             DoRegister("string", new StringSettings(), false);
             DoRegister("slurp", new SlurpSettings(), false);
             DoRegister("literal", new LiteralSettings(), false);
+            DoRegister("aesdecrypt", new AesEncryptionSettings(), false);
 
 
             // Load any registered setting providers
