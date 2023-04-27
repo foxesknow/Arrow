@@ -111,7 +111,7 @@ namespace Tango.JobRunner
             finally
             {
                 scorecard.StopUtc = DateTime.UtcNow;
-                var elapsedTime = scorecard.StartUtc - scorecard.StopUtc;
+                var elapsedTime = scorecard.StopUtc - scorecard.StartUtc;
 
                 log.Info($"Finished. Time taken = {elapsedTime}");
             }

@@ -158,10 +158,10 @@ namespace Tango.JobRunner.Jobs
 
         private string GetExecutable()
         {
-            var assembly = Assembly.GetEntryAssembly();
-            if(assembly is null) throw new JobRunnerException($"could not work out what the executable is");
+            var exe = Process.GetCurrentProcess().MainModule?.FileName;
+            if(exe is null) throw new JobRunnerException($"could not work out what the executable is");
 
-            return assembly.Location;
+            return exe;
         }
 
         private Expander MakeExpander()
