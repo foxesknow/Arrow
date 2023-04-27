@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Tango.JobRunner
 {
+    /// <summary>
+    /// Base class for JobRunner exceptions
+    /// </summary>
     [Serializable]
     public class JobRunnerException : Exception
     {

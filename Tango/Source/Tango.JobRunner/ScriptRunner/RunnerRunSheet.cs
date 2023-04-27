@@ -30,7 +30,10 @@ namespace ScriptRunner
 
         public override JobContext MakeContext(Group group)
         {
-            return new RunnerJobContext(this);
+            return new RunnerJobContext(this)
+            {
+                UseTransactions = group.Transactional
+            };
         }
 
         public override async Task<IReadOnlyList<Scorecard>> Run(RunConfig runConfig)

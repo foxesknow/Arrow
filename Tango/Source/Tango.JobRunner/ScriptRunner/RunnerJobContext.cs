@@ -33,15 +33,19 @@ namespace ScriptRunner
             m_DatabaseManager = m_Script.DatabaseManager;
         }
 
+        public bool UseTransactions{get; set;}
+
         public override IDbCommand MakeCommand(string databaseName)
         {
             lock(m_SyncRoot)
             {
-                return m_DatabaseManager.GetConnectionInfo(databaseName) switch
+                var connectionInfo = m_DatabaseManager.GetConnectionInfo(databaseName);
+                return (connectionInfo, UseTransactions) switch
                 {
-                    ConnectionInfo.Transactional => MakeTransactionalCommand(databaseName),
-                    ConnectionInfo.Default       => MakeNonTransactionalCommand(databaseName),
-                    var other                    => throw new JobRunnerException("unsupported connection type: {other}")
+                    (ConnectionInfo.Transactional, true)    => MakeTransactionalCommand(databaseName),
+                    (ConnectionInfo.Transactional, false)   => MakeNonTransactionalCommand(databaseName),
+                    (ConnectionInfo.Default, _)             => MakeNonTransactionalCommand(databaseName),
+                    var other                               => throw new JobRunnerException("unsupported connection type: {other}")
                 };
             }
         }

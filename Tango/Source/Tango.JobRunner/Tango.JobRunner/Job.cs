@@ -9,6 +9,9 @@ using Arrow.Logging.Loggers;
 
 namespace Tango.JobRunner
 {
+    /// <summary>
+    /// Base class for all jobs
+    /// </summary>
     public abstract class Job
     {
         private readonly static ILog s_RootLog = LogManager.GetDefaultLog();
@@ -50,7 +53,10 @@ namespace Tango.JobRunner
         /// </summary>
         protected internal Score Score{get; internal set;} = default!;
        
-
+        /// <summary>
+        /// Context information for the job.
+        /// This is only valid when your job is running
+        /// </summary>
         protected internal JobContext Context{get; internal set;} = default!;
 
         internal void SetLogName(string? name)

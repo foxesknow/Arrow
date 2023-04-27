@@ -24,14 +24,32 @@ namespace Tango.JobRunner
 
         public RunSheet Script{get;}
 
+        /// <summary>
+        /// The name of the group
+        /// </summary>
         public string Name{get; init;} = "No name";
 
+        /// <summary>
+        /// If the group is enabled.
+        /// Only enabled groups are run
+        /// </summary>
         public bool Enabled{get; init;} = true;
 
+        /// <summary>
+        /// True if a group is allowed to fail. 
+        /// If so then this won't stop the next group from running
+        /// </summary>
         public bool AllowFail{get; set;}
 
+        /// <summary>
+        /// True to make all database connections within the group,
+        /// false to make them non-transactional, even if the database configuration says otherwise
+        /// </summary>
         public bool Transactional{get; set;} = true;
 
+        /// <summary>
+        /// The jobs that make up the group
+        /// </summary>
         public List<Job> Jobs{get;} = new();
 
         // <summary>
@@ -68,16 +86,8 @@ namespace Tango.JobRunner
                         }
                         catch(Exception e)
                         {
-                            if(this.AllowFail)
-                            {
-                                job.Log.Warn("Job failed, but this is allowed", e);
-                                score.ReportWarning($"Job failed, but this is allowed. Message = {e.Message}");
-                            }
-                            else
-                            {
-                                job.Log.Error("Job failed", e);
-                                score.ReportError($"Job failed. Message = {e.Message}");
-                            }
+                            job.Log.Warn("Job failed", e);
+                            throw;
                         }
                         finally
                         {
@@ -93,6 +103,7 @@ namespace Tango.JobRunner
                 }
                 catch(Exception e)
                 {
+                    // Something went wrong, but that might be allowed
                     if(this.AllowFail)
                     {
                         log.Warn("Group failed, but this is allowed", e);
@@ -104,6 +115,7 @@ namespace Tango.JobRunner
                         score?.ReportError($"Group failed. Message = {e.Message}");
                     }
 
+                    // Even if it's allowed we still want to rollback
                     context.Rollback();
                     succeeded = this.AllowFail;
                 }

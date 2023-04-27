@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Tango.JobRunner
 {
+    /// <summary>
+    /// Flags a class as a job
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class JobAttribute : Attribute
     {
