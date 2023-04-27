@@ -17,7 +17,7 @@ namespace Tango.JobRunner.Jobs
             if(this.Database is null) throw new JobRunnerException("no database specified");
             if(this.Sql is null) throw new JobRunnerException("no sql specified");
 
-            using(var command = this.Context.MakeCommand(this.Database))
+            using(var command = this.Context.CreateCommand(this.Database))
             {
                 command.CommandText = this.Sql;
                 var rowsAffected = command.ExecuteNonQuery();

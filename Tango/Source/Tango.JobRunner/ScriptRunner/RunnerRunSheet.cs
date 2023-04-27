@@ -26,6 +26,8 @@ namespace ScriptRunner
             m_Groups.Add(group);
         }
 
+        public string ScriptDirectory{get; set;} = "";
+
         /// <summary>
         /// The database manager which will be ultimately used by the jobs
         /// </summary>
@@ -38,10 +40,14 @@ namespace ScriptRunner
 
         public override JobContext MakeContext(Group group)
         {
-            return new RunnerJobContext(this)
+            var context = new RunnerJobContext(this)
             {
-                UseTransactions = group.Transactional
+                UseTransactions = group.Transactional,
             };
+
+            context.SetScriptDirectory(this.ScriptDirectory);
+
+            return context;
         }
 
         public override async Task<IReadOnlyList<Scorecard>> Run(RunConfig runConfig)

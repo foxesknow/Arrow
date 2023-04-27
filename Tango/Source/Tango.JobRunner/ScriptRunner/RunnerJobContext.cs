@@ -27,6 +27,8 @@ namespace ScriptRunner
         private readonly RunnerRunSheet m_Script;
         private readonly IDatabaseManager m_DatabaseManager;
 
+        private string m_ScriptDirectory = "";
+
         public RunnerJobContext(RunnerRunSheet script)
         {
             m_Script = script;
@@ -38,6 +40,16 @@ namespace ScriptRunner
         /// </summary>
         public bool UseTransactions{get; set;}
 
+        public override string ScriptDirectory
+        {
+            get{return m_ScriptDirectory;}
+        }
+
+        public void SetScriptDirectory(string directory)
+        {
+            m_ScriptDirectory = directory;
+        }
+
         /// <summary>
         /// Creates a command against the specified database.
         /// If the database is already open then the command will come from that connection
@@ -45,7 +57,7 @@ namespace ScriptRunner
         /// <param name="databaseName"></param>
         /// <returns></returns>
         /// <exception cref="JobRunnerException"></exception>
-        public override IDbCommand MakeCommand(string databaseName)
+        public override IDbCommand CreateCommand(string databaseName)
         {
             lock(m_SyncRoot)
             {

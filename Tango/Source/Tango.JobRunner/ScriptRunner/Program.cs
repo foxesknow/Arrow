@@ -2,13 +2,11 @@
 using System.Threading.Tasks;
 using System.Xml;
 
-using Arrow.Configuration;
 using Arrow.Application;
-using Arrow.Text;
-using Arrow.Storage;
-using Arrow.Xml.Macro;
+using Arrow.Execution;
+using Arrow.Reflection;
 
-using Tango.JobRunner;
+[assembly: ForceAssemblyReference(typeof(Tango.JobRunner.Python.PythonJob))]
 
 namespace ScriptRunner
 {

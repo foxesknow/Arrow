@@ -18,7 +18,9 @@ namespace Tango.JobRunner
         /// </summary>
         /// <param name="databaseName"></param>
         /// <returns></returns>
-        public abstract IDbCommand MakeCommand(string databaseName);
+        public abstract IDbCommand CreateCommand(string databaseName);
+
+        public abstract string ScriptDirectory{get;}
 
         /// <summary>
         /// Commits any transactions

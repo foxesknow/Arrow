@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -64,8 +64,13 @@ namespace ScriptRunner
                 Verbose = m_Verbose
             };
 
-            var script = LoadScript(m_ScriptFilename);
+            var (script, uri) = LoadScript(m_ScriptFilename);
             parser.Parse(runSheet, script.DocumentElement!);
+
+            if(uri.LocalPath is not null)
+            {
+                runSheet.ScriptDirectory = Path.GetDirectoryName(uri.LocalPath) ?? "";
+            }
 
             return Execute(runSheet);
         }
@@ -106,7 +111,7 @@ namespace ScriptRunner
             GlobalClockDriverManager.Install(clockDriver);
         }
 
-        private static XmlDocument LoadScript(string filename)
+        private static (XmlDocument Document, Uri Location) LoadScript(string filename)
         {
             var expandedFilename = TokenExpander.ExpandText(filename);
             var uri = Accessor.CreateUri(expandedFilename);
@@ -114,7 +119,7 @@ namespace ScriptRunner
             var expander = new XmlMacroExpander();
             var scriptDocument = expander.Expand(uri);
 
-            return scriptDocument;
+            return (scriptDocument, uri);
         }
 
         private void ParseCommandLine(string[] args)

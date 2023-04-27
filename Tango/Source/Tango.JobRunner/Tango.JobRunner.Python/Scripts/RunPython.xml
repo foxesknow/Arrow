@@ -1,0 +1,12 @@
+﻿<Script>
+	<Import>Tango.JobRunner.Python</Import>
+	
+	<Group name="Python">
+		<Python name="Hello world" filename="HelloWorld.py">
+			<Settings>
+				<Setting name="database" value="tango" />
+			</Settings>
+		</Python>
+	</Group>
+</Script>
+
