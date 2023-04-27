@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace Arrow.Application.DaemonHosting
 {
@@ -20,6 +21,8 @@ namespace Arrow.Application.DaemonHosting
             var daemon = new TDaemon();
             daemon.StartDaemon(args);
 
+            RegisterPosixHandlers(daemon);
+
             try
             {
                 // Wait for someone to signal that we should stop
@@ -35,6 +38,27 @@ namespace Arrow.Application.DaemonHosting
             {
                 daemon.StopDaemon();
             }
+        }
+
+        private void RegisterPosixHandlers(DaemonBase daemon)
+        {
+#if NET6_0_OR_GREATER
+            PosixSignalRegistration.Create(PosixSignal.SIGINT, context =>
+            {
+                if(daemon.KeepRunning)
+                {
+                    // It's the first time, so let the app try gracefully
+                    daemon.KeepRunning = false;
+                    context.Cancel = true;
+                }
+                else
+                {
+                    // We're supposed to be stopping and someone has tried again.
+                    // This time we'll let the default behavior apply
+                    context.Cancel = false;
+                }
+            });
+#endif
         }
     }
 }

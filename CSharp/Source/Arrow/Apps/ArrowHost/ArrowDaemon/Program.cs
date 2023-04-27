@@ -15,7 +15,8 @@ namespace ArrowDaemon
 
 		static void Run(string[] args)
 		{
-			var runner = new ConsoleRunner<Daemon>();
+			//var runner = new ConsoleRunner<Daemon>();
+			var runner = new HeadlessRunner<Daemon>();
 			runner.Run(args);
 		}
     }
