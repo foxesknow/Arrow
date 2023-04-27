@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ArrowEncrypt": {
+      "commandName": "Project",
+      "commandLineArgs": "/e \"Hello, world\""
+    }
+  }
+}

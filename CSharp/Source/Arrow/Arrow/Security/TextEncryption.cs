@@ -42,7 +42,7 @@ namespace Arrow.Security
             using(var writer = new StreamWriter(cryptoStream, Encoding.UTF8))
             {
                 var salt = GetSalt();
-                writer.Write(salt + text);
+                writer.Write(text + salt);
                 writer.Close();
 
                 return Convert.ToBase64String(memoryStream.ToArray());
@@ -72,7 +72,7 @@ namespace Arrow.Security
                 var salt = GetSalt();
                 if(unencrypted.Length < salt.Length) throw new CryptographicException("password could not be decrypted");
 
-                return unencrypted.Substring(salt.Length);
+                return unencrypted.Substring(0, unencrypted.Length - salt.Length);
             }
         }
     }

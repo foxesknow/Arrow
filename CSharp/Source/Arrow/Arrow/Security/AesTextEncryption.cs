@@ -21,6 +21,7 @@ namespace Arrow.Security
         };
 
         private const string s_Salt = "wmdCyshYARNnpBTLpyhEryTK"; 
+        //private const string s_Salt = "wmdCyshYAR"; 
 
         protected override string GetSalt()
         {
