@@ -70,6 +70,11 @@ namespace Tango.JobRunner.Python
             return settings;
         }
 
+        /// <summary>
+        /// Updates the scripting host search path to have additional locations
+        /// </summary>
+        /// <param name="scriptEngine"></param>
+        /// <param name="scriptFilename"></param>
         private void UpdateSearchPaths(ScriptEngine scriptEngine, string scriptFilename)
         {
             var searchPaths = scriptEngine.GetSearchPaths().ToList();
