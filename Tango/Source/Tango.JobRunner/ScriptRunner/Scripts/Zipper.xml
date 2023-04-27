@@ -1,6 +1,6 @@
 ﻿<Script>
 	<Group name="Archive">
-		<ZipDirectory goBack="0" daysToCheck="10">
+		<ZipDirectory goBack="0" daysToCheck="10" overwriteZip="true">
 			<Directories>
 				<Zip>
 					<From>C:\Code\Test\Logs\$(yyyymmdd)</From>

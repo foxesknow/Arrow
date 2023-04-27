@@ -21,6 +21,8 @@ namespace Tango.JobRunner.Jobs
                 return default;
             }
 
+            DeleteFiles();
+
             return default;
         }
 
@@ -38,7 +40,7 @@ namespace Tango.JobRunner.Jobs
                     {
                         if(this.IgnoreMissing) continue;
 
-                        throw new JobRunnerException($"Directory does not exist: {path}");
+                        throw new JobRunnerException($"directory does not exist: {path}");
                     }
 
                     try

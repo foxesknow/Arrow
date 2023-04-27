@@ -1,0 +1,10 @@
+﻿<Script xmlns:m="urn:arrow.xml.macro" xmlns:x="urn:arrow.xml.macro.def">
+	<Group name="Parallel run">
+		<ParallelScripts relativeFilename="@{cfile}">
+			<Scripts>
+				<Script>$(relativeDir)/HelloWorld.xml</Script>
+			</Scripts>
+		</ParallelScripts>
+	</Group>
+</Script>
+

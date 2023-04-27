@@ -2,7 +2,7 @@
   "profiles": {
     "ScriptRunner": {
       "commandName": "Project",
-      "commandLineArgs": "-live C:\\Code\\git\\Arrow\\Tango\\Source\\Tango.JobRunner\\ScriptRunner\\Scripts\\Zipper.xml"
+      "commandLineArgs": "-live C:\\Code\\git\\Arrow\\Tango\\Source\\Tango.JobRunner\\ScriptRunner\\Scripts\\ParallelScripts.xml"
     }
   }
 }

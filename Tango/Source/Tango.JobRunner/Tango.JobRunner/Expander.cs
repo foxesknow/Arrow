@@ -13,18 +13,21 @@ namespace Tango.JobRunner
         private const string BeginToken = "$(";
         private const string EndToken = ")";
 
-        private readonly Dictionary<string, object> m_Mappings = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, object?> m_Mappings = new(StringComparer.OrdinalIgnoreCase);
 
-        public void Add(string key, object value)
+        public Expander Add(string key, object? value)
         {
             m_Mappings[key] = value;
+            return this;
         }
 
-        public void AddDates(DateTime when)
+        public Expander AddDates(DateTime when)
         {
             Add("YYYYMMDD", when.ToString("yyyyMMdd"));
             Add("DDMMMYYYY", when.ToString("ddMMMyyyy"));
             Add("date", when);
+
+            return this;
         }
 
         public string Expand(string text)
