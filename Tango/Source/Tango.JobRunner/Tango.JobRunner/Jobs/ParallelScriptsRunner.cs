@@ -11,6 +11,9 @@ using System.Threading;
 
 namespace Tango.JobRunner.Jobs
 {
+    /// <summary>
+    /// Runs multiple scripts at once by invoking new instance of the host application
+    /// </summary>
     [Job("ParallelScripts")]
     public sealed class ParallelScriptsRunner : Job
     {
@@ -156,6 +159,11 @@ namespace Tango.JobRunner.Jobs
             }
         }
 
+        /// <summary>
+        /// Works out which executable is running us!
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="JobRunnerException"></exception>
         private string GetExecutable()
         {
             var exe = Process.GetCurrentProcess().MainModule?.FileName;
@@ -216,6 +224,9 @@ namespace Tango.JobRunner.Jobs
         /// </summary>
         public List<string> Scripts{get;} = new();
 
+        /// <summary>
+        /// True to allow the scripts to fail without causing the job to fail
+        /// </summary>
         public bool AllowFail{get; set;}
     }
 }

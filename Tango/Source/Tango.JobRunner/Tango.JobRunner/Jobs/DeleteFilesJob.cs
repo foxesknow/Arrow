@@ -10,6 +10,9 @@ using Arrow.IO;
 
 namespace Tango.JobRunner.Jobs
 {
+    /// <summary>
+    /// The job deletes files which are over a particular age
+    /// </summary>
     [Job("DeleteFiles")]
     public sealed class DeleteFilesJob : Job
     {

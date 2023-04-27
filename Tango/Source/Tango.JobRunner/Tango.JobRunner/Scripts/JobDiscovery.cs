@@ -19,10 +19,10 @@ namespace Tango.JobRunner.Scripts
 
         public static void Register(Assembly assembly)
         {
-            LoadFromAssembly<JobAttribute>(assembly, (type, attribute) => s_JobTypes[attribute.Name] = type);
+            LoadFromAssembly(assembly, (type, attribute) => s_JobTypes[attribute.Name] = type);
         }
 
-        public static void LoadFromAssembly<TAttribute>(Assembly assembly, Action<Type, TAttribute> register) where TAttribute : Attribute
+        public static void LoadFromAssembly(Assembly assembly, Action<Type, JobAttribute> register)
         {
             var types = assembly.GetTypes();
 
@@ -31,7 +31,7 @@ namespace Tango.JobRunner.Scripts
                 if(type.IsPublic && type.IsClass && type.IsAbstract == false && type.IsGenericType == false)
                 {
                     // Well, it's eligable...
-                    var attributes = type.GetCustomAttributes<TAttribute>(false);
+                    var attributes = type.GetCustomAttributes<JobAttribute>(false);
                     foreach(var attribute in attributes)
                     {
                         register(type, attribute);

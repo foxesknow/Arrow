@@ -33,8 +33,18 @@ namespace ScriptRunner
             m_DatabaseManager = m_Script.DatabaseManager;
         }
 
+        /// <summary>
+        /// Indicates if transactions should be used.
+        /// </summary>
         public bool UseTransactions{get; set;}
 
+        /// <summary>
+        /// Creates a command against the specified database.
+        /// If the database is already open then the command will come from that connection
+        /// </summary>
+        /// <param name="databaseName"></param>
+        /// <returns></returns>
+        /// <exception cref="JobRunnerException"></exception>
         public override IDbCommand MakeCommand(string databaseName)
         {
             lock(m_SyncRoot)
@@ -50,7 +60,7 @@ namespace ScriptRunner
             }
         }
 
-        public override void Commit()
+        protected override void Commit()
         {
             lock(m_SyncRoot)
             {
@@ -61,7 +71,7 @@ namespace ScriptRunner
             }
         }
 
-        public override void Rollback()
+        protected override void Rollback()
         {
             lock(m_SyncRoot)
             {

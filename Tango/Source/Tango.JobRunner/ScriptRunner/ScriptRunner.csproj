@@ -13,6 +13,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="Scripts\ExecuteSql.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Scripts\HelloWorld.xml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

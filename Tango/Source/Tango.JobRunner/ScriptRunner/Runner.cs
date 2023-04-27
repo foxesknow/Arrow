@@ -29,6 +29,7 @@ namespace ScriptRunner
         private RunConfig m_RunConfig = RunConfig.All();
         private DateTime? m_BaselineDate;
         private bool m_Live = false;
+        private bool m_Verbose = false;
 
         public Task Run(string[] args)
         {
@@ -50,7 +51,11 @@ namespace ScriptRunner
             var runSheet = MakeRunSheet();
 
             var jobFactory = MakeJobFactory();
-            var parser = new Parser(jobFactory);
+            var parser = new Parser(jobFactory)
+            {
+                Verbose = m_Verbose
+            };
+
             var script = LoadScript(m_ScriptFilename);
             parser.Parse(runSheet, script.DocumentElement!);
 
@@ -140,6 +145,12 @@ namespace ScriptRunner
                     case "live":
                         command.EnsureNoValuePresent();
                         m_Live = true;
+                        break;
+
+                    case "v":
+                    case "verbose":
+                        command.EnsureNoValuePresent();
+                        m_Verbose = true;
                         break;
 
                     default:

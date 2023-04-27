@@ -11,12 +11,20 @@ using Arrow.Xml.ObjectCreation;
 
 namespace Tango.JobRunner.Scripts
 {
+    /// <summary>
+    /// Parses a script
+    /// </summary>
     public sealed class Parser
     {
         private readonly IInstanceFactory m_Factory = InstanceFactory.New();
 
         private readonly JobFactory m_JobFactory;
 
+        /// <summary>
+        /// Initalizes the instance
+        /// </summary>
+        /// <param name="jobFactory">The factory to use for creating jobs</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public Parser(JobFactory jobFactory)
         {
             if(jobFactory is null) throw new ArgumentNullException(nameof(jobFactory));
@@ -24,6 +32,17 @@ namespace Tango.JobRunner.Scripts
             m_JobFactory = jobFactory;
         }
 
+        /// <summary>
+        /// True to turn on verbosity in all jobs, regardless of what the jobs say
+        /// </summary>
+        public bool Verbose{get; init;}
+
+        /// <summary>
+        /// Parses an xml script and populates the run sheet
+        /// </summary>
+        /// <param name="runSheet"></param>
+        /// <param name="scriptElement"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void Parse(RunSheet runSheet, XmlElement scriptElement)
         {
             if(runSheet is null) throw new ArgumentNullException(nameof(runSheet));
@@ -73,7 +92,9 @@ namespace Tango.JobRunner.Scripts
                 var job = m_JobFactory.Make(jobName);
                 XmlCreation.Apply(job, jobElement);
                 if(job.Name is null) job.Name = jobName;
-                if(verbose) job.Verbose = true;
+                
+                // Work out and set the appropriate verbosity
+                job.Verbose |= (verbose | this.Verbose);
 
                 var logName = MakeLogName(group.Name, job.Name);
                 job.SetLogName(logName);

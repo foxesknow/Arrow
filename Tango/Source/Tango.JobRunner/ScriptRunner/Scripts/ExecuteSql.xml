@@ -1,0 +1,10 @@
+﻿<Script>
+	<Group name="Update database">
+		<ExecuteSql database="tango">
+			<Sql>
+				insert into Locations (Name, Age, Location)
+				values('Jack', 42, 'The Island')
+			</Sql>
+		</ExecuteSql>
+	</Group>
+</Script>

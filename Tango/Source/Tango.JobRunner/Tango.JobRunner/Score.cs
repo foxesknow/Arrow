@@ -6,22 +6,37 @@ using System.Threading.Tasks;
 
 namespace Tango.JobRunner
 {
+    /// <summary>
+    /// The score for a job.
+    /// This class is thread safe
+    /// </summary>
     public sealed class Score
     {
         private readonly List<string> m_Errors = new();
         private readonly List<string> m_Warnings = new();
 
-        public Score(Job job)
+        private readonly object m_SyncRoot = new();
+
+        internal Score(Job job)
         {
             if(job is null) throw new ArgumentNullException(nameof(job));
 
             this.Job = job;
         }
 
+        /// <summary>
+        /// The job the score relates to
+        /// </summary>
         public Job Job{get;}
 
+        /// <summary>
+        /// When the job was started
+        /// </summary>
         public DateTime StartUtc{get; internal set;}
         
+        /// <summary>
+        /// When the job stopped
+        /// </summary>
         public DateTime StopUtc{get; internal set;}
 
         /// <summary>
@@ -29,7 +44,13 @@ namespace Tango.JobRunner
         /// </summary>
         public bool NoErrorsOrWarnings
         {
-            get{return this.HasErrors && this.HasWarnings;}
+            get
+            {
+                lock(m_SyncRoot)
+                {
+                    return this.HasErrors && this.HasWarnings;
+                }
+            }
         }
 
         /// <summary>
@@ -37,7 +58,13 @@ namespace Tango.JobRunner
         /// </summary>
         public bool HasErrors
         {
-            get{return m_Errors.Count != 0;}
+            get
+            {
+                lock(m_SyncRoot)
+                {
+                    return m_Errors.Count != 0;
+                }
+            }
         }
 
         /// <summary>
@@ -45,42 +72,88 @@ namespace Tango.JobRunner
         /// </summary>
         public bool HasWarnings
         {
-            get{return m_Warnings.Count != 0;}
-        }
-
-        public IReadOnlyList<string> Errors
-        {
-            get{return m_Errors;}
-        }
-
-        public IReadOnlyList<string> Warnings
-        {
-            get{return m_Warnings;}
-        }
-
-        public void ReportError(string error)
-        {
-            m_Errors.Add(error);
-        }
-
-        public void ReportError(Exception exception)
-        {
-            if(exception is AggregateException aggregate)
+            get
             {
-                foreach(var e in aggregate.InnerExceptions)
+                lock(m_SyncRoot)
                 {
-                    ReportError(e);
+                    return m_Warnings.Count != 0;
                 }
             }
-            else
+        }
+
+        /// <summary>
+        /// Returns a copy of the errors
+        /// </summary>
+        public IReadOnlyList<string> GetErrors()
+        {
+            lock(m_SyncRoot)
             {
-                ReportError(exception.Message);
+                return m_Errors.ToArray();
             }
         }
 
+        /// <summary>
+        /// Returns a copy of the warnings
+        /// </summary>
+        /// <returns></returns>
+        public IReadOnlyList<string> GetWarnings()
+        {
+            lock(m_SyncRoot)
+            {
+                return m_Warnings.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Adds an error
+        /// </summary>
+        /// <param name="error"></param>
+        public void ReportError(string error)
+        {
+            lock(m_SyncRoot)
+            {
+                m_Errors.Add(error);
+            }
+        }
+
+        /// <summary>
+        /// Adds an exception. 
+        /// If the exception is an aggregate then the the inner exceptions are added.
+        /// </summary>
+        /// <param name="exception"></param>
+        public void ReportError(Exception exception)
+        {
+            lock(m_SyncRoot)
+            {
+                Recurse(exception);
+            }
+
+            void Recurse(Exception exception)
+            {
+                if(exception is AggregateException aggregate)
+                {
+                    foreach(var e in aggregate.InnerExceptions)
+                    {
+                        Recurse(e);
+                    }
+                }
+                else
+                {
+                    m_Errors.Add(exception.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds a warning
+        /// </summary>
+        /// <param name="warning"></param>
         public void ReportWarning(string warning)
         {
-            m_Warnings.Add(warning);
+            lock(m_SyncRoot)
+            {
+                m_Warnings.Add(warning);
+            }
         }
     }
 }

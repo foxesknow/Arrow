@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Tango.JobRunner.Scripts
 {
+    /// <summary>
+    /// The class is responsible for creating job instnaces
+    /// </summary>
     public sealed class JobFactory
     {
         private readonly Dictionary<string, Type> m_JobTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
@@ -38,13 +41,25 @@ namespace Tango.JobRunner.Scripts
             }
         }
 
+        /// <summary>
+        /// Registers all jobs in an assembly
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void Register(Assembly assembly)
         {
             if(assembly is null) throw new ArgumentNullException(nameof(assembly));
 
-            JobDiscovery.LoadFromAssembly<JobAttribute>(assembly, (type, attribute) => Register(attribute.Name, type));
+            JobDiscovery.LoadFromAssembly(assembly, (type, attribute) => Register(attribute.Name, type));
         }
 
+        /// <summary>
+        /// Explicitly registers a job with the given name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public void Register(string name, Type type)
         {
             if(name is null) throw new ArgumentNullException(nameof(name));
@@ -82,6 +97,13 @@ namespace Tango.JobRunner.Scripts
             }
         }
 
+        /// <summary>
+        /// The default job creator, which uses Activator.CreateInstance.
+        /// Callers can specify their own creator if they want to use DI
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <exception cref="JobRunnerException"></exception>
         private static Job MakeJob(Type type)
         {
             var instance = Activator.CreateInstance(type);

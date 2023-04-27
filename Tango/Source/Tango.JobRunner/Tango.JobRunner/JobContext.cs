@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Tango.JobRunner
 {
+    /// <summary>
+    /// Job context information.
+    /// This class and it's implementations are thread safe.
+    /// </summary>
     public abstract class JobContext
     {
         /// <summary>
@@ -16,8 +20,14 @@ namespace Tango.JobRunner
         /// <returns></returns>
         public abstract IDbCommand MakeCommand(string databaseName);
 
-        public abstract void Commit();
+        /// <summary>
+        /// Commits any transactions
+        /// </summary>
+        protected internal abstract void Commit();
         
-        public abstract void Rollback();
+        /// <summary>
+        /// Rolls back any transactions
+        /// </summary>
+        protected internal abstract void Rollback();
     }
 }

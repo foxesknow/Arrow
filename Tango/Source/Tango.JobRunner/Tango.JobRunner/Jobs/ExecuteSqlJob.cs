@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Tango.JobRunner.Jobs
 {
+    /// <summary>
+    /// Executes sql against a database
+    /// </summary>
     [Job("ExecuteSql")]
     public sealed class ExecuteSqlJob : Job
     {
@@ -17,12 +20,21 @@ namespace Tango.JobRunner.Jobs
             using(var command = this.Context.MakeCommand(this.Database))
             {
                 command.CommandText = this.Sql;
-                command.ExecuteNonQuery();
+                var rowsAffected = command.ExecuteNonQuery();
+                VerboseLog.Info($"{rowsAffected} row(s) affected");
             }
+
+            return default;
         }
 
+        /// <summary>
+        /// The database to connect to
+        /// </summary>
         public string? Database{get; set;}
 
+        /// <summary>
+        /// The sql to run
+        /// </summary>
         public string? Sql{get; set;}
     }
 }

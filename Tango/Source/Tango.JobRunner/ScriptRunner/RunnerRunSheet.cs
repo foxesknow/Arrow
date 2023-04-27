@@ -26,7 +26,15 @@ namespace ScriptRunner
             m_Groups.Add(group);
         }
 
+        /// <summary>
+        /// The database manager which will be ultimately used by the jobs
+        /// </summary>
         public XmlDatabaseManager DatabaseManager{get; set;} = new();
+
+        /// <summary>
+        /// True to send a report when the jobs have run
+        /// </summary>
+        public bool SendReport{get; set;} = true;
 
         public override JobContext MakeContext(Group group)
         {
