@@ -3,6 +3,10 @@
     "ScriptRunner": {
       "commandName": "Project",
       "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Tango.JobRunner\\ScriptRunner\\Scripts\\ExecuteSql.xml"
+    },
+    "PID Test": {
+      "commandName": "Project",
+      "commandLineArgs": "-live -v -pidfile:c:\\code\\test\\scriptrunner.pid C:\\Code\\git\\Arrow\\Tango\\Source\\Tango.JobRunner\\ScriptRunner\\Scripts\\ExecuteSql.xml"
     }
   }
 }

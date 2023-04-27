@@ -9,6 +9,7 @@ using Arrow.Application;
 using Arrow.Calendar;
 using Arrow.Calendar.ClockDrivers;
 using Arrow.Configuration;
+using Arrow.IO;
 using Arrow.Logging;
 using Arrow.Storage;
 using Arrow.Text;
@@ -21,7 +22,7 @@ using Tango.JobRunner.Scripts;
 
 namespace ScriptRunner
 {
-    internal class Runner
+    internal class Runner : IDisposable
     {
         private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[Runner]");
 
@@ -30,6 +31,13 @@ namespace ScriptRunner
         private DateTime? m_BaselineDate;
         private bool m_Live = false;
         private bool m_Verbose = false;
+
+        private PidFile? m_PidFile;
+
+        public void Dispose()
+        {
+            m_PidFile?.Dispose();
+        }
 
         public Task Run(string[] args)
         {
@@ -151,6 +159,11 @@ namespace ScriptRunner
                     case "verbose":
                         command.EnsureNoValuePresent();
                         m_Verbose = true;
+                        break;
+
+                    case "pidfile":
+                        command.EnsureValuePresent();
+                        m_PidFile = new PidFile(command.Value!);
                         break;
 
                     default:

@@ -19,10 +19,12 @@ namespace ScriptRunner
             return ApplicationRunner.RunAsync(() => Run(args));
         }
 
-        private static Task Run(string[] args)
+        private static async Task Run(string[] args)
         {
-            var runner = new Runner();
-            return runner.Run(args);
+            using(var runner = new Runner())
+            {
+                await runner.Run(args);
+            }
         }
     }
 }
