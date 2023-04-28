@@ -9,7 +9,7 @@ namespace Tango.JobRunner
 {
     /// <summary>
     /// Job context information.
-    /// This class and it's implementations are thread safe.
+    /// This class and its implementations are thread safe.
     /// </summary>
     public abstract class JobContext
     {
@@ -20,6 +20,9 @@ namespace Tango.JobRunner
         /// <returns></returns>
         public abstract IDbCommand CreateCommand(string databaseName);
 
+        /// <summary>
+        /// The directory where the currently executing script resides
+        /// </summary>
         public abstract string ScriptDirectory{get;}
 
         /// <summary>
