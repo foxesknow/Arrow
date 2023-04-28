@@ -9,13 +9,13 @@ namespace Arrow.Scripting.Wire
 {
 	public class ParseContext
 	{
-		private readonly List<Assembly> m_References=new List<Assembly>();
+		private readonly HashSet<Assembly> m_References=new HashSet<Assembly>();
 		private readonly List<string> m_Usings=new List<string>();
 
 		/// <summary>
 		/// The assemblies to reference when resolving types
 		/// </summary>
-		public IList<Assembly> References
+		public HashSet<Assembly> References
 		{
 			get{return m_References;}
 		}

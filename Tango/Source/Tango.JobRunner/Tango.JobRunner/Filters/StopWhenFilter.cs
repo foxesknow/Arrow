@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-using Arrow.Scripting.Wire;
-using Arrow.Scripting.Wire.StaticExpression;
-
 namespace Tango.JobRunner.Filters
 {
-    /// <summary>
-    /// Applies a predicate to incoming data, only passing through the data that evaluates to true
-    /// </summary>
-    [Filter("Where")]
-    public sealed class WhereFilter : PredicateFilterBase
+    [Filter("StopWhen")]
+    public sealed class StopWhenFilter : PredicateFilterBase
     {
         public override async IAsyncEnumerable<object> Run(IAsyncEnumerable<object> items)
         {
@@ -26,12 +19,14 @@ namespace Tango.JobRunner.Filters
                 var itemType = item.GetType();
                 var predicate = GetPredicate(this.Predicate, itemType);
 
-                if(predicate(item, index++)) yield return item;
+                if(predicate(item, index++)) break;
+
+                yield return item;
             }
         }
 
         /// <summary>
-        /// The predicate to apply to each item
+        /// When the predicate evaluates to true we will stop returning items
         /// </summary>
         public string? Predicate{get; set;}
     }

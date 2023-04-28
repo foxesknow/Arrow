@@ -1,9 +1,23 @@
 ﻿<Script>
-	<Group name="Greetings">
+	<Group name="Pipe">
+		<!--
 		<Pipeline name="Numbers">
 			<Numbers start="10" count="20" />
-			<Where predicate="item.Length > 20" />
+			<SkipUntil predicate="index == 3" />			
 			<Log/>
+		</Pipeline>
+		-->
+
+		<Pipeline name="Zipper">
+			<ChildDirectories directorySpec="c:\code\test\logs\**" />
+			<ToString/>
+			
+			<!-- Only archive directories created today -->
+			<Where predicate="Directory.GetCreationTime(item).Date == Clock.Now.Date" />
+			
+			<ZipDirectory skipExisting="true">
+				<ZipSpec>c:\code\test\archive\$(root).zip</ZipSpec>
+			</ZipDirectory>
 		</Pipeline>
 	</Group>
 </Script>

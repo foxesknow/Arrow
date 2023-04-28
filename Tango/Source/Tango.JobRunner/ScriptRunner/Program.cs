@@ -12,9 +12,16 @@ namespace ScriptRunner
 {
     internal class Program
     {
-        static Task Main(string[] args)
+        static async Task Main(string[] args)
         {
-            return ApplicationRunner.RunAsync(() => Run(args));
+            await ApplicationRunner.RunAsync(() => Run(args));
+
+            #if DEBUG
+                if(System.Diagnostics.Debugger.IsAttached)
+                {
+                    Console.ReadLine();
+                }
+            #endif
         }
 
         private static async Task Run(string[] args)
