@@ -7,17 +7,29 @@
 			<Log/>
 		</Pipeline>
 		-->
-
+		
+		<!--
 		<Pipeline name="Zipper">
 			<ChildDirectories directorySpec="c:\code\test\logs\**" />
 			<ToString/>
 			
-			<!-- Only archive directories created today -->
 			<Where predicate="Directory.GetCreationTime(item).Date == Clock.Now.Date" />
 			
 			<ZipDirectory skipExisting="true">
 				<ZipSpec>c:\code\test\archive\$(root).zip</ZipSpec>
 			</ZipDirectory>
+		</Pipeline>
+		-->
+
+		<Pipeline name="Database">
+			<!--
+			<Select database="tango">
+				<Query>select * from Locations</Query>
+			</Select>
+			-->
+			
+			<ChildDirectories directorySpec="c:\code\test\logs\**" />
+			<ToJson filename="c:\code\test\out.json" />
 		</Pipeline>
 	</Group>
 </Script>

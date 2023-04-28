@@ -47,16 +47,16 @@ namespace Tango.JobRunner.Filters
             {
                 var zipFilename = GetZipFilename(matchingDirectory, zipSpec);
 
-                if(this.SkipExisting && File.Exists(zipFilename))
-                {
-                    Log.Info($"Skipping {zipFilename}");
-                    continue;
-                }
-
                 MakeZipFileDirectory(zipFilename);
 
                 if(File.Exists(zipFilename))
                 {
+                    if(this.SkipExisting)
+                    {
+                        Log.Info($"Skipping {zipFilename}");
+                        continue;
+                    }
+
                     if(this.Overwrite)
                     {
                         Log.Info($"deleting {zipFilename}");
