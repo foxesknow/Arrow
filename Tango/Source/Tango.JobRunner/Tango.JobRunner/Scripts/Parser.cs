@@ -8,6 +8,7 @@ using System.Xml;
 using Arrow.Reflection;
 using Arrow.Xml;
 using Arrow.Xml.ObjectCreation;
+using System.Text.Json;
 
 namespace Tango.JobRunner.Scripts
 {
@@ -30,6 +31,7 @@ namespace Tango.JobRunner.Scripts
             if(jobFactory is null) throw new ArgumentNullException(nameof(jobFactory));
 
             m_JobFactory = jobFactory;
+            m_JobFactory.RegisterJob("Pipeline", typeof(PipelineJob));
         }
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace Tango.JobRunner.Scripts
             {
                 var jobName = jobElement.Name;
                 
-                var job = m_JobFactory.Make(jobName);
+                var job = m_JobFactory.MakeJob(jobName);
                 XmlCreation.Apply(job, jobElement);
                 if(job.Name is null) job.Name = jobName;
                 
@@ -98,6 +100,11 @@ namespace Tango.JobRunner.Scripts
 
                 var logName = MakeLogName(group.Name, job.Name);
                 job.SetLogName(logName);
+
+                if(job is PipelineJob pipelineJob)
+                {
+                    ComposePipeline(group, pipelineJob, jobElement);
+                }
 
                 group.Jobs.Add(job);
             }
@@ -114,6 +121,35 @@ namespace Tango.JobRunner.Scripts
             m_JobFactory.Register(assembly);
         }
 
+        private void ComposePipeline(Group group, PipelineJob pipeline, XmlNode pipelineElement)
+        {
+            var parts = pipelineElement.SelectNodesOrEmpty("*")
+                                       .Cast<XmlElement>()
+                                       .ToArray();
+
+            if(parts.Length == 0) throw new JobRunnerException("a pipeline needs at least a source");
+
+            // The first item in the pipeline is the source, the rest are filters
+            var source = m_JobFactory.MakeSource(parts[0].Name);
+            XmlCreation.Apply(source, parts[0]);
+            if(source.Name is null) source.Name = parts[0].Name;
+            source.Verbose |= pipeline.Verbose;
+            source.SetLogName(MakeLogName(group.Name, pipeline.Name, source.Name));
+            
+            pipeline.Source = source;
+
+            for(int i = 1; i < parts.Length; i++)
+            {
+                var filter = m_JobFactory.MakeFilter(parts[i].Name);
+                XmlCreation.Apply(filter, parts[i]);
+                if(filter.Name is null) filter.Name = parts[i].Name;
+                filter.Verbose |= pipeline.Verbose;
+                filter.SetLogName(MakeLogName(group.Name, pipeline.Name, filter.Name));
+                
+                pipeline.Filters.Add(filter);
+            }
+        }
+
         private bool ParseFlag(XmlElement element, string name, string defaultValue)
         {
             var flag = element.Attributes.GetValueOrDefault(name, defaultValue);
@@ -125,6 +161,14 @@ namespace Tango.JobRunner.Scripts
             if(jobName is null) jobName = "No job name";
 
             return $"{groupName}:{jobName}";
+        }
+
+        private static string MakeLogName(string groupName, string? jobName, string? pipelineItem)
+        {
+            var name = MakeLogName(groupName, jobName);
+
+            if(pipelineItem is null) pipelineItem = "No item name";
+            return $"{name}:{pipelineItem}";
         }
     }
 }

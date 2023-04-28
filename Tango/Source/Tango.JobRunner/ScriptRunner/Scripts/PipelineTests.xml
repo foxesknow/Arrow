@@ -1,0 +1,10 @@
+﻿<Script>
+	<Group name="Greetings">
+		<Pipeline name="Numbers">
+			<Numbers start="10" count="20" />
+			<Where predicate="item.Length > 20" />
+			<Log/>
+		</Pipeline>
+	</Group>
+</Script>
+

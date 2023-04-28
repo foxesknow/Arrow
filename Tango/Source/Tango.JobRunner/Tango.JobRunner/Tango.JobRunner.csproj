@@ -6,6 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\CSharp\Source\Arrow\Arrow.Scripting.Wire\Arrow.Scripting.Wire.csproj" />
 	  <ProjectReference Include="..\..\..\..\CSharp\Source\Arrow\Arrow\Arrow.csproj" />
 	</ItemGroup>
 

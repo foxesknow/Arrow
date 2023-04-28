@@ -158,7 +158,7 @@ namespace Arrow.Data
         }
 
         /// <inheritdoc/>
-        public virtual long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
+        public virtual long GetBytes(int i, long fieldOffset, byte[]? buffer, int bufferoffset, int length)
         {
             return m_Reader.GetBytes(i, fieldOffset, buffer, bufferoffset, length);
         }
@@ -170,7 +170,7 @@ namespace Arrow.Data
         }
 
         /// <inheritdoc/>
-        public virtual long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
+        public virtual long GetChars(int i, long fieldoffset, char[]? buffer, int bufferoffset, int length)
         {
             return m_Reader.GetChars(i, fieldoffset, buffer, bufferoffset, length);
         }
@@ -254,7 +254,7 @@ namespace Arrow.Data
         }
 
         /// <inheritdoc/>
-        public virtual DataTable GetSchemaTable()
+        public virtual DataTable? GetSchemaTable()
         {
             return m_Reader.GetSchemaTable();
         }

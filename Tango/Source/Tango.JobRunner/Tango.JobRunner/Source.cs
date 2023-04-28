@@ -4,20 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Arrow.Logging;
-using Arrow.Logging.Loggers;
-
 namespace Tango.JobRunner
 {
     /// <summary>
-    /// Base class for all jobs
+    /// Defines a pipeline source
     /// </summary>
-    public abstract class Job : Runnable
+    public abstract class Source : Runnable
     {
         /// <summary>
-        /// Runs the actual job
+        /// Generates the initial data for the pipeline
         /// </summary>
         /// <returns></returns>
-        public abstract ValueTask Run();        
+        public abstract IAsyncEnumerable<object> Run();
     }
 }

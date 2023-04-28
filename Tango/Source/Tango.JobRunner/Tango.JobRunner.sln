@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow", "..\..\..\CSharp\So
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptRunner", "ScriptRunner\ScriptRunner.csproj", "{334E2C00-EE1C-45C9-9806-5B756182A6AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tango.JobRunner.Python", "Tango.JobRunner.Python\Tango.JobRunner.Python.csproj", "{3AA13117-6C76-4A6C-A014-9D00A377AF97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tango.JobRunner.Python", "Tango.JobRunner.Python\Tango.JobRunner.Python.csproj", "{3AA13117-6C76-4A6C-A014-9D00A377AF97}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Scripting.Wire", "..\..\..\CSharp\Source\Arrow\Arrow.Scripting.Wire\Arrow.Scripting.Wire.csproj", "{6700D46D-FF2D-4062-BB59-FF0D2C07226D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,14 @@ Global
 		{3AA13117-6C76-4A6C-A014-9D00A377AF97}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3AA13117-6C76-4A6C-A014-9D00A377AF97}.Release|x64.ActiveCfg = Release|Any CPU
 		{3AA13117-6C76-4A6C-A014-9D00A377AF97}.Release|x64.Build.0 = Release|Any CPU
+		{6700D46D-FF2D-4062-BB59-FF0D2C07226D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6700D46D-FF2D-4062-BB59-FF0D2C07226D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6700D46D-FF2D-4062-BB59-FF0D2C07226D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6700D46D-FF2D-4062-BB59-FF0D2C07226D}.Debug|x64.Build.0 = Debug|Any CPU
+		{6700D46D-FF2D-4062-BB59-FF0D2C07226D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6700D46D-FF2D-4062-BB59-FF0D2C07226D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6700D46D-FF2D-4062-BB59-FF0D2C07226D}.Release|x64.ActiveCfg = Release|Any CPU
+		{6700D46D-FF2D-4062-BB59-FF0D2C07226D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

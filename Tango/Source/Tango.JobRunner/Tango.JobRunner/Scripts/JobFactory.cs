@@ -13,14 +13,16 @@ namespace Tango.JobRunner.Scripts
     public sealed class JobFactory
     {
         private readonly Dictionary<string, Type> m_JobTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Type> m_SourceTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Type> m_FilterTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 
-        private readonly Func<Type, Job> m_MakeJob;
+        private readonly Func<Type, object> m_MakeComponent;
 
         /// <summary>
         /// Initializes the instance.
         /// Jobs will be creates via a call to Activator.CreateInstance
         /// </summary>
-        public JobFactory() : this(MakeJob)
+        public JobFactory() : this(MakeComponent)
         {
         }
 
@@ -29,15 +31,25 @@ namespace Tango.JobRunner.Scripts
         /// </summary>
         /// <param name="makeJob">A function responsible for creating instance of jobs</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public JobFactory(Func<Type, Job> makeJob)
+        public JobFactory(Func<Type, object> makeComponent)
         {
-            if(makeJob is null) throw new ArgumentNullException(nameof(makeJob));
+            if(makeComponent is null) throw new ArgumentNullException(nameof(makeComponent));
 
-            m_MakeJob = makeJob;
+            m_MakeComponent = makeComponent;
 
             foreach(var (name, type) in JobDiscovery.PredefinedJobs)
             {
-                Register(name, type);
+                RegisterJob(name, type);
+            }
+
+            foreach(var (name, type) in JobDiscovery.PredefinedSources)
+            {
+                RegisterSource(name, type);
+            }
+
+            foreach(var (name, type) in JobDiscovery.PredefinedFilters)
+            {
+                RegisterFilter(name, type);
             }
         }
 
@@ -50,7 +62,9 @@ namespace Tango.JobRunner.Scripts
         {
             if(assembly is null) throw new ArgumentNullException(nameof(assembly));
 
-            JobDiscovery.LoadFromAssembly(assembly, (type, attribute) => Register(attribute.Name, type));
+            JobDiscovery.LoadFromAssembly<JobAttribute>(assembly, (type, attribute) => RegisterJob(attribute.Name, type));
+            JobDiscovery.LoadFromAssembly<SourceAttribute>(assembly, (type, attribute) => RegisterSource(attribute.Name, type));
+            JobDiscovery.LoadFromAssembly<FilterAttribute>(assembly, (type, attribute) => RegisterFilter(attribute.Name, type));
         }
 
         /// <summary>
@@ -60,7 +74,7 @@ namespace Tango.JobRunner.Scripts
         /// <param name="type"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public void Register(string name, Type type)
+        public void RegisterJob(string name, Type type)
         {
             if(name is null) throw new ArgumentNullException(nameof(name));
             if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name is empty", nameof(name));
@@ -76,6 +90,38 @@ namespace Tango.JobRunner.Scripts
             }
         }
 
+        public void RegisterSource(string name, Type type)
+        {
+            if(name is null) throw new ArgumentNullException(nameof(name));
+            if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name is empty", nameof(name));
+            if(type is null) throw new ArgumentNullException(nameof(type));
+
+            if(typeof(Source).IsAssignableFrom(type))
+            {
+                m_SourceTypes[name] = type;
+            }
+            else
+            {
+                throw new ArgumentException($"{type.Name} is not a source");
+            }
+        }
+
+        public void RegisterFilter(string name, Type type)
+        {
+            if(name is null) throw new ArgumentNullException(nameof(name));
+            if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name is empty", nameof(name));
+            if(type is null) throw new ArgumentNullException(nameof(type));
+
+            if(typeof(Filter).IsAssignableFrom(type))
+            {
+                m_FilterTypes[name] = type;
+            }
+            else
+            {
+                throw new ArgumentException($"{type.Name} is not a dilter");
+            }
+        }
+
         /// <summary>
         /// Creates a job with the specified name
         /// </summary>
@@ -83,13 +129,41 @@ namespace Tango.JobRunner.Scripts
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="JobRunnerException"></exception>
-        public Job Make(string name)
+        public Job MakeJob(string name)
         {
             if(name is null) throw new ArgumentNullException(nameof(name));
 
             if(m_JobTypes.TryGetValue(name, out var type))
             {
-                return m_MakeJob(type);
+                return (Job)m_MakeComponent(type);
+            }
+            else
+            {
+                throw new JobRunnerException($"could not find {name}");
+            }
+        }
+
+        public Source MakeSource(string name)
+        {
+            if(name is null) throw new ArgumentNullException(nameof(name));
+
+            if(m_SourceTypes.TryGetValue(name, out var type))
+            {
+                return (Source)m_MakeComponent(type);
+            }
+            else
+            {
+                throw new JobRunnerException($"could not find {name}");
+            }
+        }
+
+        public Filter MakeFilter(string name)
+        {
+            if(name is null) throw new ArgumentNullException(nameof(name));
+
+            if(m_FilterTypes.TryGetValue(name, out var type))
+            {
+                return (Filter)m_MakeComponent(type);
             }
             else
             {
@@ -98,18 +172,18 @@ namespace Tango.JobRunner.Scripts
         }
 
         /// <summary>
-        /// The default job creator, which uses Activator.CreateInstance.
+        /// The default component creator, which uses Activator.CreateInstance.
         /// Callers can specify their own creator if they want to use DI
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         /// <exception cref="JobRunnerException"></exception>
-        private static Job MakeJob(Type type)
+        private static object MakeComponent(Type type)
         {
             var instance = Activator.CreateInstance(type);
             if(instance is null) throw new JobRunnerException($"could not create instance of {type.Name}");
 
-            return (Job)instance;
+            return instance;
         }
     }
 }

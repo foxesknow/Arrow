@@ -10,6 +10,8 @@ namespace Tango.JobRunner.Scripts
     static class JobDiscovery
     {
         private static readonly Dictionary<string, Type> s_JobTypes = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Type> s_SourceTypes = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Type> s_FilterTypes = new(StringComparer.OrdinalIgnoreCase);
 
         static JobDiscovery()
         {
@@ -19,10 +21,12 @@ namespace Tango.JobRunner.Scripts
 
         public static void Register(Assembly assembly)
         {
-            LoadFromAssembly(assembly, (type, attribute) => s_JobTypes[attribute.Name] = type);
+            LoadFromAssembly<JobAttribute>(assembly, (type, attribute) => s_JobTypes[attribute.Name] = type);
+            LoadFromAssembly<SourceAttribute>(assembly, (type, attribute) => s_SourceTypes[attribute.Name] = type);
+            LoadFromAssembly<FilterAttribute>(assembly, (type, attribute) => s_FilterTypes[attribute.Name] = type);
         }
 
-        public static void LoadFromAssembly(Assembly assembly, Action<Type, JobAttribute> register)
+        public static void LoadFromAssembly<TAttribute>(Assembly assembly, Action<Type, TAttribute> register) where TAttribute : Attribute
         {
             var types = assembly.GetTypes();
 
@@ -31,7 +35,7 @@ namespace Tango.JobRunner.Scripts
                 if(type.IsPublic && type.IsClass && type.IsAbstract == false && type.IsGenericType == false)
                 {
                     // Well, it's eligable...
-                    var attributes = type.GetCustomAttributes<JobAttribute>(false);
+                    var attributes = type.GetCustomAttributes<TAttribute>(false);
                     foreach(var attribute in attributes)
                     {
                         register(type, attribute);
@@ -43,6 +47,16 @@ namespace Tango.JobRunner.Scripts
         public static IReadOnlyDictionary<string, Type> PredefinedJobs
         {
             get{return s_JobTypes;}
+        }
+
+        public static IReadOnlyDictionary<string, Type> PredefinedSources
+        {
+            get{return s_SourceTypes;}
+        }
+
+        public static IReadOnlyDictionary<string, Type> PredefinedFilters
+        {
+            get{return s_FilterTypes;}
         }
     }
 }
