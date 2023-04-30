@@ -56,7 +56,7 @@ namespace Workbench
                 Log.Info("Running in test mode");
             }
 
-            var runSheet = MakeRunSheet();
+            var batch = MakeBatch();
 
             var jobFactory = MakeJobFactory();
             var parser = new Parser(jobFactory)
@@ -65,23 +65,23 @@ namespace Workbench
             };
 
             var (script, uri) = LoadScript(m_ScriptFilename);
-            parser.Parse(runSheet, script.DocumentElement!);
+            parser.Parse(batch, script.DocumentElement!);
 
             if(uri.LocalPath is not null)
             {
-                runSheet.ScriptDirectory = Path.GetDirectoryName(uri.LocalPath) ?? "";
+                batch.ScriptDirectory = Path.GetDirectoryName(uri.LocalPath) ?? "";
             }
 
-            return Execute(runSheet);
+            return Execute(batch);
         }
 
-        private async Task Execute(RunnerRunSheet runSheet)
+        private async Task Execute(RunnerBatch batch)
         {
             try
             {
                 Log.Info("Running sheet");
 
-                await runSheet.Run(m_RunConfig).ContinueOnAnyContext();
+                await batch.Run(m_RunConfig).ContinueOnAnyContext();
             }
             catch(Exception e)
             {
@@ -99,10 +99,10 @@ namespace Workbench
             return new JobFactory(static _ => new NullJob());
         }
 
-        private RunnerRunSheet MakeRunSheet()
+        private RunnerBatch MakeBatch()
         {
-            var runSheet = AppConfig.GetSectionObject<RunnerRunSheet>("App", "RunSheet");
-            return runSheet;
+            var batch = AppConfig.GetSectionObject<RunnerBatch>("App", "Batch");
+            return batch;
         }
 
         private void ChangeClock(DateTime when)

@@ -24,12 +24,12 @@ namespace Workbench
 
         private readonly object m_SyncRoot = new();
 
-        private readonly RunnerRunSheet m_Script;
+        private readonly RunnerBatch m_Script;
         private readonly IDatabaseManager m_DatabaseManager;
 
         private string m_ScriptDirectory = "";
 
-        public RunnerJobContext(RunnerRunSheet script)
+        public RunnerJobContext(RunnerBatch script)
         {
             m_Script = script;
             m_DatabaseManager = m_Script.DatabaseManager;

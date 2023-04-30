@@ -15,14 +15,14 @@ namespace Tango.Workbench
     /// </summary>
     public sealed class Group
     {
-        public Group(RunSheet script)
+        public Group(Batch script)
         {
             if(script is null) throw new ArgumentNullException(nameof(script));
 
             this.Script = script;
         }
 
-        public RunSheet Script{get;}
+        public Batch Script{get;}
 
         /// <summary>
         /// The name of the group

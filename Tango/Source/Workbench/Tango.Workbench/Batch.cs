@@ -9,7 +9,7 @@ namespace Tango.Workbench
     /// <summary>
     /// A run sheet describes the groups that will be run
     /// </summary>
-    public abstract class RunSheet
+    public abstract class Batch
     {
         /// <summary>
         /// Adds a new group to the sheet

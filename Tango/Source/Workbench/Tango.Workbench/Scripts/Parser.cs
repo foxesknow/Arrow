@@ -42,15 +42,15 @@ namespace Tango.Workbench.Scripts
         /// <summary>
         /// Parses an xml script and populates the run sheet
         /// </summary>
-        /// <param name="runSheet"></param>
+        /// <param name="batch"></param>
         /// <param name="scriptElement"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public void Parse(RunSheet runSheet, XmlElement scriptElement)
+        public void Parse(Batch batch, XmlElement scriptElement)
         {
-            if(runSheet is null) throw new ArgumentNullException(nameof(runSheet));
+            if(batch is null) throw new ArgumentNullException(nameof(batch));
             if(scriptElement is null) throw new ArgumentNullException(nameof(scriptElement));
 
-            m_Factory.ApplyNodeAttributes(scriptElement, runSheet);
+            m_Factory.ApplyNodeAttributes(scriptElement, batch);
 
             foreach(XmlElement element in scriptElement.SelectNodesOrEmpty("*"))
             {
@@ -59,11 +59,11 @@ namespace Tango.Workbench.Scripts
                 switch(what)
                 {
                     case "Group":
-                        HandleGroup(runSheet, element);
+                        HandleGroup(batch, element);
                         break;
 
                     case "Import":
-                        HandleImport(runSheet, element);
+                        HandleImport(batch, element);
                         break;
 
                     default: break;
@@ -71,14 +71,14 @@ namespace Tango.Workbench.Scripts
             }
         }
 
-        private void HandleGroup(RunSheet runSheet, XmlElement groupElement)
+        private void HandleGroup(Batch batch, XmlElement groupElement)
         {
             var transactional = ParseFlag(groupElement, "transactional", "true");
             var enabled = ParseFlag(groupElement, "enabled", "true");
             var allowFail = ParseFlag(groupElement, "allowFail", "false");
             var verbose = ParseFlag(groupElement, "verbose", "false");
 
-            var group = new Group(runSheet)
+            var group = new Group(batch)
             {
                 Name = groupElement.Attributes.GetValueOrDefault("name", "No name"),
                 Enabled = enabled,
@@ -109,10 +109,10 @@ namespace Tango.Workbench.Scripts
                 group.Jobs.Add(job);
             }
 
-            runSheet.Add(group);
+            batch.Add(group);
         }
 
-        private void HandleImport(RunSheet runSheet, XmlElement importElement)
+        private void HandleImport(Batch batch, XmlElement importElement)
         {
             var assemblyName = importElement.InnerText.Trim();
             if(string.IsNullOrWhiteSpace(assemblyName)) throw new WorkbenchException($"no assembly specified in import element");

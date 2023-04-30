@@ -13,7 +13,7 @@ using Tango.Workbench;
 
 namespace Workbench
 {
-    internal class RunnerRunSheet : RunSheet
+    internal class RunnerBatch : Batch
     {
         private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[RunSheet]");
 
