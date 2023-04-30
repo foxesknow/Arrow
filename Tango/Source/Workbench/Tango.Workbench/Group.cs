@@ -80,8 +80,10 @@ namespace Tango.Workbench
                         try
                         {
                             log.Info($"Running {job.Name}");
-                        
-                            job.Context = context;                            
+
+                            var dependencies = new RuntimeDependencies(context, score);                        
+                            job.RegisterRuntimeDependencies(dependencies);
+
                             await job.Run().ContinueOnAnyContext();
                         }
                         catch(Exception e)
@@ -93,8 +95,7 @@ namespace Tango.Workbench
                         {
                             score.StopUtc = DateTime.UtcNow;
 
-                            job.Context = null!;
-                            job.Score = null!;
+                            job.UnregisterRuntimeDependencies();
                         }
                     }
 
@@ -141,8 +142,6 @@ namespace Tango.Workbench
             var score = new Score(job);
             score.StartUtc = DateTime.UtcNow;
             scorecard.Add(score);
-
-            job.Score = score;
 
             return score;
         }

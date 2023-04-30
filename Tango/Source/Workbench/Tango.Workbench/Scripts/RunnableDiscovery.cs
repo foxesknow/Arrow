@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace Tango.Workbench.Scripts
 {
-    static class JobDiscovery
+    static class RunnableDiscovery
     {
         private static readonly Dictionary<string, Type> s_JobTypes = new(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, Type> s_SourceTypes = new(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, Type> s_FilterTypes = new(StringComparer.OrdinalIgnoreCase);
 
-        static JobDiscovery()
+        static RunnableDiscovery()
         {
             // Register any standard jobs to save users having to do so explicitly
-            Register(typeof(JobDiscovery).Assembly);
+            Register(typeof(RunnableDiscovery).Assembly);
         }
 
         public static void Register(Assembly assembly)

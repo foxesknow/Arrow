@@ -58,8 +58,8 @@ namespace Workbench
 
             var batch = MakeBatch();
 
-            var jobFactory = MakeJobFactory();
-            var parser = new Parser(jobFactory)
+            var runnableFactory = MakeRunnableFactory();
+            var parser = new Parser(runnableFactory)
             {
                 Verbose = m_Verbose
             };
@@ -89,14 +89,14 @@ namespace Workbench
             }
         }
 
-        private JobFactory MakeJobFactory()
+        private RunnableFactory MakeRunnableFactory()
         {
             if(m_Live)
             {
-                return new JobFactory();
+                return new RunnableFactory();
             }
 
-            return new JobFactory(static _ => new NullJob());
+            return new RunnableFactory(static _ => new NullJob());
         }
 
         private RunnerBatch MakeBatch()

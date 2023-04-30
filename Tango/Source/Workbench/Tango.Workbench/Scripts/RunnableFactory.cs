@@ -10,7 +10,7 @@ namespace Tango.Workbench.Scripts
     /// <summary>
     /// The class is responsible for creating job instnaces
     /// </summary>
-    public sealed class JobFactory
+    public sealed class RunnableFactory
     {
         private readonly Dictionary<string, Type> m_JobTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, Type> m_SourceTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
@@ -22,7 +22,7 @@ namespace Tango.Workbench.Scripts
         /// Initializes the instance.
         /// Jobs will be creates via a call to Activator.CreateInstance
         /// </summary>
-        public JobFactory() : this(MakeComponent)
+        public RunnableFactory() : this(MakeComponent)
         {
         }
 
@@ -31,23 +31,23 @@ namespace Tango.Workbench.Scripts
         /// </summary>
         /// <param name="makeJob">A function responsible for creating instance of jobs</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public JobFactory(Func<Type, object> makeComponent)
+        public RunnableFactory(Func<Type, object> makeComponent)
         {
             if(makeComponent is null) throw new ArgumentNullException(nameof(makeComponent));
 
             m_MakeComponent = makeComponent;
 
-            foreach(var (name, type) in JobDiscovery.PredefinedJobs)
+            foreach(var (name, type) in RunnableDiscovery.PredefinedJobs)
             {
                 RegisterJob(name, type);
             }
 
-            foreach(var (name, type) in JobDiscovery.PredefinedSources)
+            foreach(var (name, type) in RunnableDiscovery.PredefinedSources)
             {
                 RegisterSource(name, type);
             }
 
-            foreach(var (name, type) in JobDiscovery.PredefinedFilters)
+            foreach(var (name, type) in RunnableDiscovery.PredefinedFilters)
             {
                 RegisterFilter(name, type);
             }
@@ -62,9 +62,9 @@ namespace Tango.Workbench.Scripts
         {
             if(assembly is null) throw new ArgumentNullException(nameof(assembly));
 
-            JobDiscovery.LoadFromAssembly<JobAttribute>(assembly, (type, attribute) => RegisterJob(attribute.Name, type));
-            JobDiscovery.LoadFromAssembly<SourceAttribute>(assembly, (type, attribute) => RegisterSource(attribute.Name, type));
-            JobDiscovery.LoadFromAssembly<FilterAttribute>(assembly, (type, attribute) => RegisterFilter(attribute.Name, type));
+            RunnableDiscovery.LoadFromAssembly<JobAttribute>(assembly, (type, attribute) => RegisterJob(attribute.Name, type));
+            RunnableDiscovery.LoadFromAssembly<SourceAttribute>(assembly, (type, attribute) => RegisterSource(attribute.Name, type));
+            RunnableDiscovery.LoadFromAssembly<FilterAttribute>(assembly, (type, attribute) => RegisterFilter(attribute.Name, type));
         }
 
         /// <summary>

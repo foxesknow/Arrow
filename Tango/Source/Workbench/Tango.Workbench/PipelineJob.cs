@@ -17,8 +17,6 @@ namespace Tango.Workbench
 
             try
             {
-                RegisterComponentRequirements();
-
                 var factory = BuildPipelineFactory();
                 var sequence = factory();
 
@@ -30,26 +28,24 @@ namespace Tango.Workbench
             finally
             {
                 VerboseLog.Info($"{count} items went through the pipeline");
-
-                UnregisterComponentRequirements();
             }
         }
 
-        private void RegisterComponentRequirements()
+        internal override void RegisterRuntimeDependencies(RuntimeDependencies dependencies)
         {
+            base.RegisterRuntimeDependencies(dependencies);
+
             foreach(var component in AllComponents())
             {
-                component.Context = this.Context;
-                component.Score = this.Score;
+                component.RegisterRuntimeDependencies(dependencies);
             }
         }
 
-        private void UnregisterComponentRequirements()
+        internal override void UnregisterRuntimeDependencies()
         {
             foreach(var component in AllComponents())
             {
-                component.Context = null!;
-                component.Score = null!;
+                component.UnregisterRuntimeDependencies();
             }
         }
 

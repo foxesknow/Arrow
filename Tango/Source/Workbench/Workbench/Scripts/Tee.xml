@@ -1,0 +1,17 @@
+﻿<Script>
+	<Group name="Pipe">
+		<Pipeline name="TeeTest">
+			<Numbers from="0" count="50" />
+			<Tee name="Multiple of 10">
+				<Where predicate ="(item % 10) == 0" />
+				<Log/>
+			</Tee>
+			<Tee name="Multiple of 7">
+				<Where predicate ="(item % 7) == 0" />
+				<Log/>
+			</Tee>
+		</Pipeline>
+	</Group>
+</Script>
+
+

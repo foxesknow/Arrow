@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,13 +52,25 @@ namespace Tango.Workbench
         /// <summary>
         /// The score for the current job
         /// </summary>
-        protected internal Score Score{get; internal set;} = default!;
+        protected internal Score Score{get; private set;} = default!;
        
         /// <summary>
         /// Context information for the job.
         /// This is only valid when your job is running
         /// </summary>
-        protected internal JobContext Context{get; internal set;} = default!;
+        protected internal JobContext Context{get; private set;} = default!;
+
+        internal virtual void RegisterRuntimeDependencies(RuntimeDependencies dependencies)
+        {
+            this.Context = dependencies.Context;
+            this.Score = dependencies.Score;
+        }
+
+        internal virtual void UnregisterRuntimeDependencies()
+        {
+            this.Context = null!;
+            this.Score = null!;
+        }
 
         internal void SetLogName(string? name)
         {
