@@ -9,8 +9,8 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\..\CSharp\Source\Arrow\Arrow\Arrow.csproj" />
-	  <ProjectReference Include="..\Tango.JobRunner.Python\Tango.Workbench.Python.csproj" />
-	  <ProjectReference Include="..\Tango.JobRunner\Tango.Workbench.csproj" />
+	  <ProjectReference Include="..\Tango.Workbench.Python\Tango.Workbench.Python.csproj" />
+	  <ProjectReference Include="..\Tango.Workbench\Tango.Workbench.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

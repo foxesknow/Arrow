@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Tango.JobRunner\Tango.JobRunner.csproj" />
+	  <ProjectReference Include="..\Tango.Workbench\Tango.Workbench.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
