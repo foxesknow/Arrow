@@ -6,7 +6,7 @@
     },
     "PID Test": {
       "commandName": "Project",
-      "commandLineArgs": "-live -v -pidfile:c:\\code\\test\\scriptrunner.pid C:\\Code\\git\\Arrow\\Tango\\Source\\Tango.JobRunner\\ScriptRunner\\Scripts\\ExecuteSql.xml"
+      "commandLineArgs": "-live -v -pidfile:c:\\code\\test\\scriptrunner.pid C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\ExecuteSql.xml"
     },
     "Python": {
       "commandName": "Project",
@@ -14,7 +14,7 @@
     },
     "Pipeline": {
       "commandName": "Project",
-      "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Tango.JobRunner\\ScriptRunner\\Scripts\\PipelineTests.xml"
+      "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\PipelineTests.xml"
     }
   }
 }

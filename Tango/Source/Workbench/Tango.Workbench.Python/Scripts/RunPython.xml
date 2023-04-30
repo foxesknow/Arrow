@@ -1,5 +1,5 @@
 ﻿<Script>
-	<Import>Tango.JobRunner.Python</Import>
+	<Import>Tango.Workbench.Python</Import>
 	
 	<Group name="Python">
 		<Python name="Hello world" filename="HelloWorld.py">

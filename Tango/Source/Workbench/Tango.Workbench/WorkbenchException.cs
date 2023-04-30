@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Tango.Workbench
 {
     /// <summary>
-    /// Base class for JobRunner exceptions
+    /// Base class for Workbench exceptions
     /// </summary>
     [Serializable]
     public class WorkbenchException : Exception

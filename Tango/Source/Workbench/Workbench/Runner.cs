@@ -20,7 +20,7 @@ using Tango.Workbench;
 using Tango.Workbench.Jobs;
 using Tango.Workbench.Scripts;
 
-namespace ScriptRunner
+namespace Workbench
 {
     internal class Runner : IDisposable
     {

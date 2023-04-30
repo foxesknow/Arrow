@@ -11,7 +11,7 @@ using Arrow.Logging;
 
 using Tango.Workbench;
 
-namespace ScriptRunner
+namespace Workbench
 {
     internal class RunnerJobContext : JobContext
     {

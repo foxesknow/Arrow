@@ -11,7 +11,7 @@ using Arrow.Threading.Tasks;
 
 using Tango.Workbench;
 
-namespace ScriptRunner
+namespace Workbench
 {
     internal class RunnerRunSheet : RunSheet
     {

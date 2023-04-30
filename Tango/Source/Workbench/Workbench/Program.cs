@@ -8,7 +8,7 @@ using Arrow.Reflection;
 
 [assembly: ForceAssemblyReference(typeof(Tango.Workbench.Python.PythonJob))]
 
-namespace ScriptRunner
+namespace Workbench
 {
     internal class Program
     {
