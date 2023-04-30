@@ -8,7 +8,7 @@ using Arrow.Logging;
 using Arrow.Threading;
 using Arrow.Threading.Tasks;
 
-namespace Tango.JobRunner
+namespace Tango.Workbench
 {
     /// <summary>
     /// A group is a collection of jobs

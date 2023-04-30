@@ -9,7 +9,7 @@ using Arrow.Data.DatabaseManagers;
 using Arrow.Logging;
 using Arrow.Threading.Tasks;
 
-using Tango.JobRunner;
+using Tango.Workbench;
 
 namespace ScriptRunner
 {

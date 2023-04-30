@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Arrow.Logging;
 
-namespace Tango.JobRunner.Python
+namespace Tango.Workbench.Python
 {
     /// <summary>
     /// IronPython has a problem with explicitly implemented interfaces so

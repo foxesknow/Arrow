@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tango.JobRunner.Scripts
+namespace Tango.Workbench.Scripts
 {
     static class JobDiscovery
     {

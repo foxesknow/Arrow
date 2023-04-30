@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tango.JobRunner.Jobs
+namespace Tango.Workbench.Jobs
 {
     /// <summary>
     /// Executes sql against a database
@@ -14,8 +14,8 @@ namespace Tango.JobRunner.Jobs
     {
         public override ValueTask Run()
         {
-            if(this.Database is null) throw new JobRunnerException("no database specified");
-            if(this.Sql is null) throw new JobRunnerException("no sql specified");
+            if(this.Database is null) throw new WorkbenchException("no database specified");
+            if(this.Sql is null) throw new WorkbenchException("no sql specified");
 
             using(var command = this.Context.CreateCommand(this.Database))
             {

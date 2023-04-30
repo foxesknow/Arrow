@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tango.JobRunner.Filters
+namespace Tango.Workbench.Filters
 {
     /// <summary>
     /// Calls ToString() on each item in the sequence.

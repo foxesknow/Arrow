@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tango.JobRunner
+namespace Tango.Workbench
 {
     /// <summary>
     /// Defines how the script will be run

@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Xml;
 using System.Threading;
 
-namespace Tango.JobRunner.Jobs
+namespace Tango.Workbench.Jobs
 {
     /// <summary>
     /// Runs multiple scripts at once by invoking new instance of the host application
@@ -97,7 +97,7 @@ namespace Tango.JobRunner.Jobs
                     }
                     else
                     {
-                        throw new JobRunnerException($"{failedScripts.Count} failed");
+                        throw new WorkbenchException($"{failedScripts.Count} failed");
                     }
                 }
             }
@@ -163,11 +163,11 @@ namespace Tango.JobRunner.Jobs
         /// Works out which executable is running us!
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="JobRunnerException"></exception>
+        /// <exception cref="WorkbenchException"></exception>
         private string GetExecutable()
         {
             var exe = Process.GetCurrentProcess().MainModule?.FileName;
-            if(exe is null) throw new JobRunnerException($"could not work out what the executable is");
+            if(exe is null) throw new WorkbenchException($"could not work out what the executable is");
 
             return exe;
         }

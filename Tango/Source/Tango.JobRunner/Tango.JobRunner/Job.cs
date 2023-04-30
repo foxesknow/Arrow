@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Arrow.Logging;
 using Arrow.Logging.Loggers;
 
-namespace Tango.JobRunner
+namespace Tango.Workbench
 {
     /// <summary>
     /// Base class for all jobs

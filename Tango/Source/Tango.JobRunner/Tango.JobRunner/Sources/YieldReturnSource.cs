@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Arrow.Collections;
 
-namespace Tango.JobRunner.Sources
+namespace Tango.Workbench.Sources
 {
     /// <summary>
     /// Yields a sequence of items

@@ -9,7 +9,7 @@ using Arrow.Data;
 using Arrow.Execution;
 using Arrow.Logging;
 
-using Tango.JobRunner;
+using Tango.Workbench;
 
 namespace ScriptRunner
 {
@@ -56,7 +56,7 @@ namespace ScriptRunner
         /// </summary>
         /// <param name="databaseName"></param>
         /// <returns></returns>
-        /// <exception cref="JobRunnerException"></exception>
+        /// <exception cref="WorkbenchException"></exception>
         public override IDbCommand CreateCommand(string databaseName)
         {
             lock(m_SyncRoot)
@@ -67,7 +67,7 @@ namespace ScriptRunner
                     (ConnectionInfo.Transactional, true)    => MakeTransactionalCommand(databaseName),
                     (ConnectionInfo.Transactional, false)   => MakeNonTransactionalCommand(databaseName),
                     (ConnectionInfo.Default, _)             => MakeNonTransactionalCommand(databaseName),
-                    var other                               => throw new JobRunnerException("unsupported connection type: {other}")
+                    var other                               => throw new WorkbenchException("unsupported connection type: {other}")
                 };
             }
         }

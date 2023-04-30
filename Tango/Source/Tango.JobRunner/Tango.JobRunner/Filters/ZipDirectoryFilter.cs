@@ -11,7 +11,7 @@ using Arrow.Calendar;
 using Arrow.Execution;
 using Arrow.IO;
 
-namespace Tango.JobRunner.Filters
+namespace Tango.Workbench.Filters
 {
     /// <summary>
     /// Takes in a sequence of directories and zips them up
@@ -21,7 +21,7 @@ namespace Tango.JobRunner.Filters
     {
         public override IAsyncEnumerable<object> Run(IAsyncEnumerable<object> items)
         {
-            if(this.ZipSpec is null) throw new JobRunnerException("no zip spec specified");
+            if(this.ZipSpec is null) throw new WorkbenchException("no zip spec specified");
 
             return Zip(this.ZipSpec, items);
         }
@@ -34,7 +34,7 @@ namespace Tango.JobRunner.Filters
                 {
                     string directory            => ZipDirectory(new(directory), zipSpec),
                     DirectoryInfo directoryInfo => ZipDirectory(directoryInfo, zipSpec), 
-                    _                           => throw new JobRunnerException($"item does not specify a directory")
+                    _                           => throw new WorkbenchException($"item does not specify a directory")
                 };
 
                 yield return item;
@@ -64,7 +64,7 @@ namespace Tango.JobRunner.Filters
                     }
                     else
                     {
-                        throw new JobRunnerException($"zip file already exists: {zipFilename}");
+                        throw new WorkbenchException($"zip file already exists: {zipFilename}");
                     }
                 }
 

@@ -9,7 +9,7 @@ using static Community.CsharpSqlite.Sqlite3;
 using System.Dynamic;
 using Microsoft.Scripting;
 
-namespace Tango.JobRunner.Python
+namespace Tango.Workbench.Python
 {
     /// <summary>
     /// Runs a Python script stored in another file
@@ -19,7 +19,7 @@ namespace Tango.JobRunner.Python
     {
         public override ValueTask Run()
         {
-            if(this.Filename is null) throw new JobRunnerException($"no script specified");
+            if(this.Filename is null) throw new WorkbenchException($"no script specified");
 
             var filename = MakeScriptFilename(this.Filename);
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Arrow.Text;
 
-namespace Tango.JobRunner
+namespace Tango.Workbench
 {
     /// <summary>
     /// Expands job runner specific tokens.

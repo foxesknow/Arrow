@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Arrow.Collections;
 
-namespace Tango.JobRunner.Sources
+namespace Tango.Workbench.Sources
 {
     /// <summary>
     /// Generates a sequence of numbers

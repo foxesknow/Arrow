@@ -8,7 +8,7 @@ using Arrow.Calendar;
 using Arrow.Execution;
 using Arrow.IO;
 
-namespace Tango.JobRunner.Jobs
+namespace Tango.Workbench.Jobs
 {
     /// <summary>
     /// The job deletes files which are over a particular age
@@ -43,7 +43,7 @@ namespace Tango.JobRunner.Jobs
                     {
                         if(this.IgnoreMissing) continue;
 
-                        throw new JobRunnerException($"directory does not exist: {path}");
+                        throw new WorkbenchException($"directory does not exist: {path}");
                     }
 
                     try
@@ -80,10 +80,10 @@ namespace Tango.JobRunner.Jobs
         private (string Directory, string Filespec) SplitFilename(string filename)
         {
             var directory = Path.GetDirectoryName(filename);
-            if(directory is null) throw new JobRunnerException($"no directory in filename");
+            if(directory is null) throw new WorkbenchException($"no directory in filename");
 
             var filespec = Path.GetFileName(filename);
-            if(filespec is null) throw new JobRunnerException($"no filespec in filename");
+            if(filespec is null) throw new WorkbenchException($"no filespec in filename");
 
             return (directory, filespec);
         }

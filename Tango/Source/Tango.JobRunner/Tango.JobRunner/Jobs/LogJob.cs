@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tango.JobRunner.Jobs
+namespace Tango.Workbench.Jobs
 {
     /// <summary>
     /// Writes to the info log

@@ -11,7 +11,7 @@ using System.Xml.Schema;
 using Arrow.Execution;
 using System.Threading;
 
-namespace Tango.JobRunner.Jobs
+namespace Tango.Workbench.Jobs
 {
     /// <summary>
     /// Zips a directory into a zip archive, and optionally removes the source directory

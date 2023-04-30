@@ -16,9 +16,9 @@ using Arrow.Text;
 using Arrow.Threading.Tasks;
 using Arrow.Xml.Macro;
 
-using Tango.JobRunner;
-using Tango.JobRunner.Jobs;
-using Tango.JobRunner.Scripts;
+using Tango.Workbench;
+using Tango.Workbench.Jobs;
+using Tango.Workbench.Scripts;
 
 namespace ScriptRunner
 {
@@ -43,7 +43,7 @@ namespace ScriptRunner
         {
             ParseCommandLine(args);
 
-            if(m_ScriptFilename is null) throw new JobRunnerException("no script specified");
+            if(m_ScriptFilename is null) throw new WorkbenchException("no script specified");
 
             if(m_BaselineDate.HasValue) ChangeClock(m_BaselineDate.Value);
 

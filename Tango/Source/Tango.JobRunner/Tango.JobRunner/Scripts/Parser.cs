@@ -10,7 +10,7 @@ using Arrow.Xml;
 using Arrow.Xml.ObjectCreation;
 using System.Text.Json;
 
-namespace Tango.JobRunner.Scripts
+namespace Tango.Workbench.Scripts
 {
     /// <summary>
     /// Parses a script
@@ -115,7 +115,7 @@ namespace Tango.JobRunner.Scripts
         private void HandleImport(RunSheet runSheet, XmlElement importElement)
         {
             var assemblyName = importElement.InnerText.Trim();
-            if(string.IsNullOrWhiteSpace(assemblyName)) throw new JobRunnerException($"no assembly specified in import element");
+            if(string.IsNullOrWhiteSpace(assemblyName)) throw new WorkbenchException($"no assembly specified in import element");
 
             var assembly = TypeResolver.LoadAssembly(assemblyName);
             m_JobFactory.Register(assembly);
@@ -127,7 +127,7 @@ namespace Tango.JobRunner.Scripts
                                        .Cast<XmlElement>()
                                        .ToArray();
 
-            if(parts.Length == 0) throw new JobRunnerException("a pipeline needs at least a source");
+            if(parts.Length == 0) throw new WorkbenchException("a pipeline needs at least a source");
 
             // The first item in the pipeline is the source, the rest are filters
             var source = m_JobFactory.MakeSource(parts[0].Name);

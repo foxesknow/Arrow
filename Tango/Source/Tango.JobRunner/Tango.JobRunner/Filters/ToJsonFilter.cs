@@ -9,9 +9,9 @@ using System.Globalization;
 
 using Arrow.Execution;
 
-using Tango.JobRunner.Data;
+using Tango.Workbench.Data;
 
-namespace Tango.JobRunner.Filters
+namespace Tango.Workbench.Filters
 {
     [Filter("ToJson")]
     public sealed class ToJsonFilter : Filter
@@ -37,7 +37,7 @@ namespace Tango.JobRunner.Filters
                 }
                 else
                 {
-                    throw new JobRunnerException($"zip file already exists: {filename}");
+                    throw new WorkbenchException($"zip file already exists: {filename}");
                 }
             }
 

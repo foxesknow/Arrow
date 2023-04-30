@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Arrow.Scripting.Wire;
 using Arrow.Scripting.Wire.StaticExpression;
 
-namespace Tango.JobRunner.Filters
+namespace Tango.Workbench.Filters
 {
     /// <summary>
     /// Applies a predicate to incoming data, only passing through the data that evaluates to true

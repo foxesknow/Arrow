@@ -6,7 +6,7 @@ using Arrow.Application;
 using Arrow.Execution;
 using Arrow.Reflection;
 
-[assembly: ForceAssemblyReference(typeof(Tango.JobRunner.Python.PythonJob))]
+[assembly: ForceAssemblyReference(typeof(Tango.Workbench.Python.PythonJob))]
 
 namespace ScriptRunner
 {

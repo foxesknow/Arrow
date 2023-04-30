@@ -4,9 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tango.JobRunner.Data;
+using Tango.Workbench.Data;
 
-namespace Tango.JobRunner.Sources
+namespace Tango.Workbench.Sources
 {
     [Source("Select")]
     public sealed class SelectSource : Source

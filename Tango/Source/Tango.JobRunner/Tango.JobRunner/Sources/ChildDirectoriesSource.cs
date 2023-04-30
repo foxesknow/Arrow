@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Arrow.IO;
 
-namespace Tango.JobRunner.Sources
+namespace Tango.Workbench.Sources
 {
     /// <summary>
     /// Returns all directory names that match a given directory spec
@@ -17,7 +17,7 @@ namespace Tango.JobRunner.Sources
     {
         public override async IAsyncEnumerable<object> Run()
         {
-            if(this.DirectorySpec is null) throw new JobRunnerException($"no directory spec specified");
+            if(this.DirectorySpec is null) throw new WorkbenchException($"no directory spec specified");
 
             await ForceAsync();
 

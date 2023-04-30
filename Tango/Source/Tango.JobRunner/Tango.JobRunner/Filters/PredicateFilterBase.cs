@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Arrow.Scripting.Wire;
 using Arrow.Scripting.Wire.StaticExpression;
 
-namespace Tango.JobRunner.Filters
+namespace Tango.Workbench.Filters
 {
     /// <summary>
     /// Base class for all filters that preform some sort of filtering.

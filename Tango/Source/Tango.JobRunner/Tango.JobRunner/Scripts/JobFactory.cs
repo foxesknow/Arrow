@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tango.JobRunner.Scripts
+namespace Tango.Workbench.Scripts
 {
     /// <summary>
     /// The class is responsible for creating job instnaces
@@ -128,7 +128,7 @@ namespace Tango.JobRunner.Scripts
         /// <param name="name"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="JobRunnerException"></exception>
+        /// <exception cref="WorkbenchException"></exception>
         public Job MakeJob(string name)
         {
             if(name is null) throw new ArgumentNullException(nameof(name));
@@ -139,7 +139,7 @@ namespace Tango.JobRunner.Scripts
             }
             else
             {
-                throw new JobRunnerException($"could not find {name}");
+                throw new WorkbenchException($"could not find {name}");
             }
         }
 
@@ -153,7 +153,7 @@ namespace Tango.JobRunner.Scripts
             }
             else
             {
-                throw new JobRunnerException($"could not find {name}");
+                throw new WorkbenchException($"could not find {name}");
             }
         }
 
@@ -167,7 +167,7 @@ namespace Tango.JobRunner.Scripts
             }
             else
             {
-                throw new JobRunnerException($"could not find {name}");
+                throw new WorkbenchException($"could not find {name}");
             }
         }
 
@@ -177,11 +177,11 @@ namespace Tango.JobRunner.Scripts
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        /// <exception cref="JobRunnerException"></exception>
+        /// <exception cref="WorkbenchException"></exception>
         private static object MakeComponent(Type type)
         {
             var instance = Activator.CreateInstance(type);
-            if(instance is null) throw new JobRunnerException($"could not create instance of {type.Name}");
+            if(instance is null) throw new WorkbenchException($"could not create instance of {type.Name}");
 
             return instance;
         }

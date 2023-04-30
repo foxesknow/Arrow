@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace Tango.JobRunner.Data
+namespace Tango.Workbench.Data
 {
     public sealed class StructuredObject : IEnumerable<(string Name, object? Value)>
     {
