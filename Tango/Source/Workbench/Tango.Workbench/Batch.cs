@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 namespace Tango.Workbench
 {
     /// <summary>
-    /// A run sheet describes the groups that will be run
+    /// A batch describes the groups that will be run
     /// </summary>
     public abstract class Batch
     {
         /// <summary>
-        /// Adds a new group to the sheet
+        /// Adds a new group to the batch
         /// </summary>
         /// <param name="group"></param>
         public abstract void Add(Group group);
 
         /// <summary>
-        /// Executes the sheet
+        /// Executes the batch
         /// </summary>
         /// <param name="runData"></param>
         /// <returns></returns>

@@ -37,7 +37,7 @@ namespace Tango.Workbench
 
         /// <summary>
         /// True if a group is allowed to fail. 
-        /// If so then this won't stop the next group from running
+        /// If so then this won't stop the next group from running, but any transactions will be rolled back
         /// </summary>
         public bool AllowFail{get; set;}
 

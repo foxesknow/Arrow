@@ -23,6 +23,14 @@ namespace Tango.Workbench
             m_AsyncScopeID.Value = m_ScopeID;
         }
 
+        /// <summary>
+        /// Called by the implementation to indicate that it is starting a new logic scope
+        /// and that the framework should make any necessary changes that may be required.
+        /// 
+        /// For example, database connections cannot be shared across threads. When we enter
+        /// a new scope we will create a new set of connections for them,
+        /// </summary>
+        /// <returns></returns>
         internal long EnterNewAsyncScope()
         {
             var id = Interlocked.Increment(ref m_ScopeID);

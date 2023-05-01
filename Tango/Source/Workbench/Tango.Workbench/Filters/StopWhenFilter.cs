@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Tango.Workbench.Filters
 {
+    /// <summary>
+    /// Stops passing items through the pipeline when the predicate is true
+    /// </summary>
     [Filter("StopWhen")]
     public sealed class StopWhenFilter : PredicateFilterBase
     {

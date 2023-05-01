@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Tango.Workbench.Filters
 {
+    /// <summary>
+    /// Skips items whilst the predicate is true. 
+    /// Once it goes to false all subsequent items will be returned.
+    /// </summary>
     [Filter("SkipWhile")]
     public sealed class SkipWhileFilter : PredicateFilterBase
     {

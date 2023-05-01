@@ -113,8 +113,15 @@ namespace Tango.Workbench.Filters
         /// </summary>
         public string? ZipSpec{get; set;}
 
+        /// <summary>
+        /// True to overwrite the file.
+        /// If false then if the file already exists an exception is thrown
+        /// </summary>
         public bool Overwrite{get; set;}
 
+        /// <summary>
+        /// True to skip writing to file if the file already exists
+        /// </summary>
         public bool SkipExisting{get; set;}
     }
 }

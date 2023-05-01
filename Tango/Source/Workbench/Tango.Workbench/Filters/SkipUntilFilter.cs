@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Tango.Workbench.Filters
 {
+    /// <summary>
+    /// Skips incoming items until the predicate is true.
+    /// Once it is true all subsequent items will be returned.
+    /// </summary>
     [Filter("SkipUntil")]
     public sealed class SkipUntilFilter : PredicateFilterBase
     {
@@ -23,13 +27,13 @@ namespace Tango.Workbench.Filters
                     var itemType = item.GetType();
                     var predicate = GetPredicate(this.Predicate, itemType);
 
-                    if(predicate(item, index++) == false)
+                    if(predicate(item, index++))
                     {
-                        continue;
+                        publish = true;
                     }
                     else
                     {
-                        publish = true;
+                        continue;
                     }
                 }
 

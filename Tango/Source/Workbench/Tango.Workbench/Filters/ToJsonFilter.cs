@@ -204,10 +204,20 @@ namespace Tango.Workbench.Filters
             }
         }        
 
+        /// <summary>
+        /// The file to write the json to
+        /// </summary>
         public string? Filename{get; set;}
 
+        /// <summary>
+        /// True to overwrite the file.
+        /// If false then if the file already exists an exception is thrown
+        /// </summary>
         public bool Overwrite{get; set;}
 
+        /// <summary>
+        /// True to skip writing to file if the file already exists
+        /// </summary>
         public bool SkipExisting{get; set;}
     }
 }

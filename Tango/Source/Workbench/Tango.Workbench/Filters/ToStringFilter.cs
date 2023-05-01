@@ -8,7 +8,7 @@ namespace Tango.Workbench.Filters
 {
     /// <summary>
     /// Calls ToString() on each item in the sequence.
-    /// If the call returns null then an empty string is returned.
+    /// If the item returns null as its string representation then the item is not passed through.
     /// </summary>
     [Filter("ToString")]
     public sealed class ToStringFilter : Filter
@@ -17,7 +17,8 @@ namespace Tango.Workbench.Filters
         {
             await foreach(var item in items)
             {
-                yield return item.ToString() ?? "";
+                var asString = item.ToString();
+                if(asString is not null) yield return asString;
             }
         }
     }

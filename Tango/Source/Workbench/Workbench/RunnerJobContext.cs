@@ -14,6 +14,9 @@ using Tango.Workbench;
 
 namespace Workbench
 {
+    /// <summary>
+    /// The job context used by the workbench.
+    /// </summary>
     internal partial class RunnerJobContext : JobContext
     {
         private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[Context]");

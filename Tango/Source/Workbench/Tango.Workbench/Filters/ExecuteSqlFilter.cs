@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Tango.Workbench.Filters
 {
+    /// <summary>
+    /// Executes sql against a database
+    /// </summary>
     [Filter("ExecuteSql")]
     public sealed class ExecuteSqlFilter : Filter
     {

@@ -46,7 +46,8 @@ namespace Tango.Workbench
         public string? Name{get; set;}
 
         /// <summary>
-        /// True if the job should be verbose with its logging
+        /// True if the job should be verbose with its logging.
+        /// This can be overridden from the command line or by the containing group.
         /// </summary>
         public bool Verbose{get; set;}
 
