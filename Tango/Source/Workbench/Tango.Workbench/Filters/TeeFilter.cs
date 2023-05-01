@@ -24,21 +24,56 @@ namespace Tango.Workbench.Filters
 
             try
             {
-                
-
                 await foreach(var item in items)
                 {
                     // We need to pass through what we're receiving...
                     yield return item;
 
                     // ...as well as pass it into the tee bit of our filter
-                    await writer.WriteAsync(item);
+                    if(teeTask.IsCompleted == false) await writer.WriteAsync(item);
                 }
             }
             finally
             {
                 writer.Complete();
                 await teeTask;    
+            }
+        }
+
+        private async Task RunTee(IAsyncEnumerable<object> input, Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> function)
+        {
+            // We need to tell the context that we've entered a new async scope.
+            // Some things, like database connections can't be shared amongst threads
+            // so this gives the framework change to make any adjustments
+            this.Context.EnterNewAsyncScope();
+
+            var sequence = function(input);
+
+            long count = 0;
+            try
+            {                
+                await foreach(var item in sequence)
+                {
+                    count++;
+                }
+            }
+            catch(Exception e)
+            {
+                if(this.AllowFail)
+                {
+                    Log.Warn("Tee failed, but this is allowed", e);
+                    Score.ReportWarning($"Tee failed, but this is allowed. Message = {e.Message}");
+                }
+                else
+                {
+                    Log.Error("Tee failed", e);
+                    Score.ReportError($"Tee failed. Message = {e.Message}");
+                    throw;
+                }
+            }
+            finally
+            {
+                VerboseLog.Info($"{count} items went through the tee");
             }
         }
 
@@ -62,24 +97,6 @@ namespace Tango.Workbench.Filters
             }
         }
 
-        private async Task RunTee(IAsyncEnumerable<object> input, Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> function)
-        {
-            var sequence = function(input);
-
-            long count = 0;
-            try
-            {                
-                await foreach(var item in sequence)
-                {
-                    count++;
-                }
-            }
-            finally
-            {
-                VerboseLog.Info($"{count} items went through the tee");
-            }
-        }
-
         private Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> BuildPipelineFactory()
         {
             Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> function = input => this.Filters[0].Run(input);
@@ -98,5 +115,10 @@ namespace Tango.Workbench.Filters
         /// Filters to apply to the data flowing through the pipeline
         /// </summary>
         internal List<Filter> Filters{get; set;} = new();
+
+         /// <summary>
+        /// True if a tee is allowed to fail. 
+        /// </summary>
+        public bool AllowFail{get; set;}
     }
 }

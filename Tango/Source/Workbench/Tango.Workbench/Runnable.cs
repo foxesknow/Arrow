@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Arrow.Calendar;
 using Arrow.Logging;
 using Arrow.Logging.Loggers;
 
@@ -96,6 +97,15 @@ namespace Tango.Workbench
 
             var prefix = $"[{name}]";
             return new PrefixLog(s_RootLog, prefix);
+        }
+
+        /// <summary>
+        /// Creates a new expander with the date set to the local date
+        /// </summary>
+        /// <returns></returns>
+        protected Expander MakeExpander()
+        {
+            return new Expander().AddDates(Clock.Now);
         }
     }
 }

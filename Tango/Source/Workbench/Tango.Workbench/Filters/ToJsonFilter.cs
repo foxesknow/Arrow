@@ -20,7 +20,7 @@ namespace Tango.Workbench.Filters
         {
             if(this.Filename is null) throw new ArgumentNullException(nameof(Filename));
 
-            var filename = new Expander().Expand(this.Filename);
+            var filename = MakeExpander().Expand(this.Filename);
 
             if(File.Exists(filename))
             {

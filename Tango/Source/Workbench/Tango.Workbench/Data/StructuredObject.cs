@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Tango.Workbench.Data
 {
-    public sealed class StructuredObject : IEnumerable<(string Name, object? Value)>
+    public sealed class StructuredObject : IEnumerable<KeyValuePair<string, object?>>
     {
         private readonly List<(string Name, object? Value)> m_Properties = new();
         private readonly Dictionary<string, int> m_NameIndex = new(StringComparer.OrdinalIgnoreCase);
@@ -42,9 +42,12 @@ namespace Tango.Workbench.Data
             return string.Join(", ", m_Properties.Select(pair => $"{pair.Name} = {pair.Value}"));
         }
 
-        public IEnumerator<(string Name, object? Value)> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
         {
-            return m_Properties.GetEnumerator();
+            foreach(var (key, value) in m_Properties)
+            {
+                yield return new(key, value);
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -58,9 +61,24 @@ namespace Tango.Workbench.Data
 
             return @object switch
             {
+                var x when IsBasicValue(x)                       => FromValue(x),
                 IEnumerable<KeyValuePair<string, object?>> pairs => FromSequence(pairs),
-                var other => FromObject(other)
+                var other                                        => FromObject(other)
             };
+        }        
+
+        public static StructuredObject FromSequence(IEnumerable<KeyValuePair<string, object?>> pairs)
+        {
+            if(pairs is null) throw new ArgumentNullException(nameof(pairs));
+
+            var structuredObject = new StructuredObject();
+
+            foreach(var pair in pairs)
+            {
+                structuredObject.Add(pair.Key, pair.Value);
+            }
+
+            return structuredObject;
         }
 
         /// <summary>
@@ -69,7 +87,7 @@ namespace Tango.Workbench.Data
         /// <param name="object"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static StructuredObject FromObject(object @object)
+        private static StructuredObject FromObject(object @object)
         {
             if(@object is null) throw new ArgumentNullException(nameof(@object));
 
@@ -90,18 +108,37 @@ namespace Tango.Workbench.Data
             return structuredObject;
         }
 
-        public static StructuredObject FromSequence(IEnumerable<KeyValuePair<string, object?>> pairs)
+        private static StructuredObject FromValue(object @object)
         {
-            if(pairs is null) throw new ArgumentNullException(nameof(pairs));
-
             var structuredObject = new StructuredObject();
-
-            foreach(var pair in pairs)
-            {
-                structuredObject.Add(pair.Key, pair.Value);
-            }
+            structuredObject.Add("value", @object);
 
             return structuredObject;
+        }
+
+        private static bool IsBasicValue(object value)
+        {
+            switch(Type.GetTypeCode(value.GetType()))
+            {
+                case TypeCode.Boolean:
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.Int16:
+                case TypeCode.UInt16:
+                case TypeCode.Int32:
+                case TypeCode.UInt32:
+                case TypeCode.Int64:
+                case TypeCode.UInt64:
+                case TypeCode.Single:
+                case TypeCode.Double:
+                case TypeCode.Decimal:
+                case TypeCode.DateTime:
+                case TypeCode.String:
+                case TypeCode.Char:
+                    return true;
+
+                default:    return false;
+            }
         }
     }
 }

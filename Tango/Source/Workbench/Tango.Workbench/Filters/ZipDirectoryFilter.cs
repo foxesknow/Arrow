@@ -89,9 +89,9 @@ namespace Tango.Workbench.Filters
             var info = new DirectoryInfo(sourceDirectoryInfo);
 
             var today = Clock.Now;
-            var expander = new Expander().AddDates(today)
-                                         .Add("root", info.Name)
-                                         .Add("self", info.FullName);
+            var expander = MakeExpander()
+                           .Add("root", info.Name)
+                           .Add("self", info.FullName);
 
             return expander.Expand(zipSpec);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Arrow.Data;
@@ -13,14 +14,14 @@ using Tango.Workbench;
 
 namespace Workbench
 {
-    internal class RunnerJobContext : JobContext
+    internal partial class RunnerJobContext : JobContext
     {
         private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), "[Context]");
 
-        private readonly Dictionary<string, IDbConnection> m_Connections = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<(long ScopeID, string Name), IDbConnection> m_Connections = new(ScopedDatabaseComparer.Instance);
         
-        private readonly Dictionary<string, IDbConnection> m_TransactedConnections = new(StringComparer.OrdinalIgnoreCase);        
-        private readonly Dictionary<string, IDbTransaction> m_Transactions = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<(long ScopeID, string Name), IDbConnection> m_TransactedConnections = new(ScopedDatabaseComparer.Instance);        
+        private readonly Dictionary<(long ScopeID, string Name), IDbTransaction> m_Transactions = new(ScopedDatabaseComparer.Instance);
 
         private readonly object m_SyncRoot = new();
 
@@ -57,16 +58,16 @@ namespace Workbench
         /// <param name="databaseName"></param>
         /// <returns></returns>
         /// <exception cref="WorkbenchException"></exception>
-        public override IDbCommand CreateCommand(string databaseName)
+        protected override IDbCommand CreateCommand(long scopeID, string databaseName)
         {
             lock(m_SyncRoot)
             {
                 var connectionInfo = m_DatabaseManager.GetConnectionInfo(databaseName);
                 return (connectionInfo, UseTransactions) switch
                 {
-                    (ConnectionInfo.Transactional, true)    => MakeTransactionalCommand(databaseName),
-                    (ConnectionInfo.Transactional, false)   => MakeNonTransactionalCommand(databaseName),
-                    (ConnectionInfo.Default, _)             => MakeNonTransactionalCommand(databaseName),
+                    (ConnectionInfo.Transactional, true)    => MakeTransactionalCommand(scopeID, databaseName),
+                    (ConnectionInfo.Transactional, false)   => MakeNonTransactionalCommand(scopeID, databaseName),
+                    (ConnectionInfo.Default, _)             => MakeNonTransactionalCommand(scopeID, databaseName),
                     var other                               => throw new WorkbenchException("unsupported connection type: {other}")
                 };
             }
@@ -114,30 +115,30 @@ namespace Workbench
             return exceptions;
         }
 
-        private IDbCommand MakeNonTransactionalCommand(string databaseName)
+        private IDbCommand MakeNonTransactionalCommand(long scopeID, string databaseName)
         {
-            if(m_Connections.TryGetValue(databaseName, out var connection) == false)
+            if(m_Connections.TryGetValue((scopeID, databaseName), out var connection) == false)
             {
                 connection = m_DatabaseManager.OpenConnection(databaseName);
-                m_Connections.Add(databaseName, connection);
+                m_Connections.Add((scopeID, databaseName), connection);
             }
 
             return connection.CreateCommand();
         }
 
-        private IDbCommand MakeTransactionalCommand(string databaseName)
+        private IDbCommand MakeTransactionalCommand(long scopeID, string databaseName)
         {
-            if(m_TransactedConnections.TryGetValue(databaseName, out var connection) == false)
+            if(m_TransactedConnections.TryGetValue((scopeID, databaseName), out var connection) == false)
             {
                 connection = m_DatabaseManager.OpenConnection(databaseName);                
-                m_TransactedConnections.Add(databaseName, connection);
+                m_TransactedConnections.Add((scopeID, databaseName), connection);
 
                 var transaction = connection.BeginTransaction();
-                m_Transactions.Add(databaseName, transaction);
+                m_Transactions.Add((scopeID, databaseName), transaction);
             }
 
             var command = connection.CreateCommand();
-            command.Transaction = m_Transactions[databaseName];
+            command.Transaction = m_Transactions[(scopeID, databaseName)];
 
             return command;
         }

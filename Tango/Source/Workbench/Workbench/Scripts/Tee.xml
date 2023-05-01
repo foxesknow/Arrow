@@ -1,14 +1,25 @@
 ﻿<Script>
 	<Group name="Pipe">
 		<Pipeline name="TeeTest">
-			<Numbers from="0" count="50" />
-			<Tee name="Multiple of 10">
-				<Where predicate ="(item % 10) == 0" />
-				<Log/>
+			<Numbers start="50" count="5" />
+			<Tee name="Jack in his 50s">
+				<ParameterizedSql database="tango">
+					<Sql>
+						insert into Locations (Name, Age, Location)
+						values('Jack', @age, 'The Island')
+					</Sql>
+					<Parameters>
+						<Item parameter="@age" dbType="int32" property="value" />
+					</Parameters>
+				</ParameterizedSql>
 			</Tee>
-			<Tee name="Multiple of 7">
-				<Where predicate ="(item % 7) == 0" />
-				<Log/>
+			<Tee name="Jack in his 60s">
+				<ExecuteSql database="tango">
+					<Sql>
+						insert into Locations (Name, Age, Location)
+						values('Jack', 10 + $(item), 'The Island')
+					</Sql>
+				</ExecuteSql>
 			</Tee>
 		</Pipeline>
 	</Group>

@@ -37,7 +37,7 @@ namespace Tango.Workbench.Jobs
                     {
                         var dateToArchive = now.AddDays(-delta);
 
-                        var expander = new Expander();
+                        var expander = MakeExpander();
                         expander.AddDates(dateToArchive);
 
                         var fromDirectory = expander.Expand(details.From);

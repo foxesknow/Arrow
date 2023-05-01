@@ -172,9 +172,9 @@ namespace Tango.Workbench.Jobs
             return exe;
         }
 
-        private Expander MakeExpander()
+        private Expander MakeScriptExpander()
         {
-            var expander = new Expander();
+            var expander = MakeExpander();
 
             if(this.RelativeFilename is not null)
             {
