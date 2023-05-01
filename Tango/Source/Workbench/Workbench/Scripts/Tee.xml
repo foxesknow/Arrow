@@ -12,6 +12,7 @@
 						<Item parameter="@age" dbType="int32" property="value" />
 					</Parameters>
 				</ParameterizedSql>
+				<Sink/>
 			</Tee>
 			<Tee name="Jack in his 60s">
 				<ExecuteSql database="tango">

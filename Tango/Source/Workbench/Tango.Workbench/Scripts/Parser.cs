@@ -9,12 +9,17 @@ using Arrow.Reflection;
 using Arrow.Xml;
 using Arrow.Xml.ObjectCreation;
 using System.Text.Json;
-using Tango.Workbench.Filters;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace Tango.Workbench.Scripts
 {
     /// <summary>
-    /// Parses a script
+    /// Parses a script.
+    /// 
+    /// The parser adds the "Pipeline" job and the "Tee" filter to the factory in order
+    /// to add pipeline and tee support to the scripts. These runnable items are not
+    /// directly exposed as they have complicated initialization requirements.
     /// </summary>
     public sealed class Parser
     {
@@ -137,27 +142,32 @@ namespace Tango.Workbench.Scripts
             if(source.Name is null) source.Name = parts[0].Name;
             source.Verbose |= pipeline.Verbose;
 
-            source.SetLogName(MakeLogName(rootLogName, source.Name));
-            
+            source.SetLogName(MakeLogName(rootLogName, source.Name));            
             pipeline.Source = source;
 
             for(int i = 1; i < parts.Length; i++)
             {
-                var filter = m_RunnableFactory.MakeFilter(parts[i].Name);
-                XmlCreation.Apply(filter, parts[i]);
-                if(filter.Name is null) filter.Name = parts[i].Name;
-                filter.Verbose |= pipeline.Verbose;
-
-                var filterLogName = MakeLogName(rootLogName, filter.Name);
-                filter.SetLogName(filterLogName);
-
-                if(filter is TeeFilter teeFilter)
-                {
-                    ComposeTee(filterLogName, teeFilter, parts[i]);
-                }
-                
+                var filter = MakeFilter(rootLogName, parts[i], pipeline);
                 pipeline.Filters.Add(filter);
             }
+        }
+
+        private Filter MakeFilter(string rootLogName, XmlElement element, Runnable parent)
+        {
+            var filter = m_RunnableFactory.MakeFilter(element.Name);
+            XmlCreation.Apply(filter, element);
+            if(filter.Name is null) filter.Name = element.Name;
+            filter.Verbose |= parent.Verbose;
+
+            var filterLogName = MakeLogName(rootLogName, filter.Name);
+            filter.SetLogName(filterLogName);
+
+            if(filter is TeeFilter teeFilter)
+            {
+                ComposeTee(filterLogName, teeFilter, element);
+            }
+
+            return filter;
         }
 
         private void ComposeTee(string rootLogName, TeeFilter teeFilter, XmlElement teeElement)
@@ -170,19 +180,7 @@ namespace Tango.Workbench.Scripts
 
             foreach(var filterElement in parts)
             {
-                var filter = m_RunnableFactory.MakeFilter(filterElement.Name);
-                XmlCreation.Apply(filter, filterElement);
-                if(filter.Name is null) filter.Name = filterElement.Name;
-                filter.Verbose |= teeFilter.Verbose;
-
-                var filterLogName = MakeLogName(rootLogName, filter.Name);
-                filter.SetLogName(filterLogName);
-
-                if(filter is TeeFilter subFilter)
-                {
-                    ComposeTee(filterLogName, subFilter, filterElement);
-                }
-
+                var filter = MakeFilter(rootLogName, filterElement, teeFilter);
                 teeFilter.Filters.Add(filter);
             }
         }

@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Channels;
 
-namespace Tango.Workbench.Filters
-{   
+namespace Tango.Workbench
+{
     /// <summary>
     /// The tee filter allows you to branch off from a pipeline flow and do additional processing on 
     /// the data flowing through the pipeline
@@ -24,19 +24,19 @@ namespace Tango.Workbench.Filters
 
             try
             {
-                await foreach(var item in items)
+                await foreach (var item in items)
                 {
                     // We need to pass through what we're receiving...
                     yield return item;
 
                     // ...as well as pass it into the tee bit of our filter
-                    if(teeTask.IsCompleted == false) await writer.WriteAsync(item);
+                    if (teeTask.IsCompleted == false) await writer.WriteAsync(item);
                 }
             }
             finally
             {
                 writer.Complete();
-                await teeTask;    
+                await teeTask;
             }
         }
 
@@ -45,21 +45,21 @@ namespace Tango.Workbench.Filters
             // We need to tell the context that we've entered a new async scope.
             // Some things, like database connections can't be shared amongst threads
             // so this gives the framework change to make any adjustments
-            this.Context.EnterNewAsyncScope();
+            Context.EnterNewAsyncScope();
 
             var sequence = function(input);
 
             long count = 0;
             try
-            {                
-                await foreach(var item in sequence)
+            {
+                await foreach (var item in sequence)
                 {
                     count++;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                if(this.AllowFail)
+                if (AllowFail)
                 {
                     Log.Warn("Tee failed, but this is allowed", e);
                     Score.ReportWarning($"Tee failed, but this is allowed. Message = {e.Message}");
@@ -81,7 +81,7 @@ namespace Tango.Workbench.Filters
         {
             base.RegisterRuntimeDependencies(dependencies);
 
-            foreach(var component in this.Filters)
+            foreach (var component in Filters)
             {
                 component.RegisterRuntimeDependencies(dependencies);
             }
@@ -91,7 +91,7 @@ namespace Tango.Workbench.Filters
         {
             base.UnregisterRuntimeDependencies();
 
-            foreach(var component in this.Filters)
+            foreach (var component in Filters)
             {
                 component.UnregisterRuntimeDependencies();
             }
@@ -99,9 +99,9 @@ namespace Tango.Workbench.Filters
 
         private Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> BuildPipelineFactory()
         {
-            Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> function = input => this.Filters[0].Run(input);
+            Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> function = input => Filters[0].Run(input);
 
-            foreach(var filter in this.Filters.Skip(1))
+            foreach (var filter in Filters.Skip(1))
             {
                 var first = function;
                 Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> next = input => filter.Run(first(input));
@@ -114,11 +114,11 @@ namespace Tango.Workbench.Filters
         /// <summary>
         /// Filters to apply to the data flowing through the pipeline
         /// </summary>
-        internal List<Filter> Filters{get; set;} = new();
+        internal List<Filter> Filters { get; set; } = new();
 
-         /// <summary>
+        /// <summary>
         /// True if a tee is allowed to fail. 
         /// </summary>
-        public bool AllowFail{get; set;}
+        public bool AllowFail { get; set; }
     }
 }
