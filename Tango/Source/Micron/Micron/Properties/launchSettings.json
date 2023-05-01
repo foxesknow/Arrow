@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Micron": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Code\\git\\Arrow\\Tango\\Source\\Micron\\Micron\\Scripts\\Test.xml"
+    }
+  }
+}

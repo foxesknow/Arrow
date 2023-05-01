@@ -17,11 +17,11 @@ namespace Arrow.Application.DaemonHosting
         /// so any command line proceesing can take place
         /// </summary>
         /// <param name="args"></param>
-        protected internal abstract void StartDaemon(string[] args);
+        protected internal abstract ValueTask StartDaemon(string[] args);
         
         /// <summary>
         /// Called to stop the daemon
         /// </summary>
-        protected internal abstract void StopDaemon();
+        protected internal abstract ValueTask StopDaemon();
     }
 }

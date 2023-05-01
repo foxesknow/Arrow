@@ -10,14 +10,16 @@ namespace ArrowDaemon
 {
     internal class Daemon : DaemonBase
     {
-        protected override void StartDaemon(string[] args)
+        protected override ValueTask StartDaemon(string[] args)
         {
             Console.WriteLine("StartDaemon");
+            return default;
         }
 
-        protected override void StopDaemon()
+        protected override ValueTask StopDaemon()
         {
             Console.WriteLine("StopDaemon");
+            return default;
         }
     }
 }

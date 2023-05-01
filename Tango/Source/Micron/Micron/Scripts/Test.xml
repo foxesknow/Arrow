@@ -1,0 +1,6 @@
+﻿<Jobs>
+	<Run name="notepad" trigger="0 0/1 * * * ?">
+		<App>Notepad.exe</App>
+		<Arguments>C:\Code\Test\out.json</Arguments>
+	</Run>
+</Jobs>

@@ -16,10 +16,10 @@ namespace Arrow.Application.DaemonHosting
     public sealed class HeadlessRunner<TDaemon> : IDaemonRunner where TDaemon : DaemonBase, new()
     {
         /// <inheritdoc/>
-        public void Run(string[] args)
+        public async ValueTask Run(string[] args)
         {
             var daemon = new TDaemon();
-            daemon.StartDaemon(args);
+            await daemon.StartDaemon(args);
 
             RegisterPosixHandlers(daemon);
 
@@ -36,7 +36,7 @@ namespace Arrow.Application.DaemonHosting
             }
             finally
             {
-                daemon.StopDaemon();
+                await daemon.StopDaemon();
             }
         }
 

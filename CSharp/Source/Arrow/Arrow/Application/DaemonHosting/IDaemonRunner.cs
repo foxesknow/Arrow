@@ -13,6 +13,6 @@ namespace Arrow.Application.DaemonHosting
         /// This method will only return when the daemon shuts down
         /// </summary>
         /// <param name="args"></param>
-        public void Run(string[] args);
+        public ValueTask Run(string[] args);
     }
 }
