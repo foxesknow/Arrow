@@ -35,12 +35,14 @@ namespace UnitTests.Arrow.Application.DaemonHosting
 
         private class TestDaemon : DaemonBase
         {
-            protected internal override void StartDaemon(string[] args)
+            protected internal override ValueTask StartDaemon(string[] args)
             {
+                return default;
             }
 
-            protected internal override void StopDaemon()
+            protected internal override ValueTask StopDaemon()
             {
+                return default;
             }
 
             public IEnumerable<InteractiveCommand> AllCommands()
