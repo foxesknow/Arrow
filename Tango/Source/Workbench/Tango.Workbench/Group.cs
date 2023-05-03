@@ -15,14 +15,14 @@ namespace Tango.Workbench
     /// </summary>
     public sealed class Group
     {
-        public Group(Batch script)
+        public Group(Batch batch)
         {
-            if(script is null) throw new ArgumentNullException(nameof(script));
+            if(batch is null) throw new ArgumentNullException(nameof(batch));
 
-            this.Script = script;
+            this.Batch = batch;
         }
 
-        public Batch Script{get;}
+        public Batch Batch{get;}
 
         /// <summary>
         /// The name of the group
@@ -69,7 +69,7 @@ namespace Tango.Workbench
             try
             {
                 Score? score = null;
-                var context = this.Script.MakeContext(this);
+                var context = this.Batch.MakeContext(this);
 
                 try
                 {
