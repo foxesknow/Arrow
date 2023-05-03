@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
+using Arrow.Execution;
+
 namespace Tango.Workbench.Filters
 {
     /// <summary>
@@ -38,6 +40,12 @@ namespace Tango.Workbench.Filters
             }
 
             return WriteToFile(this.Filename, items);
+        }
+
+        protected void TidyUpFailedWrite(string filename)
+        {
+            Log.Error($"error whilst writing {filename}");
+            MethodCall.AllowFail(filename, static filename => File.Delete(filename));
         }
 
         protected abstract IAsyncEnumerable<object> WriteToFile(string filename, IAsyncEnumerable<object> items);

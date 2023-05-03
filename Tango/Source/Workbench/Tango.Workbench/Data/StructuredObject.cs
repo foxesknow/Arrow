@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Tango.Workbench.Data
 {
-    public sealed class StructuredObject : IEnumerable<KeyValuePair<string, object?>>
+    public sealed class StructuredObject : IReadOnlyStructuredObject
     {
         private readonly List<(string Name, object? Value)> m_Properties = new();
         private readonly Dictionary<string, int> m_NameIndex = new(StringComparer.OrdinalIgnoreCase);

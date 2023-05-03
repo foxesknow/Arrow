@@ -20,7 +20,7 @@ namespace Tango.Workbench.Filters
         {
             var options = new JsonWriterOptions()
             {
-                Indented = true,
+                Indented = this.Indented,
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
 
@@ -48,19 +48,14 @@ namespace Tango.Workbench.Filters
             {
                 if(succeeded == false)
                 {
-                    Log.Error($"error whilst writing {filename}");
-                    MethodCall.AllowFail(filename, static filename => File.Delete(filename));
+                    TidyUpFailedWrite(filename);
                 }
             }
         }
 
         private void WriteObject(Utf8JsonWriter writer, object @object)
         {
-            var structuredObject = @object switch
-            {
-                StructuredObject s  => s,
-                var other           => StructuredObject.From(other)
-            };
+            var structuredObject = ToStructuredObject(@object);
 
             writer.WriteStartObject();
 
@@ -175,5 +170,10 @@ namespace Tango.Workbench.Filters
 
             }
         }        
+
+        /// <summary>
+        /// True to indent the json
+        /// </summary>
+        public bool Indented{get; set;} = true;
     }
 }

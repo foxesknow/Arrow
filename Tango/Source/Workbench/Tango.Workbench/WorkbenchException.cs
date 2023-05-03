@@ -16,11 +16,11 @@ namespace Tango.Workbench
         { 
         }
         
-        public WorkbenchException(string message) : base(message) 
+        public WorkbenchException(string? message) : base(message) 
         { 
         }
         
-        public WorkbenchException(string message, Exception inner) : base(message, inner) 
+        public WorkbenchException(string? message, Exception inner) : base(message, inner) 
         { 
         }
         

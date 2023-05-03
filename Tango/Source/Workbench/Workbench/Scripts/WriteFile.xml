@@ -32,8 +32,15 @@
 			</Tee>
 
 			<Tee name="JsonBranch">
-				<ToJson filename="c:\code\test\out.json" overwrite="true" />
+				<ToJson filename="c:\code\test\out.json" overwrite="true" indented="false" />
 			</Tee>
+		</Pipeline>
+	</Group>
+
+	<Group name="Directories">
+		<Pipeline>
+			<ChildDirectories directorySpec="c:\code\**\**" />
+			<ToCsv filename="c:\code\test\directories.csv" overwrite="true" />
 		</Pipeline>
 	</Group>
 </Script>

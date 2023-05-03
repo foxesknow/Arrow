@@ -53,14 +53,7 @@ namespace Tango.Workbench.Filters
             }
         }
 
-        private StructuredObject ToStructuredObject(object obj)
-        {
-            if(obj is StructuredObject structuredObject) return structuredObject;
-
-            return StructuredObject.From(obj);
-        }
-
-        private object GetValue(StructuredObject @object, ParameterInfo parameterInfo)
+        private object GetValue(IReadOnlyStructuredObject @object, ParameterInfo parameterInfo)
         {
             var value = @object[parameterInfo.Property!];
             if(value is null) return DBNull.Value;
