@@ -38,6 +38,12 @@ namespace UnitTests.Arrow.Text
         }
 
         [Test]
+        public void SingleNewline()
+        {
+            Assert.That(Csv.Escape("\n"), Is.EqualTo("\"\n\""));
+        }
+
+        [Test]
         public void HasComma()
         {
             Assert.That(Csv.Escape("Hello, world"), Is.EqualTo("\"Hello, world\""));
@@ -59,6 +65,12 @@ namespace UnitTests.Arrow.Text
         public void HasEmbeddedQuoteAndComman()
         {
             Assert.That(Csv.Escape("Hello \"Jack\", how are you"), Is.EqualTo("\"Hello \"\"Jack\"\", how are you\""));
+        }
+
+        [Test]
+        public void HasEmbeddedNewline()
+        {
+            Assert.That(Csv.Escape("Hello\nGoodbye"), Is.EqualTo("\"Hello\nGoodbye\""));
         }
     }
 }

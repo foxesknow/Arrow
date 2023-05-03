@@ -19,6 +19,7 @@ using Arrow.Xml.Macro;
 using Tango.Workbench;
 using Tango.Workbench.Jobs;
 using Tango.Workbench.Scripts;
+using System.Text;
 
 namespace Workbench
 {
@@ -31,6 +32,7 @@ namespace Workbench
         private DateTime? m_BaselineDate;
         private bool m_Live = false;
         private bool m_Verbose = false;
+        private bool m_DumpScript;
 
         private PidFile? m_PidFile;
 
@@ -65,6 +67,8 @@ namespace Workbench
             };
 
             var (script, uri) = LoadScript(m_ScriptFilename);
+            if(m_DumpScript) LogDocument(script);
+
             parser.Parse(batch, script.DocumentElement!);
 
             if(uri.LocalPath is not null)
@@ -109,6 +113,8 @@ namespace Workbench
         {
             var clockDriver = new BaselineClockDriver(when);
             GlobalClockDriverManager.Install(clockDriver);
+
+            Log.Info($"Installed a baseline clock for {when}");
         }
 
         private static (XmlDocument Document, Uri Location) LoadScript(string filename)
@@ -171,6 +177,12 @@ namespace Workbench
                         m_PidFile = new PidFile(command.Value!);
                         break;
 
+                    case "dumpscript":
+                        command.EnsureNoValuePresent();
+                        m_DumpScript = true;
+
+                        break;
+
                     default:
                         break;
                 }
@@ -179,8 +191,30 @@ namespace Workbench
 
         private DateTime ParseDateTime(string date)
         {
+            var now = Clock.Now;
+
             var when = DateTime.ParseExact(date, "yyyyMMdd", null);
-            return DateTime.SpecifyKind(when, DateTimeKind.Local);
-        }        
+            var local = DateTime.SpecifyKind(when, DateTimeKind.Local).Add(now.TimeOfDay);
+            
+            return local;
+        }
+
+        private void LogDocument(XmlDocument document)
+        {
+            var settings = new XmlWriterSettings()
+            {
+                Indent = true,
+                IndentChars = "  "
+            };
+
+            var b = new StringBuilder();
+
+            using(var writer = XmlWriter.Create(b, settings))
+            {
+                document.Save(writer);
+            }
+
+            Log.Info(b.ToString());
+        }
     }
 }

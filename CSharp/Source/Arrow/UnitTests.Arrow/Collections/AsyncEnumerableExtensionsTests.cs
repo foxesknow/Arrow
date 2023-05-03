@@ -37,7 +37,7 @@ namespace UnitTests.Arrow.Collections
         }
 
         [Test]
-        public async Task CanBeCancelled()
+        public void CanBeCancelled()
         {
             using(var cts = new CancellationTokenSource())
             {

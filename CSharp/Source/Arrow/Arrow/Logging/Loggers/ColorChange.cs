@@ -10,7 +10,7 @@ namespace Arrow.Logging.Loggers
     {
         private readonly bool m_Redirected;
 
-        public  ColorChange(ConsoleColor foreground, bool redirected)
+        public ColorChange(ConsoleColor foreground, bool redirected)
         {
             m_Redirected = redirected;
 
@@ -19,7 +19,7 @@ namespace Arrow.Logging.Loggers
 
         public void Dispose()
         {
-            if(m_Redirected) Console.ResetColor();
+            if(!m_Redirected) Console.ResetColor();
         }
     }
 }

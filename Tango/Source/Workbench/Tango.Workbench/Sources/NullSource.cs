@@ -8,6 +8,9 @@ using Arrow.Collections;
 
 namespace Tango.Workbench.Sources
 {
+    /// <summary>
+    /// Does nothing, and just returns an empty stream
+    /// </summary>
     [Source("Null")]
     public sealed class NullSource : Source
     {

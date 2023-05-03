@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace Arrow.Text
 {
+    /// <summary>
+    /// Useful csv methods.
+    /// </summary>
     public static class Csv
     {
+        /// <summary>
+        /// Escapes a value, if required
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static string Escape(string value)
         {
             if(value is null) throw new ArgumentNullException(nameof(value));
@@ -15,7 +24,7 @@ namespace Arrow.Text
             bool wrapInQuotes = false;
             StringBuilder? b = null;
 
-            for(int i = 0; i < value.Length; i++)
+            for(var i = 0; i < value.Length; i++)
             {
                 char c = value[i];
 
@@ -29,7 +38,7 @@ namespace Arrow.Text
 
                     b.Append(c);
                 }
-                else if(c == ',')
+                else if(wrapInQuotes == false && (c == ',' || c == '\r' || c == '\n'))
                 {
                     wrapInQuotes = true;
                 }
@@ -37,14 +46,25 @@ namespace Arrow.Text
                 if(b is not null) b.Append(c);
             }
 
-            var finalValue = (b is null ? value : b.ToString());
+            // If we've got a builder then we can use it to 
+            // more efficiently wrap the string
+            if(b is not null)
+            {
+                if(wrapInQuotes)
+                {
+                    b.Insert(0, '\"');
+                    b.Append('\"');
+                }
+
+                return b.ToString();
+            }
 
             if(wrapInQuotes)
             {
-                return string.Concat("\"", finalValue, "\"");
+                return string.Concat("\"", value, "\"");
             }
             
-            return finalValue;
+            return value;
 
         }
     }
