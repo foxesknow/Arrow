@@ -22,7 +22,7 @@
     },
     "WriteFile": {
       "commandName": "Project",
-      "commandLineArgs": "-v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\WriteFile.xml"
+      "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\WriteFile.xml"
     }
   }
 }

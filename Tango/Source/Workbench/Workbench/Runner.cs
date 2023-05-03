@@ -96,7 +96,7 @@ namespace Workbench
                 return new RunnableFactory();
             }
 
-            return new RunnableFactory(static _ => new NullJob());
+            return new RunnableFactory(static type => RunnableFactory.MakeMockComponent(type));
         }
 
         private RunnerBatch MakeBatch()
@@ -181,6 +181,6 @@ namespace Workbench
         {
             var when = DateTime.ParseExact(date, "yyyyMMdd", null);
             return DateTime.SpecifyKind(when, DateTimeKind.Local);
-        }
+        }        
     }
 }

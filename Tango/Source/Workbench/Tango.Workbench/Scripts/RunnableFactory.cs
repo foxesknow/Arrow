@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Tango.Workbench.Filters;
+using Tango.Workbench.Jobs;
+using Tango.Workbench.Sources;
 
 namespace Tango.Workbench.Scripts
 {
@@ -184,6 +187,33 @@ namespace Tango.Workbench.Scripts
             if(instance is null) throw new WorkbenchException($"could not create instance of {type.Name}");
 
             return instance;
+        }
+
+        /// <summary>
+        /// Creates mock objects that wont make any actual changes to anything but
+        /// can be run to show how the workflow might execute.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <exception cref="WorkbenchException"></exception>
+        public static object MakeMockComponent(Type type)
+        {
+            if(typeof(Filter).IsAssignableFrom(type))
+            {
+                return type == typeof(TeeFilter) ? new TeeFilter() : new NullFilter();
+            }
+
+            if(typeof(Source).IsAssignableFrom(type))
+            {
+                return new NullSource();
+            }
+
+            if(typeof(Job).IsAssignableFrom(type))
+            {
+                return type == typeof(PipelineJob) ? new PipelineJob() : new NullJob();
+            }
+
+            throw new WorkbenchException($"could not create instance of {type.Name}");
         }
     }
 }
