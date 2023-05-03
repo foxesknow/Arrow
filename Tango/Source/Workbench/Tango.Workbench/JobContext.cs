@@ -18,10 +18,15 @@ namespace Tango.Workbench
 
         private AsyncLocal<long> m_AsyncScopeID = new();
 
+        private readonly CancellationTokenSource m_Cts = new();
+
         protected JobContext()
         {
             m_AsyncScopeID.Value = m_ScopeID;
+            this.CancellationToken = m_Cts.Token;
         }
+
+        public CancellationToken CancellationToken{get;}
 
         /// <summary>
         /// Called by the implementation to indicate that it is starting a new logic scope
@@ -37,6 +42,23 @@ namespace Tango.Workbench
             m_AsyncScopeID.Value = id;
 
             return id;
+        }
+
+        /// <summary>
+        /// Signals the cancellation token
+        /// </summary>
+        internal void Cancel()
+        {
+            m_Cts.Cancel();
+        }
+
+        /// <summary>
+        /// Schedules a cancellation after a given delay
+        /// </summary>
+        /// <param name="delay"></param>
+        internal void CancelAfter(TimeSpan delay)
+        {
+            m_Cts.CancelAfter(delay);
         }
 
         /// <summary>
@@ -67,5 +89,13 @@ namespace Tango.Workbench
         /// </summary>
         protected internal abstract void Rollback();
 
+        /// <summary>
+        /// Disposes of any resources.
+        /// NOTE: We don't do this via IDisposable as we don't want to expose the interface to consumers.
+        /// </summary>
+        protected internal virtual void Dispose()
+        {
+            m_Cts.Dispose();
+        }
     }
 }

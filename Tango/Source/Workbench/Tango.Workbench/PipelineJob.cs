@@ -20,8 +20,11 @@ namespace Tango.Workbench
                 var factory = BuildPipelineFactory();
                 var sequence = factory();
 
-                await foreach(var item in sequence)
+                var ct = this.Context.CancellationToken;
+
+                await foreach(var item in sequence.WithCancellation(this.Context.CancellationToken))
                 {
+                    ct.ThrowIfCancellationRequested();
                     count++;
                 }
             }

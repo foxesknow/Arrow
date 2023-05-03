@@ -2,9 +2,11 @@
 	<Group name="Pipe">
 		<Pipeline name="Numbers">
 			<Numbers start="10" count="20" />
-			<TakeUntil>
-				<Predicate><![CDATA[index == 5]]></Predicate>
-			</TakeUntil>
+			<CancelAfter delay="00:00:06" />
+			<Tee name="Branch">
+				<Throttle quantity="2" interval="00:00:05" />
+				<Log/>
+			</Tee>
 			<Log/>
 		</Pipeline>
 		

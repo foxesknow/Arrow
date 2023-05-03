@@ -15,36 +15,41 @@ namespace Arrow.Collections
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> source)
+        public static IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> source, CancellationToken cancellationToken = default)
         {
             if(source is null) throw new ArgumentNullException(nameof(source));
 
-            return new AsyncEnumerableWrapper<T>(source);
+            return new AsyncEnumerableWrapper<T>(source, cancellationToken);
         }
 
         private class AsyncEnumerableWrapper<T> : IAsyncEnumerable<T>
         {
             private readonly IEnumerable<T> m_Source;
+            private readonly CancellationToken m_CancellationToken;
 
-            public AsyncEnumerableWrapper(IEnumerable<T> source)
+            public AsyncEnumerableWrapper(IEnumerable<T> source, CancellationToken cancellationToken)
             {
                 m_Source = source;
+                m_CancellationToken = cancellationToken;
             }
 
             IAsyncEnumerator<T> IAsyncEnumerable<T>.GetAsyncEnumerator(CancellationToken cancellationToken)
             {
-                return new AsyncEnumeratorWrapper(m_Source.GetEnumerator());
+                return new AsyncEnumeratorWrapper(m_Source.GetEnumerator(), m_CancellationToken);
             }
 
             private class AsyncEnumeratorWrapper : IAsyncEnumerator<T>
             {
                 private IEnumerator<T>? m_Source;
+                private readonly CancellationToken m_CancellationToken;
 
-                public AsyncEnumeratorWrapper(IEnumerator<T> source)
+                public AsyncEnumeratorWrapper(IEnumerator<T> source, CancellationToken cancellationToken)
                 {
                     m_Source = source;
+                    m_CancellationToken = cancellationToken;
                 }
 
                 T IAsyncEnumerator<T>.Current
@@ -65,6 +70,7 @@ namespace Arrow.Collections
 
                 ValueTask<bool> IAsyncEnumerator<T>.MoveNextAsync()
                 {
+                    m_CancellationToken.ThrowIfCancellationRequested();
                     return new(m_Source!.MoveNext());
                 }
             }

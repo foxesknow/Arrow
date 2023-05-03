@@ -120,6 +120,10 @@ namespace Tango.Workbench
                     context.Rollback();
                     succeeded = this.AllowFail;
                 }
+                finally
+                {
+                    context.Dispose();
+                }
             }
             finally
             {

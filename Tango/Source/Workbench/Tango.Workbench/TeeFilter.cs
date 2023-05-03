@@ -24,8 +24,12 @@ namespace Tango.Workbench
 
             try
             {
-                await foreach (var item in items)
+                var ct = this.Context.CancellationToken;
+
+                await foreach (var item in items.WithCancellation(this.Context.CancellationToken))
                 {
+                    ct.ThrowIfCancellationRequested();
+
                     // We need to pass through what we're receiving...
                     yield return item;
 
@@ -52,9 +56,12 @@ namespace Tango.Workbench
             long count = 0;
             try
             {
-                await foreach (var item in sequence)
+                var ct = this.Context.CancellationToken;
+
+                await foreach (var item in sequence.WithCancellation(this.Context.CancellationToken))
                 {
                     count++;
+                    ct.ThrowIfCancellationRequested();
                 }
             }
             catch (Exception e)
