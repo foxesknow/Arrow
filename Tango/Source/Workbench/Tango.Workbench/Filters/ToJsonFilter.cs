@@ -14,70 +14,42 @@ using Tango.Workbench.Data;
 namespace Tango.Workbench.Filters
 {
     [Filter("ToJson")]
-    public sealed class ToJsonFilter : Filter
+    public sealed class ToJsonFilter : FileFilterBase
     {
-        public override IAsyncEnumerable<object> Run(IAsyncEnumerable<object> items)
+        protected override async IAsyncEnumerable<object> WriteToFile(string filename, IAsyncEnumerable<object> items)
         {
-            if(this.Filename is null) throw new ArgumentNullException(nameof(Filename));
-
-            var filename = MakeExpander().Expand(this.Filename);
-
-            if(File.Exists(filename))
+            var options = new JsonWriterOptions()
             {
-                if(this.SkipExisting)
+                Indented = true,
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+
+            var succeeded = false;
+
+            try
+            {
+                using(var stream = File.Create(filename, 16384))
+                using(var writer = new Utf8JsonWriter(stream, options))
                 {
-                    Log.Info($"Skipping {filename}");
-                    return items;
+                    writer.WriteStartArray();
+
+                    await foreach(var item in items)
+                    {
+                        WriteObject(writer, item);
+                        yield return item;
+                    }
+
+                    writer.WriteEndArray();
                 }
 
-                if(this.Overwrite)
-                {
-                    Log.Info($"deleting {filename}");
-                    File.Delete(filename);
-                }
-                else
-                {
-                    throw new WorkbenchException($"zip file already exists: {filename}");
-                }
+                succeeded = true;
             }
-
-            return Execute(filename, items);
-
-            async IAsyncEnumerable<object> Execute(string filename, IAsyncEnumerable<object> items)
+            finally
             {
-                var options = new JsonWriterOptions()
+                if(succeeded == false)
                 {
-                    Indented = true,
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                };
-
-                var succeeded = false;
-
-                try
-                {
-                    using(var stream = File.Create(filename, 16384))
-                    using(var writer = new Utf8JsonWriter(stream, options))
-                    {
-                        writer.WriteStartArray();
-
-                        await foreach(var item in items)
-                        {
-                            WriteObject(writer, item);
-                            yield return item;
-                        }
-
-                        writer.WriteEndArray();
-                    }
-
-                    succeeded = true;
-                }
-                finally
-                {
-                    if(succeeded == false)
-                    {
-                        Log.Error($"error whilst writing {filename}");
-                        MethodCall.AllowFail(filename, static filename => File.Delete(filename));
-                    }
+                    Log.Error($"error whilst writing {filename}");
+                    MethodCall.AllowFail(filename, static filename => File.Delete(filename));
                 }
             }
         }
@@ -203,21 +175,5 @@ namespace Tango.Workbench.Filters
 
             }
         }        
-
-        /// <summary>
-        /// The file to write the json to
-        /// </summary>
-        public string? Filename{get; set;}
-
-        /// <summary>
-        /// True to overwrite the file.
-        /// If false then if the file already exists an exception is thrown
-        /// </summary>
-        public bool Overwrite{get; set;}
-
-        /// <summary>
-        /// True to skip writing to file if the file already exists
-        /// </summary>
-        public bool SkipExisting{get; set;}
     }
 }

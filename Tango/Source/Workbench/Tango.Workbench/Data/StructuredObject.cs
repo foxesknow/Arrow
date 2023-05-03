@@ -37,6 +37,20 @@ namespace Tango.Workbench.Data
             }
         }
 
+        public bool TryGetValue(string name, out object? value)
+        {
+            if(name is null) throw new ArgumentNullException(nameof(name));
+
+            if(m_NameIndex.TryGetValue(name, out var index))
+            {
+                value = m_Properties[index].Value;
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
         public override string ToString()
         {
             return string.Join(", ", m_Properties.Select(pair => $"{pair.Name} = {pair.Value}"));

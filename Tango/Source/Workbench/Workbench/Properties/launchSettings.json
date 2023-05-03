@@ -19,6 +19,10 @@
     "Tee": {
       "commandName": "Project",
       "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\Tee.xml"
+    },
+    "WriteFile": {
+      "commandName": "Project",
+      "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\WriteFile.xml"
     }
   }
 }

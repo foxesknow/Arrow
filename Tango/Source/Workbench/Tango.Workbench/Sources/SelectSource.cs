@@ -32,10 +32,19 @@ namespace Tango.Workbench.Sources
                                                    .Select(index => reader.GetName(index))
                                                    .ToArray();
 
+                        long count = 0;
+                        long pageSize = this.PageSize;
+
                         while(reader.Read())
                         {
                             var @object = MakeStructuredObject(reader, fieldNames);
                             yield return @object;
+                            count++;
+
+                            if(pageSize != 0 && (count % pageSize) == 0)
+                            {
+                                VerboseLog.Info($"read {count:n0} items");
+                            }
                         }
                     }
                 }
@@ -63,5 +72,7 @@ namespace Tango.Workbench.Sources
         
         
         public string? Query{get; set;}
+
+        public long PageSize{get; set;} = 1000;
     }
 }

@@ -1,0 +1,42 @@
+﻿<Script>
+	<Group name="Pipe">
+		<Pipeline name="Export">
+			<Select database="tango">
+				<Query>
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+					union all
+					select * from Locations
+				</Query>
+			</Select>
+			
+			<Tee name="CsvBranch">
+				<ToCsv filename="c:\code\test\out.csv" overwrite="true" />
+			</Tee>
+
+			<Tee name="JsonBranch">
+				<ToJson filename="c:\code\test\out.json" overwrite="true" />
+			</Tee>
+		</Pipeline>
+	</Group>
+</Script>
+
+
+
