@@ -17,6 +17,7 @@ namespace Tango.Workbench.Filters
             if(this.Delay > TimeSpan.Zero)
             {
                 this.Context.CancelAfter(this.Delay);
+                VerboseLog.Info($"Sequence will be cancelled in {Delay}");
             }
 
             return items;

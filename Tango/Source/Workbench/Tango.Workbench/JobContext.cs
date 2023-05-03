@@ -67,7 +67,7 @@ namespace Tango.Workbench
         /// <summary>
         /// Signals the cancellation token
         /// </summary>
-        internal void Cancel()
+        public void Cancel()
         {
             m_AsyncCancellationTokenSource.Value!.Cancel();
         }
@@ -76,7 +76,7 @@ namespace Tango.Workbench
         /// Schedules a cancellation after a given delay
         /// </summary>
         /// <param name="delay"></param>
-        internal void CancelAfter(TimeSpan delay)
+        public void CancelAfter(TimeSpan delay)
         {
             m_AsyncCancellationTokenSource.Value!.CancelAfter(delay);
         }
