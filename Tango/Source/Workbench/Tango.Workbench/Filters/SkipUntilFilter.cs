@@ -25,7 +25,7 @@ namespace Tango.Workbench.Filters
                 if(publish == false)
                 {
                     var itemType = item.GetType();
-                    var predicate = GetPredicate(this.Predicate, itemType);
+                    var predicate = GetFunction(this.Predicate, itemType);
 
                     if(predicate(item, index++))
                     {
