@@ -40,7 +40,7 @@
 	<Group name="Directories">
 		<Pipeline>
 			<ChildDirectories directorySpec="c:\code\**\**" />
-			<Map transformation="item.ToUpper()" />
+			<Map transformation='Path.Combine(item.ToString(), "log.txt") ' />
 			<ToCsv filename="c:\code\test\directories.csv" overwrite="true" />
 		</Pipeline>
 	</Group>

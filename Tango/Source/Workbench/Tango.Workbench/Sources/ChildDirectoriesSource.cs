@@ -23,7 +23,10 @@ namespace Tango.Workbench.Sources
         {
             if(this.DirectorySpec is null) throw new WorkbenchException($"no directory spec specified");
 
-            var directoryInfo = DirectoryExpander.Expand(this.DirectorySpec, DirectoryExpanderMode.OnlyExisting).ToList();
+            var directoryInfo = DirectoryExpander.Expand(this.DirectorySpec, DirectoryExpanderMode.OnlyExisting)
+                                                 .Select(d => new DirectoryInfo(d))
+                                                 .ToList();
+            
             return directoryInfo.ToAsyncEnumerable();
         }
 
