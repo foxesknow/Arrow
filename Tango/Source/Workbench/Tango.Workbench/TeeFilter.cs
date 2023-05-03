@@ -15,17 +15,17 @@ namespace Tango.Workbench
     {
         public override async IAsyncEnumerable<object> Run(IAsyncEnumerable<object> items)
         {
+            var ct = this.Context.CancellationToken;
+
             var channel = Channel.CreateUnbounded<object>();
             var reader = channel.Reader;
             var writer = channel.Writer;
 
             var factory = BuildPipelineFactory();
-            var teeTask = Task.Run(() => RunTee(reader.ReadAllAsync(), factory));
+            var teeTask = Task.Run(() => RunTee(reader.ReadAllAsync(ct), factory));
 
             try
             {
-                var ct = this.Context.CancellationToken;
-
                 await foreach (var item in items.WithCancellation(this.Context.CancellationToken))
                 {
                     ct.ThrowIfCancellationRequested();
@@ -34,7 +34,7 @@ namespace Tango.Workbench
                     yield return item;
 
                     // ...as well as pass it into the tee bit of our filter
-                    if (teeTask.IsCompleted == false) await writer.WriteAsync(item);
+                    if (teeTask.IsCompleted == false) await writer.WriteAsync(item, ct);
                 }
             }
             finally
@@ -49,7 +49,7 @@ namespace Tango.Workbench
             // We need to tell the context that we've entered a new async scope.
             // Some things, like database connections can't be shared amongst threads
             // so this gives the framework change to make any adjustments
-            Context.EnterNewAsyncScope();
+            this.Context.EnterNewAsyncScope();
 
             var sequence = function(input);
 
@@ -58,7 +58,7 @@ namespace Tango.Workbench
             {
                 var ct = this.Context.CancellationToken;
 
-                await foreach (var item in sequence.WithCancellation(this.Context.CancellationToken))
+                await foreach (var item in sequence.WithCancellation(ct))
                 {
                     count++;
                     ct.ThrowIfCancellationRequested();
@@ -81,6 +81,7 @@ namespace Tango.Workbench
             finally
             {
                 VerboseLog.Info($"{count} items went through the tee");
+                this.Context.LeaveAsyncScope();
             }
         }
 
@@ -95,13 +96,13 @@ namespace Tango.Workbench
         }
 
         internal override void UnregisterRuntimeDependencies()
-        {
-            base.UnregisterRuntimeDependencies();
-
+        {            
             foreach (var component in Filters)
             {
                 component.UnregisterRuntimeDependencies();
             }
+
+            base.UnregisterRuntimeDependencies();
         }
 
         private Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> BuildPipelineFactory()

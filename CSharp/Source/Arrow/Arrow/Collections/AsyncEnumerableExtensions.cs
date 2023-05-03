@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,27 +19,24 @@ namespace Arrow.Collections
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> source, CancellationToken cancellationToken = default)
+        public static IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> source)
         {
             if(source is null) throw new ArgumentNullException(nameof(source));
 
-            return new AsyncEnumerableWrapper<T>(source, cancellationToken);
+            return new AsyncEnumerableWrapper<T>(source);
         }
 
         private class AsyncEnumerableWrapper<T> : IAsyncEnumerable<T>
         {
             private readonly IEnumerable<T> m_Source;
-            private readonly CancellationToken m_CancellationToken;
-
-            public AsyncEnumerableWrapper(IEnumerable<T> source, CancellationToken cancellationToken)
+            public AsyncEnumerableWrapper(IEnumerable<T> source)
             {
                 m_Source = source;
-                m_CancellationToken = cancellationToken;
             }
 
             IAsyncEnumerator<T> IAsyncEnumerable<T>.GetAsyncEnumerator(CancellationToken cancellationToken)
             {
-                return new AsyncEnumeratorWrapper(m_Source.GetEnumerator(), m_CancellationToken);
+                return new AsyncEnumeratorWrapper(m_Source.GetEnumerator(), cancellationToken);
             }
 
             private class AsyncEnumeratorWrapper : IAsyncEnumerator<T>

@@ -25,7 +25,7 @@ namespace Tango.Workbench.Filters
         {
             var pushed = 0;
             var start = ExecutionTimer.Now;
-            await foreach(var item in items.WithCancellation(this.Context.CancellationToken))
+            await foreach(var item in items)
             {
                 yield return item;
                 pushed++;

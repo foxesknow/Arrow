@@ -17,16 +17,20 @@ namespace Tango.Workbench
         private long m_ScopeID = 1;
 
         private AsyncLocal<long> m_AsyncScopeID = new();
+        private AsyncLocal<CancellationTokenSource> m_AsyncCancellationTokenSource = new();
 
-        private readonly CancellationTokenSource m_Cts = new();
+        private readonly CancellationTokenSource m_RootCts = new();
 
         protected JobContext()
         {
             m_AsyncScopeID.Value = m_ScopeID;
-            this.CancellationToken = m_Cts.Token;
+            m_AsyncCancellationTokenSource.Value = m_RootCts;
         }
 
-        public CancellationToken CancellationToken{get;}
+        public CancellationToken CancellationToken
+        {
+            get{return m_AsyncCancellationTokenSource.Value!.Token;}
+        }
 
         /// <summary>
         /// Called by the implementation to indicate that it is starting a new logic scope
@@ -41,7 +45,23 @@ namespace Tango.Workbench
             var id = Interlocked.Increment(ref m_ScopeID);
             m_AsyncScopeID.Value = id;
 
+            // We need a new cancellation token source that will only affect this scope.
+            // However, we link it back to its parent so that if the parent scope is
+            // cancelled then we'll also be cancelled
+            var activeCts = m_AsyncCancellationTokenSource.Value!;            
+            var scopedCts = CancellationTokenSource.CreateLinkedTokenSource(activeCts.Token);
+            m_AsyncCancellationTokenSource.Value = scopedCts;
+
             return id;
+        }
+
+        internal void LeaveAsyncScope()
+        {
+            var activeConsCell = m_AsyncCancellationTokenSource.Value;
+            if(activeConsCell is not null)
+            {
+                activeConsCell.Dispose();
+            }
         }
 
         /// <summary>
@@ -49,7 +69,7 @@ namespace Tango.Workbench
         /// </summary>
         internal void Cancel()
         {
-            m_Cts.Cancel();
+            m_AsyncCancellationTokenSource.Value!.Cancel();
         }
 
         /// <summary>
@@ -58,7 +78,7 @@ namespace Tango.Workbench
         /// <param name="delay"></param>
         internal void CancelAfter(TimeSpan delay)
         {
-            m_Cts.CancelAfter(delay);
+            m_AsyncCancellationTokenSource.Value!.CancelAfter(delay);
         }
 
         /// <summary>
@@ -95,7 +115,7 @@ namespace Tango.Workbench
         /// </summary>
         protected internal virtual void Dispose()
         {
-            m_Cts.Dispose();
+            m_RootCts.Dispose();
         }
     }
 }

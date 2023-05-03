@@ -50,6 +50,8 @@ namespace Tango.Workbench
             {
                 component.UnregisterRuntimeDependencies();
             }
+
+            base.UnregisterRuntimeDependencies();
         }
 
         private Func<IAsyncEnumerable<object>> BuildPipelineFactory()

@@ -14,14 +14,12 @@ namespace Tango.Workbench.Sources
     [Source("Numbers")]
     public sealed class NumbersSource : Source
     {
-        public override async IAsyncEnumerable<object> Run()
+        public override IAsyncEnumerable<object> Run()
         {
-            await ForceAsync();
+            var range = Enumerable.Range(this.Start, this.Count)
+                                  .Cast<object>();
 
-            foreach(var number in Enumerable.Range(this.Start, this.Count))
-            {
-                yield return (object)number;
-            }
+            return range.ToAsyncEnumerable();
         }
 
         /// <summary>

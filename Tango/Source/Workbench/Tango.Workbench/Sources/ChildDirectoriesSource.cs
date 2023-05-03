@@ -4,27 +4,27 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Arrow.Collections;
 using Arrow.IO;
 
 namespace Tango.Workbench.Sources
 {
     /// <summary>
     /// Returns all directory names that match a given directory spec
+    /// 
+    /// NOTE: All directories are resolved before the sequence is returned.
+    /// This means that subsequent filters can update any source directories 
+    /// without seeing their changes appear in the sequence.
     /// </summary>
     [Source("ChildDirectories")]
     public sealed class ChildDirectoriesSource : Source
     {
-        public override async IAsyncEnumerable<object> Run()
+        public override IAsyncEnumerable<object> Run()
         {
             if(this.DirectorySpec is null) throw new WorkbenchException($"no directory spec specified");
 
-            await ForceAsync();
-
-            foreach(var directory in DirectoryExpander.Expand(this.DirectorySpec, DirectoryExpanderMode.OnlyExisting))
-            {
-                yield return new DirectoryInfo(directory);
-            }
+            var directoryInfo = DirectoryExpander.Expand(this.DirectorySpec, DirectoryExpanderMode.OnlyExisting).ToList();
+            return directoryInfo.ToAsyncEnumerable();
         }
 
         /// <summary>
