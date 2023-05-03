@@ -1,12 +1,12 @@
 ﻿<Script>
 	<Group name="Pipe">
-		<!--
 		<Pipeline name="Numbers">
 			<Numbers start="10" count="20" />
-			<SkipUntil predicate="index == 3" />			
+			<TakeUntil>
+				<Predicate><![CDATA[index == 5]]></Predicate>
+			</TakeUntil>
 			<Log/>
 		</Pipeline>
-		-->
 		
 		<!--
 		<Pipeline name="Zipper">
@@ -20,17 +20,6 @@
 			</ZipDirectory>
 		</Pipeline>
 		-->
-
-		<Pipeline name="Database">
-			<!--
-			<Select database="tango">
-				<Query>select * from Locations</Query>
-			</Select>
-			-->
-			
-			<ChildDirectories directorySpec="c:\code\test\logs\**" />
-			<ToJson filename="c:\code\test\out.json" />
-		</Pipeline>
 	</Group>
 </Script>
 
