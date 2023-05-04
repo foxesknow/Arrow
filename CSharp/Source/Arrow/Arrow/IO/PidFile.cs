@@ -48,7 +48,7 @@ namespace Arrow.IO
 
         private int GetProcessID()
         {
-            return Process.GetCurrentProcess().Id;
+            return Environment.ProcessId;
         }
 
         /// <inheritdoc/>

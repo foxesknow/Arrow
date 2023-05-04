@@ -35,6 +35,9 @@ namespace Tango.Workbench.Filters
             parseContext.References.Add(typeof(Arrow.Calendar.Clock).Assembly);
             parseContext.Usings.Add("Arrow.Calendar");
 
+            parseContext.References.Add(typeof(Tango.Workbench.Filters.ScriptSupport.Wire).Assembly);
+            parseContext.Usings.Add("Tango.Workbench.Filters.ScriptSupport");
+
             return parseContext;
         }
     }

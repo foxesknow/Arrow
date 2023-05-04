@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -9,8 +10,12 @@ using Arrow.Scripting.Wire.StaticExpression;
 
 namespace Tango.Workbench.Filters
 {
+    /// <summary>
+    /// Maps an incoming item to a new item.
+    /// If the new item is null then it is not passed through the stream.
+    /// </summary>
     [Filter("Map")]
-    public sealed class MapFilter : Filter
+    public sealed class MapFilter : Filter, ISupportInitialize
     {
         private readonly ExpressionCompiler<object?> m_Expressions = new(ExpressionCompiler.AlwaysNull);
 
@@ -28,6 +33,15 @@ namespace Tango.Workbench.Filters
                 var newItem = function(item, index++);
                 if(newItem is not null) yield return newItem;
             }
+        }
+
+        void ISupportInitialize.BeginInit()
+        {
+        }
+
+        void ISupportInitialize.EndInit()
+        {
+            if(string.IsNullOrWhiteSpace(this.Transformation)) throw new WorkbenchException("invalid transformation");
         }
 
         /// <summary>

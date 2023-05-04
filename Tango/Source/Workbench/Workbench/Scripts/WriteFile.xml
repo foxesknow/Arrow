@@ -46,7 +46,7 @@
 				<Cases>
 					<Case if='(index % 3) == 1' then='item.ToUpper()' />
 					<Case if='(index % 3) == 0' then='item.ToLower()' />
-					<Case if='true' then='"foo"' />
+					<Case if='true' then='null' />
 				</Cases>
 			</Switch>
 			
