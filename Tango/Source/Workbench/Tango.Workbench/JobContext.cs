@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Arrow.Execution;
+
 namespace Tango.Workbench
 {
     /// <summary>
@@ -21,11 +23,16 @@ namespace Tango.Workbench
 
         private readonly CancellationTokenSource m_RootCts = new();
 
+        private Stack<Func<IReadOnlyList<Exception>>> m_CommitStack = new();
+        private Stack<Func<IReadOnlyList<Exception>>> m_RollbackStack = new();
+
         protected JobContext()
         {
             m_AsyncScopeID.Value = m_ScopeID;
             m_AsyncCancellationTokenSource.Value = m_RootCts;
         }
+
+        protected object SyncRoot{get;} = new();
 
         public CancellationToken CancellationToken
         {
@@ -61,6 +68,36 @@ namespace Tango.Workbench
             if(activeConsCell is not null)
             {
                 activeConsCell.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Registers a function that will be called when the group commits
+        /// </summary>
+        /// <param name="commit"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void RegisterCommit(Func<IReadOnlyList<Exception>> commit)
+        {
+            if(commit is null) throw new ArgumentNullException(nameof(commit));
+
+            lock(this.SyncRoot)
+            {
+                m_CommitStack.Push(commit);
+            }
+        }
+
+        /// <summary>
+        /// Registers a function that will be called when the group rolls back
+        /// </summary>
+        /// <param name="rollback"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void RegisterRollback(Func<IReadOnlyList<Exception>> rollback)
+        {
+            if(rollback is null) throw new ArgumentNullException(nameof(rollback));
+
+            lock(this.SyncRoot)
+            {
+                m_RollbackStack.Push(rollback);
             }
         }
 
@@ -102,12 +139,54 @@ namespace Tango.Workbench
         /// <summary>
         /// Commits any transactions
         /// </summary>
-        protected internal abstract void Commit();
+        protected internal void Commit()
+        {
+            var allExceptions = new List<Exception>();
+
+            lock(this.SyncRoot)
+            {
+                while(m_CommitStack.TryPop(out var function))
+                {
+                    try
+                    {
+                        var exceptions = function();
+                        allExceptions.AddRange(exceptions);
+                    }
+                    catch(Exception e)
+                    {
+                        allExceptions.Add(e);
+                    }
+                }
+            }
+
+            if(allExceptions.Count != 0) throw new AggregateException(allExceptions);
+        }
         
         /// <summary>
         /// Rolls back any transactions
         /// </summary>
-        protected internal abstract void Rollback();
+        protected internal void Rollback()
+        {
+            var allExceptions = new List<Exception>();
+
+            lock(this.SyncRoot)
+            {
+                while(m_RollbackStack.TryPop(out var function))
+                {
+                    try
+                    {
+                        var exceptions = function();
+                        allExceptions.AddRange(exceptions);
+                    }
+                    catch(Exception e)
+                    {
+                        allExceptions.Add(e);
+                    }
+                }
+            }
+
+            if(allExceptions.Count != 0) throw new AggregateException(allExceptions);
+        }
 
         /// <summary>
         /// Disposes of any resources.

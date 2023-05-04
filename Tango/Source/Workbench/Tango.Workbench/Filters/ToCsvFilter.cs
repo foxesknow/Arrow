@@ -23,11 +23,10 @@ namespace Tango.Workbench.Filters
     {
         protected override async IAsyncEnumerable<object> WriteToFile(string filename, IAsyncEnumerable<object> items)
         {
-            var succeeded = false;
-
-            try
+            using(var stream = File.Create(filename, 16384))
             {
-                using(var stream = File.Create(filename, 16384))
+                RegisterRollbackFile(filename);
+
                 using(var writer = new StreamWriter(stream))
                 {
                     IReadOnlyList<string>? columns = null;
@@ -52,14 +51,6 @@ namespace Tango.Workbench.Filters
                         yield return item;
                     }
 
-                    succeeded = true;
-                }
-            }
-            finally
-            {
-                if(succeeded == false)
-                {
-                    TidyUpFailedWrite(filename);
                 }
             }
         }

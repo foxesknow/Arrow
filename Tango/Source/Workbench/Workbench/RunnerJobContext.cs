@@ -26,8 +26,6 @@ namespace Workbench
         private readonly Dictionary<(long ScopeID, string Name), IDbConnection> m_TransactedConnections = new(ScopedDatabaseComparer.Instance);        
         private readonly Dictionary<(long ScopeID, string Name), IDbTransaction> m_Transactions = new(ScopedDatabaseComparer.Instance);
 
-        private readonly object m_SyncRoot = new();
-
         private readonly RunnerBatch m_Script;
         private readonly IDatabaseManager m_DatabaseManager;
 
@@ -37,6 +35,9 @@ namespace Workbench
         {
             m_Script = script;
             m_DatabaseManager = m_Script.DatabaseManager;
+
+            RegisterCommit(OnCommit);
+            RegisterRollback(OnRollback);
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Workbench
         /// <exception cref="WorkbenchException"></exception>
         protected override IDbCommand CreateCommand(long scopeID, string databaseName)
         {
-            lock(m_SyncRoot)
+            lock(this.SyncRoot)
             {
                 var connectionInfo = m_DatabaseManager.GetConnectionInfo(databaseName);
                 return (connectionInfo, UseTransactions) switch
@@ -76,25 +77,25 @@ namespace Workbench
             }
         }
 
-        protected override void Commit()
+        private IReadOnlyList<Exception> OnCommit()
         {
-            lock(m_SyncRoot)
+            lock(this.SyncRoot)
             {
                 var exceptions = FinalizeTransactions("commit", static transaction => transaction.Commit());
                 ResetDatabases();
                 
-                if(exceptions.Count != 0) throw new AggregateException(exceptions);
+                return exceptions;
             }
         }
 
-        protected override void Rollback()
+        private IReadOnlyList<Exception> OnRollback()
         {
-            lock(m_SyncRoot)
+            lock(this.SyncRoot)
             {
                 var exceptions = FinalizeTransactions("rollback", static transaction => transaction.Rollback());
                 ResetDatabases();
                 
-                if(exceptions.Count != 0) throw new AggregateException(exceptions);
+                return exceptions;
             }
         }
 

@@ -24,11 +24,10 @@ namespace Tango.Workbench.Filters
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
 
-            var succeeded = false;
-
-            try
+            using(var stream = File.Create(filename, 16384))
             {
-                using(var stream = File.Create(filename, 16384))
+                RegisterRollbackFile(filename);
+
                 using(var writer = new Utf8JsonWriter(stream, options))
                 {
                     writer.WriteStartArray();
@@ -40,15 +39,6 @@ namespace Tango.Workbench.Filters
                     }
 
                     writer.WriteEndArray();
-                }
-
-                succeeded = true;
-            }
-            finally
-            {
-                if(succeeded == false)
-                {
-                    TidyUpFailedWrite(filename);
                 }
             }
         }

@@ -51,6 +51,8 @@
 			</Switch>
 			
 			<ToCsv filename="c:\code\test\directories.csv" overwrite="true" />
+
+			<Where predicate='Wire.Throw("oops")' />
 		</Pipeline>
 	</Group>
 </Script>

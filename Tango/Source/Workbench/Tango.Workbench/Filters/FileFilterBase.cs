@@ -42,10 +42,19 @@ namespace Tango.Workbench.Filters
             return WriteToFile(this.Filename, items);
         }
 
-        protected void TidyUpFailedWrite(string filename)
+        /// <summary>
+        /// Deletes the file if a rollback occurs
+        /// </summary>
+        /// <param name="filename"></param>
+        protected void RegisterRollbackFile(string filename)
         {
-            Log.Error($"error whilst writing {filename}");
-            MethodCall.AllowFail(filename, static filename => File.Delete(filename));
+            this.Context.RegisterRollback(() =>
+            {
+                Log.Error($"deleting {filename}");
+                File.Delete(filename);
+
+                return Array.Empty<Exception>();
+            });
         }
 
         protected abstract IAsyncEnumerable<object> WriteToFile(string filename, IAsyncEnumerable<object> items);
