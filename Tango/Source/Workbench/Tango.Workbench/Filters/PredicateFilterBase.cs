@@ -16,52 +16,15 @@ namespace Tango.Workbench.Filters
     /// "item" is the item going through the pipeline
     /// "index" is the 0-based position of the item in the stream
     /// </summary>
-    public abstract class PredicateFilterBase : ExpressionFilterBase<bool>
+    public abstract class PredicateFilterBase : Filter
     {
         private static readonly Func<object, long, bool> AlwaysFalse = static (_, _) => false;
 
-        protected override Func<object, long, bool> Compile(string script, Type itemType)
+        private readonly ExpressionCompiler<bool> m_Predicates = new(AlwaysFalse);
+
+        protected Func<object, long, bool> GetFunction(string script, Type itemType)
         {
-            /*
-             * The filter will receive items as objects, so we'll need to cast then
-             * to the appropriate type before passing them into the script.
-             * This lambda we generate will have the form:
-             * 
-             *   (object item, long index) => script((itemType)object, index)
-             */
-
-            try
-            {
-                var parseContext = MakeParseContext();
-                parseContext.Parameters.Add(Expression.Parameter(itemType, "item"));
-                parseContext.Parameters.Add(Expression.Parameter(typeof(long), "index"));
-            
-                var generator = new StaticCodeGenerator();
-                var innerLambda = generator.CreateLambda(script, parseContext);
-
-                var itemParameter = Expression.Parameter(typeof(object));
-                var indexParameter = Expression.Parameter(typeof(long));
-                
-                var outerLambda = Expression.Lambda<Func<object, long, bool>>
-                (
-                    Expression.Invoke
-                    (
-                        innerLambda,
-                        Expression.Convert(itemParameter, itemType),
-                        indexParameter
-                    ),
-                    itemParameter,
-                    indexParameter
-                );
-
-                return outerLambda.Compile();
-            }
-            catch
-            {
-                Log.Warn($"could not compile the predicate against the type {itemType.Name}. A default predicate will used that evaluates to false instead");
-
-                return AlwaysFalse;
-            }
+            return m_Predicates.GetFunction(script, itemType, this.Log);
         }        
     }
 }
