@@ -41,6 +41,15 @@
 		<Pipeline>
 			<ChildDirectories directorySpec="c:\code\**\**" />
 			<Map transformation='Path.Combine(item.ToString(), "log.txt") ' />
+
+			<Switch>
+				<Cases>
+					<Case if='(index % 3) == 1' then='item.ToUpper()' />
+					<Case if='(index % 3) == 0' then='item.ToLower()' />
+					<Case if='true' then='"foo"' />
+				</Cases>
+			</Switch>
+			
 			<ToCsv filename="c:\code\test\directories.csv" overwrite="true" />
 		</Pipeline>
 	</Group>

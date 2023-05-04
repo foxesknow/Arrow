@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Tango.Workbench.Filters
 {
+    /// <summary>
+    /// Takes item from the stream until the predicates is true
+    /// </summary>
     [Filter("TakeUntil")]
     public sealed class TakeUntilFilter : PredicateFilterBase
     {
@@ -18,7 +21,7 @@ namespace Tango.Workbench.Filters
             await foreach(var item in items)
             {
                 var itemType = item.GetType();
-                var predicate = GetFunction(this.Predicate, itemType);
+                var predicate = GetFunction(itemType);
 
                 if(predicate(item, index++))
                 {
@@ -30,10 +33,5 @@ namespace Tango.Workbench.Filters
                 }
             }
         }
-
-        /// <summary>
-        /// While the predicate becomes true we will stop return items
-        /// </summary>
-        public string? Predicate{get; set;}
     }
 }

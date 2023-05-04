@@ -20,17 +20,12 @@ namespace Tango.Workbench.Filters
             await foreach(var item in items)
             {
                 var itemType = item.GetType();
-                var predicate = GetFunction(this.Predicate, itemType);
+                var predicate = GetFunction(itemType);
 
                 if(predicate(item, index++)) break;
 
                 yield return item;
             }
         }
-
-        /// <summary>
-        /// When the predicate evaluates to true we will stop returning items
-        /// </summary>
-        public string? Predicate{get; set;}
     }
 }

@@ -12,9 +12,7 @@ namespace Tango.Workbench.Filters
     [Filter("Map")]
     public sealed class MapFilter : Filter
     {
-        private static readonly Func<object, long, object?> AlwaysNull = static (_, _) => null;
-
-        private readonly ExpressionCompiler<object?> m_Expressions = new(AlwaysNull);
+        private readonly ExpressionCompiler<object?> m_Expressions = new(ExpressionCompiler.AlwaysNull);
 
         public override async IAsyncEnumerable<object> Run(IAsyncEnumerable<object> items)
         {

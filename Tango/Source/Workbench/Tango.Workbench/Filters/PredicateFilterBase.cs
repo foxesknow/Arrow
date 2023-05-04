@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -16,15 +17,27 @@ namespace Tango.Workbench.Filters
     /// "item" is the item going through the pipeline
     /// "index" is the 0-based position of the item in the stream
     /// </summary>
-    public abstract class PredicateFilterBase : Filter
+    public abstract class PredicateFilterBase : Filter, ISupportInitialize
     {
-        private static readonly Func<object, long, bool> AlwaysFalse = static (_, _) => false;
+        private readonly ExpressionCompiler<bool> m_Predicates = new(ExpressionCompiler.AlwaysFalse);
 
-        private readonly ExpressionCompiler<bool> m_Predicates = new(AlwaysFalse);
-
-        protected Func<object, long, bool> GetFunction(string script, Type itemType)
+        protected Func<object, long, bool> GetFunction(Type itemType)
         {
-            return m_Predicates.GetFunction(script, itemType, this.Log);
-        }        
+            return m_Predicates.GetFunction(this.Predicate!, itemType, this.Log);
+        }
+
+        void ISupportInitialize.BeginInit()
+        {
+        }
+
+        void ISupportInitialize.EndInit()
+        {
+            if(string.IsNullOrWhiteSpace(this.Predicate)) throw new WorkbenchException("invalid predicate");
+        }
+
+        /// <summary>
+        /// The predicate to evaluate
+        /// </summary>
+        public string? Predicate{get; set;}
     }
 }

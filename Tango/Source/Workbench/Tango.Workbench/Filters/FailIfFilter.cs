@@ -22,7 +22,7 @@ namespace Tango.Workbench.Filters
             await foreach(var item in items)
             {
                 var itemType = item.GetType();
-                var predicate = GetFunction(this.Predicate, itemType);
+                var predicate = GetFunction(itemType);
 
                 if(predicate(item, index++))
                 {
@@ -32,11 +32,6 @@ namespace Tango.Workbench.Filters
                 yield return item;
             }
         }
-
-        /// <summary>
-        /// If this predicate is true we will throw an exception
-        /// </summary>
-        public string? Predicate{get; set;}
 
         /// <summary>
         /// The message to place in the exception

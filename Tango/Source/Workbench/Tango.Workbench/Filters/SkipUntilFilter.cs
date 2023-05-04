@@ -25,7 +25,7 @@ namespace Tango.Workbench.Filters
                 if(publish == false)
                 {
                     var itemType = item.GetType();
-                    var predicate = GetFunction(this.Predicate, itemType);
+                    var predicate = GetFunction(itemType);
 
                     if(predicate(item, index++))
                     {
@@ -40,10 +40,5 @@ namespace Tango.Workbench.Filters
                 yield return item;
             }
         }
-
-        /// <summary>
-        /// While the predicate is true we start returning items
-        /// </summary>
-        public string? Predicate{get; set;}
     }
 }

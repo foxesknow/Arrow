@@ -24,15 +24,10 @@ namespace Tango.Workbench.Filters
             await foreach(var item in items)
             {
                 var itemType = item.GetType();
-                var predicate = GetFunction(this.Predicate, itemType);
+                var predicate = GetFunction(itemType);
 
                 if(predicate(item, index++)) yield return item;
             }
         }
-
-        /// <summary>
-        /// The predicate to apply to each item
-        /// </summary>
-        public string? Predicate{get; set;}
     }
 }
