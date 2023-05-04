@@ -47,12 +47,12 @@ namespace Arrow.Data.Mock
 
             public override int ExecuteNonQuery()
             {
-                throw new NotImplementedException();
+                return m_Details.ExecuteNonQuery(this);
             }
 
             public override object? ExecuteScalar()
             {
-                throw new NotImplementedException();
+                return m_Details.ExecuteScalar(this);
             }
 
             public override void Prepare()
@@ -67,7 +67,7 @@ namespace Arrow.Data.Mock
 
             protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
             {
-                throw new NotImplementedException();
+                return m_Details.ExecuteReader(this);
             }
         }
     }

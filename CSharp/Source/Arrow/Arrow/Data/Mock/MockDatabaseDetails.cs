@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace Arrow.Data.Mock
         private static readonly WhenPredicate AlwaysTrue = _ => true;
 
         private readonly List<(WhenPredicate When, ThenFunction<int>)> m_ExecuteNonQuery = new();
-        private readonly List<(WhenPredicate When, ThenFunction<IDataReader>)> m_ExecuteReader = new();
+        private readonly List<(WhenPredicate When, ThenFunction<DbDataReader>)> m_ExecuteReader = new();
         private readonly List<(WhenPredicate When, ThenFunction<object?>)> m_ExecuteScalar = new();
 
         public string? ConnectionString{get; set;}   
@@ -39,12 +40,12 @@ namespace Arrow.Data.Mock
             return this;
         }
 
-        public MockDatabaseDetails OnExecuteReader(ThenFunction<IDataReader> then)
+        public MockDatabaseDetails OnExecuteReader(ThenFunction<DbDataReader> then)
         {
             return OnExecuteReader(AlwaysTrue, then);
         }
 
-        public MockDatabaseDetails OnExecuteReader(WhenPredicate when, ThenFunction<IDataReader> then)
+        public MockDatabaseDetails OnExecuteReader(WhenPredicate when, ThenFunction<DbDataReader> then)
         {
             if(when is null) throw new ArgumentNullException(nameof(when));
             if(then is null) throw new ArgumentNullException(nameof(then));
@@ -67,6 +68,36 @@ namespace Arrow.Data.Mock
             m_ExecuteScalar.Add((when, then));
 
             return this;
+        }
+
+        private int ExecuteNonQuery(DbCommand command)
+        {
+            foreach(var (when, then) in m_ExecuteNonQuery)
+            {
+                if(when(command)) return then(command);
+            }
+
+            throw new DataException($"no handler for {nameof(ExecuteNonQuery)}");
+        }
+
+        private DbDataReader ExecuteReader(DbCommand command)
+        {
+            foreach(var (when, then) in m_ExecuteReader)
+            {
+                if(when(command)) return then(command);
+            }
+
+            throw new DataException($"no handler for {nameof(ExecuteReader)}");
+        }
+
+        private object? ExecuteScalar(DbCommand command)
+        {
+            foreach(var (when, then) in m_ExecuteScalar)
+            {
+                if(when(command)) return then(command);
+            }
+
+            throw new DataException($"no handler for {nameof(ExecuteScalar)}");
         }
     }
 }

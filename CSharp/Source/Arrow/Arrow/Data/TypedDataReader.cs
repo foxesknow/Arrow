@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
+using System.Data.Common;
 
 namespace Arrow.Data
 {
@@ -43,7 +44,7 @@ namespace Arrow.Data
         /// <param name="columns"></param>
         /// <param name="rows"></param>
         /// <returns></returns>
-        public static IDataReader Make(IReadOnlyList<(string Name, Type Type)> columns, IEnumerable<object?[]> rows)
+        public static DbDataReader Make(IReadOnlyList<(string Name, Type Type)> columns, IEnumerable<object?[]> rows)
         {
             if(columns is null) throw new ArgumentNullException(nameof(columns));
             if(rows is null) throw new ArgumentNullException(nameof(rows));
@@ -57,7 +58,7 @@ namespace Arrow.Data
         /// <param name="columns"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        public static IDataReader MakeSingleRow(IReadOnlyList<(string Name, Type Type)> columns, object?[] row)
+        public static DbDataReader MakeSingleRow(IReadOnlyList<(string Name, Type Type)> columns, object?[] row)
         {
             if(columns is null) throw new ArgumentNullException(nameof(columns));
             if(row is null) throw new ArgumentNullException(nameof(row));
@@ -74,7 +75,7 @@ namespace Arrow.Data
         /// <param name="rowValues"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IDataReader MakeSingleColumn((string Name, Type Type) column, object?[] rowValues)
+        public static DbDataReader MakeSingleColumn((string Name, Type Type) column, object?[] rowValues)
         {
             if(rowValues is null) throw new ArgumentNullException(nameof(rowValues));
             if(column.Name is null) throw new ArgumentException("no name specified", nameof(column));

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Arrow.Data
 {
-    public abstract class DataReaderBase
+    public abstract class DataReaderBase : DbDataReader
     {
         protected long GetArray<T>(T[] source, long fieldOffset, T[]? buffer, int bufferOffset, int length)
         {

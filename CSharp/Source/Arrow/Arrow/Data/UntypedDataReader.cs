@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
+using System.Data.Common;
 
 namespace Arrow.Data
 {
@@ -35,7 +36,7 @@ namespace Arrow.Data
         /// <param name="columns"></param>
         /// <param name="rows"></param>
         /// <returns></returns>
-        public static IDataReader Make(IReadOnlyList<string> columns, IEnumerable<object?[]> rows)
+        public static DbDataReader Make(IReadOnlyList<string> columns, IEnumerable<object?[]> rows)
         {
             if(columns is null) throw new ArgumentNullException(nameof(columns));
             if(rows is null) throw new ArgumentNullException(nameof(rows));
@@ -49,7 +50,7 @@ namespace Arrow.Data
         /// <param name="columns"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        public static IDataReader MakeSingleRow(IReadOnlyList<string> columns, object?[] row)
+        public static DbDataReader MakeSingleRow(IReadOnlyList<string> columns, object?[] row)
         {
             if(columns is null) throw new ArgumentNullException(nameof(columns));
             if(row is null) throw new ArgumentNullException(nameof(row));
@@ -66,7 +67,7 @@ namespace Arrow.Data
         /// <param name="rowValues"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IDataReader MakeSingleColumn(string column, object?[] rowValues)
+        public static DbDataReader MakeSingleColumn(string column, object?[] rowValues)
         {
             if(column is null) throw new ArgumentNullException(nameof(column));
             if(rowValues is null) throw new ArgumentNullException(nameof(rowValues));
