@@ -52,11 +52,11 @@ namespace Tango.Workbench
 
                 switch(runConfig.RunMode)
                 {
-                    case  RunMode.Single:
+                    case RunConfig.Mode.Single:
                         runGroup = string.Equals(group.Name, runConfig.GroupName, StringComparison.OrdinalIgnoreCase);
                         break;
 
-                    case RunMode.From:
+                    case RunConfig.Mode.From:
                         if(doneInitialFrom)
                         {
                             runGroup = true;
@@ -69,7 +69,7 @@ namespace Tango.Workbench
                         break;
 
                     default:
-                    case RunMode.All:
+                    case RunConfig.Mode.All:
                         runGroup = true;
                         break;
                 }

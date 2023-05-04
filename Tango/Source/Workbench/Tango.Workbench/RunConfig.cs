@@ -11,13 +11,13 @@ namespace Tango.Workbench
     /// </summary>
     public sealed class RunConfig
     {
-        private RunConfig(RunMode runMode, string groupName)
+        private RunConfig(RunConfig.Mode mode, string groupName)
         {
-            this.RunMode = runMode;
+            this.RunMode = mode;
             this.GroupName = groupName;
         }
 
-        public RunMode RunMode{get;}
+        public RunConfig.Mode RunMode{get;}
 
         public string GroupName{get;}
 
@@ -25,8 +25,8 @@ namespace Tango.Workbench
         {
             return this.RunMode switch
             {
-                RunMode.All => $"RunMode = {RunMode}",
-                _           =>  $"RunMode = {RunMode}, GroupName = {GroupName}"
+                Mode.All => $"RunMode = {RunMode}",
+                _        =>  $"RunMode = {RunMode}, GroupName = {GroupName}"
             };            
         }
 
@@ -36,7 +36,7 @@ namespace Tango.Workbench
         /// <returns></returns>
         public static RunConfig All()
         {
-            return new(RunMode.All, "");
+            return new(Mode.All, "");
         }        
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Tango.Workbench
             if(groupName is null) throw new ArgumentNullException(nameof(groupName));
             if(string.IsNullOrWhiteSpace(groupName)) throw new ArgumentException("invalid group name", nameof(groupName));
 
-            return new(RunMode.Single, groupName);
+            return new(Mode.Single, groupName);
         }
 
         /// <summary>
@@ -66,7 +66,25 @@ namespace Tango.Workbench
             if(groupName is null) throw new ArgumentNullException(nameof(groupName));
             if(string.IsNullOrWhiteSpace(groupName)) throw new ArgumentException("invalid group name", nameof(groupName));
 
-            return new(RunMode.From, groupName);
+            return new(Mode.From, groupName);
+        }
+
+        public enum Mode
+        {
+            /// <summary>
+            /// Run all groups
+            /// </summary>
+            All,
+
+            /// <summary>
+            /// Run a single group
+            /// </summary>
+            Single,
+
+            /// <summary>
+            /// Run from a given group to the end of the script
+            /// </summary>
+            From
         }
     }
 }
