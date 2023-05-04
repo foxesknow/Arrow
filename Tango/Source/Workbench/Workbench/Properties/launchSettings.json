@@ -23,6 +23,10 @@
     "WriteFile": {
       "commandName": "Project",
       "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\WriteFile.xml"
+    },
+    "Random": {
+      "commandName": "Project",
+      "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\RandomNumbers.xml"
     }
   }
 }

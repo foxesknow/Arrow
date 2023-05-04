@@ -1,0 +1,10 @@
+﻿<Script>
+	<Group name="Pipe">
+		<Pipeline name="Random">
+			<RandomNumbers seed="0" minValue="0" maxValue="100" />
+			<TakeWhile predicate="index != 10" />
+			<Log/>
+		</Pipeline>
+	</Group>
+</Script>
+

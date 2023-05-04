@@ -40,11 +40,14 @@ namespace Tango.Workbench.Filters
                         if(columns is null) 
                         {
                             columns = structuredObject.Select(pair => pair.Key).ToList();
-                            await writer.WriteLineAsync(string.Join(",", columns));
+                            await writer.WriteAsync(string.Join(",", columns));
                         }
 
                         var line = string.Join(",", columns.Select(c => PropertyToCsv(c, structuredObject)));
-                        await writer.WriteLineAsync(line);
+                        
+                        // Writing it like this means we don't get an empty line at the end of the file
+                        await writer.WriteLineAsync();
+                        await writer.WriteAsync(line);
 
                         yield return item;
                     }

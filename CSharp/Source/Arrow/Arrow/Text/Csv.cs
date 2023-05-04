@@ -32,7 +32,9 @@ namespace Arrow.Text
                 {
                     if(b is null)
                     {
-                        b = new StringBuilder(value.Length + 10);
+                        // *2 as worst case evey character will be escaped
+                        // +2 as we may have to put quotes at the beginning and end
+                        b = new StringBuilder((value.Length * 2) + 2);
                         b.Append(value.AsSpan(0, i));
                     }
 
