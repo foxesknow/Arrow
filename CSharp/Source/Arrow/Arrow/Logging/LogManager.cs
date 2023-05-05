@@ -10,6 +10,7 @@ using Arrow.Logging.Loggers;
 using Arrow.Xml.ObjectCreation;
 using Arrow.Configuration;
 using Arrow.Collections;
+using System.Threading;
 
 namespace Arrow.Logging
 {
@@ -96,15 +97,18 @@ namespace Arrow.Logging
         /// <returns>The log for the name</returns>
         private static ILog DoGetLog(string? name)
         {
+            if(name is null)
+            {
+                if(Interlocked.CompareExchange(ref s_UnnamedLog, null, null) is ILog log)
+                {
+                    return log;
+                }
+            }
+
             lock(s_Sync)
             {
-                ILog? log = null;
-
                 // If we've already got a named logger then return it
-                if(name != null && s_Loggers.TryGetValue(name, out log)) return log;
-
-                // The unnamed log is stored outside the dictionary
-                if(name == null && s_UnnamedLog != null) return s_UnnamedLog;
+                if(name != null && s_Loggers.TryGetValue(name, out var log)) return log;
 
                 try
                 {
