@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Arrow.Logging
 {
+    /// <summary>
+    /// Places a prefix in front on each log line.
+    /// This is useful for scoping log output to a particular domain
+    /// </summary>
     public sealed class PrefixLog : ILog, IPropertyContext, IForContext
     {
         private readonly ILog m_Outer;

@@ -9,7 +9,7 @@ namespace Arrow.Logging.Loggers
 	/// <summary>
 	/// Log implementation that does nothing
 	/// </summary>
-	public class NullLog : ILog
+	public sealed class NullLog : ILog
 	{
 		/// <summary>
 		/// A shareable instance of the class
