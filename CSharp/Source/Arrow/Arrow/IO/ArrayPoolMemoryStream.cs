@@ -201,8 +201,13 @@ namespace Arrow.IO
             if(requiredBufferLength > m_Buffer.Length)
             {
                 // We need to allocate a new buffer
-                var newBufferLength = requiredBufferLength * 2;
-                var newBuffer = s_BytePools.Rent(newBufferLength);
+                var newBufferLength = requiredBufferLength * 2L;
+                if(newBufferLength > Array.MaxLength)
+                {
+                    throw new IOException($"buffer will exceed {Array.MaxLength} bytes");
+                }
+
+                var newBuffer = s_BytePools.Rent((int)newBufferLength);
                 Buffer.BlockCopy(m_Buffer, 0, newBuffer, 0, m_Position);
 
                 s_BytePools.Return(m_Buffer);
@@ -222,6 +227,10 @@ namespace Arrow.IO
             }
         }
 
+        /// <summary>
+        /// Called by the DetachedBuffer to return items to the pool
+        /// </summary>
+        /// <param name="buffer"></param>
         private static void ReturnBuffer(byte[]? buffer)
         {
             if(buffer is not null && buffer.Length != 0)

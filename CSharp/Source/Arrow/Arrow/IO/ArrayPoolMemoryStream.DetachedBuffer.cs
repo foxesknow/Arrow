@@ -9,10 +9,22 @@ namespace Arrow.IO
 {
     public sealed partial class ArrayPoolMemoryStream
     {
+        /// <summary>
+        /// Manages a buffer detached from an ArrayPoolMemoryStream.
+        /// Once you have detached the buffer you become the owner of the memory.
+        /// You MUST call Dispose EXACTLY once to return the memory to it's unerlying pool.
+        /// </summary>
         public readonly struct DetachedBuffer : IDisposable
         {
-            public DetachedBuffer(byte[]? buffer, int length)
+            /// <summary>
+            /// Initializes the instance
+            /// </summary>
+            /// <param name="buffer"></param>
+            /// <param name="length"></param>
+            public DetachedBuffer(byte[] buffer, int length)
             {
+                if(length < 0) throw new ArgumentException("length must be at least zero", nameof(length));
+
                 this.Buffer = buffer;
                 this.Length = length;
             }
@@ -50,7 +62,7 @@ namespace Arrow.IO
             /// <summary>
             /// Returns the underlying memory as a Memory.
             /// NOTE: Once you have called Dispose() on this instance
-            /// and memory the returns object refers to is invalid
+            /// any memory the returned instance refers to is invalid
             /// </summary>
             /// <returns></returns>
             public Memory<byte> AsMemory()
@@ -66,7 +78,7 @@ namespace Arrow.IO
             /// <summary>
             /// Returns the underlying buffer as a span.
             /// NOTE: Once you have called Dispose() on this instance
-            /// and memory the returns object refers to is invalid
+            /// any memory the returned instance refers to is invalid
             /// </summary>
             /// <returns></returns>
             public Span<byte> AsSpan()
