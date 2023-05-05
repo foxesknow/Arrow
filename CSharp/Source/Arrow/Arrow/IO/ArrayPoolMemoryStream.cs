@@ -20,26 +20,26 @@ namespace Arrow.IO
         private byte[] m_Buffer;
         private int m_Position = 0;
 
-        private readonly int m_InitialSize;
+        private readonly int m_InitialCapacity;
 
+        /// <summary>
+        /// Initializes the stream with a default buffer size
+        /// </summary>
         public ArrayPoolMemoryStream() : this(64)
         {
         }
 
-        public ArrayPoolMemoryStream(int initialSize)
+        /// <summary>
+        /// Initializes the stream with a given size
+        /// </summary>
+        /// <param name="initialCapacity"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public ArrayPoolMemoryStream(int initialCapacity)
         {
-            if(initialSize < 0) throw new ArgumentException("initial size must be at least 0", nameof(initialSize));
+            if(initialCapacity < 0) throw new ArgumentException("initial capacity must be at least 0", nameof(initialCapacity));
             
-            m_InitialSize = initialSize;
-
-            if(initialSize == 0)
-            {
-                m_Buffer = Array.Empty<byte>();
-            }
-            else
-            {
-                m_Buffer = s_BytePools.Rent(initialSize);
-            }
+            m_InitialCapacity = initialCapacity;
+            m_Buffer = MakeInitialBuffer(initialCapacity);
         }
 
         /// <inheritdoc/>
@@ -68,16 +68,8 @@ namespace Arrow.IO
         {
             var detachedBuffer = new DetachedBuffer(m_Buffer, m_Position);
 
-            if(m_InitialSize == 0)
-            {
-                m_Buffer = Array.Empty<byte>();
-            }
-            else
-            {
-                m_Buffer = s_BytePools.Rent(m_InitialSize);
-            }
-
             m_Position = 0;
+            m_Buffer = MakeInitialBuffer(m_InitialCapacity);
 
             return detachedBuffer;
         }
@@ -215,6 +207,18 @@ namespace Arrow.IO
 
                 s_BytePools.Return(m_Buffer);
                 m_Buffer = newBuffer;
+            }
+        }
+
+        private byte[] MakeInitialBuffer(int initialCapacity)
+        {
+            if(initialCapacity == 0)
+            {
+                return Array.Empty<byte>();
+            }
+            else
+            {
+                return s_BytePools.Rent(initialCapacity);
             }
         }
 
