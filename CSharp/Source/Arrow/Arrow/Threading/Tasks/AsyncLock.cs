@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -22,37 +23,51 @@ namespace Arrow.Threading.Tasks
     ///     // Do something
     /// }
     /// </example>
-    public sealed class AsyncLock
+    public sealed class AsyncLock : IDisposable
     {
-        private readonly AsyncSemaphore m_Lock = new(1);
+        private readonly SemaphoreSlim m_Lock = new(1);
+        private bool m_Disposed;
 
-        public TaskAwaiter<IDisposable> GetAwaiter()
+        public TaskAwaiter<Releaser> GetAwaiter()
         {
+            ThrowIfDisposed();
+
             var t = WaitFor();
             return t.GetAwaiter();
         }
 
-        public async Task<IDisposable> WaitFor()
+        public Task<Releaser> WaitFor(CancellationToken cancellationToken = default)
         {
-            await m_Lock.WaitAsync().ContinueOnAnyContext();
-            return new Releaser(this);
-        }
+            ThrowIfDisposed();
+            return Execute(cancellationToken);
 
-        public IDisposable TryLock(out bool lockAcquired)
-        {
-            if(m_Lock.TryAccquire())
+            async Task<Releaser> Execute(CancellationToken cancellationToken)
             {
-                lockAcquired = true;
+                await m_Lock.WaitAsync(cancellationToken).ContinueOnAnyContext();
                 return new Releaser(this);
             }
-
-            lockAcquired = false;
-            return Disposable.Null;
         }
 
-        private sealed class Releaser : IDisposable
+        /// <summary>
+        /// Disposes of the lock
+        /// </summary>
+        public void Dispose()
         {
-            private AsyncLock? m_ToRelease;
+            if(m_Disposed == false)
+            {
+                m_Lock.Dispose();
+                m_Disposed = true;
+            }
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if(m_Disposed) throw new ObjectDisposedException(nameof(AsyncLock));
+        }
+
+        public readonly struct Releaser : IDisposable
+        {
+            private readonly AsyncLock? m_ToRelease;
 
             public Releaser(AsyncLock toRelease)
             {
@@ -64,7 +79,6 @@ namespace Arrow.Threading.Tasks
                 if(m_ToRelease is not null)
                 {
                     m_ToRelease.m_Lock.Release();
-                    m_ToRelease = null;
                 }
             }
         }

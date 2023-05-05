@@ -22,83 +22,89 @@ namespace UnitTests.Arrow.Threading.Tasks
         [Test]
         public void AcquireOne()
         {
-            var semaphore = new AsyncSemaphore(1);
-
-            Assert.That(semaphore.WaitAsync().Wait(500), Is.True);
-            Assert.That(semaphore.WaitAsync().Wait(500), Is.False);
+            using(var semaphore = new AsyncSemaphore(1))
+            {
+                Assert.That(semaphore.WaitAsync().Wait(500), Is.True);
+                Assert.That(semaphore.WaitAsync().Wait(500), Is.False);
+            }
         }
 
         [Test]
         public async Task AcquireOne_Release()
         {
-            var semaphore = new AsyncSemaphore(1);
-            var flag = false;
-
-            await semaphore.WaitAsync();
-
-            var task = Task.Run(async () =>
+            using(var semaphore = new AsyncSemaphore(1))
             {
+                var flag = false;
+
                 await semaphore.WaitAsync();
-                flag = true;
-            });
 
-            Assert.That(flag, Is.False);
-            semaphore.Release();
+                var task = Task.Run(async () =>
+                {
+                    await semaphore.WaitAsync();
+                    flag = true;
+                });
 
-            await task;
-            Assert.That(flag, Is.True);
+                Assert.That(flag, Is.False);
+                semaphore.Release();
+
+                await task;
+                Assert.That(flag, Is.True);
+            }
         }
 
         [Test]
         public async Task AcquireOne_Release_GetAwaiter()
         {
-            var semaphore = new AsyncSemaphore(1);
-            var flag = false;
-
-            await semaphore.WaitAsync();
-
-            var task = Task.Run(async () =>
+            using(var semaphore = new AsyncSemaphore(1))
             {
-                await semaphore;
-                flag = true;
-            });
+                var flag = false;
 
-            Assert.That(flag, Is.False);
-            semaphore.Release();
+                await semaphore.WaitAsync();
 
-            await task;
-            Assert.That(flag, Is.True);
+                var task = Task.Run(async () =>
+                {
+                    await semaphore;
+                    flag = true;
+                });
+
+                Assert.That(flag, Is.False);
+                semaphore.Release();
+
+                await task;
+                Assert.That(flag, Is.True);
+            }
         }
 
         [Test]
         public async Task AcquireMany_Release()
         {
-            var semaphore = new AsyncSemaphore(2);
-            var stepDoneHandle = new AsyncAutoResetEvent(false);
-
-            var flag1 = false;
-            var flag2 = false;
-
-            await semaphore.WaitAsync();
-
-            var task = Task.Run(async () =>
+            using(var semaphore = new AsyncSemaphore(2))
+            using(var stepDoneHandle = new AsyncAutoResetEvent(false))
             {
-                await semaphore;
-                flag1 = true;
-                stepDoneHandle.Set();
+                var flag1 = false;
+                var flag2 = false;
 
-                await semaphore;
-                flag2 = true;
+                await semaphore.WaitAsync();
 
-            });
+                var task = Task.Run(async () =>
+                {
+                    await semaphore;
+                    flag1 = true;
+                    stepDoneHandle.Set();
 
-            await stepDoneHandle;
+                    await semaphore;
+                    flag2 = true;
 
-            Assert.That(flag1, Is.True);
-            semaphore.Release();
+                });
 
-            await task;
-            Assert.That(flag2, Is.True);
+                await stepDoneHandle;
+
+                Assert.That(flag1, Is.True);
+                semaphore.Release();
+
+                await task;
+                Assert.That(flag2, Is.True);
+            }
         }
     }
 }

@@ -12,10 +12,12 @@ namespace Arrow.Threading.Tasks
     /// An asynchronous auto reset event.
     /// Multiple threads can wait on the event, but only one will be released when the event is signaled
     /// </summary>
-    public class AsyncAutoResetEvent : AsyncEventWaitHandle
+    public sealed class AsyncAutoResetEvent : AsyncEventWaitHandle
     {
         private bool m_Signaled;
         private readonly Queue<TaskCompletionSource<bool>> m_PendingWaits = new();
+
+        private bool m_Disposed;
 
         /// <summary>
         /// Initializes the instance
@@ -26,6 +28,27 @@ namespace Arrow.Threading.Tasks
             m_Signaled = initiallySignaled;
         }
 
+        public override void Dispose()
+        {
+            lock(m_PendingWaits)
+            {
+                if(m_Disposed) return;
+
+                // Abort any pending wait
+                if(m_PendingWaits.Count != 0)
+                {
+                    var exception = new ObjectDisposedException(nameof(AsyncAutoResetEvent));
+
+                    while(m_PendingWaits.TryDequeue(out var tcs))
+                    {
+                        tcs.TrySetException(exception);
+                    }
+                }
+
+                m_Disposed = true;
+            }
+        }
+
         /// <summary>
         /// Sets the event back to unsignaled
         /// </summary>
@@ -33,6 +56,8 @@ namespace Arrow.Threading.Tasks
         {
             lock(m_PendingWaits)
             {
+                ThrowIfDisposed();
+                
                 m_Signaled = false;
             }
         }
@@ -48,6 +73,8 @@ namespace Arrow.Threading.Tasks
 
             lock(m_PendingWaits)
             {
+                ThrowIfDisposed();
+
                 if(m_PendingWaits.Count > 0)
                 {
                     // There's someone waiting, so just release them
@@ -63,7 +90,7 @@ namespace Arrow.Threading.Tasks
             // If there was someone waiting then release them
             if(tcs is not null)
             {
-                ReleaseTcs(tcs);
+                tcs.TrySetResult(true);
             }
         }
 
@@ -71,6 +98,8 @@ namespace Arrow.Threading.Tasks
         {
             lock(m_PendingWaits)
             {
+                ThrowIfDisposed();
+
                 if(m_Signaled)
                 {
                     // Easy, we've been signaled so just return success
@@ -87,6 +116,11 @@ namespace Arrow.Threading.Tasks
                     return source.Task;
                 }
             }
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if(m_Disposed) throw new ObjectDisposedException(nameof(AsyncAutoResetEvent));
         }
     }
 }

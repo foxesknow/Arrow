@@ -16,54 +16,55 @@ namespace UnitTests.Arrow.Threading.Tasks
         [Test]
         public async Task TestEvent()
         {
-            var nextStepHandle = new AsyncAutoResetEvent(false);
-            var stepDoneHandle = new AsyncAutoResetEvent(false);
-
-            var flag1 = false;
-            var flag2 = false;
-            var flag3 = false;
-
-            var task = Task.Run(async () =>
+            using(var nextStepHandle = new AsyncAutoResetEvent(false))
+            using(var stepDoneHandle = new AsyncAutoResetEvent(false))
             {
-                await nextStepHandle;
-                flag1 = true;
-                stepDoneHandle.Set();
+                var flag1 = false;
+                var flag2 = false;
+                var flag3 = false;
 
-                await nextStepHandle;
-                flag2 = true;
-                stepDoneHandle.Set();
+                var task = Task.Run(async () =>
+                {
+                    await nextStepHandle;
+                    flag1 = true;
+                    stepDoneHandle.Set();
 
-                await nextStepHandle;
-                flag3 = true;
-                stepDoneHandle.Set();
-            });
+                    await nextStepHandle;
+                    flag2 = true;
+                    stepDoneHandle.Set();
 
-            Assert.That(flag1, Is.False);
-            Assert.That(flag2, Is.False);
-            Assert.That(flag3, Is.False);
+                    await nextStepHandle;
+                    flag3 = true;
+                    stepDoneHandle.Set();
+                });
 
-            nextStepHandle.Set();
-            await stepDoneHandle;
+                Assert.That(flag1, Is.False);
+                Assert.That(flag2, Is.False);
+                Assert.That(flag3, Is.False);
 
-            Assert.That(flag1, Is.True);
-            Assert.That(flag2, Is.False);
-            Assert.That(flag3, Is.False);
+                nextStepHandle.Set();
+                await stepDoneHandle;
 
-            nextStepHandle.Set();
-            await stepDoneHandle;
+                Assert.That(flag1, Is.True);
+                Assert.That(flag2, Is.False);
+                Assert.That(flag3, Is.False);
 
-            Assert.That(flag1, Is.True);
-            Assert.That(flag2, Is.True);
-            Assert.That(flag3, Is.False);
+                nextStepHandle.Set();
+                await stepDoneHandle;
 
-            nextStepHandle.Set();
-            await stepDoneHandle;
+                Assert.That(flag1, Is.True);
+                Assert.That(flag2, Is.True);
+                Assert.That(flag3, Is.False);
 
-            Assert.That(flag1, Is.True);
-            Assert.That(flag2, Is.True);
-            Assert.That(flag3, Is.True);
+                nextStepHandle.Set();
+                await stepDoneHandle;
 
-            await task;
+                Assert.That(flag1, Is.True);
+                Assert.That(flag2, Is.True);
+                Assert.That(flag3, Is.True);
+
+                await task;
+            }
         }
     }
 }

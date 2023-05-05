@@ -12,7 +12,7 @@ namespace Arrow.Threading.Tasks
     /// More threads that participants can singal the barrier, but only the 
     /// specified number of participants will be allows to advance at any one time
     /// </summary>
-    public class AsyncBarrier
+    public class AsyncBarrier : IDisposable
     {
         private readonly int m_NumberOfParticipants;
         private int m_OutstandingParticipants;
@@ -60,6 +60,11 @@ namespace Arrow.Threading.Tasks
 
             handle.Set();
             return handle.WaitAsync();
+        }
+
+        public void Dispose()
+        {
+            m_Handle.Dispose();
         }
     }
 }

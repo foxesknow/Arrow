@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Arrow.Calendar;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,80 +11,95 @@ using System.Threading.Tasks;
 
 namespace Arrow.Threading.Tasks
 {
-    public class AsyncSemaphore : AsyncWaitHandle
+    /// <summary>
+    /// An asynchronous semaphore
+    /// </summary>
+    public sealed class AsyncSemaphore : IDisposable
     {
-        private readonly Queue<TaskCompletionSource<bool>> m_Waiters = new Queue<TaskCompletionSource<bool>>();
+        private readonly SemaphoreSlim m_Semaphore;
+        private bool m_Disposed;
 
-        private int m_CurrentCount;
-
-        public AsyncSemaphore(int initialCount)
+        /// <summary>
+        /// Initializes the semaphore.
+        /// The initial count will be set to the max count
+        /// </summary>
+        /// <param name="maxCount"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public AsyncSemaphore(int maxCount) : this(maxCount, maxCount)
         {
-            if(initialCount <= 0) throw new ArgumentException("need at least a count of one", nameof(initialCount));
-
-            m_CurrentCount = initialCount;
         }
 
-        public override Task WaitAsync()
+        /// <summary>
+        /// Initializes the instance
+        /// </summary>
+        /// <param name="initialCount"></param>
+        /// <param name="maxCount"></param>
+        public AsyncSemaphore(int initialCount, int maxCount)
         {
-            lock(m_Waiters)
-            {
-                if(m_CurrentCount > 0)
-                {
-                    // We've still got resources to allocate
-                    m_CurrentCount--;
-                    return Task.CompletedTask;
-                }
-                else
-                {
-                    // We're all out of resources, so the caller will have to wait
-                    var waiter = MakeTcs();
-                    m_Waiters.Enqueue(waiter);
+            m_Semaphore = new(initialCount, maxCount);
+        }
 
-                    return waiter.Task;
-                }
+        /// <summary>
+        /// Disposes of the semaphore
+        /// </summary>
+        public void Dispose()
+        {
+            if(m_Disposed == false)
+            {
+                m_Semaphore.Dispose();
+                m_Disposed = true;
             }
         }
 
         /// <summary>
-        /// Attempts to acquire a resource
+        /// Waits to enter the semaphore
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public bool TryAccquire()
+        public Task WaitAsync(CancellationToken cancellationToken = default)
         {
-            lock(m_Waiters)
-            {
-                if(m_CurrentCount > 0)
-                {
-                    m_CurrentCount--;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            ThrowIfDisposed();
+
+            return m_Semaphore.WaitAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Waits to enter the semaphore within a given timeframe
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task<bool> WaitAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            return m_Semaphore.WaitAsync(timeout, cancellationToken);
+        }
+
+        /// <summary>
+        /// Allows a semaphore to be used with the await keyword
+        /// </summary>
+        /// <returns></returns>
+        public TaskAwaiter GetAwaiter()
+        {
+            ThrowIfDisposed();
+
+            return WaitAsync().GetAwaiter();
+        }
+
+        /// <summary>
+        /// Releases the semaphore once
+        /// </summary>
         public void Release()
         {
-            TaskCompletionSource<bool>? source = null;
+            ThrowIfDisposed();
 
-            lock(m_Waiters)
-            {
-                if(m_Waiters.Count > 0)
-                {
-                    source = m_Waiters.Dequeue();
-                }
-                else
-                {
-                    m_CurrentCount++;
-                }
-            }
+            m_Semaphore.Release();
+        }
 
-            if(source is not null)
-            {
-                ReleaseTcs(source);
-            }
+        private void ThrowIfDisposed()
+        {
+            if(m_Disposed) throw new ObjectDisposedException(nameof(AsyncSemaphore));
         }
     }
 }

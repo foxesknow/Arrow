@@ -16,31 +16,33 @@ namespace UnitTests.Arrow.Threading.Tasks
         [Test]
         public async Task SetAndWait()
         {
-            var evt = new AsyncManualResetEvent(false);
+            using(var evt = new AsyncManualResetEvent(false))
+            {
+                evt.Set();
+                await evt.WaitAsync();
 
-            evt.Set();
-            await evt.WaitAsync();
-
-            Assert.IsTrue(true);
+                Assert.IsTrue(true);
+            }
         }
 
         [Test]
         public async Task SetAndWait_Thread_MultipleWaits()
         {
-            var evt = new AsyncManualResetEvent(false);
-
-            var t = Task.Run(async () =>
+            using(var evt = new AsyncManualResetEvent(false))
             {
-                await Task.Delay(500);
-                evt.Set();
-            });
+                var t = Task.Run(async () =>
+                {
+                    await Task.Delay(500);
+                    evt.Set();
+                });
 
-            // We can wait multiple times as the event doesn't reset
-            await evt.WaitAsync();
-            await evt.WaitAsync();
-            await evt.WaitAsync();
+                // We can wait multiple times as the event doesn't reset
+                await evt;
+                await evt;
+                await evt;
 
-            Assert.IsTrue(true);
+                Assert.IsTrue(true);
+            }
         }
     }
 }

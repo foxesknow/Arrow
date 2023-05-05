@@ -11,10 +11,11 @@ namespace Arrow.Threading.Tasks
     /// <summary>
     /// Base class for anything that functions like an awaitable handle
     /// </summary>
-    public abstract class AsyncWaitHandle
+    public abstract class AsyncWaitHandle : IDisposable
     {
         protected static TaskCompletionSource<bool> MakeTcs()
         {
+            // We don't want to run continuations on the current thread
             return new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         }
 
@@ -32,19 +33,7 @@ namespace Arrow.Threading.Tasks
         {
             return WaitAsync().GetAwaiter();
         }
-     
-        protected void ReleaseTcs(TaskCompletionSource<bool> tcs)
-        {
-            Task.Factory.StartNew
-            (
-                s => ((TaskCompletionSource<bool>)s!).TrySetResult(true),
-                tcs,
-                CancellationToken.None,
-                TaskCreationOptions.PreferFairness,
-                TaskScheduler.Default
-            );
 
-            tcs.Task.Wait();
-        }
+        public abstract void Dispose();
     }
 }

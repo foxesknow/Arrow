@@ -11,9 +11,10 @@ namespace Arrow.Threading.Tasks
     /// An asynchronous manual reset event.
     /// Multiple threads can wait on the event, and all will be released when the event is signaled
     /// </summary>
-    public class AsyncManualResetEvent : AsyncEventWaitHandle
+    public sealed class AsyncManualResetEvent : AsyncEventWaitHandle
     {
         private volatile TaskCompletionSource<bool> m_Source = MakeTcs();
+        private bool m_Disposed;
 
         /// <summary>
         /// Initializes the instance
@@ -27,13 +28,23 @@ namespace Arrow.Threading.Tasks
             }
         }
 
+        public override void Dispose()
+        {
+            m_Disposed = true;
+
+            var source = m_Source;
+            source.TrySetException(new ObjectDisposedException(nameof(AsyncManualResetEvent)));
+        }
+
         /// <summary>
         /// Sets the event, waking any threads waiting on the event
         /// </summary>
         public override void Set()
         {
+            ThrowIfDisposed();
+
             var source = m_Source;
-            ReleaseTcs(source);
+            source.TrySetResult(true);
         }
 
         /// <summary>
@@ -42,6 +53,8 @@ namespace Arrow.Threading.Tasks
         /// <returns></returns>
         public override Task WaitAsync()
         {
+            ThrowIfDisposed();
+
             return m_Source.Task;
         }
 
@@ -53,13 +66,30 @@ namespace Arrow.Threading.Tasks
             while(true)
             {
                 var tcs = m_Source;
-                if(tcs.Task.IsCompleted == false) return;
+                var disposed = m_Disposed;
+
+                if(tcs.Task.IsCompleted == false)
+                {
+                    if(disposed) tcs.TrySetException(new ObjectDisposedException(nameof(AsyncManualResetEvent)));
+                    break;
+                }
 
                 if(Interlocked.CompareExchange(ref m_Source, MakeTcs(), tcs) == tcs)
                 {
-                    return;
+                    if(disposed) m_Source.TrySetException(new ObjectDisposedException(nameof(AsyncManualResetEvent)));
+                    break;
                 }
             }
+
+            // NOTE: We do the throw here so that the TCS in the look gets the exception attached
+            // before we throw back to the caller. That will wake up anyone awaiting on a task
+            // and propagate the exception to them.
+            ThrowIfDisposed();
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if(m_Disposed) throw new ObjectDisposedException(nameof(AsyncManualResetEvent));
         }
     }
 }
