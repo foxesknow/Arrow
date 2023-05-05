@@ -97,16 +97,15 @@ namespace Arrow.Logging
         /// <returns>The log for the name</returns>
         private static ILog DoGetLog(string? name)
         {
-            if(name is null)
+            if(name is null && Interlocked.CompareExchange(ref s_UnnamedLog, null, null) is ILog unnamedLog)
             {
-                if(Interlocked.CompareExchange(ref s_UnnamedLog, null, null) is ILog log)
-                {
-                    return log;
-                }
+                return unnamedLog;
             }
 
             lock(s_Sync)
             {
+                if(name == null && s_UnnamedLog != null) return s_UnnamedLog;
+
                 // If we've already got a named logger then return it
                 if(name != null && s_Loggers.TryGetValue(name, out var log)) return log;
 
