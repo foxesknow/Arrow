@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Arrow.Data;
 using Arrow.Data.Mock;
 
@@ -11,7 +12,7 @@ using NUnit.Framework;
 namespace UnitTests.Arrow.Data.Mock
 {
     [TestFixture]
-    public class MockDatabaseDetailsTests
+    public partial class MockDatabaseDetailsTests
     {
         [Test]
         public void ExecuteNonQuery()

@@ -25,6 +25,7 @@ namespace Arrow.Data.Mock
                 this.CommandType = CommandType.Text;
                 this.CommandText = "";
                 this.UpdatedRowSource = UpdateRowSource.Both;
+                this.CommandTimeout = connection.ConnectionTimeout;
             }
 
             [AllowNull]

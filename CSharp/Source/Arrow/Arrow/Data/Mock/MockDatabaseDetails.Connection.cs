@@ -24,6 +24,11 @@ namespace Arrow.Data.Mock
                 this.ConnectionString = connectionString;
             }
 
+            public override int ConnectionTimeout
+            {
+                get{return 15;}
+            }
+
             [AllowNull]
             public override string ConnectionString{get; set;}
 

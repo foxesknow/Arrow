@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Arrow.Data.Mock
 {
+    /// <summary>
+    /// An implementation of DatabaseDetails that can be used to mock a real database
+    /// </summary>
     public sealed partial class MockDatabaseDetails : DatabaseDetails
     {
         private static readonly WhenPredicate AlwaysTrue = _ => true;
@@ -16,8 +19,16 @@ namespace Arrow.Data.Mock
         private readonly List<(WhenPredicate When, ThenFunction<DbDataReader>)> m_ExecuteReader = new();
         private readonly List<(WhenPredicate When, ThenFunction<object?>)> m_ExecuteScalar = new();
 
+        /// <summary>
+        /// The connection string to use
+        /// </summary>
         public string? ConnectionString{get; set;}   
         
+        /// <summary>
+        /// Creates a connection
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="DataException">Thrown if there is no connection string</exception>
         public override IDbConnection CreateConnection()
         {
             if(this.ConnectionString is null) throw new DataException("no connection string specified");
@@ -25,11 +36,24 @@ namespace Arrow.Data.Mock
             return new Connection(this, this.ConnectionString);
         }
 
+        /// <summary>
+        /// Add a handler that will be called when ExecuteNonQuery is called
+        /// </summary>
+        /// <param name="then"></param>
+        /// <returns></returns>
         public MockDatabaseDetails OnExecuteNonQuery(ThenFunction<int> then)
         {
             return OnExecuteNonQuery(AlwaysTrue, then);
         }
 
+        /// <summary>
+        /// Add a handler that will be called when ExecuteNonQuery is called
+        /// if the "when" condition is true.
+        /// </summary>
+        /// <param name="when"></param>
+        /// <param name="then"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public MockDatabaseDetails OnExecuteNonQuery(WhenPredicate when, ThenFunction<int> then)
         {
             if(when is null) throw new ArgumentNullException(nameof(when));
@@ -40,11 +64,24 @@ namespace Arrow.Data.Mock
             return this;
         }
 
+        /// <summary>
+        /// Add a handler that will be called when ExecuteReader is called
+        /// </summary>
+        /// <param name="then"></param>
+        /// <returns></returns>
         public MockDatabaseDetails OnExecuteReader(ThenFunction<DbDataReader> then)
         {
             return OnExecuteReader(AlwaysTrue, then);
         }
 
+        /// <summary>
+        /// Add a handler that will be called when ExecuteReader is called
+        /// if the "when" condition is true,
+        /// </summary>
+        /// <param name="when"></param>
+        /// <param name="then"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public MockDatabaseDetails OnExecuteReader(WhenPredicate when, ThenFunction<DbDataReader> then)
         {
             if(when is null) throw new ArgumentNullException(nameof(when));
@@ -55,11 +92,24 @@ namespace Arrow.Data.Mock
             return this;
         }
 
+        /// <summary>
+        /// Add a handler that will be called when ExecuteScalar is called
+        /// </summary>
+        /// <param name="then"></param>
+        /// <returns></returns>
         public MockDatabaseDetails OnExecuteScalar(ThenFunction<object?> then)
         {
             return OnExecuteScalar(AlwaysTrue, then);
         }
 
+        /// <summary>
+        /// Add a handler that will be called when ExecuteScalar is called
+        /// if the "when" condition is true.
+        /// </summary>
+        /// <param name="when"></param>
+        /// <param name="then"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public MockDatabaseDetails OnExecuteScalar(WhenPredicate when, ThenFunction<object?> then)
         {
             if(when is null) throw new ArgumentNullException(nameof(when));
