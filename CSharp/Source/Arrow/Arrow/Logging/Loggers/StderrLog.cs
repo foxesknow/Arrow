@@ -11,11 +11,11 @@ namespace Arrow.Logging.Loggers
 	/// Writes to the console window.
 	/// Output is sent to Console.Error so that it will not mix with redirected output
 	/// </summary>
-	public sealed class ConsoleLog : BaseConsoleLog
+	public sealed class StderrLog : BaseConsoleLog
 	{
-		private static readonly object s_Sync=new object();
+		private static readonly object s_Sync = new object();
 		
-		public ConsoleLog() : base(Console.Error, Console.IsErrorRedirected, s_Sync)
+		public StderrLog() : base(Console.Error, Console.IsErrorRedirected, s_Sync)
 		{
 		}
 	}

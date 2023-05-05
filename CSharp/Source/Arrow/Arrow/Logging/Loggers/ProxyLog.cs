@@ -12,11 +12,13 @@ using Microsoft.SqlServer.Server;
 
 namespace Arrow.Logging.Loggers
 {
+    /// <summary>
+    /// A log that sits between the user and the actual log.
+    /// The log can be changed on the fly
+    /// </summary>
     public sealed class ProxyLog : ILog, IPropertyContext, IForContext
     {
-        private static ILog s_Log = NullLog.Instance;
-
-        
+        private static ILog s_Log = NullLog.Instance;        
 
         /// <summary>
         /// Registers a new log

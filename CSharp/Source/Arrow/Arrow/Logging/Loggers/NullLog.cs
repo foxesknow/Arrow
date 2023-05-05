@@ -14,7 +14,7 @@ namespace Arrow.Logging.Loggers
 		/// <summary>
 		/// A shareable instance of the class
 		/// </summary>
-		public static readonly ILog Instance=new NullLog();
+		public static readonly ILog Instance = new NullLog();
 	
 		bool ILog.IsDebugEnabled
 		{

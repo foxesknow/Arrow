@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -50,6 +51,9 @@ namespace Arrow.Logging.Loggers
         /// </summary>
         public ConsoleDateTimeMode DateTimeMode{get; set;}
 
+        /// <summary>
+        /// What to log. The default is everything
+        /// </summary>
         public LogLevel LogLevel
         {
             get{return m_LogLevel;}
@@ -74,7 +78,7 @@ namespace Arrow.Logging.Loggers
             if(redirected)
             {
                 // Redirected output won't be colorized so we'll add the log level
-                if(time.Length == 0)
+                if(time is null)
                 {
                     return $"{level.Prefix}{message}";
                 }
@@ -86,19 +90,19 @@ namespace Arrow.Logging.Loggers
             else
             {
                 
-                if(time.Length == 0) return message;
+                if(time is null) return message;
                 
                 return $"{time} {message}";
             }
         }
 
-        private static string MakeTime(ConsoleDateTimeMode mode)
+        private static string? MakeTime(ConsoleDateTimeMode mode)
         {
             return mode switch
             {
                 ConsoleDateTimeMode.Time     => Clock.Now.TimeOfDay.ToString(@"hh\:mm\:ss\.fff"),
                 ConsoleDateTimeMode.DateTime => Clock.Now.ToString(@"yyyyMMdd-HH\:mm\:ss\.fff"),
-                _                            => ""
+                _                            => null
             };
         }
 
@@ -108,13 +112,7 @@ namespace Arrow.Logging.Loggers
             {
                 var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.message);
 
-                lock(state.m_SyncRoot)
-                {
-                    using(new ColorChange(state.level.Color, state.m_Redirected))
-                    {
-                        state.m_Out.WriteLine(line);
-                    }
-                }
+                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
             });
         }
 
@@ -124,15 +122,42 @@ namespace Arrow.Logging.Loggers
             {
                 var line1 = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.message);
                 var line2 = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.exception);
+                
+                var combinedLine = string.Concat(line1, Environment.NewLine, line2);
+                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, combinedLine);
+            });
+        }
 
-                lock(state.m_SyncRoot)
-                {
-                    using(new ColorChange(state.level.Color, state.m_Redirected))
-                    {
-                        state.m_Out.WriteLine(line1);
-                        state.m_Out.WriteLine(line2);
-                    }
-                }
+        private void Log(in ConsoleLevel level, string format, object? arg0)
+        {
+            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, format, arg0), static state =>
+            {
+                var message = string.Format(state.format, state.arg0);
+                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
+
+                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
+            });
+        }
+
+        private void Log(in ConsoleLevel level, string format, object? arg0, object? arg1)
+        {
+            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, format, arg0, arg1), static state =>
+            {
+                var message = string.Format(state.format, state.arg0, state.arg1);
+                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
+
+                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
+            });
+        }
+
+        private void Log(in ConsoleLevel level, string format, object? arg0, object? arg1, object? arg2)
+        {
+            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, format, arg0, arg1, arg2), static state =>
+            {
+                var message = string.Format(state.format, state.arg0, state.arg1, state.arg2);
+                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
+
+                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
             });
         }
 
@@ -143,13 +168,7 @@ namespace Arrow.Logging.Loggers
                 var message = string.Format(state.format, state.args);
                 var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
 
-                lock(state.m_SyncRoot)
-                {
-                    using(new ColorChange(state.level.Color, state.m_Redirected))
-                    {
-                        state.m_Out.WriteLine(line);
-                    }
-                }
+                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
             });
         }
 
@@ -160,14 +179,20 @@ namespace Arrow.Logging.Loggers
                 var message = string.Format(state.provider, state.format, state.args);
                 var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
 
-                lock(state.m_SyncRoot)
-                {
-                    using(new ColorChange(state.level.Color, state.m_Redirected))
-                    {
-                        state.m_Out.WriteLine(line);
-                    }
-                }
+                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
             });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void WriteLine(object syncRoot, ConsoleColor color, bool redirected, TextWriter writer, object line)
+        {
+            lock(syncRoot)
+            {
+                using(new ColorChange(color, redirected))
+                {
+                    writer.WriteLine(line);
+                }
+            }
         }
 
         bool ILog.IsDebugEnabled

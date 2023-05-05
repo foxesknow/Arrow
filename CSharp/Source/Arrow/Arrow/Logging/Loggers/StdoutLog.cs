@@ -14,6 +14,9 @@ namespace Arrow.Logging.Loggers
     {
         private static readonly object s_Sync = new object();
 
+        /// <summary>
+        /// Initializes the instance
+        /// </summary>
         public StdoutLog() : base(Console.Out, Console.IsOutputRedirected, s_Sync)
         {
         }
