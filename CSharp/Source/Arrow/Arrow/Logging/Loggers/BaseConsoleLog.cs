@@ -14,6 +14,10 @@ using Microsoft.SqlServer.Server;
 
 namespace Arrow.Logging.Loggers
 {
+    /// <summary>
+    /// Base class for console loggers.
+    /// It supports colorization of the output based on the log level
+    /// </summary>
     public abstract class BaseConsoleLog : ILog
     {
         private static readonly ConsoleLevel DebugLevel = new("[DEBUG] ", ConsoleColor.Gray);
@@ -28,6 +32,8 @@ namespace Arrow.Logging.Loggers
         private bool m_ErrorEnabled = true;
         private bool m_FatalEnabled = true;
 
+        private LogLevel m_LogLevel = LogLevel.All;
+
         private readonly TextWriter m_Out;
         private readonly bool m_Redirected;
         private readonly object m_SyncRoot;
@@ -39,30 +45,68 @@ namespace Arrow.Logging.Loggers
             m_SyncRoot = syncRoot;
         }
 
-        private static object FormatLine(bool redirected, in ConsoleLevel level, object message)
+        /// <summary>
+        /// How to log the date and time
+        /// </summary>
+        public ConsoleDateTimeMode DateTimeMode{get; set;}
+
+        public LogLevel LogLevel
         {
+            get{return m_LogLevel;}
+            set{ApplyLogLevel(value);}
+        }
+
+        private void ApplyLogLevel(LogLevel logLevel)
+        {
+            m_LogLevel = logLevel;
+
+            m_DebugEnabled = (logLevel & LogLevel.Debug) != 0;
+            m_InfoEnabled = (logLevel & LogLevel.Info) != 0;
+            m_WarnEnabled = (logLevel & LogLevel.Warn) != 0;
+            m_ErrorEnabled = (logLevel & LogLevel.Error) != 0;
+            m_FatalEnabled = (logLevel & LogLevel.Fatal) != 0;
+        }
+
+        private static object FormatLine(ConsoleDateTimeMode dateTimeMode, bool redirected, in ConsoleLevel level, object message)
+        {
+            var time = MakeTime(dateTimeMode);
+
             if(redirected)
             {
-                var time = MakeTime();
-                return $"{time} {level.Prefix}{message}";
+                // Redirected output won't be colorized so we'll add the log level
+                if(time.Length == 0)
+                {
+                    return $"{level.Prefix}{message}";
+                }
+                else
+                {
+                    return $"{time} {level.Prefix}{message}";
+                }
             }
             else
             {
-                return message;
+                
+                if(time.Length == 0) return message;
+                
+                return $"{time} {message}";
             }
         }
 
-        private static string MakeTime()
+        private static string MakeTime(ConsoleDateTimeMode mode)
         {
-            var now = Clock.Now;
-            return now.TimeOfDay.ToString(@"hh\:mm:\ss\.fff");
+            return mode switch
+            {
+                ConsoleDateTimeMode.Time     => Clock.Now.TimeOfDay.ToString(@"hh\:mm\:ss\.fff"),
+                ConsoleDateTimeMode.DateTime => Clock.Now.ToString(@"yyyyMMdd-HH\:mm\:ss\.fff"),
+                _                            => ""
+            };
         }
 
         private void Log(in ConsoleLevel level, object message)
         {
-            MethodCall.AllowFail((m_Redirected, m_SyncRoot, m_Out, level, message), static state =>
+            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, message), static state =>
             {
-                var line = FormatLine(state.m_Redirected, state.level, state.message);
+                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.message);
 
                 lock(state.m_SyncRoot)
                 {
@@ -76,10 +120,10 @@ namespace Arrow.Logging.Loggers
 
         private void Log(in ConsoleLevel level, object message, Exception exception)
         {
-            MethodCall.AllowFail((m_Redirected, m_SyncRoot, m_Out, level, message, exception), static state =>
+            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, message, exception), static state =>
             {
-                var line1 = FormatLine(state.m_Redirected, state.level, state.message);
-                var line2 = FormatLine(state.m_Redirected, state.level, state.exception);
+                var line1 = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.message);
+                var line2 = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.exception);
 
                 lock(state.m_SyncRoot)
                 {
@@ -94,10 +138,10 @@ namespace Arrow.Logging.Loggers
 
         private void Log(in ConsoleLevel level, string format, params object?[] args)
         {
-            MethodCall.AllowFail((m_Redirected, m_SyncRoot, m_Out, level, format, args), static state =>
+            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, format, args), static state =>
             {
                 var message = string.Format(state.format, state.args);
-                var line = FormatLine(state.m_Redirected, state.level, message);
+                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
 
                 lock(state.m_SyncRoot)
                 {
@@ -111,10 +155,10 @@ namespace Arrow.Logging.Loggers
 
         private void Log(in ConsoleLevel level, IFormatProvider provider, string format, params object?[] args)
         {
-            MethodCall.AllowFail((m_Redirected, m_SyncRoot, m_Out, level, provider, format, args), static state =>
+            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, provider, format, args), static state =>
             {
                 var message = string.Format(state.provider, state.format, state.args);
-                var line = FormatLine(state.m_Redirected, state.level, message);
+                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
 
                 lock(state.m_SyncRoot)
                 {
