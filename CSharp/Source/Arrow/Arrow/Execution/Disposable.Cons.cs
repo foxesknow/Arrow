@@ -53,7 +53,6 @@ namespace Arrow.Execution
             }
         }
 
-#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
         /// <summary>
         /// Combines 2 disposables into 1.
         /// The head will be disposed first, followed by the tail
@@ -96,6 +95,5 @@ namespace Arrow.Execution
                 }
             }
         }
-#endif
     }
 }

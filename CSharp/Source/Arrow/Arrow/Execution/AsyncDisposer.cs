@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Arrow.Execution
 {
-#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
     public sealed class AsyncDisposer : IAsyncDisposable
     {
         private Func<ValueTask>? m_Function;
@@ -55,5 +54,4 @@ namespace Arrow.Execution
 			return new AsyncDisposer(function);
 		}
     }
-#endif
 }

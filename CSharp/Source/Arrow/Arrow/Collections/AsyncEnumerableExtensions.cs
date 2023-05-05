@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Arrow.Collections
 {
-#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
     public static class AsyncEnumerableExtensions
     {
         /// <summary>
@@ -74,5 +73,4 @@ namespace Arrow.Collections
             }
         }
     }
-#endif
 }

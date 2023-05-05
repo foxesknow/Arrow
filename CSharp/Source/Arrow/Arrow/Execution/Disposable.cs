@@ -23,19 +23,17 @@ namespace Arrow.Execution
             }
         }
 
-#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
         /// <summary>
         /// A disposer that does nothing
         /// </summary>
         public static readonly IAsyncDisposable NullAsync = new NullAsyncDisposable();
 
-        private class NullAsyncDisposable : IAsyncDisposable
+        private sealed class NullAsyncDisposable : IAsyncDisposable
         {
             public ValueTask DisposeAsync()
             {
                 return default;
             }
         }
-#endif
     }
 }

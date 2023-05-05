@@ -42,7 +42,6 @@ namespace Arrow.Application.DaemonHosting
 
         private void RegisterPosixHandlers(DaemonBase daemon)
         {
-#if NET6_0_OR_GREATER
             PosixSignalRegistration.Create(PosixSignal.SIGINT, context =>
             {
                 if(daemon.KeepRunning)
@@ -58,7 +57,6 @@ namespace Arrow.Application.DaemonHosting
                     context.Cancel = false;
                 }
             });
-#endif
         }
     }
 }

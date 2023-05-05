@@ -8,8 +8,6 @@ namespace Arrow.Execution
 {
     public static partial class Disposable
     {
-#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
-
         /// <summary>
         /// Converts a synchronois disposer into an asynchronous disposer
         /// </summary>
@@ -44,7 +42,5 @@ namespace Arrow.Execution
                 return default;
             }
         }
-
-#endif
     }
 }
