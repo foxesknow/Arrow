@@ -12,10 +12,91 @@ namespace Arrow.Logging
 	public interface ILog
 	{
 		/// <summary>
+		/// Logs at a given level, if enabled
+		/// </summary>
+		/// <param name="level"></param>
+		/// <param name="formattableString"></param>
+		void LogTo(LogLevel level, FormattableString formattableString)
+		{
+			switch(level)
+			{
+				case LogLevel.Debug:
+					Debug(formattableString);
+					break;
+
+				case LogLevel.Info:
+					Info(formattableString);
+					break;
+
+				case LogLevel.Warn:
+					Warn(formattableString);
+					break;
+
+				case LogLevel.Error:
+					Error(formattableString);
+					break;
+
+				case LogLevel.Fatal:
+					Fatal(formattableString);
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Logs at a given level, if enabled
+		/// </summary>
+		/// <param name="level"></param>
+		/// <param name="message"></param>
+		void LogTo(LogLevel level, object message)
+		{
+			switch(level)
+			{
+				case LogLevel.Debug:
+					Debug(message);
+					break;
+
+				case LogLevel.Info:
+					Info(message);
+					break;
+
+				case LogLevel.Warn:
+					Warn(message);
+					break;
+
+				case LogLevel.Error:
+					Error(message);
+					break;
+
+				case LogLevel.Fatal:
+					Fatal(message);
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Writes a debug message, if enabled
+		/// </summary>
+		/// <param name="formattableString"></param>
+		void Debug(FormattableString formattableString)
+		{
+			if(this.IsDebugEnabled)
+			{
+				Debug(formattableString.ToString());
+			}
+		}
+
+		/// <summary>
 		/// Writes a debug message
 		/// </summary>
 		/// <param name="message"></param>
 		void Debug(object message);  
+		
 		
 		/// <summary>
 		/// Writes a debug message
@@ -62,6 +143,18 @@ namespace Arrow.Logging
 		/// <param name="format"></param>
 		/// <param name="args"></param>
 		void DebugFormat(IFormatProvider provider, string format, params object?[] args);
+
+		/// <summary>
+		/// Writes an info message, if enabled
+		/// </summary>
+		/// <param name="formattableString"></param>
+		void Info(FormattableString formattableString)
+		{
+			if(this.IsInfoEnabled)
+			{
+				Info(formattableString.ToString());
+			}
+		}
 
 		/// <summary>
 		/// Writes an information message
@@ -116,6 +209,18 @@ namespace Arrow.Logging
 		void InfoFormat(IFormatProvider provider, string format, params object?[] args);
 		
 		/// <summary>
+		/// Writes a warning message, if enabled
+		/// </summary>
+		/// <param name="formattableString"></param>
+		void Warn(FormattableString formattableString)
+		{
+			if(this.IsWarnEnabled)
+			{
+				Warn(formattableString.ToString());
+			}
+		}
+
+		/// <summary>
 		/// Writes a warning message
 		/// </summary>
 		/// <param name="message"></param>
@@ -166,6 +271,18 @@ namespace Arrow.Logging
 		/// <param name="format"></param>
 		/// <param name="args"></param>
 		void WarnFormat(IFormatProvider provider, string format, params object?[] args);
+
+		/// <summary>
+		/// Writes an error message, if enabled
+		/// </summary>
+		/// <param name="formattableString"></param>
+		void Error(FormattableString formattableString)
+		{
+			if(this.IsErrorEnabled)
+			{
+				Error(formattableString.ToString());
+			}
+		}
 
 		/// <summary>
 		/// Writes an error message
@@ -219,6 +336,18 @@ namespace Arrow.Logging
 		/// <param name="args"></param>
 		void ErrorFormat(IFormatProvider provider, string format, params object?[] args);
 		
+		/// <summary>
+		/// Writes a fatal message, if enabled
+		/// </summary>
+		/// <param name="formattableString"></param>
+		void Fatal(FormattableString formattableString)
+		{
+			if(this.IsFatalEnabled)
+			{
+				Fatal(formattableString.ToString());
+			}
+		}
+
 		/// <summary>
 		/// Writes a fatal message
 		/// </summary>

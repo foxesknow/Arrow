@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.Logging.Loggers
+namespace Arrow.Logging
 {
     [Flags]
     public enum LogLevel
@@ -43,7 +43,7 @@ namespace Arrow.Logging.Loggers
         /// Log everything
         /// </summary>
         All = Debug | Info | Warn | Error | Fatal,
-        
+
         /// <summary>
         /// Log everything except debug
         /// </summary>

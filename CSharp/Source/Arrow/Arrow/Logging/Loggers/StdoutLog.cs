@@ -10,14 +10,14 @@ namespace Arrow.Logging.Loggers
 	/// Writes to the console window.
 	/// Output is sent to Console.Out so that it can be captured by redirection
 	/// </summary>
-    public sealed class StdoutLog : BaseConsoleLog
+    public sealed class StdoutLog : ConsoleLog
     {
         private static readonly object s_Sync = new object();
 
         /// <summary>
         /// Initializes the instance
         /// </summary>
-        public StdoutLog() : base(Console.Out, Console.IsOutputRedirected, s_Sync)
+        public StdoutLog() : base(Console.Out, !Console.IsOutputRedirected, s_Sync)
         {
         }
     }

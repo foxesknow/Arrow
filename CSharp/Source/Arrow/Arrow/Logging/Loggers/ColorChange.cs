@@ -8,18 +8,14 @@ namespace Arrow.Logging.Loggers
 {
     readonly ref struct ColorChange
     {
-        private readonly bool m_Redirected;
-
-        public ColorChange(ConsoleColor foreground, bool redirected)
+        public ColorChange(ConsoleColor foreground, bool colorize)
         {
-            m_Redirected = redirected;
-
-            if(!redirected) Console.ForegroundColor = foreground;
+            Console.ForegroundColor = foreground;
         }
 
         public void Dispose()
         {
-            if(!m_Redirected) Console.ResetColor();
+            Console.ResetColor();
         }
     }
 }

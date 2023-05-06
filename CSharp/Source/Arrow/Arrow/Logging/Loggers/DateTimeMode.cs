@@ -9,7 +9,7 @@ namespace Arrow.Logging.Loggers
     /// <summary>
     /// Specifies how console loggers will write the time
     /// </summary>
-    public enum ConsoleDateTimeMode
+    public enum DateTimeMode
     {
         None,
         Time,

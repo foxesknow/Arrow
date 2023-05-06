@@ -16,16 +16,15 @@ using Microsoft.SqlServer.Server;
 namespace Arrow.Logging.Loggers
 {
     /// <summary>
-    /// Base class for console loggers.
-    /// It supports colorization of the output based on the log level
+    /// A base class for writing custom loggers
     /// </summary>
-    public abstract class BaseConsoleLog : ILog
+    public abstract class BaseLog : ILog
     {
-        private static readonly ConsoleLevel DebugLevel = new("[DEBUG] ", ConsoleColor.Gray);
-        private static readonly ConsoleLevel InfoLevel =  new("[INFO ] ", ConsoleColor.White);
-        private static readonly ConsoleLevel WarnLevel =  new("[WARN ] ", ConsoleColor.DarkYellow);
-        private static readonly ConsoleLevel ErrorLevel = new("[ERROR] ", ConsoleColor.Magenta);
-        private static readonly ConsoleLevel FatalLevel = new("[FATAL] ", ConsoleColor.Red);
+        private static readonly LoggingInfo DebugLevel = new(LogLevel.Debug, "[DEBUG] ", ConsoleColor.Gray);
+        private static readonly LoggingInfo InfoLevel =  new(LogLevel.Info,  "[INFO ] ", ConsoleColor.White);
+        private static readonly LoggingInfo WarnLevel =  new(LogLevel.Warn,  "[WARN ] ", ConsoleColor.DarkYellow);
+        private static readonly LoggingInfo ErrorLevel = new(LogLevel.Error, "[ERROR] ", ConsoleColor.Magenta);
+        private static readonly LoggingInfo FatalLevel = new(LogLevel.Fatal, "[FATAL] ", ConsoleColor.Red);
 
         private bool m_DebugEnabled = true;
         private bool m_InfoEnabled = true;
@@ -35,21 +34,14 @@ namespace Arrow.Logging.Loggers
 
         private LogLevel m_LogLevel = LogLevel.All;
 
-        private readonly TextWriter m_Out;
-        private readonly bool m_Redirected;
-        private readonly object m_SyncRoot;
-
-        protected BaseConsoleLog(TextWriter output, bool redirected, object syncRoot)
+        protected BaseLog()
         {
-            m_Out = output;
-            m_Redirected = redirected;
-            m_SyncRoot = syncRoot;
         }
 
         /// <summary>
         /// How to log the date and time
         /// </summary>
-        public ConsoleDateTimeMode DateTimeMode{get; set;}
+        public DateTimeMode DateTimeMode{get; init;}
 
         /// <summary>
         /// What to log. The default is everything
@@ -59,6 +51,11 @@ namespace Arrow.Logging.Loggers
             get{return m_LogLevel;}
             set{ApplyLogLevel(value);}
         }
+
+        /// <summary>
+        /// Specified if the log output should include the log level
+        /// </summary>
+        public bool AddLogLevel{get; init;} = false;
 
         private void ApplyLogLevel(LogLevel logLevel)
         {
@@ -71,130 +68,119 @@ namespace Arrow.Logging.Loggers
             m_FatalEnabled = (logLevel & LogLevel.Fatal) != 0;
         }
 
-        private static object FormatLine(ConsoleDateTimeMode dateTimeMode, bool redirected, in ConsoleLevel level, object message)
+        /// <summary>
+        /// Writes a log line to wherever it needs to go
+        /// </summary>
+        /// <param name="consoleLevel"></param>
+        /// <param name="line"></param>
+        protected abstract void WriteLine(in LoggingInfo consoleLevel, object line);
+
+        private static object FormatLine(DateTimeMode dateTimeMode, bool addLogLevel, in LoggingInfo loggingInfo, object message)
         {
             var time = MakeTime(dateTimeMode);
 
-            if(redirected)
+            return (addLogLevel, time) switch
             {
-                // Redirected output won't be colorized so we'll add the log level
-                if(time is null)
-                {
-                    return $"{level.Prefix}{message}";
-                }
-                else
-                {
-                    return $"{time} {level.Prefix}{message}";
-                }
-            }
-            else
-            {
-                
-                if(time is null) return message;
-                
-                return $"{time} {message}";
-            }
+                (true, null)    => $"{loggingInfo.Prefix}{message}",
+                (true, _)       => $"{time} {loggingInfo.Prefix}{message}",
+                (false, null)   => message,
+                (false, _)      => $"{time} {message}",
+            };
         }
 
-        private static string? MakeTime(ConsoleDateTimeMode mode)
+        private static string? MakeTime(DateTimeMode mode)
         {
             return mode switch
             {
-                ConsoleDateTimeMode.Time     => Clock.Now.TimeOfDay.ToString(@"hh\:mm\:ss\.fff"),
-                ConsoleDateTimeMode.DateTime => Clock.Now.ToString(@"yyyyMMdd-HH\:mm\:ss\.fff"),
+                DateTimeMode.Time     => Clock.Now.TimeOfDay.ToString(@"hh\:mm\:ss\.fff"),
+                DateTimeMode.DateTime => Clock.Now.ToString(@"yyyyMMdd-HH\:mm\:ss\.fff"),
                 _                            => null
             };
         }
 
-        private void Log(in ConsoleLevel level, object message)
+        private void Log(in LoggingInfo loggingInfo, object message)
         {
-            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, message), static state =>
+            var self = this;
+            MethodCall.AllowFail((self, loggingInfo, message), static state =>
             {
-                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.message);
+                var line = FormatLine(state.self.DateTimeMode, state.self.AddLogLevel, state.loggingInfo, state.message);
 
-                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
+                state.self.WriteLine(in state.loggingInfo, line);
             });
         }
 
-        private void Log(in ConsoleLevel level, object message, Exception exception)
+        private void Log(in LoggingInfo loggingInfo, object message, Exception exception)
         {
-            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, message, exception), static state =>
+            var self = this;
+            MethodCall.AllowFail((self, loggingInfo, message, exception), static state =>
             {
-                var line1 = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.message);
-                var line2 = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, state.exception);
+                var line1 = FormatLine(state.self.DateTimeMode, state.self.AddLogLevel, state.loggingInfo, state.message);
+                var line2 = FormatLine(state.self.DateTimeMode, state.self.AddLogLevel, state.loggingInfo, state.exception);
                 
                 var combinedLine = string.Concat(line1, Environment.NewLine, line2);
-                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, combinedLine);
+                state.self.WriteLine(in state.loggingInfo, combinedLine);
             });
         }
 
-        private void Log(in ConsoleLevel level, string format, object? arg0)
+        private void Log(in LoggingInfo loggingInfo, string format, object? arg0)
         {
-            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, format, arg0), static state =>
+            var self = this;
+            MethodCall.AllowFail((self, loggingInfo, format, arg0), static state =>
             {
                 var message = string.Format(state.format, state.arg0);
-                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
+                var line = FormatLine(state.self.DateTimeMode, state.self.AddLogLevel, state.loggingInfo, message);
 
-                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
+                state.self.WriteLine(in state.loggingInfo, line);
             });
         }
 
-        private void Log(in ConsoleLevel level, string format, object? arg0, object? arg1)
+        private void Log(in LoggingInfo loggingInfo, string format, object? arg0, object? arg1)
         {
-            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, format, arg0, arg1), static state =>
+            var self = this;
+            MethodCall.AllowFail((self, loggingInfo, format, arg0, arg1), static state =>
             {
                 var message = string.Format(state.format, state.arg0, state.arg1);
-                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
+                var line = FormatLine(state.self.DateTimeMode, state.self.AddLogLevel, state.loggingInfo, message);
 
-                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
+                state.self.WriteLine(in state.loggingInfo, line);
             });
         }
 
-        private void Log(in ConsoleLevel level, string format, object? arg0, object? arg1, object? arg2)
+        private void Log(in LoggingInfo loggingInfo, string format, object? arg0, object? arg1, object? arg2)
         {
-            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, format, arg0, arg1, arg2), static state =>
+            var self = this;
+            MethodCall.AllowFail((self, loggingInfo, format, arg0, arg1, arg2), static state =>
             {
                 var message = string.Format(state.format, state.arg0, state.arg1, state.arg2);
-                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
+                var line = FormatLine(state.self.DateTimeMode, state.self.AddLogLevel, state.loggingInfo, message);
 
-                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
+                state.self.WriteLine(in state.loggingInfo, line);
             });
         }
 
-        private void Log(in ConsoleLevel level, string format, params object?[] args)
+        private void Log(in LoggingInfo loggingInfo, string format, params object?[] args)
         {
-            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, format, args), static state =>
+            var self = this;
+            MethodCall.AllowFail((self, loggingInfo, format, args), static state =>
             {
                 var message = string.Format(state.format, state.args);
-                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
+                var line = FormatLine(state.self.DateTimeMode, state.self.AddLogLevel, state.loggingInfo, message);
 
-                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
+                state.self.WriteLine(in state.loggingInfo, line);
             });
         }
 
-        private void Log(in ConsoleLevel level, IFormatProvider provider, string format, params object?[] args)
+        private void Log(in LoggingInfo loggingInfo, IFormatProvider provider, string format, params object?[] args)
         {
-            MethodCall.AllowFail((this.DateTimeMode, m_Redirected, m_SyncRoot, m_Out, level, provider, format, args), static state =>
+            var self = this;
+            MethodCall.AllowFail((self, loggingInfo, provider, format, args), static state =>
             {
                 var message = string.Format(state.provider, state.format, state.args);
-                var line = FormatLine(state.DateTimeMode, state.m_Redirected, state.level, message);
+                var line = FormatLine(state.self.DateTimeMode, state.self.AddLogLevel, state.loggingInfo, message);
 
-                WriteLine(state.m_SyncRoot, state.level.Color, state.m_Redirected, state.m_Out, line);
+                state.self.WriteLine(in state.loggingInfo, line);
             });
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void WriteLine(object syncRoot, ConsoleColor color, bool redirected, TextWriter writer, object line)
-        {
-            lock(syncRoot)
-            {
-                using(new ColorChange(color, redirected))
-                {
-                    writer.WriteLine(line);
-                }
-            }
-        }
-
         bool ILog.IsDebugEnabled
         {
             get{return m_DebugEnabled;}
