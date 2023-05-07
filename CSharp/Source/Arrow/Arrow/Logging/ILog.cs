@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
+
+using Arrow.Logging.Loggers.InterpolationHandlers;
 
 #nullable enable
 
@@ -16,28 +19,34 @@ namespace Arrow.Logging
 		/// </summary>
 		/// <param name="level"></param>
 		/// <param name="formattableString"></param>
-		void LogTo(LogLevel level, FormattableString formattableString)
+		void LogTo(LogLevel level, [InterpolatedStringHandlerArgument("", "level")] ref LogLevelInterpolatedStringHandler handler)
 		{
+			if(handler.Enabled == false)
+			{
+				// NOTE: No need to call handler.ToStringAndClear() as we've not build up anything
+				return;
+			}
+
 			switch(level)
 			{
 				case LogLevel.Debug:
-					Debug(formattableString);
+					Debug(handler.ToStringAndClear());
 					break;
 
 				case LogLevel.Info:
-					Info(formattableString);
+					Info(handler.ToStringAndClear());
 					break;
 
 				case LogLevel.Warn:
-					Warn(formattableString);
+					Warn(handler.ToStringAndClear());
 					break;
 
 				case LogLevel.Error:
-					Error(formattableString);
+					Error(handler.ToStringAndClear());
 					break;
 
 				case LogLevel.Fatal:
-					Fatal(formattableString);
+					Fatal(handler.ToStringAndClear());
 					break;
 
 				default:
@@ -80,14 +89,32 @@ namespace Arrow.Logging
 		}
 
 		/// <summary>
+		/// Indicates if a particular log level is enabled
+		/// </summary>
+		/// <param name="logLevel"></param>
+		/// <returns></returns>
+		bool IsEnabled(LogLevel logLevel)
+		{
+			return logLevel switch
+			{
+				LogLevel.Debug	=> this.IsDebugEnabled,
+				LogLevel.Info	=> this.IsInfoEnabled,
+				LogLevel.Warn	=> this.IsWarnEnabled,
+				LogLevel.Error	=> this.IsErrorEnabled,
+				LogLevel.Fatal	=> this.IsFatalEnabled,
+				_				=> false
+			};
+		}
+
+		/// <summary>
 		/// Writes a debug message, if enabled
 		/// </summary>
 		/// <param name="formattableString"></param>
-		void Debug(FormattableString formattableString)
+		void Debug([InterpolatedStringHandlerArgument("")] ref DebugLogInterpolatedStringHandler handler)
 		{
-			if(this.IsDebugEnabled)
+			if(handler.Enabled)
 			{
-				Debug(formattableString.ToString());
+				Debug(handler.ToStringAndClear());
 			}
 		}
 
@@ -148,11 +175,11 @@ namespace Arrow.Logging
 		/// Writes an info message, if enabled
 		/// </summary>
 		/// <param name="formattableString"></param>
-		void Info(FormattableString formattableString)
+		void Info([InterpolatedStringHandlerArgument("")] ref InfoLogInterpolatedStringHandler handler)
 		{
-			if(this.IsInfoEnabled)
+			if(handler.Enabled)
 			{
-				Info(formattableString.ToString());
+				Info(handler.ToStringAndClear());
 			}
 		}
 
@@ -212,11 +239,11 @@ namespace Arrow.Logging
 		/// Writes a warning message, if enabled
 		/// </summary>
 		/// <param name="formattableString"></param>
-		void Warn(FormattableString formattableString)
+		void Warn([InterpolatedStringHandlerArgument("")] ref WarnLogInterpolatedStringHandler handler)
 		{
-			if(this.IsWarnEnabled)
+			if(handler.Enabled)
 			{
-				Warn(formattableString.ToString());
+				Warn(handler.ToStringAndClear());
 			}
 		}
 
@@ -276,11 +303,11 @@ namespace Arrow.Logging
 		/// Writes an error message, if enabled
 		/// </summary>
 		/// <param name="formattableString"></param>
-		void Error(FormattableString formattableString)
+		void Error([InterpolatedStringHandlerArgument("")] ref ErrorLogInterpolatedStringHandler handler)
 		{
-			if(this.IsErrorEnabled)
+			if(handler.Enabled)
 			{
-				Error(formattableString.ToString());
+				Error(handler.ToStringAndClear());
 			}
 		}
 
@@ -340,11 +367,11 @@ namespace Arrow.Logging
 		/// Writes a fatal message, if enabled
 		/// </summary>
 		/// <param name="formattableString"></param>
-		void Fatal(FormattableString formattableString)
+		void Fatal([InterpolatedStringHandlerArgument("")] ref FatalLogInterpolatedStringHandler handler)
 		{
-			if(this.IsFatalEnabled)
+			if(handler.Enabled)
 			{
-				Fatal(formattableString.ToString());
+				Fatal(handler.ToStringAndClear());
 			}
 		}
 

@@ -41,10 +41,6 @@ namespace Arrow.Logging.Loggers
 			get{return false;}
 		}
 
-		void ILog.LogTo(LogLevel level, FormattableString formattableString)
-		{
-		}
-
 		void ILog.LogTo(LogLevel level, object message)
 		{
 		}

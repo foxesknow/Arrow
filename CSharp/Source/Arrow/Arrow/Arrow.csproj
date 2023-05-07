@@ -16,6 +16,14 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
+	  <None Include="Logging\Loggers\InterpolationHandlers\MakeHandlers.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>MakeHandlers.tt</DependentUpon>
+	  </None>
+	</ItemGroup>
+	
+	<ItemGroup>
 		<PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
 		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
@@ -47,5 +55,21 @@
 	<ItemGroup>
 		<Compile Update="Application\Service\ServiceMainHost.cs" />
 		<Compile Update="Application\Service\InteractiveServiceBase.cs" />
+		<Compile Update="Logging\Loggers\InterpolationHandlers\MakeHandlers.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>MakeHandlers.tt</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <None Update="Logging\Loggers\InterpolationHandlers\MakeHandlers.tt">
+	    <Generator>TextTemplatingFileGenerator</Generator>
+	    <LastGenOutput>MakeHandlers.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 </Project>

@@ -1,0 +1,67 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+
+<#
+	var names = new[]{"Debug", "Info", "Warn", "Error", "Fatal"};
+#>
+
+using System;
+using System.Runtime.CompilerServices;
+
+namespace Arrow.Logging.Loggers.InterpolationHandlers
+{
+
+	<# 
+		foreach(var name in names) 
+		{
+	#>
+
+    [InterpolatedStringHandler]
+    public ref struct <#=name#>LogInterpolatedStringHandler
+    {
+        private DefaultInterpolatedStringHandler m_Handler;
+
+        public <#=name#>LogInterpolatedStringHandler(int literalLength, int formattedCount, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.Is<#=name#>Enabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public bool Enabled{get;}
+
+        public void AppendLiteral(string value) => m_Handler.AppendLiteral(value);
+
+        public void AppendFormatted<T>(T value) => m_Handler.AppendFormatted(value);
+
+        public void AppendFormatted<T>(T value, string? format) => m_Handler.AppendFormatted(value, format);
+
+        public void AppendFormatted<T>(T value, int alignment) => m_Handler.AppendFormatted(value, alignment);
+
+        public void AppendFormatted<T>(T value, int alignment, string? format) => m_Handler.AppendFormatted(value, alignment, format);
+
+        public void AppendFormatted(ReadOnlySpan<char> value) => m_Handler.AppendFormatted(value);
+
+        public void AppendFormatted(ReadOnlySpan<char> value, int alignment = 0, string? format = null) => m_Handler.AppendFormatted(value, alignment, format);
+
+        public void AppendFormatted(string? value) => m_Handler.AppendFormatted(value);
+
+        public void AppendFormatted(string? value, int alignment = 0, string? format = null) => m_Handler.AppendFormatted(value, alignment, format);
+
+        public void AppendFormatted(object? value, int alignment = 0, string? format = null) => m_Handler.AppendFormatted(value, alignment, format);
+
+        public string ToStringAndClear() => m_Handler.ToStringAndClear();
+
+    }
+	<# } #>
+}
