@@ -14,11 +14,22 @@ namespace Arrow.Logging.Loggers
     {
         private readonly bool m_Colorize;
 
+        /// <summary>
+        /// Initializes the instance
+        /// </summary>
+        /// <param name="output"></param>
+        /// <param name="colorize"></param>
+        /// <param name="syncRoot"></param>
         protected ConsoleLog(TextWriter output, bool colorize, object syncRoot) : base(output, syncRoot)
         {
             m_Colorize = colorize;
         }
 
+        /// <summary>
+        /// Write to the console, using color is requested
+        /// </summary>
+        /// <param name="consoleLevel"></param>
+        /// <param name="line"></param>
         protected override sealed void WriteLine(in LoggingInfo consoleLevel, object line)
         {
             if(m_Colorize)

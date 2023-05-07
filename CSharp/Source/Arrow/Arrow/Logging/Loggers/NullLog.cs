@@ -15,6 +15,15 @@ namespace Arrow.Logging.Loggers
 		/// A shareable instance of the class
 		/// </summary>
 		public static readonly ILog Instance = new NullLog();
+
+		void ILog.LogTo(LogLevel level, object message)
+		{
+		}
+
+		bool ILog.IsEnabled(LogLevel logLevel)
+		{
+			return false;
+		}
 	
 		bool ILog.IsDebugEnabled
 		{
@@ -39,10 +48,6 @@ namespace Arrow.Logging.Loggers
 		bool ILog.IsFatalEnabled
 		{
 			get{return false;}
-		}
-
-		void ILog.LogTo(LogLevel level, object message)
-		{
 		}
 
 		void ILog.Debug(object message)

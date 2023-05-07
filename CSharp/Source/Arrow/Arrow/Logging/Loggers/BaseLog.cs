@@ -94,7 +94,7 @@ namespace Arrow.Logging.Loggers
             {
                 DateTimeMode.Time     => Clock.Now.TimeOfDay.ToString(@"hh\:mm\:ss\.fff"),
                 DateTimeMode.DateTime => Clock.Now.ToString(@"yyyyMMdd-HH\:mm\:ss\.fff"),
-                _                            => null
+                _                     => null
             };
         }
 
