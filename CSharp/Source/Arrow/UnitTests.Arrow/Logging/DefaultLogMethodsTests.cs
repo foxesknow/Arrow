@@ -48,10 +48,12 @@ namespace UnitTests.Arrow.Logging
                     DateTimeMode = DateTimeMode.None
                 };
 
-                log.LogTo(logLevel, $"Total = {1 + 2}");
+                var sum = 0;
+                log.LogTo(logLevel, $"Total = {sum = 1 + 2}");
 
                 var output = writer.ToString().Trim();
                 Assert.That(output, Does.StartWith($"[{logLevel}").IgnoreCase);
+                Assert.That(sum, Is.EqualTo(3));
             }
         }
 
@@ -72,10 +74,12 @@ namespace UnitTests.Arrow.Logging
                     LogLevel = LogLevel.None
                 };
 
-                log.LogTo(logLevel, $"Total = {1 + 2}");
+                var sum = 0;
+                log.LogTo(logLevel, $"Total = {sum = 1 + 2}");
 
                 var output = writer.ToString().Trim();
                 Assert.That(output, Is.EqualTo(""));
+                Assert.That(sum, Is.EqualTo(0));
             }
         }
 
@@ -95,26 +99,27 @@ namespace UnitTests.Arrow.Logging
                     DateTimeMode = DateTimeMode.None
                 };
 
+                var sum = 0;
                 switch(logLevel)
                 {
                     case LogLevel.Debug:
-                        log.Debug($"Total = {1 + 2}");
+                        log.Debug($"Total = {sum = 1 + 2}");
                         break;
 
                     case LogLevel.Info:
-                        log.Info($"Total = {1 + 2}");
+                        log.Info($"Total = {sum = 1 + 2}");
                         break;
 
                     case LogLevel.Warn:
-                        log.Warn($"Total = {1 + 2}");
+                        log.Warn($"Total = {sum = 1 + 2}");
                         break;
 
                     case LogLevel.Error:
-                        log.Error($"Total = {1 + 2}");
+                        log.Error($"Total = {sum = 1 + 2}");
                         break;
 
                     case LogLevel.Fatal:
-                        log.Fatal($"Total = {1 + 2}");
+                        log.Fatal($"Total = {sum = 1 + 2}");
                         break;
 
                     default:
@@ -123,6 +128,7 @@ namespace UnitTests.Arrow.Logging
 
                 var output = writer.ToString().Trim();
                 Assert.That(output, Does.StartWith($"[{logLevel}").IgnoreCase);
+                Assert.That(sum, Is.EqualTo(3));
             }
         }
 
@@ -143,26 +149,27 @@ namespace UnitTests.Arrow.Logging
                     LogLevel = LogLevel.None
                 };
 
+                var sum = 0;
                 switch(logLevel)
                 {
                     case LogLevel.Debug:
-                        log.Debug($"Total = {1 + 2}");
+                        log.Debug($"Total = {sum = 1 + 2}");
                         break;
 
                     case LogLevel.Info:
-                        log.Info($"Total = {1 + 2}");
+                        log.Info($"Total = {sum = 1 + 2}");
                         break;
 
                     case LogLevel.Warn:
-                        log.Warn($"Total = {1 + 2}");
+                        log.Warn($"Total = {sum = 1 + 2}");
                         break;
 
                     case LogLevel.Error:
-                        log.Error($"Total = {1 + 2}");
+                        log.Error($"Total = {sum = 1 + 2}");
                         break;
 
                     case LogLevel.Fatal:
-                        log.Fatal($"Total = {1 + 2}");
+                        log.Fatal($"Total = {sum = 1 + 2}");
                         break;
 
                     default:
@@ -171,6 +178,7 @@ namespace UnitTests.Arrow.Logging
 
                 var output = writer.ToString().Trim();
                 Assert.That(output, Is.EqualTo(""));
+                Assert.That(sum, Is.EqualTo(0));
             }
         }
     }
