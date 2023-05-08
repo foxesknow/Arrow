@@ -29,15 +29,39 @@ namespace Micron
                                     .UsingJobData(nameof(RunJobData.Arguments), runData.Arguments)
                                     .Build();
 
-                var trigger = TriggerBuilder.Create()
-                                            .WithIdentity(runData.Name!)
-                                            .WithCronSchedule(runData.Trigger!)
-                                            .Build();
+                var trigger = MakeTrigger(runData);
 
                 schedules.Add((job, trigger));
             }
 
             return schedules;
+        }
+
+        private ITrigger MakeTrigger(JobData jobData)
+        {
+            if(string.IsNullOrWhiteSpace(jobData.Cron) == false)
+            {
+                return TriggerBuilder.Create()
+                                     .WithIdentity(jobData.Name)
+                                     .WithCronSchedule(jobData.Cron)
+                                     .Build();
+            }
+
+            if(jobData.Days == DaysOfTheWeek.None || jobData.At < TimeSpan.Zero)
+            {
+                throw new Exception($"invalid schedule for {jobData.Name}");
+            }
+
+            var at = jobData.At;
+
+            return TriggerBuilder.Create()
+                                 .WithIdentity(jobData.Name)
+                                 .WithDailyTimeIntervalSchedule(x =>
+                                     x.InTimeZone(TimeZoneInfo.Local)
+                                      .WithIntervalInHours(24)
+                                      .OnDaysOfTheWeek(jobData.Days.ToDayOfWeekList())
+                                      .StartingDailyAt(TimeOfDay.HourMinuteAndSecondOfDay(at.Hours, at.Minutes, at.Seconds))
+                                  ).Build();
         }
     }
 }

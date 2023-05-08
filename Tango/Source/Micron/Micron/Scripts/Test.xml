@@ -1,5 +1,12 @@
 ﻿<Jobs>
-	<Run name="notepad" trigger="0 0/1 * * * ?">
+	<!--
+	<Run name="notepad" cron="0 0/1 * * * ?">
+		<App>Notepad.exe</App>
+		<Arguments>C:\Code\Test\out.json</Arguments>
+	</Run>
+	-->
+
+	<Run name="notepad" days="Mon" at="13:50:00">
 		<App>Notepad.exe</App>
 		<Arguments>C:\Code\Test\out.json</Arguments>
 	</Run>
