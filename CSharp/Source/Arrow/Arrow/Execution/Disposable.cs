@@ -16,17 +16,17 @@ namespace Arrow.Execution
         /// </summary>
         public static readonly IDisposable Null = new NullDisposable();
 
-        private class NullDisposable : IDisposable
+        /// <summary>
+        /// A disposer that does nothing
+        /// </summary>
+        public static readonly IAsyncDisposable NullAsync = new NullAsyncDisposable();
+
+        private sealed class NullDisposable : IDisposable
         {
             public void Dispose()
             {
             }
         }
-
-        /// <summary>
-        /// A disposer that does nothing
-        /// </summary>
-        public static readonly IAsyncDisposable NullAsync = new NullAsyncDisposable();
 
         private sealed class NullAsyncDisposable : IAsyncDisposable
         {

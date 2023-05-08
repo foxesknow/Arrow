@@ -13,11 +13,11 @@ namespace Arrow.Factory
     /// This class is threadsafe
     /// </summary>
     /// <typeparam name="T">The type that all registered types must derive from or implement</typeparam>
-    public class SimpleFactory<T>
+    public sealed class SimpleFactory<T>
     {
         private readonly object m_SyncRoot = new object();
 
-        private Dictionary<string, TypeInfo> m_Types;
+        private readonly Dictionary<string, TypeInfo> m_Types;
 
         /// <summary>
         /// Initializes the instance
