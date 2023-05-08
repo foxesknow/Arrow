@@ -25,6 +25,32 @@ namespace Arrow.Logging.Loggers.InterpolationHandlers
             }
         }
 
+        public LogLevelInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, ILog log, LogLevel logLevel, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsEnabled(logLevel);
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public LogLevelInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, Span<char> initialBuffer, ILog log, LogLevel logLevel, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsEnabled(logLevel);
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider, initialBuffer);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
         public bool Enabled{get;}
 
         public void AppendLiteral(string value) => m_Handler.AppendLiteral(value);

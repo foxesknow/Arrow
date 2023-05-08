@@ -25,6 +25,32 @@ namespace Arrow.Logging.Loggers.InterpolationHandlers
             }
         }
 
+        public DebugLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsDebugEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public DebugLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, Span<char> initialBuffer, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsDebugEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider, initialBuffer);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
         public bool Enabled{get;}
 
         public void AppendLiteral(string value) => m_Handler.AppendLiteral(value);
@@ -62,6 +88,32 @@ namespace Arrow.Logging.Loggers.InterpolationHandlers
             if(shouldAppend)
             {
                 m_Handler = new(literalLength, formattedCount);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public InfoLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsInfoEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public InfoLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, Span<char> initialBuffer, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsInfoEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider, initialBuffer);
             }
             else
             {
@@ -113,6 +165,32 @@ namespace Arrow.Logging.Loggers.InterpolationHandlers
             }
         }
 
+        public WarnLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsWarnEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public WarnLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, Span<char> initialBuffer, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsWarnEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider, initialBuffer);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
         public bool Enabled{get;}
 
         public void AppendLiteral(string value) => m_Handler.AppendLiteral(value);
@@ -157,6 +235,32 @@ namespace Arrow.Logging.Loggers.InterpolationHandlers
             }
         }
 
+        public ErrorLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsErrorEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public ErrorLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, Span<char> initialBuffer, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsErrorEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider, initialBuffer);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
         public bool Enabled{get;}
 
         public void AppendLiteral(string value) => m_Handler.AppendLiteral(value);
@@ -194,6 +298,32 @@ namespace Arrow.Logging.Loggers.InterpolationHandlers
             if(shouldAppend)
             {
                 m_Handler = new(literalLength, formattedCount);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public FatalLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsFatalEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider);
+            }
+            else
+            {
+                m_Handler = new();
+            }
+        }
+
+        public FatalLogInterpolatedStringHandler(int literalLength, int formattedCount, IFormatProvider? provider, Span<char> initialBuffer, ILog log, out bool shouldAppend)
+        {
+            this.Enabled = shouldAppend = log.IsFatalEnabled;
+            if(shouldAppend)
+            {
+                m_Handler = new(literalLength, formattedCount, provider, initialBuffer);
             }
             else
             {
