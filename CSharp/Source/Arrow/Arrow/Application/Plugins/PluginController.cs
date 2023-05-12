@@ -282,7 +282,7 @@ namespace Arrow.Application.Plugins
 						if(s_SystemPlugins==null)
 						{
 							
-							var systemPluginsNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Services/SystemPlugins");
+							var systemPluginsNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Plugins/SystemPlugins");
 							if(systemPluginsNode!=null)
 							{
 								try

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Buffers;
 using System.Threading;
 
+using Arrow.Execution;
+
 namespace Arrow.IO
 {
     /// <summary>
@@ -64,9 +66,9 @@ namespace Arrow.IO
         /// return the buffer to the pool
         /// </summary>
         /// <returns></returns>
-        public DetachedBuffer Detach()
+        public ArrayPoolReturner<byte> Detach()
         {
-            var detachedBuffer = new DetachedBuffer(m_Buffer, m_Position);
+            var detachedBuffer = new ArrayPoolReturner<byte>(s_BytePools, m_Buffer, 0, m_Position);
 
             m_Position = 0;
             m_Buffer = MakeInitialBuffer(m_InitialCapacity);

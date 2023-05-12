@@ -183,21 +183,6 @@ namespace UnitTests.Arrow.IO
             }
         }
 
-        [Test]
-        public void DetachedBuffer_DefaultState()
-        {
-            var d = new ArrayPoolMemoryStream.DetachedBuffer();
-            Assert.That(d.HasBuffer, Is.False);
-            Assert.That(d.Buffer, Is.Null);
-            Assert.That(d.Length, Is.EqualTo(0));
-
-            var span = d.AsSpan();
-            Assert.That(span.Length, Is.EqualTo(0));
-
-            var memory = d.AsMemory();
-            Assert.That(memory.Length, Is.EqualTo(0));
-        }
-
         private static IEnumerable<string> GenerateStrings()
         {
             yield return "";
