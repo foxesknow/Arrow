@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Arrow.Logging;
+using Arrow.Threading.Tasks;
 
 namespace Arrow.Application
 {
@@ -17,37 +20,44 @@ namespace Arrow.Application
         /// </summary>
         /// <param name="main">The method to run</param>
         /// <param name="args">The arguments to pass to the main delegate</param>
-        public static void Run(Action<string[]> main, string[] args)
+        public static Task Run(Func<string[], ValueTask> main, string[] args)
         {
-            Func<string[], int> wrapper = (string[] wrapperArgs) =>
+            Func<string[], ValueTask<int>> wrapper = async (wrapperArgs) =>
             {
-                main(wrapperArgs);
+                await main(wrapperArgs).ContinueOnAnyContext();
                 return 0;
             };
 
-            RunAndReturn(wrapper, args);
+            return RunAndReturn(wrapper, args);
         }
 
         /// <summary>
         /// Runs a "main" method. Any failure to launch the application is logged.
         /// </summary>
         /// <param name="main">The action that is the main function of the application</param>
-        public static void Run(Action main)
+        public static Task Run(Func<Task> main)
         {
-            if(main is null) throw new ArgumentNullException("main");
+            ArgumentNullException.ThrowIfNull(main);
 
-            // Start the systemwide services
-            using(ApplicationRunContext context = new ApplicationRunContext())
+            return Execute(main);
+
+            static async Task Execute(Func<Task> main)
             {
-                try
+                // Start the systemwide services
+                await using (ApplicationRunContext context = new ApplicationRunContext())
                 {
-                    main();
-                }
-                catch(Exception e)
-                {
-                    ILog log = LogManager.GetLog(typeof(ApplicationRunner));
-                    log.Error("Error running application", e);
-                    Environment.ExitCode = -1;
+                    await context.Start();
+
+                    try
+                    {
+                        await main().ContinueOnAnyContext();
+                    }
+                    catch (Exception e)
+                    {
+                        ILog log = LogManager.GetLog(typeof(ApplicationRunner));
+                        log.Error("Error running application", e);
+                        Environment.ExitCode = -1;
+                    }
                 }
             }
         }
@@ -59,27 +69,33 @@ namespace Arrow.Application
         /// </summary>
         /// <param name="main">The method to run</param>
         /// <param name="args">The arguments to pass to the main delegate</param>
-        public static void RunAndReturn(Func<string[], int> main, string[] args)
+        public static Task RunAndReturn(Func<string[], ValueTask<int>> main, string[] args)
         {
-            if(main is null) throw new ArgumentNullException("main");
-            if(args is null) throw new ArgumentNullException("args");
+            ArgumentNullException.ThrowIfNull(main);
+            ArgumentNullException.ThrowIfNull(args);
 
-            // Start the systemwide services
-            using(ApplicationRunContext context = new ApplicationRunContext())
+            return Execute(main, args);
+
+            static async Task Execute(Func<string[], ValueTask<int>> main, string[] args)
             {
-                try
+                // Start the systemwide services
+                await using (ApplicationRunContext context = new ApplicationRunContext())
                 {
-                    int exitCode = main(args);
-                    Environment.ExitCode = exitCode;
-                }
-                catch(Exception e)
-                {
-                    ILog log = LogManager.GetLog(typeof(ApplicationRunner));
-                    log.Error("Error running application", e);
-                    Environment.ExitCode = -1;
+                    await context.Start();
+
+                    try
+                    {
+                        int exitCode = await main(args).ContinueOnAnyContext();
+                        Environment.ExitCode = exitCode;
+                    }
+                    catch (Exception e)
+                    {
+                        ILog log = LogManager.GetLog(typeof(ApplicationRunner));
+                        log.Error("Error running application", e);
+                        Environment.ExitCode = -1;
+                    }
                 }
             }
-
         }
     }
 }

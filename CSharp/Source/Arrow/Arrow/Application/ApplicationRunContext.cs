@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using Arrow.Xml.ObjectCreation;
 using Arrow.Application.Plugins;
 using Arrow.Logging;
+using Arrow.Threading.Tasks;
 
 namespace Arrow.Application
 {
@@ -15,7 +17,7 @@ namespace Arrow.Application
     /// don't lend themselves to the <b>ApplicationRunner</b>
     /// In this case just create an instance of the context and dispose of it at application exit.
     /// </summary>
-    public class ApplicationRunContext : IDisposable
+    public class ApplicationRunContext : IAsyncDisposable
     {
         private static readonly object s_SyncRoot = new object();
         private static readonly List<Action> s_ShutdownCallbacks = new List<Action>();
@@ -25,20 +27,22 @@ namespace Arrow.Application
         /// </summary>
         public ApplicationRunContext()
         {
-            PluginController.SystemServices.Start();
+            
         }
 
-        #region IDisposable Members
+        public async ValueTask Start()
+        {
+            await PluginController.SystemServices.Start().ContinueOnAnyContext();
+        }
 
-        void IDisposable.Dispose()
+        async ValueTask IAsyncDisposable.DisposeAsync()
         {
             RunRegisteredShutdownActions();
-            PluginController.SystemServices.Stop();
-            PluginController.SystemServices.Dispose();
+            await PluginController.SystemServices.Stop();
+            await PluginController.SystemServices.DisposeAsync();
+            
             LogManager.ShutdownLoggingSystem();
         }
-
-        #endregion
 
         /// <summary>
         /// Register a shutdown routine that will be called when the application exits

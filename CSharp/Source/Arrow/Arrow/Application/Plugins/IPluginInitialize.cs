@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Arrow.Application.Plugins
 {
@@ -17,6 +18,6 @@ namespace Arrow.Application.Plugins
 		/// Every call to Start() will be preceeded by a call to this method
 		/// </summary>
 		/// <param name="discovery">A interface to the discovery portion of the controller that owns the plugin</param>
-		void Initialize(IPluginDiscovery discovery);
+		ValueTask Initialize(IPluginDiscovery discovery);
 	}
 }

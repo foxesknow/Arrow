@@ -32,7 +32,7 @@ public interface IClientManager
     /// <exception cref="InsideOutException"></exception>
     public IInsideOutNode GetNode(PublisherID publisherID)
     {
-        if (TryGetNode(publisherID, out var node)) return node;
+        if(TryGetNode(publisherID, out var node)) return node;
 
         throw new InsideOutException($"not subscribed to {publisherID}");
     }

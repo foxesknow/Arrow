@@ -51,9 +51,10 @@ public abstract class ListenerPluginBase : Plugin, IListener, IPluginInitialize
         m_PublisherID = publisherID;
     }
 
-    void IPluginInitialize.Initialize(IPluginDiscovery discovery)
+    ValueTask IPluginInitialize.Initialize(IPluginDiscovery discovery)
     {
         m_PluginDiscovery = discovery;
+        return default;
     }
 
     /// <summary>

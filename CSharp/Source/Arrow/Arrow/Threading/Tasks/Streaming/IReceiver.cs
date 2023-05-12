@@ -45,7 +45,7 @@ namespace Arrow.Threading.Tasks.Streaming
         /// <exception cref="ArgumentNullException"></exception>
         public static Task<TData> WaitFor<TData>(this IReceiver<TData> receiver, Func<TData, bool> ifCondition)
         {
-            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.WaitFor(receiver.DefaultTimeout, ifCondition, EmptyThen<TData>.Instance);
         }
@@ -61,7 +61,7 @@ namespace Arrow.Threading.Tasks.Streaming
         /// <exception cref="ArgumentNullException"></exception>
         public static Task<TData> WaitFor<TData>(this IReceiver<TData> receiver, TimeSpan timeout, Func<TData, bool> ifCondition)
         {
-            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.WaitFor(timeout, ifCondition, EmptyThen<TData>.Instance);
         }
@@ -78,7 +78,7 @@ namespace Arrow.Threading.Tasks.Streaming
         /// <exception cref="ArgumentNullException"></exception>
         public static Task<TData> WaitFor<TData>(this IReceiver<TData> receiver, TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then)
         {
-            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.WaitFor(timeout, ifCondition, then);
         }

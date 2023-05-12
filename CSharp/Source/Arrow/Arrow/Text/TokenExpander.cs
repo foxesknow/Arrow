@@ -197,7 +197,7 @@ namespace Arrow.Text
 
         private static object ApplyProperty(string? property, object value)
         {
-            if (string.IsNullOrEmpty(property)) return value;
+            if(string.IsNullOrEmpty(property)) return value;
 
             object? resolvedValue = value;
                 

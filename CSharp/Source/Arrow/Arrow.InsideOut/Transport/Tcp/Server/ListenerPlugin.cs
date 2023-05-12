@@ -35,7 +35,7 @@ public sealed class ListenerPlugin : ListenerPluginBase
 
     public override string Name => ListenerName;
 
-    protected override void Start()
+    protected override ValueTask Start()
     {
         if(this.InstanceName is null) throw new InsideOutException("no instance name specified");
         if(this.Port < 0 || this.Port > 65535) throw new InsideOutException($"invalid port: {this.Port}");
@@ -44,16 +44,17 @@ public sealed class ListenerPlugin : ListenerPluginBase
         Register(publisherID);
 
         m_ListenTask = Task.Run(() => Listen(m_CancelSource.CanceledTask, m_CancelSource.Token));
+
+        return default;
     }
 
-    protected override void Stop()
+    protected override async ValueTask Stop()
     {
         m_CancelSource.Cancel();
 
         if(m_ListenTask is not null)
         {
-            // Yuck!
-            m_ListenTask.GetAwaiter().GetResult();
+            await m_ListenTask.ContinueOnAnyContext();
             m_ListenTask = null;
         }
 

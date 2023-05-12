@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
 using Arrow.Configuration;
 using Arrow.Storage;
+using Arrow.Threading.Tasks;
 using Arrow.Xml;
 using Arrow.Xml.ObjectCreation;
 
@@ -14,11 +17,9 @@ namespace Arrow.Application.Plugins
 	/// <summary>
 	/// Manages a group of plugins
 	/// </summary>
-	public class PluginController : IPluginDiscovery, IEnumerable<Plugin>, IDisposable, IServiceProvider
+	public class PluginController : IPluginDiscovery, IEnumerable<Plugin>, IAsyncDisposable, IServiceProvider
 	{
-		private readonly object m_SyncRoot=new object();
-		
-		private readonly List<Plugin> m_Plugins=new List<Plugin>();
+		private readonly ConcurrentQueue<Plugin> m_Plugins = new();
 		private string m_PluginName;
 		private volatile bool m_Started;
 		
@@ -30,32 +31,34 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		public PluginController()
 		{
-			m_PluginName="PluginController";
+			m_PluginName = "PluginController";
 		}
 		
 		/// <summary>
 		/// Starts all the plugins
 		/// </summary>
-		public void Start()
+		public async ValueTask Start()
 		{
-			lock(m_SyncRoot)
+			if(!m_Started)
 			{
-				if(!m_Started)
+				foreach(var plugin in m_Plugins)
 				{
-					m_Plugins.ForEach(plugin=>
+					if(plugin is IPluginInitialize serviceInitialize) 
 					{
-						var serviceInitialize=plugin as IPluginInitialize;
-						if(serviceInitialize!=null) serviceInitialize.Initialize(this);
-						plugin.Start();
-					});
+						await serviceInitialize.Initialize(this).ContinueOnAnyContext();
+					}
 					
-					m_Started=true;
+					await plugin.Start().ContinueOnAnyContext();
+				}
+
+				m_Started=true;
 					
-					m_Plugins.ForEach(plugin=>
+				foreach(var plugin in m_Plugins)
+				{
+					if(plugin is IPluginPostStart postStart) 
 					{
-						var postStart=plugin as IPluginPostStart;
-						if(postStart!=null) postStart.AllPluginsStarted(this);
-					});
+						await postStart.AllPluginsStarted(this).ContinueOnAnyContext();
+					}
 				}
 			}
 		}
@@ -63,20 +66,17 @@ namespace Arrow.Application.Plugins
 		/// <summary>
 		/// Stops all the plugins
 		/// </summary>
-		public void Stop()
+		public async ValueTask Stop()
 		{
-			lock(m_SyncRoot)
+			if(m_Started)
 			{
-				if(m_Started)
+				// Stop them in reverse order					
+				foreach(var plugins in m_Plugins.AsEnumerable().Reverse())
 				{
-					// Stop them in reverse order					
-					foreach(var plugins in m_Plugins.AsEnumerable().Reverse())
-					{
-						plugins.Stop();
-					}
-					
-					m_Started=false;
+					await plugins.Stop().ContinueOnAnyContext();
 				}
+					
+				m_Started=false;
 			}
 		}
 		
@@ -89,8 +89,8 @@ namespace Arrow.Application.Plugins
 			get{return m_PluginName;}
 			set
 			{
-				if(value==null) throw new ArgumentNullException("value");
-				m_PluginName=value;
+				if(value == null) throw new ArgumentNullException("value");
+				m_PluginName = value;
 			}
 		}
 		
@@ -100,13 +100,10 @@ namespace Arrow.Application.Plugins
 		/// <param name="service">The service to add</param>
 		public void Add(Plugin service)
 		{
-			if(service==null) throw new ArgumentNullException("service");
+			if(service is null) throw new ArgumentNullException("service");
 			if(m_Started) throw new InvalidOperationException("cannot add to controller once started");
 			
-			lock(m_SyncRoot)
-			{
-				m_Plugins.Add(service);
-			}
+			m_Plugins.Enqueue(service);
 		}
 		
 		/// <summary>
@@ -116,25 +113,7 @@ namespace Arrow.Application.Plugins
 		{
 			if(m_Started) throw new InvalidOperationException("cannot clear controller once started");
 		
-			lock(m_SyncRoot)
-			{
-				m_Plugins.Clear();
-			}
-		}
-		
-		/// <summary>
-		/// Removes a plugin
-		/// </summary>
-		/// <param name="plugin">The plugin to remove</param>
-		/// <returns>true if a plugin was found and removed, otherwise false</returns>
-		public bool Remove(Plugin plugin)
-		{
-			if(m_Started) throw new InvalidOperationException("cannot remove once controller has started");
-		
-			lock(m_SyncRoot)
-			{
-				return m_Plugins.Remove(plugin);
-			}
+			m_Plugins.Clear();
 		}
 		
 		/// <summary>
@@ -142,14 +121,11 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="predicate">The predicate to apply to each plugin</param>
 		/// <returns>The first plugin to match the predicate, or null if no plugin matches</returns>
-		public Plugin? Find(Predicate<Plugin> predicate)
+		public Plugin? Find(Func<Plugin, bool> predicate)
 		{
-			if(predicate==null) throw new ArgumentNullException("predicate");
+			if(predicate is null) throw new ArgumentNullException("predicate");
 			
-			lock(m_SyncRoot)
-			{
-				return m_Plugins.Find(predicate);
-			}
+			return m_Plugins.FirstOrDefault(predicate);
 		}
 		
 		/// <summary>
@@ -159,7 +135,7 @@ namespace Arrow.Application.Plugins
 		/// <returns>The first plugin to match, or null if no plugin matches</returns>
 		public T? Find<T>() where T : class
 		{
-			Type type=typeof(T);
+			Type type = typeof(T);
 			return (T?)GetService(type);
 		}
 		
@@ -170,35 +146,9 @@ namespace Arrow.Application.Plugins
 		/// <returns>The first service that matches the name, otherwise null</returns>
 		public Plugin? FindByName(string name)
 		{
-			if(name==null) throw new ArgumentNullException("name");
+			if(name is null) throw new ArgumentNullException(nameof(name));
 			
-			return Find(service=>service.Name==name);
-		}
-		
-		/// <summary>
-		/// Returns all the plugins in a controller
-		/// </summary>
-		/// <returns>A sequence of service</returns>
-		public IEnumerable<Plugin> AllPlugins()
-		{
-			lock(m_SyncRoot)
-			{
-				return new List<Plugin>(m_Plugins);
-			}
-		}
-		
-		/// <summary>
-		///  Applies an action to every plugin
-		/// </summary>
-		/// <param name="action">The action to apply</param>
-		public void ForEach(Action<Plugin> action)
-		{
-			if(action==null) throw new ArgumentNullException("action");
-			
-			lock(m_SyncRoot)
-			{
-				m_Plugins.ForEach(action);
-			}
+			return Find(service => service.Name == name);
 		}
 		
 		/// <summary>
@@ -206,13 +156,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		public int Count
 		{
-			get
-			{
-				lock(m_SyncRoot)
-				{
-					return m_Plugins.Count;
-				}
-			}
+			get{return m_Plugins.Count;}
 		}
 		
 		/// <summary>
@@ -222,9 +166,9 @@ namespace Arrow.Application.Plugins
 		/// <returns>A service object of the specified type, or null if no matching object found</returns>
 		public object? GetService(Type pluginType)
 		{
-			if(pluginType==null) throw new ArgumentNullException("pluginType");
+			if(pluginType is null) throw new ArgumentNullException("pluginType");
 			
-			return Find(service=>pluginType.IsAssignableFrom(service.GetType()));
+			return Find(service => pluginType.IsAssignableFrom(service.GetType()));
 		}
 
 		/// <summary>
@@ -233,15 +177,7 @@ namespace Arrow.Application.Plugins
 		/// <returns>An enumerator</returns>
 		public IEnumerator<Plugin> GetEnumerator()
 		{
-			// We need to grab a copy, for thread safety
-			List<Plugin> plugins;
-			
-			lock(m_SyncRoot)
-			{
-				plugins=new List<Plugin>(m_Plugins);
-			}
-			
-			return plugins.GetEnumerator();
+			return m_Plugins.GetEnumerator();
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -250,22 +186,28 @@ namespace Arrow.Application.Plugins
 		}
 
 		/// <summary>
-		/// Stops all plugins and calls IDisposable.Dispose on any plugins that implement the interface
+		/// Stops all plugins.
+		/// 
+		/// If the plugin implements IDisposable then Dispose() is called.
+		/// Otherwise if the plugin implements IAsyncDisposable then DisposeAsync() is called
 		/// </summary>
-		public void Dispose()
+		public async ValueTask DisposeAsync()
 		{
-			lock(m_SyncRoot)
+			await Stop().ContinueOnAnyContext();
+				
+			foreach(var plugin in m_Plugins)
 			{
-				Stop();
-				
-				foreach(var plugin in m_Plugins)
+				if(plugin is IDisposable disposer) 
 				{
-					var disposable=plugin as IDisposable;
-					if(disposable!=null) disposable.Dispose();	
+					disposer.Dispose();	
 				}
-				
-				m_Plugins.Clear();
+				else if(plugin is IAsyncDisposable asyncDisposer)
+				{
+					await asyncDisposer.DisposeAsync().ContinueOnAnyContext();
+				}
 			}
+				
+			m_Plugins.Clear();
 		}
 
 		/// <summary>
@@ -275,37 +217,37 @@ namespace Arrow.Application.Plugins
 		{
 			get
 			{
-				if(s_SystemPlugins==null)
-				{
-					lock(s_SyncRoot)
-					{
-						if(s_SystemPlugins==null)
-						{
-							
-							var systemPluginsNode=AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Plugins/SystemPlugins");
-							if(systemPluginsNode!=null)
-							{
-								try
-								{
-									s_SystemPlugins=PluginController.FromXml(systemPluginsNode);
-								}
-								catch
-								{
-									// If we fail then create an empty controller
-									s_SystemPlugins=new PluginController();
-								}
-							}
-							else
-							{
-								s_SystemPlugins=new PluginController();
-							}
+                if(s_SystemPlugins == null)
+                {
+                    lock(s_SyncRoot)
+                    {
+                        if(s_SystemPlugins == null)
+                        {
 
-							s_SystemPlugins.Name="SystemPlugins";
-						}
-					}
-				}
-				
-				return s_SystemPlugins;
+                            var systemPluginsNode = AppConfig.GetSectionXml(ArrowSystem.Name, "Arrow.Plugins/SystemPlugins");
+                            if(systemPluginsNode != null)
+                            {
+                                try
+                                {
+                                    s_SystemPlugins = PluginController.FromXml(systemPluginsNode);
+                                }
+                                catch
+                                {
+                                    // If we fail then create an empty controller
+                                    s_SystemPlugins = new PluginController();
+                                }
+                            }
+                            else
+                            {
+                                s_SystemPlugins = new PluginController();
+                            }
+
+                            s_SystemPlugins.Name = "SystemPlugins";
+                        }
+                    }
+                }
+
+                return s_SystemPlugins;
 			}
 		}
 		
@@ -317,18 +259,18 @@ namespace Arrow.Application.Plugins
 		/// <returns>A controller</returns>
 		public static PluginController FromXml(XmlNode pluginsRoot)
 		{
-			if(pluginsRoot==null) throw new ArgumentNullException("pluginsRoot");
-			
-			PluginController controller=new PluginController();
-			
-			foreach(XmlNode? pluginNode in pluginsRoot.SelectNodesOrEmpty("Plugin"))
-			{
-				var plugin=XmlCreation.Create<Plugin>(pluginNode!);
-				controller.Add(plugin);
-			}
-			
-			return controller;
-		}
+            if(pluginsRoot == null) throw new ArgumentNullException("pluginsRoot");
+
+            PluginController controller = new PluginController();
+
+            foreach(XmlNode? pluginNode in pluginsRoot.SelectNodesOrEmpty("Plugin"))
+            {
+                var plugin = XmlCreation.Create<Plugin>(pluginNode!);
+                controller.Add(plugin);
+            }
+
+            return controller;
+        }
 		
 		/// <summary>
 		/// Loads an xml document and generates a controller
@@ -337,10 +279,10 @@ namespace Arrow.Application.Plugins
 		/// <returns>A controller</returns>
 		public static PluginController FromXml(Uri uri)
 		{
-			if(uri==null) throw new ArgumentNullException("uri");
-		
-			XmlDocument doc=StorageManager.Get(uri).ReadXmlDocument();
-			return FromXml(doc.DocumentElement!);
-		}
+            if(uri == null) throw new ArgumentNullException("uri");
+
+            XmlDocument doc = StorageManager.Get(uri).ReadXmlDocument();
+            return FromXml(doc.DocumentElement!);
+        }
 	}
 }

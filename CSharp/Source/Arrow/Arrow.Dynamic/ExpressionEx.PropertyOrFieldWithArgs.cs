@@ -61,7 +61,7 @@ namespace Arrow.Dynamic
 				if(propertyInfo==null) return false;
 
 				var propertyInstance=Expression.Property(instance,propertyInfo);
-				if (propertyInfo.PropertyType.IsArray)
+				if(propertyInfo.PropertyType.IsArray)
 				{
 					expression=Expression.ArrayAccess(propertyInstance,indexes);
 					return true;
@@ -85,7 +85,7 @@ namespace Arrow.Dynamic
 			Expression? instance=null;
 
 			var fieldInfo = type.GetField(name, bindingFlags);
-			if (fieldInfo!= null)
+			if(fieldInfo!= null)
 			{
 				var fieldInstance=Expression.Field(null,fieldInfo);
 
@@ -106,10 +106,10 @@ namespace Arrow.Dynamic
 			else
 			{
 				var propertyInfo=type.GetProperty(name,bindingFlags);
-				if (propertyInfo==null) return false;
+				if(propertyInfo==null) return false;
 
 				var propertyInstance=Expression.Property(null,propertyInfo);
-				if (propertyInfo.PropertyType.IsArray)
+				if(propertyInfo.PropertyType.IsArray)
 				{
 					expression=Expression.ArrayAccess(propertyInstance,indexes);
 					return true;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace Arrow.Application.Plugins.Memory
@@ -18,68 +19,72 @@ namespace Arrow.Application.Plugins.Memory
 		/// </summary>
 		public GarbageCollectorPlugin()
 		{
-			this.Interval=new TimeSpan(0,1,0); // One minute
+			this.Interval=new TimeSpan(0, 1, 0); // One minute
 		}
 
 		/// <summary>
 		/// How often to garbage collect. The default is every minute
 		/// </summary>
-		public TimeSpan Interval{get;set;}
-		
-		/// <summary>
-		/// How often to garbage collect. The default is every minute
-		/// </summary>
-		private void TimerElapsed(object? sender, ElapsedEventArgs e)
-		{
-			GC.Collect();
-		}
-	
-		/// <summary>
-		/// Pauses garbage collection
-		/// </summary>
-		public override void Pause()
-		{
-			if(m_Timer!=null) m_Timer.Enabled=false;
-		}
+		public TimeSpan Interval{get; set;}
 
-		/// <summary>
-		/// Continues garbage collection
-		/// </summary>
-		public override void Continue()
-		{
-			if(m_Timer!=null) m_Timer.Enabled=true;
-		}
+        /// <summary>
+        /// How often to garbage collect. The default is every minute
+        /// </summary>
+        private void TimerElapsed(object? sender, ElapsedEventArgs e)
+        {
+            GC.Collect();
+        }
 
-		/// <summary>
-		/// Starts garbage collection
-		/// </summary>
-		protected internal override void Start()
-		{
-			if(m_Timer==null)
-			{
-				m_Timer=new Timer();
-				m_Timer.Interval=this.Interval.TotalMilliseconds;
-				m_Timer.Elapsed+=TimerElapsed;
-			}
-		}
+        /// <summary>
+        /// Pauses garbage collection
+        /// </summary>
+        public override void Pause()
+        {
+            if(m_Timer != null) m_Timer.Enabled = false;
+        }
 
-		/// <summary>
-		/// Stops garbage collection
-		/// </summary>
-		protected internal override void Stop()
-		{
-			if(m_Timer!=null)
-			{
-				m_Timer.Stop();
-				m_Timer.Dispose();
-				m_Timer=null;
-			}
-		}
+        /// <summary>
+        /// Continues garbage collection
+        /// </summary>
+        public override void Continue()
+        {
+            if(m_Timer != null) m_Timer.Enabled = true;
+        }
 
-		/// <summary>
-		/// The name of the service
-		/// </summary>
-		public override string Name
+        /// <summary>
+        /// Starts garbage collection
+        /// </summary>
+        protected internal override ValueTask Start()
+        {
+            if(m_Timer == null)
+            {
+                m_Timer = new Timer();
+                m_Timer.Interval = this.Interval.TotalMilliseconds;
+                m_Timer.Elapsed += TimerElapsed;
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        /// Stops garbage collection
+        /// </summary>
+        protected internal override ValueTask Stop()
+        {
+            if(m_Timer != null)
+            {
+                m_Timer.Stop();
+                m_Timer.Dispose();
+                m_Timer = null;
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        /// The name of the service
+        /// </summary>
+        public override string Name
 		{
 			get{return "GarbageCollector";}
 		}

@@ -16,7 +16,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="predicate">The predicate to apply to each plugin</param>
 		/// <returns>The first plugin to match the predicate, or null if no plugin matches</returns>
-		Plugin? Find(Predicate<Plugin> predicate);
+		Plugin? Find(Func<Plugin, bool> predicate);
 		
 		/// <summary>
 		/// Searches for the first service to implements the specified type
@@ -31,11 +31,5 @@ namespace Arrow.Application.Plugins
 		/// <param name="pluginName">The name of the plugin to find</param>
 		/// <returns>The first plugin that matches the name, otherwise null</returns>
 		Plugin? FindByName(string pluginName);
-		
-		/// <summary>
-		/// Returns all the plugins in a controller
-		/// </summary>
-		/// <returns>A sequence of plugins</returns>
-		IEnumerable<Plugin> AllPlugins();
 	}
 }

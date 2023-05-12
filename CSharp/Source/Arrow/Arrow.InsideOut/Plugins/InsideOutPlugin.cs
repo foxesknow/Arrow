@@ -38,17 +38,20 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
     }
 
     /// <inheritdoc/>
-    protected override void Start()
+    protected override ValueTask Start()
     {
+        return default;
     }
 
     /// <inheritdoc/>
-    protected override void Stop()
+    protected override ValueTask Stop()
     {
         foreach(var name in m_Nodes.Keys)
         {
             Unregister(name);
         }
+
+        return default;
     }
 
     /// <inheritdoc/>
@@ -147,8 +150,9 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
         }
     }
 
-    void IPluginPostStart.AllPluginsStarted(IPluginDiscovery discovery)
+    ValueTask IPluginPostStart.AllPluginsStarted(IPluginDiscovery discovery)
     {
         // TODO: Look for a broadcaster
+        return default;
     }
 }

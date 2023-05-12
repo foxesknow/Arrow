@@ -28,21 +28,21 @@ namespace Arrow.Threading.Tasks.Streaming
 
         public static Task<TData> PeekFor<TData>(this IPeekableReceiver<TData> receiver, Func<TData, bool> ifCondition)
         {
-            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.PeekFor(receiver.DefaultTimeout, ifCondition, EmptyThen<TData>.Instance);
         }
 
         public static Task<TData> PeekFor<TData>(this IPeekableReceiver<TData> receiver, TimeSpan timeout, Func<TData, bool> ifCondition)
         {
-            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.PeekFor(timeout, ifCondition, EmptyThen<TData>.Instance);
         }
 
         public static Task<TData> PeekFor<TData>(this IPeekableReceiver<TData> receiver, TimeSpan timeout, Func<TData, bool> ifCondition, Action<TData> then)
         {
-            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
+            if(receiver is null) throw new ArgumentNullException(nameof(receiver));
 
             return receiver.PeekFor(timeout, ifCondition, then);
         }

@@ -40,7 +40,7 @@ public sealed class ListenerPlugin : ListenerPluginBase
 
     public override string Name => ListenerName;
 
-    protected override void Start()
+    protected override ValueTask Start()
     {
         if(HttpListener.IsSupported == false) throw new InvalidOperationException("http not supported");
         if(string.IsNullOrWhiteSpace(this.InstanceName)) throw new InsideOutException("no instance name set");
@@ -66,9 +66,11 @@ public sealed class ListenerPlugin : ListenerPluginBase
 
         m_ListenTask = Task.Run(() => Listen(m_Listener, this.MaxConnections, m_Cts.Token));
         Log.Info("started");
+
+        return default;
     }
 
-    protected override void Stop()
+    protected override async ValueTask Stop()
     {
         Log.Info("stopping");
 
@@ -77,8 +79,7 @@ public sealed class ListenerPlugin : ListenerPluginBase
 
         if(m_ListenTask is not null)
         {
-            // Yuck!
-            m_ListenTask.GetAwaiter().GetResult();
+            await m_ListenTask.ContinueOnAnyContext();
             m_ListenTask = null;
         }
 

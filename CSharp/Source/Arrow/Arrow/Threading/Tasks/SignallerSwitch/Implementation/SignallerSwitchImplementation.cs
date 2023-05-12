@@ -200,7 +200,7 @@ namespace Arrow.Threading.Tasks.SignallerSwitch.Implementation
                     {
                         ct.ThrowIfCancellationRequested();
 
-                        if (conditions[i](caseData))
+                        if(conditions[i](caseData))
                         {
                             // We've got a match.
                             // However, there may be multiple threads signalling data, so we need to
@@ -308,7 +308,7 @@ namespace Arrow.Threading.Tasks.SignallerSwitch.Implementation
             private protected override async Task<(TResult Result, T SignalledData)> DoExecute()
             {
                 var (signalledData, index) = await ExecuteSwitch().ContinueOnAnyContext();
-                if (index != -1)
+                if(index != -1)
                 {
                     var caseData = new CaseData<T, TState>(signalledData, State, CancellationToken);
                     var result = await m_Then[index](caseData).ContinueOnAnyContext();

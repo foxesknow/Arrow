@@ -50,7 +50,7 @@ public sealed class ListenerPlugin : ListenerPluginBase, IDisposable, ISupportIn
 
     public override string Name => ListenerName;    
 
-    protected override void Start()
+    protected override ValueTask Start()
     {
         if(this.InstanceName is null) throw new InsideOutException("no instance name specified");
         if(m_RequestEndpoint is null) throw new InsideOutException("could not resolve request endpoint");
@@ -73,9 +73,11 @@ public sealed class ListenerPlugin : ListenerPluginBase, IDisposable, ISupportIn
             m_Responses = MessagingSystem.CreateSender(m_ResponseEndpoint);
             m_Responses.Connect(m_ResponseEndpoint);
         }
+
+        return default;
     }
 
-    protected override void Stop()
+    protected override ValueTask Stop()
     {
         m_CancelSource.Cancel();
 
@@ -90,6 +92,8 @@ public sealed class ListenerPlugin : ListenerPluginBase, IDisposable, ISupportIn
             MethodCall.AllowFail(m_Responses, static d => d.Dispose());
             m_Responses = null;
         }
+
+        return default;
     }
 
     private void HandleMessage(object? sender, MessageEventArgs args)
@@ -159,13 +163,13 @@ public sealed class ListenerPlugin : ListenerPluginBase, IDisposable, ISupportIn
         }
     }
 
-    internal void TestStart()
+    internal ValueTask TestStart()
     {
-        Start();
+        return Start();
     }
 
-    internal void TestStop()
+    internal ValueTask TestStop()
     {
-        Stop();
+        return Stop();
     }
 }

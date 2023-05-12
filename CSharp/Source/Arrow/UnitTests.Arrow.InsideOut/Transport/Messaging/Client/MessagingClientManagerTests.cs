@@ -16,6 +16,7 @@ using Arrow.Execution;
 
 using NUnit.Framework;
 using Arrow.InsideOut;
+using Arrow.Threading.Tasks;
 
 namespace UnitTests.Arrow.InsideOut.Transport.Messaging.Client
 {
@@ -87,7 +88,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Messaging.Client
         [Test]
         public async Task GetDetails()
         {
-            using(var listener = MakeListener())
+            await using(var listener = await MakeListener())
             using(var manager = new MessagingClientManager())
             {
                 var node = manager.Register(Publisher, new("memtopic://inmemory/InsideOut"));
@@ -99,7 +100,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Messaging.Client
         [Test]
         public async Task Execute()
         {
-            using(var listener = MakeListener())
+            await using(var listener = await MakeListener())
             using(var manager = new MessagingClientManager())
             {
                 var node = manager.Register(Publisher, new("memtopic://inmemory/InsideOut"));
@@ -120,9 +121,9 @@ namespace UnitTests.Arrow.InsideOut.Transport.Messaging.Client
         }
 
         [Test]
-        public void ThrowsException()
+        public async Task ThrowsException()
         {
-            using(var listener = MakeListener())
+            await using(var listener = await MakeListener())
             using(var manager = new MessagingClientManager())
             {
                 var node = manager.Register(Publisher, new("memtopic://inmemory/InsideOut"));
@@ -140,7 +141,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Messaging.Client
             }
         }
 
-        private IDisposable MakeListener()
+        private async ValueTask<IAsyncDisposable> MakeListener()
         {
             var document = new XmlDocument();
             document.LoadXml(s_PluginXml);
@@ -154,11 +155,11 @@ namespace UnitTests.Arrow.InsideOut.Transport.Messaging.Client
             };
 
             ((ISupportInitialize)listener).EndInit();
-            listener.TestStart();
+            await listener.TestStart().ContinueOnAnyContext();
 
-            return Disposer.Make(() =>
+            return AsyncDisposer.Make(async () =>
             {
-                listener.TestStop();
+                await listener.TestStop().ContinueOnAnyContext();
                 listener.Dispose();
             });
         }

@@ -14,7 +14,7 @@ namespace InsideOutClient
     {
         static async Task Main(string[] args)
         {
-            await ApplicationRunner.RunAsync(() => Run(args));
+            await ApplicationRunner.Run(() => Run(args));
         }
 
         private static async Task Run(string[] args)
@@ -44,8 +44,15 @@ namespace InsideOutClient
                         }
                     };
 
-                    var result = await node.Execute(executeRequest, default);
-                    Console.WriteLine(result);
+                    try
+                    {
+                        var result = await node.Execute(executeRequest, default);
+                        Console.WriteLine(result);
+                    }
+                    catch(Exception e)
+                    {
+                        Console.Error.WriteLine(e.Message);
+                    }
                 }
             }
         }
