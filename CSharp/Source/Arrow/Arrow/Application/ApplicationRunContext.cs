@@ -17,29 +17,32 @@ namespace Arrow.Application
     /// don't lend themselves to the <b>ApplicationRunner</b>
     /// In this case just create an instance of the context and dispose of it at application exit.
     /// </summary>
-    public class ApplicationRunContext : IAsyncDisposable
+    public sealed class ApplicationRunContext : IAsyncDisposable
     {
         private static readonly object s_SyncRoot = new object();
-        private static readonly List<Action> s_ShutdownCallbacks = new List<Action>();
+        private static readonly List<Action> s_ShutdownCallbacks = new();
 
         /// <summary>
         /// Starts all standard subsystems
         /// </summary>
-        public ApplicationRunContext()
+        internal ApplicationRunContext()
         {
             
         }
 
         public async ValueTask Start()
         {
-            await PluginManager.SystemServices.Start().ContinueOnAnyContext();
+            var plugins = PluginManager.GetSystemPlugins();
+            await plugins.Start().ContinueOnAnyContext();
         }
 
         async ValueTask IAsyncDisposable.DisposeAsync()
         {
             RunRegisteredShutdownActions();
-            await PluginManager.SystemServices.Stop();
-            await PluginManager.SystemServices.DisposeAsync();
+
+            var plugins = PluginManager.GetSystemPlugins();
+            await plugins.Stop();
+            await plugins.DisposeAsync();
             
             LogManager.ShutdownLoggingSystem();
         }
@@ -50,7 +53,7 @@ namespace Arrow.Application
         /// <param name="action">The action to invoke at shutdown</param>
         public static void RegisterForShutdown(Action action)
         {
-            if(action == null) throw new ArgumentNullException("action");
+            if(action == null) throw new ArgumentNullException(nameof(action));
 
             lock(s_SyncRoot)
             {

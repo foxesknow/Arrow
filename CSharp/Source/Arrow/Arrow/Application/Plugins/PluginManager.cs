@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -21,9 +22,11 @@ namespace Arrow.Application.Plugins
 	/// </summary>
 	internal class PluginManager : IPluginDiscovery, IEnumerable<Plugin>, IAsyncDisposable, IServiceProvider
 	{
-		private readonly ConcurrentQueue<Plugin> m_Plugins = new();
-		private string m_PluginName;
-		private volatile bool m_Started;
+		private readonly ConcurrentQueue<Plugin> m_Plugins;
+		
+		private bool m_Started;
+		
+		private readonly AsyncLock m_SyncRoot = new();
 		
 		private static readonly object s_SyncRoot=new object();
 		private static PluginManager? s_SystemPlugins;
@@ -31,9 +34,9 @@ namespace Arrow.Application.Plugins
 		/// <summary>
 		/// Initializes the instance
 		/// </summary>
-		public PluginManager()
+		public PluginManager(IEnumerable<Plugin> plugins)
 		{
-			m_PluginName = "PluginController";
+			m_Plugins = new(plugins);
 		}
 		
 		/// <summary>
@@ -41,25 +44,28 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		internal async ValueTask Start()
 		{
-			if(!m_Started)
+			using(await m_SyncRoot)
 			{
-				foreach(var plugin in m_Plugins)
+				if(!m_Started)
 				{
-					if(plugin is IPluginInitialize serviceInitialize) 
+					foreach(var plugin in m_Plugins)
 					{
-						await serviceInitialize.Initialize(this).ContinueOnAnyContext();
+						if(plugin is IPluginInitialize serviceInitialize) 
+						{
+							await serviceInitialize.Initialize(this).ContinueOnAnyContext();
+						}
+					
+						await plugin.Start().ContinueOnAnyContext();
 					}
-					
-					await plugin.Start().ContinueOnAnyContext();
-				}
 
-				m_Started=true;
+					m_Started = true;
 					
-				foreach(var plugin in m_Plugins)
-				{
-					if(plugin is IPluginPostStart postStart) 
+					foreach(var plugin in m_Plugins)
 					{
-						await postStart.AllPluginsStarted(this).ContinueOnAnyContext();
+						if(plugin is IPluginPostStart postStart) 
+						{
+							await postStart.AllPluginsStarted(this).ContinueOnAnyContext();
+						}
 					}
 				}
 			}
@@ -70,52 +76,19 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		internal async ValueTask Stop()
 		{
-			if(m_Started)
+			using(await m_SyncRoot)
 			{
-				// Stop them in reverse order					
-				foreach(var plugins in m_Plugins.AsEnumerable().Reverse())
+				if(m_Started)
 				{
-					await plugins.Stop().ContinueOnAnyContext();
-				}
+					// Stop them in reverse order					
+					foreach(var plugins in m_Plugins.AsEnumerable().Reverse())
+					{
+						await plugins.Stop().ContinueOnAnyContext();
+					}
 					
-				m_Started=false;
+					m_Started = false;
+				}
 			}
-		}
-		
-		/// <summary>
-		/// The name of the plugin controller
-		/// </summary>
-		/// <exception cref="System.ArgumentNullException">value is null</exception>
-		public string Name
-		{
-			get{return m_PluginName;}
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_PluginName = value;
-			}
-		}
-		
-		/// <summary>
-		/// Adds a new service
-		/// </summary>
-		/// <param name="service">The service to add</param>
-		internal void Add(Plugin service)
-		{
-			if(service is null) throw new ArgumentNullException("service");
-			if(m_Started) throw new InvalidOperationException("cannot add to controller once started");
-			
-			m_Plugins.Enqueue(service);
-		}
-		
-		/// <summary>
-		/// Removes all plugins from the controller
-		/// </summary>
-		internal void Clear()
-		{
-			if(m_Started) throw new InvalidOperationException("cannot clear controller once started");
-		
-			m_Plugins.Clear();
 		}
 		
 		/// <summary>
@@ -168,7 +141,7 @@ namespace Arrow.Application.Plugins
 		/// <returns>A service object of the specified type, or null if no matching object found</returns>
 		public object? GetService(Type pluginType)
 		{
-			if(pluginType is null) throw new ArgumentNullException("pluginType");
+			if(pluginType is null) throw new ArgumentNullException(nameof(pluginType));
 			
 			return Find(service => pluginType.IsAssignableFrom(service.GetType()));
 		}
@@ -213,44 +186,35 @@ namespace Arrow.Application.Plugins
 		}
 
 		/// <summary>
-		/// Returns the systemwide plugin controller
+		/// Returns the systemwide plugin manager
 		/// </summary>
-		internal static PluginManager SystemServices
+		internal static PluginManager GetSystemPlugins()
 		{
-			get
-			{
+            lock(s_SyncRoot)
+            {
                 if(s_SystemPlugins == null)
                 {
-                    lock(s_SyncRoot)
+                    var systemPluginsNode = AppConfig.GetSectionXml(ArrowSystem.Name, "Arrow.Plugins/SystemPlugins");
+                    if(systemPluginsNode != null)
                     {
-                        if(s_SystemPlugins == null)
+                        try
                         {
-
-                            var systemPluginsNode = AppConfig.GetSectionXml(ArrowSystem.Name, "Arrow.Plugins/SystemPlugins");
-                            if(systemPluginsNode != null)
-                            {
-                                try
-                                {
-                                    s_SystemPlugins = PluginManager.FromXml(systemPluginsNode);
-                                }
-                                catch
-                                {
-                                    // If we fail then create an empty controller
-                                    s_SystemPlugins = new PluginManager();
-                                }
-                            }
-                            else
-                            {
-                                s_SystemPlugins = new PluginManager();
-                            }
-
-                            s_SystemPlugins.Name = "SystemPlugins";
+                            s_SystemPlugins = PluginManager.FromXml(systemPluginsNode);
                         }
+                        catch
+                        {
+                            // If we fail then create an empty controller
+                            s_SystemPlugins = new PluginManager(Array.Empty<Plugin>());
+                        }
+                    }
+                    else
+                    {
+                        s_SystemPlugins = new PluginManager(Array.Empty<Plugin>());
                     }
                 }
 
-                return s_SystemPlugins;
-			}
+				return s_SystemPlugins;
+            }
 		}
 		
 		/// <summary>
@@ -261,17 +225,17 @@ namespace Arrow.Application.Plugins
 		/// <returns>A controller</returns>
 		internal static PluginManager FromXml(XmlNode pluginsRoot)
 		{
-            if(pluginsRoot == null) throw new ArgumentNullException("pluginsRoot");
+            if(pluginsRoot == null) throw new ArgumentNullException(nameof(pluginsRoot));
 
-            PluginManager controller = new PluginManager();
+            var plugins = new List<Plugin>();
 
             foreach(XmlNode? pluginNode in pluginsRoot.SelectNodesOrEmpty("Plugin"))
             {
                 var plugin = XmlCreation.Create<Plugin>(pluginNode!);
-                controller.Add(plugin);
+                plugins.Add(plugin);
             }
 
-            return controller;
+			return new PluginManager(plugins);
         }
 		
 		/// <summary>
@@ -281,9 +245,9 @@ namespace Arrow.Application.Plugins
 		/// <returns>A controller</returns>
 		internal static PluginManager FromXml(Uri uri)
 		{
-            if(uri == null) throw new ArgumentNullException("uri");
+            if(uri == null) throw new ArgumentNullException(nameof(uri));
 
-            XmlDocument doc = StorageManager.Get(uri).ReadXmlDocument();
+            var doc = StorageManager.Get(uri).ReadXmlDocument();
             return FromXml(doc.DocumentElement!);
         }
 	}
