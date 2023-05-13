@@ -16,31 +16,31 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 		{
 		}
 
-		public override DynamicMetaObject FallbackBinaryOperation(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject? errorSuggestion)
-		{
-			var restrictions=BindingRestrictions.Empty;
-			Expression? expression=null;
+        public override DynamicMetaObject FallbackBinaryOperation(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject? errorSuggestion)
+        {
+            var restrictions = BindingRestrictions.Empty;
+            Expression? expression = null;
 
-			var lhs=target.GetLimitedExpression();
-			var rhs=arg.GetLimitedExpression();
+            var lhs = target.GetLimitedExpression();
+            var rhs = arg.GetLimitedExpression();
 
-			if(lhs.IsOfType<string>() && rhs.IsOfType<string>() && this.Operation==ExpressionType.Add)
-			{
-				expression=StringExpression.Concat(lhs,rhs);
-			}
-			else if(TypeCoercion.NormalizeBinaryExpression(ref lhs, ref rhs))
-			{
-				expression=Expression.MakeBinary(this.Operation,lhs,rhs);
-			}
-			else
-			{
-				expression=this.ThrowException("BinaryBinder: could not normalize expressions");
-			}
+            if(lhs.IsOfType<string>() && rhs.IsOfType<string>() && this.Operation == ExpressionType.Add)
+            {
+                expression = StringExpression.Concat(lhs, rhs);
+            }
+            else if(TypeCoercion.NormalizeBinaryExpression(ref lhs, ref rhs))
+            {
+                expression = Expression.MakeBinary(this.Operation, lhs, rhs);
+            }
+            else
+            {
+                expression = this.ThrowException("BinaryBinder: could not normalize expressions");
+            }
 
-			expression=expression.ConvertTo<object>();
-			restrictions=restrictions.AndLimitType(target).AndLimitType(arg);
+            expression = expression.ConvertTo<object>();
+            restrictions = restrictions.AndLimitType(target).AndLimitType(arg);
 
-			return new DynamicMetaObject(expression,restrictions);
-		}
-	}
+            return new DynamicMetaObject(expression, restrictions);
+        }
+    }
 }

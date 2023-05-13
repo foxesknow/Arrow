@@ -30,7 +30,7 @@ namespace Arrow.Messaging
 		/// <summary>
 		/// A message selection string for messaging systems that support filtering
 		/// </summary>
-		public virtual string MessageSelector{get;set;}
+		public virtual string MessageSelector{get; set;}
 				
 		/// <summary>
 		/// Receives a message, blocking until one is available

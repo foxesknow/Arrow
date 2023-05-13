@@ -24,17 +24,17 @@ namespace Arrow.Messaging
 		/// <summary>
 		/// The message type
 		/// </summary>
-		string MessageType{get;set;}
+		string MessageType{get; set;}
 		
 		/// <summary>
 		/// The message id
 		/// </summary>
-		string MessageID{get;set;}
+		string MessageID{get; set;}
 		
 		/// <summary>
 		/// The correlation id of the message
 		/// </summary>
-		string CorrelationID{get;set;}
+		string CorrelationID{get; set;}
 		
 		/// <summary>
 		/// Sets a message property

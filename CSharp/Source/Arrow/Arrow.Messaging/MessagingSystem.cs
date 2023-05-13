@@ -57,89 +57,89 @@ namespace Arrow.Messaging
 		/// <returns>A MessagingSystem for the specified resource</returns>
 		public static MessagingSystem Create(Uri uri)
 		{
-			if(uri==null) throw new ArgumentNullException("uri");
-			return Create(uri.Scheme);
-		}
-		
-		/// <summary>
-		/// Creates a concrete MessagingSystem instance for a specific resource
-		/// </summary>
-		/// <param name="scheme">The scheme (Uri.Scheme) to access</param>
-		/// <returns>A MessagingSystem for the specified resource</returns>
-		public static MessagingSystem Create(string scheme)
-		{
-			if(scheme==null) throw new ArgumentNullException("scheme");			
-			
-			MessagingSystem system=MessagingSystemFactory.TryCreate(scheme);
-			if(system==null) throw new MessagingException("unsupported scheme: "+scheme);
-			
-			return system;
-		}
-		
-		/// <summary>
-		/// Create a MessageSender instance for a uri
-		/// </summary>
-		/// <param name="uri">The messaging resource to access</param>
-		/// <returns>A MessageSender instance</returns>
-		public static MessageSender CreateSender(Uri uri)
-		{
-			if(uri==null) throw new ArgumentNullException("uri");
-			return CreateSender(uri.Scheme);
-		}
-		
-		/// <summary>
-		/// Create a MessageSender instance for a uri
-		/// </summary>
-		/// <param name="scheme">The messaging resource to access</param>
-		/// <returns>A MessageSender instance</returns>
-		public static MessageSender CreateSender(string scheme)
-		{
-			var system=MessagingSystem.Create(scheme);
-			return system.CreateSender();
-		}
-		
-		/// <summary>
-		/// Create a MessageReceiver instance for a uri
-		/// </summary>
-		/// <param name="uri">The messaging resource to access</param>
-		/// <returns>A MessageReceiver instance</returns>
-		public static MessageReceiver CreateReceiver(Uri uri)
-		{
-			if(uri==null) throw new ArgumentNullException("uri");
-			return CreateReceiver(uri.Scheme);
-		}
-		
-		/// <summary>
-		/// Create a MessageReceiver instance for a uri
-		/// </summary>
-		/// <param name="scheme">The messaging resource to access</param>
-		/// <returns>A MessageReceiver instance</returns>
-		public static MessageReceiver CreateReceiver(string scheme)
-		{
-			var system=MessagingSystem.Create(scheme);
-			return system.CreateReceiver();
-		}
-		
-		/// <summary>
-		/// Checks if the messaging system to handle the uri is available
-		/// </summary>
-		/// <param name="uri">The uri to check</param>
-		/// <returns>true if available, false otherwise</returns>
-		public static bool IsPresent(Uri uri)
-		{
-			if(uri==null) throw new ArgumentNullException("uri");			
-			return IsPresent(uri.Scheme);
-		}
-		
-		/// <summary>
-		/// Checks if the messaging system to handle the uri is available
-		/// </summary>
-		/// <param name="scheme">The scheme to check</param>
-		/// <returns>true if available, false otherwise</returns>
-		public static bool IsPresent(string scheme)
-		{
-			if(scheme==null) throw new ArgumentNullException("scheme");			
-			return MessagingSystemFactory.IsPresent(scheme);
-		}
-	}
+            if(uri == null) throw new ArgumentNullException("uri");
+            return Create(uri.Scheme);
+        }
+
+        /// <summary>
+        /// Creates a concrete MessagingSystem instance for a specific resource
+        /// </summary>
+        /// <param name="scheme">The scheme (Uri.Scheme) to access</param>
+        /// <returns>A MessagingSystem for the specified resource</returns>
+        public static MessagingSystem Create(string scheme)
+        {
+            if(scheme == null) throw new ArgumentNullException("scheme");
+
+            MessagingSystem system = MessagingSystemFactory.TryCreate(scheme);
+            if(system == null) throw new MessagingException("unsupported scheme: " + scheme);
+
+            return system;
+        }
+
+        /// <summary>
+        /// Create a MessageSender instance for a uri
+        /// </summary>
+        /// <param name="uri">The messaging resource to access</param>
+        /// <returns>A MessageSender instance</returns>
+        public static MessageSender CreateSender(Uri uri)
+        {
+            if(uri == null) throw new ArgumentNullException("uri");
+            return CreateSender(uri.Scheme);
+        }
+
+        /// <summary>
+        /// Create a MessageSender instance for a uri
+        /// </summary>
+        /// <param name="scheme">The messaging resource to access</param>
+        /// <returns>A MessageSender instance</returns>
+        public static MessageSender CreateSender(string scheme)
+        {
+            var system = MessagingSystem.Create(scheme);
+            return system.CreateSender();
+        }
+
+        /// <summary>
+        /// Create a MessageReceiver instance for a uri
+        /// </summary>
+        /// <param name="uri">The messaging resource to access</param>
+        /// <returns>A MessageReceiver instance</returns>
+        public static MessageReceiver CreateReceiver(Uri uri)
+        {
+            if(uri == null) throw new ArgumentNullException("uri");
+            return CreateReceiver(uri.Scheme);
+        }
+
+        /// <summary>
+        /// Create a MessageReceiver instance for a uri
+        /// </summary>
+        /// <param name="scheme">The messaging resource to access</param>
+        /// <returns>A MessageReceiver instance</returns>
+        public static MessageReceiver CreateReceiver(string scheme)
+        {
+            var system = MessagingSystem.Create(scheme);
+            return system.CreateReceiver();
+        }
+
+        /// <summary>
+        /// Checks if the messaging system to handle the uri is available
+        /// </summary>
+        /// <param name="uri">The uri to check</param>
+        /// <returns>true if available, false otherwise</returns>
+        public static bool IsPresent(Uri uri)
+        {
+            if(uri == null) throw new ArgumentNullException("uri");
+            return IsPresent(uri.Scheme);
+        }
+
+        /// <summary>
+        /// Checks if the messaging system to handle the uri is available
+        /// </summary>
+        /// <param name="scheme">The scheme to check</param>
+        /// <returns>true if available, false otherwise</returns>
+        public static bool IsPresent(string scheme)
+        {
+            if(scheme == null) throw new ArgumentNullException("scheme");
+            return MessagingSystemFactory.IsPresent(scheme);
+        }
+    }
 }

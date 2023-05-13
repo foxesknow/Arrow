@@ -41,24 +41,24 @@ namespace Arrow.Messaging.Memory
 		{
 			add
 			{
-				if(value==null) return;
-				
-				lock(m_SyncRoot)
-				{
-					m_MessagesAvailableHandlers.Add(value);
-					ScheduleProcessing();
-				}
-			}
+                if(value == null) return;
+
+                lock(m_SyncRoot)
+                {
+                    m_MessagesAvailableHandlers.Add(value);
+                    ScheduleProcessing();
+                }
+            }
 
 			remove
 			{
-				if(value==null) return;
-				
-				lock(m_SyncRoot)
-				{
-					m_MessagesAvailableHandlers.Remove(value);
-				}
-			}
+                if(value == null) return;
+
+                lock(m_SyncRoot)
+                {
+                    m_MessagesAvailableHandlers.Remove(value);
+                }
+            }
 		}
 
 		/// <summary>
@@ -81,91 +81,91 @@ namespace Arrow.Messaging.Memory
 			{
 				MethodCall.AllowFail(()=>
 				{
-					var args=argFactory();
-					d(this,args);
+					var args = argFactory();
+					d(this, args);
 				});
 			}
 		}
-	
-		/// <summary>
-		/// Sends a message
-		/// </summary>
-		/// <param name="message"></param>
-		public virtual void Send(IMessage message)
-		{
-			byte[] data=GenericBinaryFormatter.ToArray(message);
-			
-			lock(m_SyncRoot)
-			{
-				m_Queue.Enqueue(data);
-				ScheduleProcessing();				
-			}
-		}
 
-		private void ScheduleProcessing()
-		{
-			if(m_ThreadActive==false)
-			{
-				m_ThreadActive=true;
-				m_Dispatcher.QueueUserWorkItem(ProcessQueue);
-			}
-		}
+        /// <summary>
+        /// Sends a message
+        /// </summary>
+        /// <param name="message"></param>
+        public virtual void Send(IMessage message)
+        {
+            byte[] data = GenericBinaryFormatter.ToArray(message);
 
-		/// <summary>
-		/// Closes the session
-		/// </summary>
-		public void Close()
-		{
-			Release();
-		}
+            lock(m_SyncRoot)
+            {
+                m_Queue.Enqueue(data);
+                ScheduleProcessing();
+            }
+        }
 
-		/// <summary>
-		/// Attempts to get a message from the queue
-		/// </summary>
-		/// <param name="message"></param>
-		/// <returns></returns>
-		public bool TryGetMessage(out IMessage message)
-		{
-			bool gotMessage=false;
-			byte[] messageBytes=null;
-			
-			message=null;
+        private void ScheduleProcessing()
+        {
+            if(m_ThreadActive == false)
+            {
+                m_ThreadActive = true;
+                m_Dispatcher.QueueUserWorkItem(ProcessQueue);
+            }
+        }
 
-			lock(m_SyncRoot)
-			{
-				if(m_Queue.Count!=0)
-				{
-					gotMessage=true;
-					messageBytes=m_Queue.Dequeue();
-				}
-			}
+        /// <summary>
+        /// Closes the session
+        /// </summary>
+        public void Close()
+        {
+            Release();
+        }
 
-			if(gotMessage) message=GenericBinaryFormatter.FromArray<IMessage>(messageBytes);
+        /// <summary>
+        /// Attempts to get a message from the queue
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public bool TryGetMessage(out IMessage message)
+        {
+            bool gotMessage = false;
+            byte[] messageBytes = null;
 
-			return gotMessage;
-		}
+            message = null;
 
-		protected bool TryGetBytes(out byte[] messageData)
-		{
-			lock(m_SyncRoot)
-			{
-				if(m_Queue.Count!=0)
-				{
-					messageData=m_Queue.Dequeue();
-					return true;
-				}
-				else
-				{
-					messageData=null;
-					return false;
-				}
-			}
-		}
+            lock(m_SyncRoot)
+            {
+                if(m_Queue.Count != 0)
+                {
+                    gotMessage = true;
+                    messageBytes = m_Queue.Dequeue();
+                }
+            }
 
-		/// <summary>
-		/// The address of the topic or queue
-		/// </summary>
-		public Uri Address
+            if(gotMessage) message = GenericBinaryFormatter.FromArray<IMessage>(messageBytes);
+
+            return gotMessage;
+        }
+
+        protected bool TryGetBytes(out byte[] messageData)
+        {
+            lock(m_SyncRoot)
+            {
+                if(m_Queue.Count != 0)
+                {
+                    messageData = m_Queue.Dequeue();
+                    return true;
+                }
+                else
+                {
+                    messageData = null;
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The address of the topic or queue
+        /// </summary>
+        public Uri Address
 		{
 			get{return m_Address;}
 		}
@@ -186,74 +186,73 @@ namespace Arrow.Messaging.Memory
 			}
 		}
 
-		/// <summary>
-		/// Release a reference to the queue.
-		/// When there are no more references any resources will be reclaimed
-		/// </summary>
-		public void Release()
-		{
-			lock(m_SyncRoot)
-			{
-				if(m_Usage>0)
-				{
-					m_Usage--;
-					if(m_Usage==0)
-					{						
-						// Just for sanity, when there's nobody using the
-						// session make sure we've removed all events
-						m_MessagesAvailableHandlers.Clear();
-					}
-				}
-			}
-		}
+        /// <summary>
+        /// Release a reference to the queue.
+        /// When there are no more references any resources will be reclaimed
+        /// </summary>
+        public void Release()
+        {
+            lock(m_SyncRoot)
+            {
+                if(m_Usage > 0)
+                {
+                    m_Usage--;
+                    if(m_Usage == 0)
+                    {
+                        // Just for sanity, when there's nobody using the
+                        // session make sure we've removed all events
+                        m_MessagesAvailableHandlers.Clear();
+                    }
+                }
+            }
+        }
 
-		/// <summary>
-		/// Indicates if messages should be buffers (for a queue)
-		/// or thrown away if nobody is subscribed (for a topic)
-		/// </summary>
-		protected bool BufferMessages{get;set;}
+        /// <summary>
+        /// Indicates if messages should be buffers (for a queue)
+        /// or thrown away if nobody is subscribed (for a topic)
+        /// </summary>
+        protected bool BufferMessages{get; set;}
 
-		private void ProcessQueue(object state)
-		{
-			lock(m_SyncRoot)
-			{
-				try
-				{
-					while(true)
-					{
-						// If theres nothing to process then stop
-						if(m_Queue.Count==0) return;
-						
-						// If we're buffering messages (ie a queue) and nobody is listening then stop
-						if(this.BufferMessages && m_MessagesAvailableHandlers.Count==0) return;
+        private void ProcessQueue(object state)
+        {
+            lock(m_SyncRoot)
+            {
+                try
+                {
+                    while(true)
+                    {
+                        // If theres nothing to process then stop
+                        if(m_Queue.Count == 0) return;
 
-						// We need to exit the lock so that other threads
-						// can modify the topic/queue whilst in their callbacks
-						Monitor.Exit(m_SyncRoot);
-				
-						try
-						{
-							DispatchMessage();
-						}
-						finally
-						{
-							Monitor.Enter(m_SyncRoot);
-						}
-					}
-				}
-				finally
-				{
-					m_ThreadActive=false;
-				}
-			}
-		}
+                        // If we're buffering messages (ie a queue) and nobody is listening then stop
+                        if(this.BufferMessages && m_MessagesAvailableHandlers.Count == 0) return;
 
-		protected abstract void DispatchMessage();
+                        // We need to exit the lock so that other threads
+                        // can modify the topic/queue whilst in their callbacks
+                        Monitor.Exit(m_SyncRoot);
 
-		public override string ToString()
-		{
-			return m_Address.ToString();
-		}
-		
-	}
+                        try
+                        {
+                            DispatchMessage();
+                        }
+                        finally
+                        {
+                            Monitor.Enter(m_SyncRoot);
+                        }
+                    }
+                }
+                finally
+                {
+                    m_ThreadActive = false;
+                }
+            }
+        }
+
+        protected abstract void DispatchMessage();
+
+        public override string ToString()
+        {
+            return m_Address.ToString();
+        }
+    }
 }

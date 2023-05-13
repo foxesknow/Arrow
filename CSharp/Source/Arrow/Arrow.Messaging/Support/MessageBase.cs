@@ -42,55 +42,55 @@ namespace Arrow.Messaging.Support
 		/// <summary>
 		/// The message type
 		/// </summary>
-		public virtual string MessageType{get;set;}
+		public virtual string MessageType{get; set;}
 
 		/// <summary>
 		/// The message id
 		/// </summary>
-		public virtual string MessageID{get;set;}
+		public virtual string MessageID{get; set;}
 
 		/// <summary>
 		/// The correlation id of the message
 		/// </summary>
-		public virtual string CorrelationID{get;set;}
+		public virtual string CorrelationID{get; set;}
 
-		/// <summary>
-		/// Sets a message property
-		/// </summary>
-		/// <param name="name">The name of the property</param>
-		/// <param name="value">The value of the property</param>
-		public virtual void SetProperty(string name,object value)
-		{
-			if(name==null) throw new ArgumentNullException("name");
-		
-			if(m_Properties==null) m_Properties=new Dictionary<string,object>();
-			m_Properties[name]=value;
-		}
+        /// <summary>
+        /// Sets a message property
+        /// </summary>
+        /// <param name="name">The name of the property</param>
+        /// <param name="value">The value of the property</param>
+        public virtual void SetProperty(string name, object value)
+        {
+            if(name == null) throw new ArgumentNullException("name");
 
-		/// <summary>
-		/// Gets a property
-		/// </summary>
-		/// <param name="name">The name of the property</param>
-		/// <returns>The value of the property, or null if the property does not exist</returns>
-		public virtual object GetProperty(string name)
-		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(m_Properties==null) return null;
-			
-			object value;
-			m_Properties.TryGetValue(name,out value);
-			
-			return value;
-		}
+            if(m_Properties == null) m_Properties = new Dictionary<string, object>();
+            m_Properties[name] = value;
+        }
 
-		/// <summary>
-		/// Returns the names of all message properties
-		/// </summary>
-		public virtual IEnumerable<string> PropertyNames
+        /// <summary>
+        /// Gets a property
+        /// </summary>
+        /// <param name="name">The name of the property</param>
+        /// <returns>The value of the property, or null if the property does not exist</returns>
+        public virtual object GetProperty(string name)
+        {
+            if(name == null) throw new ArgumentNullException("name");
+            if(m_Properties == null) return null;
+
+            object value;
+            m_Properties.TryGetValue(name, out value);
+
+            return value;
+        }
+
+        /// <summary>
+        /// Returns the names of all message properties
+        /// </summary>
+        public virtual IEnumerable<string> PropertyNames
 		{
 			get
 			{
-				if(m_Properties==null) return new string[0];
+				if(m_Properties == null) return new string[0];
 				return m_Properties.Keys;
 			}
 		}
@@ -102,18 +102,18 @@ namespace Arrow.Messaging.Support
 		/// <returns>true if the property exists, false otherwise</returns>
 		public virtual bool ContainsProperty(string name)
 		{
-			if(name==null) throw new ArgumentNullException("name");
-			if(m_Properties==null) return false;
-			
-			return m_Properties.ContainsKey(name);
-		}
+            if(name == null) throw new ArgumentNullException("name");
+            if(m_Properties == null) return false;
+
+            return m_Properties.ContainsKey(name);
+        }
 
 		/// <summary>
 		/// Removes all properties
 		/// </summary>
 		public virtual void ClearProperties()
 		{
-			m_Properties=null;
+			m_Properties = null;
 		}
 	}
 }

@@ -47,7 +47,7 @@ namespace Arrow.GraphTheory
 		/// <returns>The total of the weights</returns>
 		public double Add(double lhs, double rhs)
 		{
-			return lhs+rhs;
+			return lhs + rhs;
 		}
 		
 	}

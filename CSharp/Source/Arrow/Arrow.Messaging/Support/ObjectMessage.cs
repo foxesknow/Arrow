@@ -21,12 +21,10 @@ namespace Arrow.Messaging.Support
 		/// <param name="theObject">The object the message holds</param>
 		public ObjectMessage(object theObject)
 		{
-			m_Object=theObject;
+			m_Object = theObject;
 		}
 		
 		
-		#region IObjectMessage Members
-
 		/// <summary>
 		/// The object held in the message
 		/// </summary>
@@ -34,7 +32,5 @@ namespace Arrow.Messaging.Support
 		{
 			get{return m_Object;}
 		}
-
-		#endregion
 	}
 }

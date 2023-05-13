@@ -21,7 +21,7 @@ namespace Arrow.Messaging.Support
 		/// <param name="data">The byte data that makes up the message</param>
 		public ByteMessage(byte[] data)
 		{
-			m_Data=data;
+			m_Data = data;
 		}
 	
 		/// <summary>

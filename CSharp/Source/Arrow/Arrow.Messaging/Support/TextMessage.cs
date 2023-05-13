@@ -21,7 +21,7 @@ namespace Arrow.Messaging.Support
 		/// <param name="text">The text message that makes up the instance</param>
 		public TextMessage(string text)
 		{
-			m_Text=text;
+			m_Text = text;
 		}
 	
 		/// <summary>

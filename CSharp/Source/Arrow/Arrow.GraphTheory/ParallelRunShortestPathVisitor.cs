@@ -39,7 +39,7 @@ namespace Arrow.GraphTheory
 		/// <returns></returns>
 		public override bool IsCloser(VertexDescriptor<T> lhs, VertexDescriptor<T> rhs, Edge<T> edge)
 		{
- 			return lhs.D+WeightOf(edge)>rhs.D;
-		}
-	}
+            return lhs.D + WeightOf(edge) > rhs.D;
+        }
+    }
 }

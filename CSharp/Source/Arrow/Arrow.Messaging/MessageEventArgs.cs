@@ -16,13 +16,13 @@ namespace Arrow.Messaging
 		/// <param name="message">The message for the event</param>
 		public MessageEventArgs(IMessage message)
 		{
-			if(message==null) throw new ArgumentNullException("message");
-			this.Message=message;
-		}
+            if(message == null) throw new ArgumentNullException("message");
+            this.Message = message;
+        }
 	
 		/// <summary>
 		/// The message the event relates to
 		/// </summary>
-		public IMessage Message{get;private set;}
+		public IMessage Message{get; private set;}
 	}
 }

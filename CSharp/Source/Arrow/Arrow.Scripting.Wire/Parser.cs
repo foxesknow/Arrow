@@ -651,7 +651,7 @@ namespace Arrow.Scripting.Wire
 
         protected virtual bool AllowConditionMemberAccess
         {
-            get { return false; }
+            get{return false;}
         }
 
         protected virtual Expression ConditionalInstanceAccess(Expression instance)

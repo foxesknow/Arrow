@@ -26,79 +26,79 @@ namespace Arrow.Messaging.Memory
 			get{return false;}
 		}
 
-		/// <summary>
-		/// Throws NotImplementedException
-		/// </summary>
-		/// <param name="milliseconds"></param>
-		/// <returns></returns>
-		public override IMessage Receive(long milliseconds)
+        /// <summary>
+        /// Throws NotImplementedException
+        /// </summary>
+        /// <param name="milliseconds"></param>
+        /// <returns></returns>
+        public override IMessage Receive(long milliseconds)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Connects to the underlying messaging system
+        /// </summary>
+        /// <param name="uri">The address to connect to</param>
+        public override void Connect(Uri uri)
+        {
+            if(uri == null) throw new ArgumentNullException("uri");
+            if(m_Session != null) throw new InvalidOperationException("already connected");
+
+            m_Session = ConnectionManager.GetSession(uri);
+            m_Session.MessageAvailable += MessageAvailable;
+        }
+
+        /// <summary>
+        /// Disconnects from the messaging system
+        /// </summary>
+        public override void Disconnect()
+        {
+            if(m_Session != null)
+            {
+                MethodCall.AllowFail(() =>
+                {
+                    m_Session.MessageAvailable -= MessageAvailable;
+                    m_Session.Close();
+                });
+
+                m_Session = null;
+                MessageReceived = null;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the receiver is currently connected
+        /// </summary>
+        public override bool IsConnected
 		{
-			throw new NotImplementedException();
+			get{return m_Session != null;}
 		}
 
-		/// <summary>
-		/// Connects to the underlying messaging system
-		/// </summary>
-		/// <param name="uri">The address to connect to</param>
-		public override void Connect(Uri uri)
-		{
-			if(uri==null) throw new ArgumentNullException("uri");
-			if(m_Session!=null) throw new InvalidOperationException("already connected");
+        private void MessageAvailable(object sender, MessageEventArgs args)
+        {
+            var session = m_Session;
+            if(session == null) return;
 
-			m_Session=ConnectionManager.GetSession(uri);
-			m_Session.MessageAvailable+=MessageAvailable;
-		}
+            MethodCall.AllowFail(() =>
+            {
+                IMessage message;
 
-		/// <summary>
-		/// Disconnects from the messaging system
-		/// </summary>
-		public override void Disconnect()
-		{
-			if(m_Session!=null)
-			{
-				MethodCall.AllowFail(()=>
-				{
-					m_Session.MessageAvailable-=MessageAvailable;
-					m_Session.Close();
-				});
+                if(args != null && args.Message != null)
+                {
+                    message = args.Message;
+                }
+                else
+                {
+                    session.TryGetMessage(out message);
+                }
 
-				m_Session=null;
-				MessageReceived=null;
-			}
-		}
-
-		/// <summary>
-		/// Indicates if the receiver is currently connected
-		/// </summary>
-		public override bool IsConnected
-		{
-			get{return m_Session!=null;}
-		}
-
-		private void MessageAvailable(object sender, MessageEventArgs args)
-		{
-			var session=m_Session;
-			if(session==null) return;
-
-			MethodCall.AllowFail(()=>
-			{
-				IMessage message;
-
-				if(args!=null && args.Message!=null)
-				{
-					message=args.Message;
-				}
-				else
-				{
-					session.TryGetMessage(out message);
-				}
-
-				if(message!=null)
-				{
-					var d=MessageReceived;
-					if(d!=null) d(this,new MessageEventArgs(message));
-				}
-			});
-		}
-	}
+                if(message != null)
+                {
+                    var d = MessageReceived;
+                    if(d != null) d(this, new MessageEventArgs(message));
+                }
+            });
+        }
+    }
 }

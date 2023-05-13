@@ -10,7 +10,7 @@ namespace Arrow.GraphTheory.Build
 	/// <typeparam name="T">The type of the target</typeparam>
 	public class ParallelBuildItems<T>
 	{
-		private List<T> m_Targets=new List<T>();
+		private List<T> m_Targets = new List<T>();
 		
 		/// <summary>
 		/// Initializes the instance

@@ -12,17 +12,17 @@ namespace Arrow.Scripting.Wire
 {
 	abstract class ExpressionFactory
 	{
-		public static readonly BindingFlags InstanceFlags=BindingFlags.Instance|BindingFlags.IgnoreCase|BindingFlags.Public;
-		public static readonly BindingFlags StaticFlags=BindingFlags.Static|BindingFlags.IgnoreCase|BindingFlags.Public;
+        public static readonly BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.IgnoreCase | BindingFlags.Public;
+        public static readonly BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.IgnoreCase | BindingFlags.Public;
 
-		protected readonly Parser m_Parser;
+        protected readonly Parser m_Parser;
 
-		protected ExpressionFactory(Parser parser)
-		{
-			m_Parser=parser;
-		}
+        protected ExpressionFactory(Parser parser)
+        {
+            m_Parser = parser;
+        }
 
-		protected Parser Parser
+        protected Parser Parser
 		{
 			get{return m_Parser;}
 		}

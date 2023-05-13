@@ -21,13 +21,13 @@ namespace Arrow.Messaging
 		/// <summary>
 		/// The priority for the message
 		/// </summary>
-		public int Priority{get;set;}
+		public int Priority{get; set;}
 		
 		/// <summary>
 		/// How long messages should live in the subsystem (in milliseconds)
 		/// zero is unlimited
 		/// </summary>
-		public long TimeToLive{get;set;}
+		public long TimeToLive{get; set;}
 			
 		/// <summary>
 		/// Sends a message into the messaging system.

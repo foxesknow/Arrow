@@ -12,64 +12,64 @@ namespace Arrow.Scripting.Wire.StaticExpression
 {
 	class StaticallyTypedParser : Parser
 	{
-		private readonly StaticParseContext m_StaticParseContext;
+        private readonly StaticParseContext m_StaticParseContext;
 
-		public StaticallyTypedParser(ITokenizer tokenizer, StaticParseContext parseContext) : base(tokenizer,parseContext)
-		{
-			m_StaticParseContext=parseContext;
-			this.ExpressionFactory=new StaticExpressionFactory(this);
-		}
+        public StaticallyTypedParser(ITokenizer tokenizer, StaticParseContext parseContext) : base(tokenizer, parseContext)
+        {
+            m_StaticParseContext = parseContext;
+            this.ExpressionFactory = new StaticExpressionFactory(this);
+        }
 
-		public LambdaExpression GenerateLambda()
-		{
-			var expression=GenerateExpression();
-			var lambda=Expression.Lambda(expression,m_StaticParseContext.Parameters);
-			return lambda;
-		}
+        public LambdaExpression GenerateLambda()
+        {
+            var expression = GenerateExpression();
+            var lambda = Expression.Lambda(expression, m_StaticParseContext.Parameters);
+            return lambda;
+        }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="T">The type of the delegate to generate</typeparam>
-		/// <returns></returns>
-		public Expression<T> GenerateLambda<T>()
-		{
-			// Make sure it's a delegate...
-			if(typeof(T).IsDelegate()==false) throw new ArgumentException("not a delegate type");
-			
-			// ...and grab the return type
-			Type returnType=typeof(T).GetMethod("Invoke")!.ReturnType;
-			
-			var expression=GenerateExpression();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T">The type of the delegate to generate</typeparam>
+        /// <returns></returns>
+        public Expression<T> GenerateLambda<T>()
+        {
+            // Make sure it's a delegate...
+            if(typeof(T).IsDelegate() == false) throw new ArgumentException("not a delegate type");
 
-			if(expression.Type!=returnType)
-			{
-				if(expression.Type==typeof(object) && returnType.IsValueType)
-				{
-					expression=Expression.Unbox(expression,returnType);
-				}
-				else
-				{
-					expression=expression.ConvertTo(returnType);
-				}
-			}
+            // ...and grab the return type
+            Type returnType = typeof(T).GetMethod("Invoke")!.ReturnType;
 
-			return Expression.Lambda<T>(expression,m_StaticParseContext.Parameters);
-		}
+            var expression = GenerateExpression();
 
-		protected override Expression Symbol(string symbolName)
-		{
-			// First, see if there's a parameter with a matching name
-			ParameterExpression? parameter=m_StaticParseContext.Parameters.SingleOrDefault(p=>string.Compare(symbolName,p.Name,true)==0);			
-			if(parameter!=null) return parameter;
+            if(expression.Type != returnType)
+            {
+                if(expression.Type == typeof(object) && returnType.IsValueType)
+                {
+                    expression = Expression.Unbox(expression, returnType);
+                }
+                else
+                {
+                    expression = expression.ConvertTo(returnType);
+                }
+            }
 
-			// Otherwise assume it's a type
-			var type=ResolveType(symbolName);
-			if(type==null) throw MakeException("could not resolve type: "+symbolName);
+            return Expression.Lambda<T>(expression, m_StaticParseContext.Parameters);
+        }
 
-			Expression staticExpression=StaticAccess(type);
+        protected override Expression Symbol(string symbolName)
+        {
+            // First, see if there's a parameter with a matching name
+            ParameterExpression? parameter = m_StaticParseContext.Parameters.SingleOrDefault(p => string.Compare(symbolName, p.Name, true) == 0);
+            if(parameter != null) return parameter;
 
-			return staticExpression;
-		}
-	}
+            // Otherwise assume it's a type
+            var type = ResolveType(symbolName);
+            if(type == null) throw MakeException("could not resolve type: " + symbolName);
+
+            Expression staticExpression = StaticAccess(type);
+
+            return staticExpression;
+        }
+    }
 }

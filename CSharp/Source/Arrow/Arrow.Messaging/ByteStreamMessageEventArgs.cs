@@ -16,12 +16,12 @@ namespace Arrow.Messaging
 		/// <param name="data">The data that makes up the message</param>
 		public ByteStreamMessageEventArgs(byte[] data)
 		{
-			this.Data=data;
+			this.Data = data;
 		}
 		
 		/// <summary>
 		/// The data for the message
 		/// </summary>
-		public byte[] Data{get;private set;}
+		public byte[] Data{get; private set;}
 	}
 }

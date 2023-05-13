@@ -12,38 +12,38 @@ namespace Arrow.Scripting.Wire.DynamicExpression.Binders
 {
 	class RelationalBinder : BinderBase
 	{
-		private readonly Func<Expression,Expression,Expression> m_Factory;
+        private readonly Func<Expression, Expression, Expression> m_Factory;
 
-		public RelationalBinder(Func<Expression,Expression,Expression> factory, ExpressionType expressionType)
-		{
-			m_Factory=factory;
-		}
+        public RelationalBinder(Func<Expression, Expression, Expression> factory, ExpressionType expressionType)
+        {
+            m_Factory = factory;
+        }
 
-		public override Type ReturnType
-		{
-			get{return typeof(bool);}
-		}
+        public override Type ReturnType
+        {
+            get{return typeof(bool);}
+        }
 
-		public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
-		{
-			var restrictions=BindingRestrictions.Empty;
-			Expression? expression=null;
+        public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
+        {
+            var restrictions = BindingRestrictions.Empty;
+            Expression? expression = null;
 
-			var lhs=target.GetLimitedExpression();
-			var rhs=args[0].GetLimitedExpression();
+            var lhs = target.GetLimitedExpression();
+            var rhs = args[0].GetLimitedExpression();
 
-			if(TypeCoercion.NormalizeBinaryExpression(ref lhs, ref rhs))
-			{
-				expression=m_Factory(lhs,rhs);
-			}
-			else
-			{
-				expression=this.ThrowException("RelationalBinder: could not normalize expressions");
-			}
+            if(TypeCoercion.NormalizeBinaryExpression(ref lhs, ref rhs))
+            {
+                expression = m_Factory(lhs, rhs);
+            }
+            else
+            {
+                expression = this.ThrowException("RelationalBinder: could not normalize expressions");
+            }
 
-			restrictions=restrictions.AndLimitType(target).AndLimitType(args[0]);			
+            restrictions = restrictions.AndLimitType(target).AndLimitType(args[0]);
 
-			return new DynamicMetaObject(expression,restrictions);
-		}
-	}
+            return new DynamicMetaObject(expression, restrictions);
+        }
+    }
 }
