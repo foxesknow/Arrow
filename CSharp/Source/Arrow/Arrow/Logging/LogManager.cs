@@ -31,7 +31,7 @@ namespace Arrow.Logging
 
         private static ILog? s_UnnamedLog;
 
-        private static readonly Dictionary<string, ILog> s_Loggers = new Dictionary<string, ILog>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, ILog> s_Loggers = new(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the log for the caller.
@@ -65,7 +65,7 @@ namespace Arrow.Logging
         /// <returns>A log</returns>
         public static ILog GetLog(Type? type)
         {
-            var name = (type == null ? null : type.FullName);
+            var name = (type is null ? null : type.FullName);
             return DoGetLog(name);
         }
 
@@ -97,23 +97,17 @@ namespace Arrow.Logging
         /// <returns>The log for the name</returns>
         private static ILog DoGetLog(string? name)
         {
-            if(name is null && Interlocked.CompareExchange(ref s_UnnamedLog, null, null) is ILog unnamedLog)
-            {
-                return unnamedLog;
-            }
-
             lock(s_Sync)
             {
-                if(name == null && s_UnnamedLog != null) return s_UnnamedLog;
+                if(name is null && s_UnnamedLog is not null) return s_UnnamedLog;
 
                 // If we've already got a named logger then return it
-                if(name != null && s_Loggers.TryGetValue(name, out var log)) return log;
+                if(name is not null && s_Loggers.TryGetValue(name, out var log)) return log;
 
                 try
                 {
                     log = CreateLogInstance();
-                    var logInitializer = log as ILogInitializer;
-                    if(logInitializer != null) logInitializer.Initialize(name!);
+                    if(log is ILogInitializer logInitializer) logInitializer.Initialize(name!);
                 }
                 catch
                 {
@@ -121,9 +115,9 @@ namespace Arrow.Logging
                 }
 
                 // If the log is named then store it away
-                if(name != null)
+                if(name is not null)
                 {
-                    s_Loggers[name] = log;
+                    s_Loggers.Add(name, log);
                 }
                 else
                 {

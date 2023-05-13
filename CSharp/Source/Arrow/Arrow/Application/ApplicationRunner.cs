@@ -44,7 +44,7 @@ namespace Arrow.Application
             static async Task Execute(Func<Task> main)
             {
                 // Start the systemwide services
-                await using (ApplicationRunContext context = new ApplicationRunContext())
+                await using(ApplicationRunContext context = new ApplicationRunContext())
                 {
                     await context.Start();
 
@@ -79,7 +79,7 @@ namespace Arrow.Application
             static async Task Execute(Func<string[], ValueTask<int>> main, string[] args)
             {
                 // Start the systemwide services
-                await using (ApplicationRunContext context = new ApplicationRunContext())
+                await using(ApplicationRunContext context = new ApplicationRunContext())
                 {
                     await context.Start();
 

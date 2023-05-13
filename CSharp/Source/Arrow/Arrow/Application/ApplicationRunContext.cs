@@ -53,7 +53,7 @@ namespace Arrow.Application
         /// <param name="action">The action to invoke at shutdown</param>
         public static void RegisterForShutdown(Action action)
         {
-            if(action == null) throw new ArgumentNullException(nameof(action));
+            if(action is null) throw new ArgumentNullException(nameof(action));
 
             lock(s_SyncRoot)
             {
