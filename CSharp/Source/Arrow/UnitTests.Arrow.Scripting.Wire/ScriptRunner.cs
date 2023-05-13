@@ -15,158 +15,158 @@ using System.Linq.Expressions;
 
 namespace UnitTests.Arrow.Scripting.Wire
 {
-	class ScriptRunner
-	{
-		public static void RunStaticExpressions(string filename, StaticParseContext parseContext, params object[] parameters)
-		{
-			string script=LoadScript(filename);
-			using(var reader=new StringReader(script))
-			{
-				int lineNumber=0;
-				string line;
-				while((line=reader.ReadLine())!=null)
-				{
-					lineNumber++;
+    class ScriptRunner
+    {
+        public static void RunStaticExpressions(string filename, StaticParseContext parseContext, params object[] parameters)
+        {
+            string script = LoadScript(filename);
+            using(var reader = new StringReader(script))
+            {
+                int lineNumber = 0;
+                string line;
+                while((line = reader.ReadLine()) != null)
+                {
+                    lineNumber++;
 
-					line=line.Trim();
-					if(line.Length==0) continue;
-					if(line[0]=='#') continue;
+                    line = line.Trim();
+                    if(line.Length == 0) continue;
+                    if(line[0] == '#') continue;
 
-					string result,expression;
-					ExtractParts(line,out result,out expression);
-					Console.WriteLine(expression);
+                    string result, expression;
+                    ExtractParts(line, out result, out expression);
+                    Console.WriteLine(expression);
 
-					var generator=new StaticCodeGenerator();
-					LambdaExpression lambda=null;
-					
-					try
-					{
-						lambda=generator.CreateLambda(expression,parseContext);
-					}
-					catch(Exception e)
-					{
-						if(result=="@nocompile")
-						{
-							// It was suppose to fail
-							Console.WriteLine("script successfully failed to compile: {0}",e.Message);
-							continue;
-						}
-						else
-						{
-							throw;
-						}
-					}
+                    var generator = new StaticCodeGenerator();
+                    LambdaExpression lambda = null;
 
-					var func=lambda.Compile();
-					object dynamicResult=func.DynamicInvoke(parameters);
+                    try
+                    {
+                        lambda = generator.CreateLambda(expression, parseContext);
+                    }
+                    catch(Exception e)
+                    {
+                        if(result == "@nocompile")
+                        {
+                            // It was suppose to fail
+                            Console.WriteLine("script successfully failed to compile: {0}", e.Message);
+                            continue;
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
 
-					object expectedResult=null;
-					
-					if(result=="null")
-					{
-						expectedResult=null;
-					}
-					else
-					{
-						expectedResult=Convert.ChangeType(result,dynamicResult.GetType());
-					}
+                    var func = lambda.Compile();
+                    object dynamicResult = func.DynamicInvoke(parameters);
 
-					if(object.Equals(dynamicResult,expectedResult)==false)
-					{
-						string message=string.Format("Expression: Script {0}, Line {1}, Expected {2}, got {3}, Expression={4}",filename,lineNumber,expectedResult,dynamicResult,expression);
-						throw new AssertionException(message);
-					}
-				}
-			}
-		}
+                    object expectedResult = null;
 
-		public static void RunDynamicExpressions(string filename, DynamicParseContext parseContext)
-		{
-			RunDynamicExpressions(filename,parseContext,new LightweightScope());
-		}
+                    if(result == "null")
+                    {
+                        expectedResult = null;
+                    }
+                    else
+                    {
+                        expectedResult = Convert.ChangeType(result, dynamicResult.GetType());
+                    }
 
-		public static void RunDynamicExpressions(string filename, DynamicParseContext parseContext, IVariableRead variableRead)
-		{
-			string script=LoadScript(filename);
-			using(var reader=new StringReader(script))
-			{
-				int lineNumber=0;
-				string line;
-				while((line=reader.ReadLine())!=null)
-				{
-					lineNumber++;
+                    if(object.Equals(dynamicResult, expectedResult) == false)
+                    {
+                        string message = string.Format("Expression: Script {0}, Line {1}, Expected {2}, got {3}, Expression={4}", filename, lineNumber, expectedResult, dynamicResult, expression);
+                        throw new AssertionException(message);
+                    }
+                }
+            }
+        }
 
-					line=line.Trim();
-					if(line.Length==0) continue;
-					if(line[0]=='#') continue;
+        public static void RunDynamicExpressions(string filename, DynamicParseContext parseContext)
+        {
+            RunDynamicExpressions(filename, parseContext, new LightweightScope());
+        }
 
-					string result,expression;
-					ExtractParts(line,out result,out expression);
-					Console.WriteLine(expression);
+        public static void RunDynamicExpressions(string filename, DynamicParseContext parseContext, IVariableRead variableRead)
+        {
+            string script = LoadScript(filename);
+            using(var reader = new StringReader(script))
+            {
+                int lineNumber = 0;
+                string line;
+                while((line = reader.ReadLine()) != null)
+                {
+                    lineNumber++;
 
-					var generator=new DynamicCodeGenerator();
-					LambdaExpression lambda=null;
-					
-					try
-					{
-						lambda=generator.CreateLambda(expression,parseContext);
-					}
-					catch(Exception e)
-					{
-						if(result=="@nocompile")
-						{
-							// It was suppose to fail
-							Console.WriteLine("script successfully failed to compile: {0}",e.Message);
-							continue;
-						}
-						else
-						{
-							throw;
-						}
-					}
+                    line = line.Trim();
+                    if(line.Length == 0) continue;
+                    if(line[0] == '#') continue;
 
-					var func=lambda.Compile();
-					object dynamicResult=func.DynamicInvoke(variableRead);
+                    string result, expression;
+                    ExtractParts(line, out result, out expression);
+                    Console.WriteLine(expression);
 
-					object expectedResult=null;
+                    var generator = new DynamicCodeGenerator();
+                    LambdaExpression lambda = null;
 
-					if(result=="null")
-					{
-						expectedResult=null;
-					}
-					else
-					{
-						expectedResult=Convert.ChangeType(result,dynamicResult.GetType());
-					}
+                    try
+                    {
+                        lambda = generator.CreateLambda(expression, parseContext);
+                    }
+                    catch(Exception e)
+                    {
+                        if(result == "@nocompile")
+                        {
+                            // It was suppose to fail
+                            Console.WriteLine("script successfully failed to compile: {0}", e.Message);
+                            continue;
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
 
-					if(object.Equals(dynamicResult,expectedResult)==false)
-					{
-						string message=string.Format("Expression: Script {0}, Line {1}, Expected {2}, got {3}, Expression={4}",filename,lineNumber,expectedResult,dynamicResult,expression);
-						throw new AssertionException(message);
-					}
-				}
-			}
-		}
+                    var func = lambda.Compile();
+                    object dynamicResult = func.DynamicInvoke(variableRead);
 
-		private static string LoadScript(string filename)
-		{
-			string path="UnitTests.Arrow.Scripting.Wire.Scripts.";
-			filename=path+filename;
-			
-			using(Stream stream=ResourceLoader.Open<ScriptRunner>(filename))
-			using(StreamReader reader=new StreamReader(stream))
-			{
-				return reader.ReadToEnd();
-			}
-		}
+                    object expectedResult = null;
 
-		private static void ExtractParts(string line, out string result, out string expression)
-		{
-			int pivot=line.IndexOf(',');
-			if(pivot==-1) throw new Exception("badly formed string: "+line);
+                    if(result == "null")
+                    {
+                        expectedResult = null;
+                    }
+                    else
+                    {
+                        expectedResult = Convert.ChangeType(result, dynamicResult.GetType());
+                    }
 
-			result=line.Substring(0,pivot).Trim();
-			expression=line.Substring(pivot+1).Trim();
-		}
-	}
+                    if(object.Equals(dynamicResult, expectedResult) == false)
+                    {
+                        string message = string.Format("Expression: Script {0}, Line {1}, Expected {2}, got {3}, Expression={4}", filename, lineNumber, expectedResult, dynamicResult, expression);
+                        throw new AssertionException(message);
+                    }
+                }
+            }
+        }
+
+        private static string LoadScript(string filename)
+        {
+            string path = "UnitTests.Arrow.Scripting.Wire.Scripts.";
+            filename = path + filename;
+
+            using(Stream stream = ResourceLoader.Open<ScriptRunner>(filename))
+            using(StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        private static void ExtractParts(string line, out string result, out string expression)
+        {
+            int pivot = line.IndexOf(',');
+            if(pivot == -1) throw new Exception("badly formed string: " + line);
+
+            result = line.Substring(0, pivot).Trim();
+            expression = line.Substring(pivot + 1).Trim();
+        }
+    }
 }

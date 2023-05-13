@@ -8,8 +8,8 @@ namespace UnitTests.Arrow.Support
 {
 	public class TypeHolder
 	{
-		public Type First{get;set;}
+		public Type First{get; set;}
 
-		public Type Second{get;set;}
+		public Type Second{get; set;}
 	}
 }

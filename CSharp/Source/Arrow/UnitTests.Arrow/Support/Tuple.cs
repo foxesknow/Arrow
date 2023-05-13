@@ -7,7 +7,7 @@ namespace UnitTests.Arrow.Support
 {
 	class TestTuple<T1,T2>
 	{
-		public T1 First{get;set;}
-		public T2 Second{get;set;}
+		public T1 First{get; set;}
+		public T2 Second{get; set;}
 	}
 }

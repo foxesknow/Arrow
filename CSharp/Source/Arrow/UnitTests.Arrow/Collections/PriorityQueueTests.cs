@@ -9,17 +9,17 @@ using NUnit.Framework;
 
 namespace UnitTests.Arrow.Collections
 {
-	[TestFixture]
-	public class PriorityQueueTests : PriorityQueueTestsBase
-	{
-		protected override IPriorityQueue<Priority,string> CreateStringQueue()
-		{
-			return new PriorityQueue<Priority,string>();
-		}
+    [TestFixture]
+    public class PriorityQueueTests : PriorityQueueTestsBase
+    {
+        protected override IPriorityQueue<Priority, string> CreateStringQueue()
+        {
+            return new PriorityQueue<Priority, string>();
+        }
 
-		protected override IPriorityQueue<Priority,int> CreateIntegerQueue()
-		{
-			return new PriorityQueue<Priority,int>();
-		}
-	}
+        protected override IPriorityQueue<Priority, int> CreateIntegerQueue()
+        {
+            return new PriorityQueue<Priority, int>();
+        }
+    }
 }

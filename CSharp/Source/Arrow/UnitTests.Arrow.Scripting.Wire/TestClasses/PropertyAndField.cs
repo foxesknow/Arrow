@@ -7,17 +7,17 @@ namespace UnitTests.Arrow.Scripting.Wire.TestClasses
 {
 	class PropertyAndField
 	{
-		private static readonly List<string> SomeNames=new List<string>(){"Dom","Rob","John"};
+        private static readonly List<string> SomeNames = new List<string>() { "Dom", "Rob", "John" };
 
-		public static readonly int sNumber=58;
-		public static readonly string sText="HelloWorld";
+        public static readonly int sNumber = 58;
+        public static readonly string sText = "HelloWorld";
 
-		private readonly Dictionary<string,string> m_UserDepartments=new Dictionary<string,string>();
+        private readonly Dictionary<string, string> m_UserDepartments = new Dictionary<string, string>();
 
-		public PropertyAndField()
+        public PropertyAndField()
 		{
-			m_UserDepartments["Jack"]="HR";
-			m_UserDepartments["Lock"]="IT";
+			m_UserDepartments["Jack"] = "HR";
+			m_UserDepartments["Lock"] = "IT";
 		}
 
 		public static int StaticNumber

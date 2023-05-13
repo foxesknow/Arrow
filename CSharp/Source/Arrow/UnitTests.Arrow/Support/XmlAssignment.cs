@@ -14,13 +14,13 @@ namespace UnitTests.Arrow.Support
 		public int Age
 		{
 			get{return m_Age;}
-			set{m_Age=value;}
+			set{m_Age = value;}
 		}
 		
 		public XmlNode Config
 		{
 			get{return m_Config;}
-			set{m_Config=value;}
+			set{m_Config = value;}
 		}
 	}
 }

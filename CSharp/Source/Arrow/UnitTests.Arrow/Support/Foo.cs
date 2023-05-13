@@ -6,27 +6,27 @@ using System.Text;
 namespace UnitTests.Arrow.Support
 {
 	public class Foo
-	{
-		private string m_Username;
-		private bool m_Enabled;
-		
-		private int? m_Offset;
-		private bool? m_Allow=true;
-		private IBasic m_Basic;
-		private DateTime m_When;		
-		
-		private List<int> m_Numbers=new List<int>();
-		private Dictionary<string,IBasic> m_Basics=new Dictionary<string,IBasic>();
-		
-		private Dictionary<string,int> m_Ages=new Dictionary<string,int>();
-		
-		public Foo(string username, bool enabled)
-		{
-			m_Username=username;
-			m_Enabled=enabled;
-		}
-		
-		public string Username
+    {
+        private string m_Username;
+        private bool m_Enabled;
+
+        private int? m_Offset;
+        private bool? m_Allow = true;
+        private IBasic m_Basic;
+        private DateTime m_When;
+
+        private List<int> m_Numbers = new List<int>();
+        private Dictionary<string, IBasic> m_Basics = new Dictionary<string, IBasic>();
+
+        private Dictionary<string, int> m_Ages = new Dictionary<string, int>();
+
+        public Foo(string username, bool enabled)
+        {
+            m_Username = username;
+            m_Enabled = enabled;
+        }
+
+        public string Username
 		{
 			get{return m_Username;}
 		}
@@ -39,25 +39,25 @@ namespace UnitTests.Arrow.Support
 		public IBasic Basic
 		{
 			get{return m_Basic;}
-			set{m_Basic=value;}
+			set{m_Basic = value;}
 		}
 		
 		public DateTime When
 		{
 			get{return m_When;}
-			set{m_When=value;}
+			set{m_When = value;}
 		}
 		
 		public bool? Allow
 		{
 			get{return m_Allow;}
-			set{m_Allow=value;}
+			set{m_Allow = value;}
 		}
 		
 		public int? Offset
 		{
 			get{return m_Offset;}
-			set{m_Offset=value;}
+			set{m_Offset = value;}
 		}
 		
 		public IList<int> Numbers

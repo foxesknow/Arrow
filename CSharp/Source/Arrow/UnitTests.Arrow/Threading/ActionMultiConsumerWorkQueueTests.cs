@@ -10,105 +10,105 @@ using NUnit.Framework;
 
 namespace UnitTests.Arrow.Threading
 {
-	[TestFixture]
-	public class ActionMultiConsumerWorkQueueTests
-	{
-		[Test]
-		public void Close()
-		{
-			using(var queue=new ActionMultiConsumerWorkQueue())
-			{
-				queue.Close();
-			}
-		}
+    [TestFixture]
+    public class ActionMultiConsumerWorkQueueTests
+    {
+        [Test]
+        public void Close()
+        {
+            using(var queue = new ActionMultiConsumerWorkQueue())
+            {
+                queue.Close();
+            }
+        }
 
-		[Test]
-		public void Add()
-		{
-			int counter=0;
+        [Test]
+        public void Add()
+        {
+            int counter = 0;
 
-			using(var queue=new ActionMultiConsumerWorkQueue())
-			{
-				queue.Enqueue(()=>Interlocked.Increment(ref counter));
-				queue.Enqueue(()=>Interlocked.Increment(ref counter));
-				queue.Enqueue(()=>Interlocked.Increment(ref counter));
-				queue.Enqueue(()=>Interlocked.Increment(ref counter));
-				queue.Enqueue(()=>Interlocked.Increment(ref counter));
-				queue.Enqueue(()=>Interlocked.Increment(ref counter));
-				queue.Enqueue(()=>Interlocked.Increment(ref counter));
-				queue.Enqueue(()=>Interlocked.Increment(ref counter));
-			}
+            using(var queue = new ActionMultiConsumerWorkQueue())
+            {
+                queue.Enqueue(() => Interlocked.Increment(ref counter));
+                queue.Enqueue(() => Interlocked.Increment(ref counter));
+                queue.Enqueue(() => Interlocked.Increment(ref counter));
+                queue.Enqueue(() => Interlocked.Increment(ref counter));
+                queue.Enqueue(() => Interlocked.Increment(ref counter));
+                queue.Enqueue(() => Interlocked.Increment(ref counter));
+                queue.Enqueue(() => Interlocked.Increment(ref counter));
+                queue.Enqueue(() => Interlocked.Increment(ref counter));
+            }
 
-			Assert.That(counter,Is.EqualTo(8));
-		}
+            Assert.That(counter, Is.EqualTo(8));
+        }
 
-		[Test]
-		public void RunOne()
-		{
-			var ids=Run(1);
-			Assert.That(ids.Count,Is.EqualTo(1));
+        [Test]
+        public void RunOne()
+        {
+            var ids = Run(1);
+            Assert.That(ids.Count, Is.EqualTo(1));
 
-			int thisID=Thread.CurrentThread.ManagedThreadId;
-			Assert.That(ids.Contains(thisID),Is.False);
-		}
+            int thisID = Thread.CurrentThread.ManagedThreadId;
+            Assert.That(ids.Contains(thisID), Is.False);
+        }
 
-		[Test]
-		public void RunTwo()
-		{
-			var ids=Run(2);
-			Assert.That(ids.Count,Is.EqualTo(2));
+        [Test]
+        public void RunTwo()
+        {
+            var ids = Run(2);
+            Assert.That(ids.Count, Is.EqualTo(2));
 
-			int thisID=Thread.CurrentThread.ManagedThreadId;
-			Assert.That(ids.Contains(thisID),Is.False);
-		}
+            int thisID = Thread.CurrentThread.ManagedThreadId;
+            Assert.That(ids.Contains(thisID), Is.False);
+        }
 
-		[Test]
-		public void RunProcessorCount()
-		{
-			var cores=Environment.ProcessorCount;
-			var ids=Run(cores);
-			Assert.That(ids.Count,Is.EqualTo(cores));
+        [Test]
+        public void RunProcessorCount()
+        {
+            var cores = Environment.ProcessorCount;
+            var ids = Run(cores);
+            Assert.That(ids.Count, Is.EqualTo(cores));
 
-			int thisID=Thread.CurrentThread.ManagedThreadId;
-			Assert.That(ids.Contains(thisID),Is.False);
-		}
+            int thisID = Thread.CurrentThread.ManagedThreadId;
+            Assert.That(ids.Contains(thisID), Is.False);
+        }
 
-		[Test]
-		public void RunTwiceProcessorCount()
-		{
-			var cores=Environment.ProcessorCount*2;
-			var ids=Run(cores);
-			Assert.That(ids.Count,Is.EqualTo(cores));
+        [Test]
+        public void RunTwiceProcessorCount()
+        {
+            var cores = Environment.ProcessorCount * 2;
+            var ids = Run(cores);
+            Assert.That(ids.Count, Is.EqualTo(cores));
 
-			int thisID=Thread.CurrentThread.ManagedThreadId;
-			Assert.That(ids.Contains(thisID),Is.False);
-		}
-		
-		private HashSet<int> Run(int numberOfConsumers)
-		{
-			HashSet<int> threadIDs=new HashSet<int>();
+            int thisID = Thread.CurrentThread.ManagedThreadId;
+            Assert.That(ids.Contains(thisID), Is.False);
+        }
 
-			using(var startRunning=new OutstandingEvent())
-			using(var queue=new ActionMultiConsumerWorkQueue(numberOfConsumers))
-			{
-				startRunning.Increase(numberOfConsumers);
+        private HashSet<int> Run(int numberOfConsumers)
+        {
+            HashSet<int> threadIDs = new HashSet<int>();
 
-				for(int i=0; i<numberOfConsumers; i++)
-				{
-					queue.Enqueue(()=>
-					{
-						startRunning.Decrease();
-						startRunning.NothingOutstandingHandle.WaitOne();
+            using(var startRunning = new OutstandingEvent())
+            using(var queue = new ActionMultiConsumerWorkQueue(numberOfConsumers))
+            {
+                startRunning.Increase(numberOfConsumers);
 
-						lock(threadIDs)
-						{
-							threadIDs.Add(Thread.CurrentThread.ManagedThreadId);
-						}
-					});
-				}
-			}
-			 
-			return threadIDs;
-		}
-	}
+                for(int i = 0; i < numberOfConsumers; i++)
+                {
+                    queue.Enqueue(() =>
+                    {
+                        startRunning.Decrease();
+                        startRunning.NothingOutstandingHandle.WaitOne();
+
+                        lock(threadIDs)
+                        {
+                            threadIDs.Add(Thread.CurrentThread.ManagedThreadId);
+                        }
+                    });
+                }
+            }
+
+            return threadIDs;
+        }
+    }
 }

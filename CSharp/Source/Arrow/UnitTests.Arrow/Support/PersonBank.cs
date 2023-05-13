@@ -13,13 +13,13 @@ namespace UnitTests.Arrow.Support
 		public Person Primary
 		{
 			get{return m_Primary;}
-			set{m_Primary=value;}
+			set{m_Primary = value;}
 		}
 		
 		public Person Secondary
 		{
 			get{return m_Secondary;}
-			set{m_Secondary=value;}
+			set{m_Secondary = value;}
 		}
 	}
 }

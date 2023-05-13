@@ -70,13 +70,13 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
 
         class Locations
         {
-            public IReadOnlyList<string> Names{get; init;}
+            public IReadOnlyList<string> Names { get; init; }
         }
 
         class Island
         {
-            public string Name{get; init;}
-            public IReadOnlyDictionary<string, int> Ages{get; init;}
+            public string Name { get; init; }
+            public IReadOnlyDictionary<string, int> Ages { get; init; }
         }
     }
 }

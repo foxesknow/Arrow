@@ -12,261 +12,261 @@ using NUnit.Framework.Constraints;
 
 namespace UnitTests.Arrow.Messaging.Memory
 {
-	[TestFixture]
-	public class MessagingTests
-	{
-		private static readonly Uri TopicAddress=new Uri("memtopic:///foo");
-		private static readonly Uri QueueAddress=new Uri("memqueue:///bar");
+    [TestFixture]
+    public class MessagingTests
+    {
+        private static readonly Uri TopicAddress = new Uri("memtopic:///foo");
+        private static readonly Uri QueueAddress = new Uri("memqueue:///bar");
 
-		[Test]
-		public void Construction()
-		{
-			using(var sender=MessagingSystem.CreateSender(TopicAddress))
-			{
-				Assert.That(sender,Is.TypeOf<MemoryMessageSender>());
-			}
-		}
+        [Test]
+        public void Construction()
+        {
+            using(var sender = MessagingSystem.CreateSender(TopicAddress))
+            {
+                Assert.That(sender, Is.TypeOf<MemoryMessageSender>());
+            }
+        }
 
-		[Test]
-		public void CreateMessages()
-		{
-			using(var sender=MessagingSystem.CreateSender(TopicAddress))
-			{
-				sender.Connect(TopicAddress);
+        [Test]
+        public void CreateMessages()
+        {
+            using(var sender = MessagingSystem.CreateSender(TopicAddress))
+            {
+                sender.Connect(TopicAddress);
 
-				var textMessage=sender.CreateTextMessage("Jack");
-				Assert.That(textMessage,Is.Not.Null);
-				Assert.That(textMessage.Text,Is.EqualTo("Jack"));
-				EnsureSerializable(textMessage);
+                var textMessage = sender.CreateTextMessage("Jack");
+                Assert.That(textMessage, Is.Not.Null);
+                Assert.That(textMessage.Text, Is.EqualTo("Jack"));
+                EnsureSerializable(textMessage);
 
-				var objectMessage=sender.CreateObjectMessage(1);
-				Assert.That(objectMessage,Is.Not.Null);
-				Assert.That(objectMessage.TheObject,Is.EqualTo(1));
-				EnsureSerializable(objectMessage);
+                var objectMessage = sender.CreateObjectMessage(1);
+                Assert.That(objectMessage, Is.Not.Null);
+                Assert.That(objectMessage.TheObject, Is.EqualTo(1));
+                EnsureSerializable(objectMessage);
 
-				var byteMessage=sender.CreateByteMessage(new byte[]{1,2,3});
-				Assert.That(byteMessage,Is.Not.Null);
-				Assert.That(byteMessage.Data,Is.Not.Null);
-				EnsureSerializable(byteMessage);
+                var byteMessage = sender.CreateByteMessage(new byte[] { 1, 2, 3 });
+                Assert.That(byteMessage, Is.Not.Null);
+                Assert.That(byteMessage.Data, Is.Not.Null);
+                EnsureSerializable(byteMessage);
 
-				var mapMessage=sender.CreateMapMessage();
-				Assert.That(mapMessage,Is.Not.Null);
-				EnsureSerializable(mapMessage);
-			}
-		}
+                var mapMessage = sender.CreateMapMessage();
+                Assert.That(mapMessage, Is.Not.Null);
+                EnsureSerializable(mapMessage);
+            }
+        }
 
-		[Test]
-		public void SendToQueue()
-		{
-			using(var gotMessage=new ManualResetEvent(false))
-			using(var sender=MessagingSystem.CreateSender(QueueAddress))
-			using(var receiver=MessagingSystem.CreateReceiver(QueueAddress))
-			{
-				bool sent=false;
-				
-				sender.Connect(QueueAddress);
-				receiver.Connect(QueueAddress);
-				
-				receiver.MessageReceived+=(s,e)=>
-				{
-					sent=true;
-					gotMessage.Set();
-				};
+        [Test]
+        public void SendToQueue()
+        {
+            using(var gotMessage = new ManualResetEvent(false))
+            using(var sender = MessagingSystem.CreateSender(QueueAddress))
+            using(var receiver = MessagingSystem.CreateReceiver(QueueAddress))
+            {
+                bool sent = false;
 
-				Assert.That(sent,Is.False);
+                sender.Connect(QueueAddress);
+                receiver.Connect(QueueAddress);
 
-				var message=sender.CreateTextMessage("The Island");
-				sender.Send(message);
+                receiver.MessageReceived += (s, e) =>
+                {
+                    sent = true;
+                    gotMessage.Set();
+                };
 
-				gotMessage.WaitOne();
-				Assert.That(sent,Is.True);
-			}
-		}
+                Assert.That(sent, Is.False);
 
-		[Test]
-		public void SendMultipleToQueue()
-		{
-			int numberToSend=10;
+                var message = sender.CreateTextMessage("The Island");
+                sender.Send(message);
 
-			using(var gotMessages=new ManualResetEvent(false))
-			using(var sender=MessagingSystem.CreateSender(QueueAddress))
-			using(var receiver=MessagingSystem.CreateReceiver(QueueAddress))
-			{
-				bool sent=false;
-				
-				sender.Connect(QueueAddress);
-				receiver.Connect(QueueAddress);
-				
-				int numberReceived=0;
+                gotMessage.WaitOne();
+                Assert.That(sent, Is.True);
+            }
+        }
 
-				receiver.MessageReceived+=(s,e)=>
-				{
-					if(Interlocked.Increment(ref numberReceived)==numberToSend)
-					{
-						sent=true;
-						gotMessages.Set();
-					}
-				};
+        [Test]
+        public void SendMultipleToQueue()
+        {
+            int numberToSend = 10;
 
-				Assert.That(sent,Is.False);
+            using(var gotMessages = new ManualResetEvent(false))
+            using(var sender = MessagingSystem.CreateSender(QueueAddress))
+            using(var receiver = MessagingSystem.CreateReceiver(QueueAddress))
+            {
+                bool sent = false;
 
-				for(int i=0; i<numberToSend; i++)
-				{
-					var message=sender.CreateTextMessage("The Island: "+i.ToString());
-					sender.Send(message);
-				}
+                sender.Connect(QueueAddress);
+                receiver.Connect(QueueAddress);
 
-				gotMessages.WaitOne();
-				Assert.That(sent,Is.True);
-			}
-		}
+                int numberReceived = 0;
 
-		[Test]
-		public void SendMultipleToMultipleQueue()
-		{
-			int numberToSend=10;
+                receiver.MessageReceived += (s, e) =>
+                {
+                    if(Interlocked.Increment(ref numberReceived) == numberToSend)
+                    {
+                        sent = true;
+                        gotMessages.Set();
+                    }
+                };
 
-			using(var gotMessages=new ManualResetEvent(false))
-			using(var sender=MessagingSystem.CreateSender(QueueAddress))
-			using(var receiver1=MessagingSystem.CreateReceiver(QueueAddress))
-			using(var receiver2=MessagingSystem.CreateReceiver(QueueAddress))
-			{
-				sender.Connect(QueueAddress);
-				receiver1.Connect(QueueAddress);
-				receiver2.Connect(QueueAddress);
-				
-				int numberReceived=0;
+                Assert.That(sent, Is.False);
 
-				Action onMessage=()=>
-				{
-					if(Interlocked.Increment(ref numberReceived)==numberToSend)
-					{
-						gotMessages.Set();
-					}
-				};
+                for(int i = 0; i < numberToSend; i++)
+                {
+                    var message = sender.CreateTextMessage("The Island: " + i.ToString());
+                    sender.Send(message);
+                }
 
-				receiver1.MessageReceived+=(s,e)=>onMessage();
-				receiver2.MessageReceived+=(s,e)=>onMessage();				
+                gotMessages.WaitOne();
+                Assert.That(sent, Is.True);
+            }
+        }
 
-				for(int i=0; i<numberToSend; i++)
-				{
-					var message=sender.CreateTextMessage("The Island: "+i.ToString());
-					sender.Send(message);
-				}
+        [Test]
+        public void SendMultipleToMultipleQueue()
+        {
+            int numberToSend = 10;
 
-				gotMessages.WaitOne();
-				Assert.That(numberReceived,Is.EqualTo(numberToSend));
-			}
-		}
+            using(var gotMessages = new ManualResetEvent(false))
+            using(var sender = MessagingSystem.CreateSender(QueueAddress))
+            using(var receiver1 = MessagingSystem.CreateReceiver(QueueAddress))
+            using(var receiver2 = MessagingSystem.CreateReceiver(QueueAddress))
+            {
+                sender.Connect(QueueAddress);
+                receiver1.Connect(QueueAddress);
+                receiver2.Connect(QueueAddress);
 
-		[Test]
-		public void SendToTopic()
-		{
-			using(var gotMessage=new ManualResetEvent(false))
-			using(var sender=MessagingSystem.CreateSender(TopicAddress))
-			using(var receiver=MessagingSystem.CreateReceiver(TopicAddress))
-			{
-				bool sent=false;
-				
-				sender.Connect(TopicAddress);
-				receiver.Connect(TopicAddress);
-				
-				receiver.MessageReceived+=(s,e)=>
-				{
-					sent=true;
-					gotMessage.Set();
-				};
+                int numberReceived = 0;
 
-				Assert.That(sent,Is.False);
+                Action onMessage = () =>
+                {
+                    if(Interlocked.Increment(ref numberReceived) == numberToSend)
+                    {
+                        gotMessages.Set();
+                    }
+                };
 
-				var message=sender.CreateTextMessage("The Island");
-				sender.Send(message);
+                receiver1.MessageReceived += (s, e) => onMessage();
+                receiver2.MessageReceived += (s, e) => onMessage();
 
-				gotMessage.WaitOne();
-				Assert.That(sent,Is.True);
-			}
-		}
+                for(int i = 0; i < numberToSend; i++)
+                {
+                    var message = sender.CreateTextMessage("The Island: " + i.ToString());
+                    sender.Send(message);
+                }
 
-		[Test]
-		public void SendMultipleToTopic()
-		{
-			int numberToSend=10;
+                gotMessages.WaitOne();
+                Assert.That(numberReceived, Is.EqualTo(numberToSend));
+            }
+        }
 
-			using(var gotMessages=new ManualResetEvent(false))
-			using(var sender=MessagingSystem.CreateSender(TopicAddress))
-			using(var receiver=MessagingSystem.CreateReceiver(TopicAddress))
-			{
-				bool sent=false;
-				
-				sender.Connect(TopicAddress);
-				receiver.Connect(TopicAddress);
-				
-				int numberReceived=0;
+        [Test]
+        public void SendToTopic()
+        {
+            using(var gotMessage = new ManualResetEvent(false))
+            using(var sender = MessagingSystem.CreateSender(TopicAddress))
+            using(var receiver = MessagingSystem.CreateReceiver(TopicAddress))
+            {
+                bool sent = false;
 
-				receiver.MessageReceived+=(s,e)=>
-				{
-					if(Interlocked.Increment(ref numberReceived)==numberToSend)
-					{
-						sent=true;
-						gotMessages.Set();
-					}
-				};
+                sender.Connect(TopicAddress);
+                receiver.Connect(TopicAddress);
 
-				Assert.That(sent,Is.False);
+                receiver.MessageReceived += (s, e) =>
+                {
+                    sent = true;
+                    gotMessage.Set();
+                };
 
-				for(int i=0; i<numberToSend; i++)
-				{
-					var message=sender.CreateTextMessage("The Island: "+i.ToString());
-					sender.Send(message);
-				}
+                Assert.That(sent, Is.False);
 
-				gotMessages.WaitOne();
-				Assert.That(sent,Is.True);
-			}
-		}
+                var message = sender.CreateTextMessage("The Island");
+                sender.Send(message);
 
-		[Test]
-		public void SendMultipleToMultipleTopic()
-		{
-			int numberToSend=10;
+                gotMessage.WaitOne();
+                Assert.That(sent, Is.True);
+            }
+        }
 
-			using(var gotMessages=new ManualResetEvent(false))
-			using(var sender=MessagingSystem.CreateSender(TopicAddress))
-			using(var receiver1=MessagingSystem.CreateReceiver(TopicAddress))
-			using(var receiver2=MessagingSystem.CreateReceiver(TopicAddress))
-			{
-				sender.Connect(TopicAddress);
-				receiver1.Connect(TopicAddress);
-				receiver2.Connect(TopicAddress);
-				
-				int numberReceived=0;
-				int instances=2;
+        [Test]
+        public void SendMultipleToTopic()
+        {
+            int numberToSend = 10;
 
-				Action onMessage=()=>
-				{
-					if(Interlocked.Increment(ref numberReceived)==numberToSend*instances)
-					{
-						gotMessages.Set();
-					}
-				};
+            using(var gotMessages = new ManualResetEvent(false))
+            using(var sender = MessagingSystem.CreateSender(TopicAddress))
+            using(var receiver = MessagingSystem.CreateReceiver(TopicAddress))
+            {
+                bool sent = false;
 
-				receiver1.MessageReceived+=(s,e)=>onMessage();
-				receiver2.MessageReceived+=(s,e)=>onMessage();				
+                sender.Connect(TopicAddress);
+                receiver.Connect(TopicAddress);
 
-				for(int i=0; i<numberToSend; i++)
-				{
-					var message=sender.CreateTextMessage("The Island: "+i.ToString());
-					sender.Send(message);
-				}
+                int numberReceived = 0;
 
-				gotMessages.WaitOne();
-				Assert.That(numberReceived,Is.EqualTo(numberToSend*instances));
-			}
-		}
+                receiver.MessageReceived += (s, e) =>
+                {
+                    if(Interlocked.Increment(ref numberReceived) == numberToSend)
+                    {
+                        sent = true;
+                        gotMessages.Set();
+                    }
+                };
 
-		private void EnsureSerializable(IMessage message)
-		{
-			Assert.That(message.GetType().IsSerializable,Is.True);
-		}
-	}
+                Assert.That(sent, Is.False);
+
+                for(int i = 0; i < numberToSend; i++)
+                {
+                    var message = sender.CreateTextMessage("The Island: " + i.ToString());
+                    sender.Send(message);
+                }
+
+                gotMessages.WaitOne();
+                Assert.That(sent, Is.True);
+            }
+        }
+
+        [Test]
+        public void SendMultipleToMultipleTopic()
+        {
+            int numberToSend = 10;
+
+            using(var gotMessages = new ManualResetEvent(false))
+            using(var sender = MessagingSystem.CreateSender(TopicAddress))
+            using(var receiver1 = MessagingSystem.CreateReceiver(TopicAddress))
+            using(var receiver2 = MessagingSystem.CreateReceiver(TopicAddress))
+            {
+                sender.Connect(TopicAddress);
+                receiver1.Connect(TopicAddress);
+                receiver2.Connect(TopicAddress);
+
+                int numberReceived = 0;
+                int instances = 2;
+
+                Action onMessage = () =>
+                {
+                    if(Interlocked.Increment(ref numberReceived) == numberToSend * instances)
+                    {
+                        gotMessages.Set();
+                    }
+                };
+
+                receiver1.MessageReceived += (s, e) => onMessage();
+                receiver2.MessageReceived += (s, e) => onMessage();
+
+                for(int i = 0; i < numberToSend; i++)
+                {
+                    var message = sender.CreateTextMessage("The Island: " + i.ToString());
+                    sender.Send(message);
+                }
+
+                gotMessages.WaitOne();
+                Assert.That(numberReceived, Is.EqualTo(numberToSend * instances));
+            }
+        }
+
+        private void EnsureSerializable(IMessage message)
+        {
+            Assert.That(message.GetType().IsSerializable, Is.True);
+        }
+    }
 }
