@@ -18,8 +18,8 @@ namespace Arrow.Functional
         /// <returns></returns>
         public override bool Equals(object? obj)
         {
-            if (obj is None) return true;
-            if (obj is IOption other) return other.IsNone;
+            if(obj is None) return true;
+            if(obj is IOption other) return other.IsNone;
 
             return false;
         }

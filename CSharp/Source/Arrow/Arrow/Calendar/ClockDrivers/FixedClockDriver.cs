@@ -28,7 +28,7 @@ namespace Arrow.Calendar.ClockDrivers
         /// </summary>
         public DateTime Now
         {
-            get { return m_Local; }
+            get{return m_Local;}
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Arrow.Calendar.ClockDrivers
         /// </summary>
         public DateTime UtcNow
         {
-            get { return m_Utc; }
+            get{return m_Utc;}
         }
 
         /// <summary>

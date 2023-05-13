@@ -78,12 +78,12 @@ namespace Arrow.Scripting.Wire
 
         protected override IDictionary<string, int> Operators
         {
-            get { return s_Operators; }
+            get{return s_Operators;}
         }
 
         protected override IDictionary<string, int> Keywords
         {
-            get { return s_Keywords; }
+            get{return s_Keywords;}
         }
     }
 }

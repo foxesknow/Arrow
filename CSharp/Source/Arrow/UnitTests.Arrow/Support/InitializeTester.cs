@@ -17,7 +17,7 @@ namespace UnitTests.Arrow.Support
 
         public int Age
         {
-            get { return m_Age; }
+            get{return m_Age;}
             set
             {
                 Assert.IsTrue(m_BeginInitCalled);

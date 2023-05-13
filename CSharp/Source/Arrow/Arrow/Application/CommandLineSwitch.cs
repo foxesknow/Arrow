@@ -35,7 +35,7 @@ namespace Arrow.Application
         /// </summary>
         public string Name
         {
-            get { return m_Name; }
+            get{return m_Name;}
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace Arrow.Application
         /// </summary>
         public string? Value
         {
-            get { return m_Value; }
-            set { m_Value = value; }
+            get{return m_Value;}
+            set{m_Value = value;}
         }
 
         /// <summary>

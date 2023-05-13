@@ -41,14 +41,14 @@ namespace Arrow.Functional
         /// <summary>
         /// True if the option has some value, otherwise false
         /// </summary>
-        public bool IsSome { get; }
+        public bool IsSome{get;}
 
         /// <summary>
         /// True if the option is none, otherwise false
         /// </summary>
         public bool IsNone
         {
-            get { return !IsSome; }
+            get{return !IsSome;}
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Arrow.Functional
         /// <exception cref="InvalidOperationException">The option is none</exception>
         public T Value()
         {
-            if (IsSome) return m_Value;
+            if(IsSome) return m_Value;
             throw new InvalidOperationException("value not set");
         }
 
@@ -72,10 +72,10 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException">One of the functions was none</exception>
         public TResult Match<TResult>(Func<T, TResult> some, Func<TResult> none)
         {
-            if (some is null) throw new ArgumentNullException(nameof(some));
-            if (none is null) throw new ArgumentNullException(nameof(none));
+            if(some is null) throw new ArgumentNullException(nameof(some));
+            if(none is null) throw new ArgumentNullException(nameof(none));
 
-            if (IsSome)
+            if(IsSome)
             {
                 return some(m_Value);
             }
@@ -98,10 +98,10 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException">One of the functions was none</exception>
         public TResult Match<TState, TResult>(TState state, Func<T, TState, TResult> some, Func<TState, TResult> none)
         {
-            if (some is null) throw new ArgumentNullException(nameof(some));
-            if (none is null) throw new ArgumentNullException(nameof(none));
+            if(some is null) throw new ArgumentNullException(nameof(some));
+            if(none is null) throw new ArgumentNullException(nameof(none));
 
-            if (IsSome)
+            if(IsSome)
             {
                 return some(m_Value, state);
             }
@@ -120,9 +120,9 @@ namespace Arrow.Functional
         /// <returns></returns>
         public Option<TResult> Select<TResult>(Func<T, TResult> selector)
         {
-            if (selector is null) throw new ArgumentNullException(nameof(selector));
+            if(selector is null) throw new ArgumentNullException(nameof(selector));
 
-            if (IsSome)
+            if(IsSome)
             {
                 return new(selector(m_Value));
             }
@@ -143,9 +143,9 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException">selector is null</exception>
         public Option<TResult> Select<TState, TResult>(TState state, Func<T, TState, TResult> selector)
         {
-            if (selector is null) throw new ArgumentNullException(nameof(selector));
+            if(selector is null) throw new ArgumentNullException(nameof(selector));
 
-            if (IsSome)
+            if(IsSome)
             {
                 return new(selector(m_Value, state));
             }
@@ -163,9 +163,9 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException">binder is null</exception>
         public Option<TResult> Bind<TResult>(Func<T, Option<TResult>> binder)
         {
-            if (binder is null) throw new ArgumentNullException(nameof(binder));
+            if(binder is null) throw new ArgumentNullException(nameof(binder));
 
-            if (IsNone) return default;
+            if(IsNone) return default;
 
             return binder(m_Value);
         }
@@ -182,9 +182,9 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException">binder is null</exception>
         public Option<TResult> Bind<TState, TResult>(TState state, Func<T, TState, Option<TResult>> binder)
         {
-            if (binder is null) throw new ArgumentNullException(nameof(binder));
+            if(binder is null) throw new ArgumentNullException(nameof(binder));
 
-            if (IsNone) return default;
+            if(IsNone) return default;
 
             return binder(m_Value, state);
         }
@@ -196,7 +196,7 @@ namespace Arrow.Functional
         /// <returns>true if there is some data in the option, otherwise false</returns>
         public bool TryGetValue([MaybeNullWhen(false)] out T value)
         {
-            if (IsSome)
+            if(IsSome)
             {
                 value = m_Value;
                 return true;
@@ -224,7 +224,7 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException">defaultValueFactory is null</exception>
         public T ValueOr(Func<T> defaultValueFactory)
         {
-            if (defaultValueFactory is null) throw new ArgumentNullException(nameof(defaultValueFactory));
+            if(defaultValueFactory is null) throw new ArgumentNullException(nameof(defaultValueFactory));
 
             return IsSome ? m_Value : defaultValueFactory();
         }
@@ -238,7 +238,7 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException">defaultValueFactory is null</exception>
         public T ValueOr<TState>(TState state, Func<TState, T> defaultValueFactory)
         {
-            if (defaultValueFactory is null) throw new ArgumentNullException(nameof(defaultValueFactory));
+            if(defaultValueFactory is null) throw new ArgumentNullException(nameof(defaultValueFactory));
 
             return IsSome ? m_Value : defaultValueFactory(state);
         }
@@ -248,16 +248,16 @@ namespace Arrow.Functional
         {
             return (IsSome, other.IsSome) switch
             {
-                (true, true) => EqualityComparer<T>.Default.Equals(m_Value, other.m_Value),
-                (false, false) => true,
-                _ => false
+                (true, true)    => EqualityComparer<T>.Default.Equals(m_Value, other.m_Value),
+                (false, false)  => true,
+                _               => false
             };
         }
 
         /// <inheritdoc/>
         public override bool Equals(object? obj)
         {
-            if (obj is None) return IsNone;
+            if(obj is None) return IsNone;
 
             return obj is Option<T> other && Equals(other);
         }
@@ -265,7 +265,7 @@ namespace Arrow.Functional
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            if (IsSome)
+            if(IsSome)
             {
                 return m_Value?.GetHashCode() ?? 0;
             }
@@ -276,7 +276,7 @@ namespace Arrow.Functional
         /// <inheritdoc/>
         public override string ToString()
         {
-            if (IsSome)
+            if(IsSome)
             {
                 var text = m_Value?.ToString() ?? "null";
                 return $"Some({text})";
@@ -407,7 +407,7 @@ namespace Arrow.Functional
         /// <returns></returns>
         public static Option<T> TreatNullAsNone<T>(T? value) where T : class
         {
-            if (value is not null) return Some(value);
+            if(value is not null) return Some(value);
 
             return None;
         }

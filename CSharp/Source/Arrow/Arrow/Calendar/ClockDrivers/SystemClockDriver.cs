@@ -15,7 +15,7 @@ namespace Arrow.Calendar.ClockDrivers
         /// </summary>
         public DateTime Now
         {
-            get { return DateTime.Now; }
+            get{return DateTime.Now;}
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace Arrow.Calendar.ClockDrivers
         /// </summary>
         public DateTime UtcNow
         {
-            get { return DateTime.UtcNow; }
+            get{return DateTime.UtcNow;}
         }
 
         public override string ToString()

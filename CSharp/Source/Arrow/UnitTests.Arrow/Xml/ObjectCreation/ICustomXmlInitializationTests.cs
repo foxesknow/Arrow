@@ -39,12 +39,12 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
 
         public int Age
         {
-            get { return m_Age; }
+            get{return m_Age;}
         }
 
         public string Location
         {
-            get { return m_Location; }
+            get{return m_Location;}
         }
 
         void ICustomXmlInitialization.InitializeObject(XmlNode rootNode, ICustomXmlCreation factory)

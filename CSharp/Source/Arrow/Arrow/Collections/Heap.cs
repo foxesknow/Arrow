@@ -97,7 +97,7 @@ namespace Arrow.Collections
         /// <returns>The value at the specified index</returns>
         public T this[int index]
         {
-            get { return m_Data[index]; }
+            get{return m_Data[index];}
         }
 
         /// <summary>

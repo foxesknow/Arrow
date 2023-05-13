@@ -27,8 +27,8 @@ namespace Arrow.Logging.Log4Net
         /// </summary>
         public IAppender Appender
         {
-            get { return m_Appender; }
-            set { m_Appender = value; }
+            get{return m_Appender;}
+            set{m_Appender = value;}
         }
 
         protected override void Append(LoggingEvent loggingEvent)

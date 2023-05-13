@@ -17,7 +17,7 @@ namespace Arrow.Scripting.Wire
         /// </summary>
         public HashSet<Assembly> References
         {
-            get { return m_References; }
+            get{return m_References;}
         }
 
         /// <summary>

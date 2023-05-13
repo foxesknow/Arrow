@@ -30,7 +30,7 @@ namespace Arrow.Functional
         /// <returns></returns>
         public static T? ToNullable<T>(in this Option<T> self, RequireStruct<T>? _ = null) where T : struct
         {
-            if (self.IsSome)
+            if(self.IsSome)
             {
                 return self.Value();
             }
@@ -49,7 +49,7 @@ namespace Arrow.Functional
         /// <returns></returns>
         public static T? ToNullable<T>(in this Option<T> self, RequireClass<T>? _ = null) where T : class
         {
-            if (self.IsSome)
+            if(self.IsSome)
             {
                 return self.Value();
             }
@@ -81,7 +81,7 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException"></exception>
         public static Option<T> OrElse<T>(in this Option<T> self, Func<Option<T>> function)
         {
-            if (function is null) throw new ArgumentNullException(nameof(function));
+            if(function is null) throw new ArgumentNullException(nameof(function));
 
             return self.IsSome ? self : function();
         }
@@ -98,7 +98,7 @@ namespace Arrow.Functional
         /// <exception cref="ArgumentNullException"></exception>
         public static Option<T> OrElse<T, TState>(in this Option<T> self, TState state, Func<TState, Option<T>> function)
         {
-            if (function is null) throw new ArgumentNullException(nameof(function));
+            if(function is null) throw new ArgumentNullException(nameof(function));
 
             return self.IsSome ? self : function(state);
         }

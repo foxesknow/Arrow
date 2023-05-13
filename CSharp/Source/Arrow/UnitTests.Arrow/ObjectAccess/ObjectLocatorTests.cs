@@ -128,17 +128,17 @@ namespace UnitTests.Arrow.ObjectAccess
 
         public DateTime When
         {
-            get { return m_When; }
+            get{return m_When;}
         }
 
         public FileMode Mode
         {
-            get { return m_Mode; }
+            get{return m_Mode;}
         }
 
         public string Username
         {
-            get { return null; }
+            get{return null;}
         }
 
         public string GetLocation()

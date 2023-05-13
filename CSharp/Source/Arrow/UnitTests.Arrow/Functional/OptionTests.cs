@@ -212,7 +212,7 @@ namespace UnitTests.Arrow.Functional
         {
             Option<string> x = "Hello";
 
-            if (x.TryGetValue(out var value))
+            if(x.TryGetValue(out var value))
             {
                 Assert.That(value, Is.EqualTo("Hello"));
             }
@@ -227,7 +227,7 @@ namespace UnitTests.Arrow.Functional
         {
             Option<string> x = default;
 
-            if (x.TryGetValue(out var value))
+            if(x.TryGetValue(out var value))
             {
                 Assert.Fail("expected a value");
             }
@@ -456,7 +456,7 @@ namespace UnitTests.Arrow.Functional
 
             static Option<int> f(string s)
             {
-                if (int.TryParse(s, out var i))
+                if(int.TryParse(s, out var i))
                     return new(i);
                 else
                     return Option.None;
@@ -493,7 +493,7 @@ namespace UnitTests.Arrow.Functional
 
             Option<int> f(string s)
             {
-                if (int.TryParse(s, out var i))
+                if(int.TryParse(s, out var i))
                     return new Option<int>(i);
                 else
                     return Option.None;
@@ -507,7 +507,7 @@ namespace UnitTests.Arrow.Functional
 
         private static Option<int> GetLength(string? value)
         {
-            if (value is null) return Option.None;
+            if(value is null) return Option.None;
 
             return value.Length;
         }

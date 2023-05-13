@@ -10,7 +10,6 @@ using Arrow.Compiler;
 using Arrow.Dynamic;
 using Arrow.Reflection;
 
-
 namespace Arrow.Scripting.Wire
 {
     partial class Parser
@@ -34,8 +33,8 @@ namespace Arrow.Scripting.Wire
 
         protected ExpressionFactory ExpressionFactory
         {
-            get { return m_ExpressionFactory; }
-            set { m_ExpressionFactory = value; }
+            get{return m_ExpressionFactory;}
+            set{m_ExpressionFactory = value;}
         }
 
         protected internal void RequireType<T>(Expression expression, string operation)
