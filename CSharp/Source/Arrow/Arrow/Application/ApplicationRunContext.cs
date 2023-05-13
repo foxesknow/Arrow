@@ -32,14 +32,14 @@ namespace Arrow.Application
 
         public async ValueTask Start()
         {
-            await PluginController.SystemServices.Start().ContinueOnAnyContext();
+            await PluginManager.SystemServices.Start().ContinueOnAnyContext();
         }
 
         async ValueTask IAsyncDisposable.DisposeAsync()
         {
             RunRegisteredShutdownActions();
-            await PluginController.SystemServices.Stop();
-            await PluginController.SystemServices.DisposeAsync();
+            await PluginManager.SystemServices.Stop();
+            await PluginManager.SystemServices.DisposeAsync();
             
             LogManager.ShutdownLoggingSystem();
         }

@@ -15,21 +15,23 @@ using Arrow.Xml.ObjectCreation;
 namespace Arrow.Application.Plugins
 {
 	/// <summary>
-	/// Manages a group of plugins
+	/// Manages a group of plugins.
+	/// 
+	/// This class is for use by the framework and should not be called directly
 	/// </summary>
-	public class PluginController : IPluginDiscovery, IEnumerable<Plugin>, IAsyncDisposable, IServiceProvider
+	internal class PluginManager : IPluginDiscovery, IEnumerable<Plugin>, IAsyncDisposable, IServiceProvider
 	{
 		private readonly ConcurrentQueue<Plugin> m_Plugins = new();
 		private string m_PluginName;
 		private volatile bool m_Started;
 		
 		private static readonly object s_SyncRoot=new object();
-		private static PluginController? s_SystemPlugins;
+		private static PluginManager? s_SystemPlugins;
 		
 		/// <summary>
 		/// Initializes the instance
 		/// </summary>
-		public PluginController()
+		public PluginManager()
 		{
 			m_PluginName = "PluginController";
 		}
@@ -37,7 +39,7 @@ namespace Arrow.Application.Plugins
 		/// <summary>
 		/// Starts all the plugins
 		/// </summary>
-		public async ValueTask Start()
+		internal async ValueTask Start()
 		{
 			if(!m_Started)
 			{
@@ -66,7 +68,7 @@ namespace Arrow.Application.Plugins
 		/// <summary>
 		/// Stops all the plugins
 		/// </summary>
-		public async ValueTask Stop()
+		internal async ValueTask Stop()
 		{
 			if(m_Started)
 			{
@@ -98,7 +100,7 @@ namespace Arrow.Application.Plugins
 		/// Adds a new service
 		/// </summary>
 		/// <param name="service">The service to add</param>
-		public void Add(Plugin service)
+		internal void Add(Plugin service)
 		{
 			if(service is null) throw new ArgumentNullException("service");
 			if(m_Started) throw new InvalidOperationException("cannot add to controller once started");
@@ -109,7 +111,7 @@ namespace Arrow.Application.Plugins
 		/// <summary>
 		/// Removes all plugins from the controller
 		/// </summary>
-		public void Clear()
+		internal void Clear()
 		{
 			if(m_Started) throw new InvalidOperationException("cannot clear controller once started");
 		
@@ -160,7 +162,7 @@ namespace Arrow.Application.Plugins
 		}
 		
 		/// <summary>
-		/// Gets the service object of the specified type
+		/// Gets the plugin object of the specified type
 		/// </summary>
 		/// <param name="pluginType">The type of service object to get</param>
 		/// <returns>A service object of the specified type, or null if no matching object found</returns>
@@ -213,7 +215,7 @@ namespace Arrow.Application.Plugins
 		/// <summary>
 		/// Returns the systemwide plugin controller
 		/// </summary>
-		public static PluginController SystemServices
+		internal static PluginManager SystemServices
 		{
 			get
 			{
@@ -229,17 +231,17 @@ namespace Arrow.Application.Plugins
                             {
                                 try
                                 {
-                                    s_SystemPlugins = PluginController.FromXml(systemPluginsNode);
+                                    s_SystemPlugins = PluginManager.FromXml(systemPluginsNode);
                                 }
                                 catch
                                 {
                                     // If we fail then create an empty controller
-                                    s_SystemPlugins = new PluginController();
+                                    s_SystemPlugins = new PluginManager();
                                 }
                             }
                             else
                             {
-                                s_SystemPlugins = new PluginController();
+                                s_SystemPlugins = new PluginManager();
                             }
 
                             s_SystemPlugins.Name = "SystemPlugins";
@@ -257,11 +259,11 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="pluginsRoot">The node containing the "Plugin" elements</param>
 		/// <returns>A controller</returns>
-		public static PluginController FromXml(XmlNode pluginsRoot)
+		internal static PluginManager FromXml(XmlNode pluginsRoot)
 		{
             if(pluginsRoot == null) throw new ArgumentNullException("pluginsRoot");
 
-            PluginController controller = new PluginController();
+            PluginManager controller = new PluginManager();
 
             foreach(XmlNode? pluginNode in pluginsRoot.SelectNodesOrEmpty("Plugin"))
             {
@@ -277,7 +279,7 @@ namespace Arrow.Application.Plugins
 		/// </summary>
 		/// <param name="uri">The location of the xml document</param>
 		/// <returns>A controller</returns>
-		public static PluginController FromXml(Uri uri)
+		internal static PluginManager FromXml(Uri uri)
 		{
             if(uri == null) throw new ArgumentNullException("uri");
 

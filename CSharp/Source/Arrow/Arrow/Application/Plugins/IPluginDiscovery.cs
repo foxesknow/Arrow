@@ -7,7 +7,7 @@ namespace Arrow.Application.Plugins
 {
 	/// <summary>
 	/// Provides plugin discovery.
-	/// This is useful is you wish to expose a plugin controller is a "read only" manner
+	/// This is useful is you wish to expose a plugin controller in a "read only" manner.
 	/// </summary>
 	public interface IPluginDiscovery
 	{

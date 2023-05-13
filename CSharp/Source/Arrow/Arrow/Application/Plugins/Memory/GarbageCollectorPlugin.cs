@@ -10,7 +10,7 @@ namespace Arrow.Application.Plugins.Memory
 	/// <summary>
 	/// Periodically collections garbage within the application
 	/// </summary>
-	public class GarbageCollectorPlugin : PausablePlugin, IDisposable
+	public sealed class GarbageCollectorPlugin : Plugin, IDisposable
 	{
 		private Timer? m_Timer;
 		
@@ -33,22 +33,6 @@ namespace Arrow.Application.Plugins.Memory
         private void TimerElapsed(object? sender, ElapsedEventArgs e)
         {
             GC.Collect();
-        }
-
-        /// <summary>
-        /// Pauses garbage collection
-        /// </summary>
-        public override void Pause()
-        {
-            if(m_Timer != null) m_Timer.Enabled = false;
-        }
-
-        /// <summary>
-        /// Continues garbage collection
-        /// </summary>
-        public override void Continue()
-        {
-            if(m_Timer != null) m_Timer.Enabled = true;
         }
 
         /// <summary>

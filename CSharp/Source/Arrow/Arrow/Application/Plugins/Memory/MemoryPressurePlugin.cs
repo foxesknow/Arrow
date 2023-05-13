@@ -10,9 +10,9 @@ namespace Arrow.Application.Plugins.Memory
 	/// Places additional stress on the garbage collector.
 	/// This is useful for stress testing an application as it will cause more frequent collections
 	/// </summary>
-	public class MemoryPressurePlugin : Plugin
+	public sealed class MemoryPressurePlugin : Plugin
 	{
-		private volatile bool m_Started;
+		private bool m_Started;
 	
 		/// <summary>
 		/// The number of bytes to allocate
