@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace UnitTests.Scripting.Wire.TestClasses
+namespace UnitTests.Arrow.Scripting.Wire.TestClasses
 {
 	class PropertyAndField
 	{

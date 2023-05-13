@@ -9,11 +9,11 @@ using Arrow.Scripting.Wire;
 using Arrow.Scripting.Wire.StaticExpression;
 using Arrow.Scripting.Wire.DynamicExpression;
 
-using UnitTests.Scripting.Wire.TestClasses;
+using UnitTests.Arrow.Scripting.Wire.TestClasses;
 
 using NUnit.Framework;
 
-namespace UnitTests.Scripting.Wire
+namespace UnitTests.Arrow.Scripting.Wire
 {
 	[TestFixture]
 	public class StaticAndDynamicExpressionTests
@@ -214,7 +214,7 @@ namespace UnitTests.Scripting.Wire
 			context.Usings.Add("System");
 
 			context.References.Add(typeof(PropertyAndField).Assembly);
-			context.Usings.Add("UnitTests.Scripting.Wire.TestClasses");
+			context.Usings.Add("UnitTests.Arrow.Scripting.Wire.TestClasses");
 
 			context.Parameters.Add(Expression.Parameter(typeof(PropertyAndField),"paf"));
 
@@ -236,7 +236,7 @@ namespace UnitTests.Scripting.Wire
 			context.Usings.Add("System");
 
 			context.References.Add(typeof(PropertyAndField).Assembly);
-			context.Usings.Add("UnitTests.Scripting.Wire.TestClasses");
+			context.Usings.Add("UnitTests.Arrow.Scripting.Wire.TestClasses");
 
 			return context;
 		}

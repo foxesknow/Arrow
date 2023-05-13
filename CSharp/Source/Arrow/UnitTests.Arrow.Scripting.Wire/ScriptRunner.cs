@@ -13,7 +13,7 @@ using Arrow.Scripting.Wire.DynamicExpression;
 using NUnit.Framework;
 using System.Linq.Expressions;
 
-namespace UnitTests.Scripting.Wire
+namespace UnitTests.Arrow.Scripting.Wire
 {
 	class ScriptRunner
 	{
@@ -150,7 +150,7 @@ namespace UnitTests.Scripting.Wire
 
 		private static string LoadScript(string filename)
 		{
-			string path="UnitTests.Scripting.Wire.Scripts.";
+			string path="UnitTests.Arrow.Scripting.Wire.Scripts.";
 			filename=path+filename;
 			
 			using(Stream stream=ResourceLoader.Open<ScriptRunner>(filename))
