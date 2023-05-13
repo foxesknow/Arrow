@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Arrow;
-
+using Arrow.Functional;
 using NUnit.Framework;
 
-namespace UnitTests.Arrow
+namespace UnitTests.Arrow.Functional
 {
     [TestFixture]
     public class UnitTests
@@ -21,7 +19,7 @@ namespace UnitTests.Arrow
 
             Assert.That(lhs.Equals(rhs), Is.True);
             Assert.That(lhs.Equals((object)rhs), Is.True);
-            
+
             Assert.That(lhs.Equals(null), Is.False);
         }
 

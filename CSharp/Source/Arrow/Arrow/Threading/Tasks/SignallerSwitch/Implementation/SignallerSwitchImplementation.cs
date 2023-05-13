@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Arrow.Functional;
 
 namespace Arrow.Threading.Tasks.SignallerSwitch.Implementation
 {

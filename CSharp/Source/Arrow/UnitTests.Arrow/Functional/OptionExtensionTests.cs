@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Arrow;
-
+using Arrow.Functional;
 using NUnit.Framework;
 
 #nullable enable
 
-namespace UnitTests.Arrow
+namespace UnitTests.Arrow.Functional
 {
     [TestFixture]
     public class OptionExtensionTests
@@ -98,7 +96,7 @@ namespace UnitTests.Arrow
             bool called = false;
 
             Option<int> x = 10;
-            var y = x.OrElse(() => {called = true; return 20;});
+            var y = x.OrElse(() => { called = true; return 20; });
             Assert.That(y.Value(), Is.EqualTo(10));
             Assert.That(called, Is.False);
         }
@@ -120,7 +118,7 @@ namespace UnitTests.Arrow
             bool called = false;
 
             Option<int> x = default;
-            var y = x.OrElse(answer, state => {called = true; return state;});
+            var y = x.OrElse(answer, state => { called = true; return state; });
             Assert.That(y.Value(), Is.EqualTo(20));
             Assert.That(called, Is.True);
         }

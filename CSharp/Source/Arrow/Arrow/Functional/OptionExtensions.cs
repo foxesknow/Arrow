@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Arrow.Execution;
 
-namespace Arrow
+namespace Arrow.Functional
 {
     public static class OptionExtensions
     {
@@ -30,7 +30,7 @@ namespace Arrow
         /// <returns></returns>
         public static T? ToNullable<T>(in this Option<T> self, RequireStruct<T>? _ = null) where T : struct
         {
-            if(self.IsSome)
+            if (self.IsSome)
             {
                 return self.Value();
             }
@@ -49,7 +49,7 @@ namespace Arrow
         /// <returns></returns>
         public static T? ToNullable<T>(in this Option<T> self, RequireClass<T>? _ = null) where T : class
         {
-            if(self.IsSome)
+            if (self.IsSome)
             {
                 return self.Value();
             }
@@ -81,7 +81,7 @@ namespace Arrow
         /// <exception cref="ArgumentNullException"></exception>
         public static Option<T> OrElse<T>(in this Option<T> self, Func<Option<T>> function)
         {
-            if(function is null) throw new ArgumentNullException(nameof(function));
+            if (function is null) throw new ArgumentNullException(nameof(function));
 
             return self.IsSome ? self : function();
         }
@@ -98,7 +98,7 @@ namespace Arrow
         /// <exception cref="ArgumentNullException"></exception>
         public static Option<T> OrElse<T, TState>(in this Option<T> self, TState state, Func<TState, Option<T>> function)
         {
-            if(function is null) throw new ArgumentNullException(nameof(function));
+            if (function is null) throw new ArgumentNullException(nameof(function));
 
             return self.IsSome ? self : function(state);
         }
@@ -113,17 +113,17 @@ namespace Arrow
         /// <param name="optionSelector"></param>
         /// <param name="resultSelector"></param>
         /// <returns></returns>
-        public static Option<TResult> SelectMany<T, U, TResult>(in this Option<T> self, Func<T, Option<U>> optionSelector, Func<T, U, TResult> resultSelector)  
+        public static Option<TResult> SelectMany<T, U, TResult>(in this Option<T> self, Func<T, Option<U>> optionSelector, Func<T, U, TResult> resultSelector)
         {
             return self.Bind
             (
-                (optionSelector, resultSelector), 
+                (optionSelector, resultSelector),
                 static (t, state) => state.optionSelector(t).Select
                 (
-                    (state.resultSelector, t), 
+                    (state.resultSelector, t),
                     static (u, state) => state.resultSelector(state.t, u)
                 )
             );
-        } 
+        }
     }
 }

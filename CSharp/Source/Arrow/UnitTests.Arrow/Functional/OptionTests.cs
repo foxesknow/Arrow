@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Arrow;
-
+using Arrow.Functional;
 using NUnit.Framework;
 
 #nullable enable
 
-namespace UnitTests.Arrow
+namespace UnitTests.Arrow.Functional
 {
     [TestFixture]
     public class OptionTests
@@ -73,7 +71,7 @@ namespace UnitTests.Arrow
         [Test]
         public void Implicit_Value()
         {
-            Option<int> age = 40;    
+            Option<int> age = 40;
             Assert.That(age.Value(), Is.EqualTo(40));
         }
 
@@ -170,7 +168,7 @@ namespace UnitTests.Arrow
         {
             var multiplier = 2;
             Option<int> x = Option.None;
-            
+
             var y = x.Select(multiplier, static (y, state) => y * state);
             Assert.That(y, Is.EqualTo(Option.None));
         }
@@ -184,13 +182,13 @@ namespace UnitTests.Arrow
 
             Option<string> address = default;
             var addressLength = address.Bind(y => GetLength(y));
-            Assert.That(addressLength, Is.EqualTo(Option.None));            
+            Assert.That(addressLength, Is.EqualTo(Option.None));
         }
 
         [Test]
         public void Bind_State()
         {
-            var surname= "Smith";
+            var surname = "Smith";
 
             Option<string> name = "Robert";
             var nameLength = name.Bind(surname, (y, state) => GetLength(y + state));
@@ -198,7 +196,7 @@ namespace UnitTests.Arrow
 
             Option<string> address = default;
             var addressLength = address.Bind(surname, (y, state) => GetLength(y + state));
-            Assert.That(addressLength, Is.EqualTo(Option.None));            
+            Assert.That(addressLength, Is.EqualTo(Option.None));
         }
 
         [Test]
@@ -214,14 +212,14 @@ namespace UnitTests.Arrow
         {
             Option<string> x = "Hello";
 
-            if(x.TryGetValue(out var value))
+            if (x.TryGetValue(out var value))
             {
                 Assert.That(value, Is.EqualTo("Hello"));
             }
             else
             {
                 Assert.Fail("expected a value");
-            }            
+            }
         }
 
         [Test]
@@ -229,14 +227,14 @@ namespace UnitTests.Arrow
         {
             Option<string> x = default;
 
-            if(x.TryGetValue(out var value))
+            if (x.TryGetValue(out var value))
             {
-                Assert.Fail("expected a value");                
+                Assert.Fail("expected a value");
             }
             else
             {
                 Assert.That(value, Is.Null);
-            }            
+            }
         }
 
         [Test]
@@ -443,7 +441,7 @@ namespace UnitTests.Arrow
 
             Func<int, Option<int>> @return = i => new Option<int>(i);
             Func<int, Option<double>> h = i => i != 0 ? new Option<double>(1.0 / i) : Option.None;
- 
+
             Assert.That(@return(a).Bind(h), Is.EqualTo(h(a)));
         }
 
@@ -458,15 +456,15 @@ namespace UnitTests.Arrow
 
             static Option<int> f(string s)
             {
-                if(int.TryParse(s, out var i))
+                if (int.TryParse(s, out var i))
                     return new(i);
                 else
                     return Option.None;
             }
             Func<int, Option<int>> @return = i => new Option<int>(i);
- 
+
             Option<int> m = f(a);
- 
+
             Assert.That(m.Bind(@return), Is.EqualTo(m));
         }
 
@@ -485,31 +483,31 @@ namespace UnitTests.Arrow
                 switch (result)
                 {
                     case double.NaN:
-                    case double.PositiveInfinity: 
+                    case double.PositiveInfinity:
                         return Option.None;
-                    
-                    default: 
+
+                    default:
                         return new Option<double>(result);
                 }
             }
 
             Option<int> f(string s)
             {
-                if(int.TryParse(s, out var i))
+                if (int.TryParse(s, out var i))
                     return new Option<int>(i);
                 else
                     return Option.None;
             }
             Func<int, Option<double>> g = i => Sqrt(i);
             Func<double, Option<double>> h = d => d == 0 ? Option.None : new Option<double>(1 / d);
- 
-            var m = f(a); 
+
+            var m = f(a);
             Assert.That(m.Bind(g).Bind(h), Is.EqualTo(m.Bind(x => g(x).Bind(h))));
         }
 
         private static Option<int> GetLength(string? value)
         {
-            if(value is null) return Option.None;
+            if (value is null) return Option.None;
 
             return value.Length;
         }

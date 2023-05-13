@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow
+namespace Arrow.Functional
 {
     /// <summary>
     /// A unit type, similiar to that found in most functional languages

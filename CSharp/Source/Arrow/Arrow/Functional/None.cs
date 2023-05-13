@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow
+namespace Arrow.Functional
 {
     /// <summary>
     /// Represents none
@@ -18,8 +18,8 @@ namespace Arrow
         /// <returns></returns>
         public override bool Equals(object? obj)
         {
-            if(obj is None) return true;
-            if(obj is IOption other) return other.IsNone;
+            if (obj is None) return true;
+            if (obj is IOption other) return other.IsNone;
 
             return false;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow
+namespace Arrow.Functional
 {
     /// <summary>
     /// Defines the non-generic features of an option
@@ -14,11 +14,11 @@ namespace Arrow
         /// <summary>
         /// True if the option has some value, otherwise false
         /// </summary>
-        internal bool IsSome{get;}
+        internal bool IsSome { get; }
 
         /// <summary>
         /// True if the option is none, otherwise false
         /// </summary>
-        internal bool IsNone{get;}
+        internal bool IsNone { get; }
     }
 }
