@@ -13,6 +13,9 @@ namespace Arrow.Data.Mock
     /// </summary>
     public sealed partial class MockDatabaseDetails : DatabaseDetails
     {
+        public delegate bool WhenPredicate(DbCommand command);
+        public delegate T ThenFunction<T>(DbCommand command);
+
         private static readonly WhenPredicate AlwaysTrue = _ => true;
 
         private readonly List<(WhenPredicate When, ThenFunction<int>)> m_ExecuteNonQuery = new();
