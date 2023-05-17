@@ -144,22 +144,7 @@ public abstract class CompositeValue : Value
 public sealed class StructValue : CompositeValue
 {
     private Dictionary<string, Value>? m_Members;
-
-    /// <summary>
-    /// Adds a new member
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="value"></param>
-    /// <exception cref="ArgumentException"></exception>
-    public void Add(string name, Value value)
-    {
-        ArgumentNullException.ThrowIfNull(name);
-        if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name is empty", nameof(name));
-        ArgumentNullException.ThrowIfNull(value);
-
-        this.Members.Add(name, value);
-    }
-
+    
     /// <inheritdoc/>
     public override Type Type()
     {

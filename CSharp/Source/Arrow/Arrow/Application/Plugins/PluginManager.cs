@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using Arrow.Configuration;
+using Arrow.Execution;
 using Arrow.Storage;
 using Arrow.Threading.Tasks;
 using Arrow.Xml;
@@ -72,22 +73,27 @@ namespace Arrow.Application.Plugins
 		}
 		
 		/// <summary>
-		/// Stops all the plugins
+		/// Stops all plugins, if started, and disposes of them
+		/// 
+		/// If the plugin implements IDisposable then Dispose() is called.
+		/// Otherwise if the plugin implements IAsyncDisposable then DisposeAsync() is called
 		/// </summary>
-		internal async ValueTask Stop()
+		public async ValueTask DisposeAsync()
 		{
 			using(await m_SyncRoot)
 			{
-				if(m_Started)
+				// Shut them down in the opposite order to how we started them
+				foreach(var plugin in m_Plugins.AsEnumerable().Reverse())
 				{
-					// Stop them in reverse order					
-					foreach(var plugins in m_Plugins.AsEnumerable().Reverse())
+					if(m_Started)
 					{
-						await plugins.Stop().ContinueOnAnyContext();
+						await plugin.Stop().ContinueOnAnyContext();
 					}
-					
-					m_Started = false;
+
+					await Disposable.TryDisposeAsync(plugin);
 				}
+				
+				m_Plugins.Clear();
 			}
 		}
 		
@@ -158,32 +164,7 @@ namespace Arrow.Application.Plugins
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
-		}
-
-		/// <summary>
-		/// Stops all plugins.
-		/// 
-		/// If the plugin implements IDisposable then Dispose() is called.
-		/// Otherwise if the plugin implements IAsyncDisposable then DisposeAsync() is called
-		/// </summary>
-		public async ValueTask DisposeAsync()
-		{
-			await Stop().ContinueOnAnyContext();
-				
-			foreach(var plugin in m_Plugins)
-			{
-				if(plugin is IDisposable disposer) 
-				{
-					disposer.Dispose();	
-				}
-				else if(plugin is IAsyncDisposable asyncDisposer)
-				{
-					await asyncDisposer.DisposeAsync().ContinueOnAnyContext();
-				}
-			}
-				
-			m_Plugins.Clear();
-		}
+		}		
 
 		/// <summary>
 		/// Returns the systemwide plugin manager

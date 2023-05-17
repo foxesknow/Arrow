@@ -41,7 +41,6 @@ namespace Arrow.Application
             RunRegisteredShutdownActions();
 
             var plugins = PluginManager.GetSystemPlugins();
-            await plugins.Stop();
             await plugins.DisposeAsync();
             
             LogManager.ShutdownLoggingSystem();

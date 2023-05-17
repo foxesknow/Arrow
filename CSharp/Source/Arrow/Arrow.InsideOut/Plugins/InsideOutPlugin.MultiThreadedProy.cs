@@ -19,15 +19,13 @@ public partial class InsideOutPlugin
             m_Outer = outer;
         }
 
-        public void Discard()
+        public IInsideOutNode WrappedItem
         {
+            get{return m_Outer;}
         }
 
         public void Dispose()
         {
-            Discard();
-
-            if(m_Outer is IDisposable d) d.Dispose();
         }
 
         public ValueTask<ExecuteResponse> Execute(ExecuteRequest request, CancellationToken ct)

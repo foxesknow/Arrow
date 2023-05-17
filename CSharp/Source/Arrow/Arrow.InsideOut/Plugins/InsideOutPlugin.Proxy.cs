@@ -4,15 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Arrow.Execution;
+
 namespace Arrow.InsideOut.Plugins;
 
 public partial class InsideOutPlugin
 {
-    private interface IInsideOutNodeProxy : IInsideOutNode, IDisposable
+    private interface IInsideOutNodeProxy : IInsideOutNode, IDisposable, IWrapper<IInsideOutNode>
     {
-        /// <summary>
-        /// Discard disposes of any proxy resources, but not of the underlying node
-        /// </summary>
-        public void Discard();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using Arrow.Application.Plugins;
+using Arrow.Execution;
 using Arrow.Text;
 using Arrow.Threading.Tasks;
 using Arrow.Xml;
@@ -43,15 +45,20 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
         return default;
     }
 
-    /// <inheritdoc/>
-    protected override ValueTask Stop()
+    /// <summary>
+    /// Unregisters any nodes that are currently registered
+    /// and attempts to dispose them
+    /// </summary>
+    /// <returns></returns>
+    protected override async ValueTask Stop()
     {
         foreach(var name in m_Nodes.Keys)
         {
-            Unregister(name);
+            if(Unregister(name, out var node))
+            {
+                await Disposable.TryDisposeAsync(node).ContinueOnAnyContext();
+            }
         }
-
-        return default;
     }
 
     /// <inheritdoc/>
@@ -100,20 +107,23 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
             return true;
         }
 
-        proxy.Discard();
+        proxy.Dispose();
         
         return false;
     }
 
     /// <inheritdoc/>
-    public bool Unregister(string name)
+    public bool Unregister(string name, [NotNullWhen(true)] out IInsideOutNode? node)
     {
         if(m_Nodes.TryRemove(name, out var proxy))
         {
+            node = proxy.WrappedItem;
             proxy.Dispose();
+            
             return true;
         }
 
+        node = null;
         return false;
     }
 

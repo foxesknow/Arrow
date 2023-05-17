@@ -124,6 +124,17 @@ namespace Arrow.IO
         }
 
         /// <inheritdoc/>
+        public override Task FlushAsync(CancellationToken cancellationToken)
+        {
+            if(cancellationToken.IsCancellationRequested)
+            {
+                return Task.FromCanceled(cancellationToken);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
         public override int Read(byte[] buffer, int offset, int count)
         {
             throw new NotImplementedException();
