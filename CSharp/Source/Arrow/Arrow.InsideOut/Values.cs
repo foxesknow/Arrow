@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Arrow.InsideOut;
 /// Base type for all values in the InsideOut universe
 /// </summary>
 [JsonPolymorphic]
+[JsonDerivedType(typeof(StructValue), "Struct")]
 [JsonDerivedType(typeof(BoolValue), "Bool")]
 [JsonDerivedType(typeof(Int32Value), "Int32")]
 [JsonDerivedType(typeof(Int64Value), "Int64")]
@@ -75,10 +77,40 @@ public abstract class BasicValue<T> : BasicValue
 /// <summary>
 /// A value that is composed of other values, much like a C struct
 /// </summary>
+[JsonPolymorphic]
+[JsonDerivedType(typeof(StructValue), "Struct")]
 public abstract class CompositeValue : Value
 {
     private protected CompositeValue()
     {
+    }
+}
+
+public sealed class StructValue : CompositeValue
+{
+    private Dictionary<string, Value>? m_Members;
+
+    public void Add(string name, Value value)
+    {
+        ArgumentNullException.ThrowIfNull(name);
+        if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name is empty", nameof(name));
+        ArgumentNullException.ThrowIfNull(value);
+
+        this.Members.Add(name, value);
+    }
+
+    public override Type Type()
+    {
+        return typeof(StructValue);
+    }
+
+        /// <summary>
+    /// The members of the struct
+    /// </summary>
+    public Dictionary<string, Value> Members
+    {
+        get{return m_Members ??= new();}
+        set{m_Members = value;}
     }
 }
 

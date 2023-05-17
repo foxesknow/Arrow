@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Arrow.InsideOut;
-
 using NUnit.Framework;
 
 namespace UnitTests.Arrow.InsideOut
@@ -28,6 +27,30 @@ namespace UnitTests.Arrow.InsideOut
             Check<StringValue, string>(new(){Value = ""});
             Check<StringValue, string>(new(){Value = "A"});
             Check<StringValue, string>(new(){Value = "Jack and Sawyer"});
+        }
+
+        [Test]
+        public void Struct()
+        {
+            Value initial = new StructValue()
+            {
+                Members =
+                {
+                    {"Name", Value.From("Jack")},
+                    {"Age", Value.From(42)},
+                    {"Location", new StructValue()
+                                 {
+                                    Members = 
+                                    {
+                                        {"Latitude", Value.From(51.1781m)},
+                                        {"Longitude", Value.From(-4.65965)}
+                                    }
+                                 }
+                    }
+                }
+            };
+
+            var roundTrip = RoundTrip(initial);
         }
 
         private void Check<TBasic, T>(TBasic value) where TBasic : BasicValue<T>
