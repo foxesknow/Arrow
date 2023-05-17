@@ -23,10 +23,24 @@ public sealed class ExecuteResponse : ResponseBase
 
     /// <summary>
     /// An optional result returned from the command.
-    /// The nature of the string is command specific
+    /// The nature of the value is command specific
     /// </summary>
     public Value? Result{get; set;}
 
+    /// <summary>
+    /// Attemtps to cast the result to a derived type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="InvalidCastException"></exception>
+    public T ResultAs<T>() where T : Value
+    {
+        if(this.Result is T derived) return derived;
+
+        throw new InvalidCastException($"value is not a {typeof(T).Name}");
+    }
+
+    /// <inheritdoc/>
     public override Type Type()
     {
         return typeof(ExceptionResponse);

@@ -14,6 +14,7 @@ namespace Arrow.InsideOut;
 /// </summary>
 [JsonPolymorphic]
 [JsonDerivedType(typeof(StructValue), "Struct")]
+[JsonDerivedType(typeof(SequenceValue), "Sequence")]
 [JsonDerivedType(typeof(BoolValue), "Bool")]
 [JsonDerivedType(typeof(Int32Value), "Int32")]
 [JsonDerivedType(typeof(Int64Value), "Int64")]
@@ -38,7 +39,7 @@ public abstract partial class Value
     /// The .NET type that represents the value
     /// </summary>
     /// <returns></returns>
-    public abstract Type Type();
+    public abstract Type Type();    
 }
 
 /// <summary>
@@ -100,6 +101,29 @@ public abstract class BasicValue<T> : BasicValue, IEquatable<BasicValue<T>>
     {
         return this.Value?.ToString() ?? "null";
     }    
+}
+
+/// <summary>
+/// A value that is composed of an ordered sequence of values
+/// </summary>
+public sealed class SequenceValue : Value
+{
+    private List<Value>? m_Values;
+
+    /// <inheritdoc/>
+    public override Type Type()
+    {
+        return typeof(SequenceValue);
+    }
+
+    /// <summary>
+    /// The values in the sequence
+    /// </summary>
+    public List<Value> Values
+    {
+        get{return m_Values ??= new();}
+        set{m_Values = value;}
+    }
 }
 
 /// <summary>

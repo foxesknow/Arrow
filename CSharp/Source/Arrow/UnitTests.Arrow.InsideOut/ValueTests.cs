@@ -52,7 +52,7 @@ namespace UnitTests.Arrow.InsideOut
 
             var roundTrip = RoundTrip(initial);
             
-            Assert.That(initial.Members.Count, Is.EqualTo(roundTrip.Members.Count));
+            Assert.That(initial.Members.Count, Is.EqualTo(roundTrip.Members.Count) & Is.EqualTo(3));
             Assert.That(((StringValue)(roundTrip.Members["Name"])).Value, Is.EqualTo("Jack"));
             Assert.That(((Int32Value)(roundTrip.Members["Age"])).Value, Is.EqualTo(42));
 
@@ -60,6 +60,26 @@ namespace UnitTests.Arrow.InsideOut
             Assert.That(location.Members.Count, Is.EqualTo(2));
             Assert.That(((DecimalValue)(location.Members["Latitude"])).Value, Is.EqualTo(51.1781m));
             Assert.That(((DecimalValue)(location.Members["Longitude"])).Value, Is.EqualTo(-4.65965m));
+        }
+
+        [Test]
+        public void Sequence()
+        {
+            var initial = new SequenceValue()
+            {
+                Values =
+                {
+                    Value.From(1),
+                    Value.From(2),
+                    Value.From(4),
+                }
+            };
+
+            var roundTrip = RoundTrip(initial);
+            Assert.That(initial.Values.Count, Is.EqualTo(roundTrip.Values.Count) & Is.EqualTo(3));
+            Assert.That(initial.Values[0], Is.EqualTo(roundTrip.Values[0]));
+            Assert.That(initial.Values[1], Is.EqualTo(roundTrip.Values[1]));
+            Assert.That(initial.Values[2], Is.EqualTo(roundTrip.Values[2]));
         }
 
         private void Check<TBasic, T>(TBasic value) where TBasic : BasicValue<T>

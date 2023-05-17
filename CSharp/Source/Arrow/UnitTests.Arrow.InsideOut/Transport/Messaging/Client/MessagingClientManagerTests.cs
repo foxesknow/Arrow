@@ -116,7 +116,12 @@ namespace UnitTests.Arrow.InsideOut.Transport.Messaging.Client
 
                 var response = await node.Execute(executeRequest);
                 Assert.That(response, Is.Not.Null);
-                Assert.That(response.Result, Is.EqualTo(Value.From(20m)));
+
+                var result = response.ResultAs<StructValue>().Members["Result"];
+                Assert.That(result, Is.EqualTo(Value.From(20m)));
+
+                var lastResult = response.ResultAs<StructValue>().Members["LastResult"];
+                Assert.That(lastResult, Is.EqualTo(Value.From(0m)));
             }
         }
 

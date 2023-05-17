@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace Arrow.InsideOut.Transport.Messaging;
 
+/// <summary>
+/// Builds endpoints for the messaging transport
+/// </summary>
 public sealed class EndpointBuilder
 {
+    /// <summary>
+    /// Given a base endpoint creates the request endpoint
+    /// </summary>
+    /// <param name="baseEndpoint"></param>
+    /// <returns></returns>
     public static Uri MakeRequest(Uri baseEndpoint)
     {
         ArgumentNullException.ThrowIfNull(baseEndpoint);
@@ -15,11 +23,28 @@ public sealed class EndpointBuilder
         return AddToUri(baseEndpoint, ".Request");
     }
 
+    /// <summary>
+    /// Given a base endpoint creates the response endpoint
+    /// </summary>
+    /// <param name="baseEndpoint"></param>
+    /// <returns></returns>
     public static Uri MakeResponse(Uri baseEndpoint)
     {
         ArgumentNullException.ThrowIfNull(baseEndpoint);
 
         return AddToUri(baseEndpoint, ".Response");
+    }
+
+    /// <summary>
+    /// Given a base endpoint creates the broadcast endpoint
+    /// </summary>
+    /// <param name="baseEndpoint"></param>
+    /// <returns></returns>
+    public static Uri MakeBroadcast(Uri baseEndpoint)
+    {
+        ArgumentNullException.ThrowIfNull(baseEndpoint);
+
+        return AddToUri(baseEndpoint, ".Broadcast");
     }
 
     private static Uri AddToUri(Uri baseEndpoint, string extra)
