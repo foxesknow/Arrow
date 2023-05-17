@@ -22,12 +22,12 @@ public sealed class EchoNode : IInsideOutNode
     public ValueTask<ExecuteResponse> Execute(ExecuteRequest request, CancellationToken ct)
     {
         request.EnsureArgumentCount(1);
-        var message = request.GetArgument<StringArgument>(0);
+        var message = request.GetArgumentValue<string>(0);
 
         var result = new ExecuteResponse()
         {
             Success = true,
-            Message = message.Value
+            Message = message.ToString()
         };
 
         return new(result);

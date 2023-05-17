@@ -58,18 +58,31 @@ public sealed class ExecuteRequest : RequestBase
     }
 
     /// <summary>
-    /// Gets an argument, ensuring that it is the correct type
+    /// Gets an arguments value, ensuring that it is the correct type
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="index"></param>
     /// <returns></returns>
     /// <exception cref="IndexOutOfRangeException"></exception>
     /// <exception cref="InsideOutException"></exception>
-    public T GetArgument<T>(int index) where T : Argument
+    public T GetArgumentValue<T>(int index)
+    {
+        return GetArgument<T>(index).Value;
+    }
+
+    /// <summary>
+    /// Gets an arguments, ensuring that it is the correct type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    /// <exception cref="IndexOutOfRangeException"></exception>
+    /// <exception cref="InsideOutException"></exception>
+    public IReadOnlyArgument<T> GetArgument<T>(int index)
     {
         if(index >= this.Arguments.Count) throw new IndexOutOfRangeException($"index {index} was requested, but there are only {Arguments.Count} arguments");
 
-        if(this.Arguments[index] is T argument) return argument;
+        if(this.Arguments[index] is IReadOnlyArgument<T> argument) return argument;
 
         throw new InsideOutException($"argument at {index} is not a {typeof(T).Name}");
     }
@@ -165,75 +178,52 @@ public sealed class ExecuteRequest : RequestBase
 public static class ExecuteRequestExtensions
 {
     public static R Let<T, R>(this ExecuteRequest executeRequest, Func<T, R> function) 
-        where T : Argument
     {
         executeRequest.EnsureArgumentCount(1);
 
-        var arg1 = executeRequest.GetArgument<T>(0);
-        return function(arg1);
-    }
-
-    public static R LetX<T, R>(this ExecuteRequest executeRequest, Func<T, R> function) 
-    {
-        executeRequest.EnsureArgumentCount(1);
-
-        var arg1 = executeRequest.GetArgument<Argument<T>>(0).Value;
+        var arg1 = executeRequest.GetArgumentValue<T>(0);
         return function(arg1);
     }
 
     public static R Let<T1, T2, R>(this ExecuteRequest executeRequest, Func<T1, T2, R> function) 
-        where T1 : Argument
-        where T2 : Argument
     {
         executeRequest.EnsureArgumentCount(2);
 
-        var arg1 = executeRequest.GetArgument<T1>(0);
-        var arg2 = executeRequest.GetArgument<T2>(1);
+        var arg1 = executeRequest.GetArgumentValue<T1>(0);
+        var arg2 = executeRequest.GetArgumentValue<T2>(1);
         return function(arg1, arg2);
     }
 
     public static R Let<T1, T2, T3, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, R> function) 
-        where T1 : Argument
-        where T2 : Argument
-        where T3 : Argument
     {
         executeRequest.EnsureArgumentCount(3);
 
-        var arg1 = executeRequest.GetArgument<T1>(0);
-        var arg2 = executeRequest.GetArgument<T2>(1);
-        var arg3 = executeRequest.GetArgument<T3>(2);
+        var arg1 = executeRequest.GetArgumentValue<T1>(0);
+        var arg2 = executeRequest.GetArgumentValue<T2>(1);
+        var arg3 = executeRequest.GetArgumentValue<T3>(2);
         return function(arg1, arg2, arg3);
     }
 
     public static R Let<T1, T2, T3, T4, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, T4, R> function) 
-        where T1 : Argument
-        where T2 : Argument
-        where T3 : Argument
-        where T4 : Argument
     {
         executeRequest.EnsureArgumentCount(4);
 
-        var arg1 = executeRequest.GetArgument<T1>(0);
-        var arg2 = executeRequest.GetArgument<T2>(1);
-        var arg3 = executeRequest.GetArgument<T3>(2);
-        var arg4 = executeRequest.GetArgument<T4>(3);
+        var arg1 = executeRequest.GetArgumentValue<T1>(0);
+        var arg2 = executeRequest.GetArgumentValue<T2>(1);
+        var arg3 = executeRequest.GetArgumentValue<T3>(2);
+        var arg4 = executeRequest.GetArgumentValue<T4>(3);
         return function(arg1, arg2, arg3, arg4);
     }
 
     public static R Let<T1, T2, T3, T4, T5, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, T4, T5, R> function) 
-        where T1 : Argument
-        where T2 : Argument
-        where T3 : Argument
-        where T4 : Argument
-        where T5 : Argument
     {
         executeRequest.EnsureArgumentCount(5);
 
-        var arg1 = executeRequest.GetArgument<T1>(0);
-        var arg2 = executeRequest.GetArgument<T2>(1);
-        var arg3 = executeRequest.GetArgument<T3>(2);
-        var arg4 = executeRequest.GetArgument<T4>(3);
-        var arg5 = executeRequest.GetArgument<T5>(4);
+        var arg1 = executeRequest.GetArgumentValue<T1>(0);
+        var arg2 = executeRequest.GetArgumentValue<T2>(1);
+        var arg3 = executeRequest.GetArgumentValue<T3>(2);
+        var arg4 = executeRequest.GetArgumentValue<T4>(3);
+        var arg5 = executeRequest.GetArgumentValue<T5>(4);
         return function(arg1, arg2, arg3, arg4, arg5);
     }
 }

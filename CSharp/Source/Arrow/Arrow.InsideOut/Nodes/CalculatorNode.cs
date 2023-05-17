@@ -57,12 +57,12 @@ public sealed class CalculatorNode : IInsideOutNode
 
         decimal result = command switch
         {
-            "Add"       => request.Let((DecimalArgument x, DecimalArgument y) => x.Value + y.Value),
-            "Subtract"  => request.Let((DecimalArgument x, DecimalArgument y) => x.Value - y.Value),
-            "Divide"    => request.Let((DecimalArgument x, DecimalArgument y) => x.Value / y.Value),
-            "Multiply"  => request.Let((DecimalArgument x, DecimalArgument y) => x.Value * y.Value),
-            "Negate"    => request.Let((DecimalArgument value) => -value.Value),
-            "Abs"       => request.Let((DecimalArgument value) => Math.Abs(value.Value)),
+            "Add"       => request.Let((decimal x, decimal y) => x + y),
+            "Subtract"  => request.Let((decimal x, decimal y) => x - y),
+            "Divide"    => request.Let((decimal x, decimal y) => x / y),
+            "Multiply"  => request.Let((decimal x, decimal y) => x * y),
+            "Negate"    => request.Let((decimal value) => -value),
+            "Abs"       => request.Let((decimal value) => Math.Abs(value)),
             _           => throw new InsideOutException($"unsupported operation: {command}")
         };
 

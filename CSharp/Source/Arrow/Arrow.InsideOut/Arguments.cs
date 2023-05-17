@@ -8,6 +8,35 @@ using System.Threading.Tasks;
 
 namespace Arrow.InsideOut;
 
+/// <summary>
+/// Defines a readonly arguement.
+/// This interface is covariant to simplify getting arguments out.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IReadOnlyArgument<out T>
+{
+    /// <summary>
+    /// The name of the argument
+    /// </summary>
+    public string Name{get;}
+
+    /// <summary>
+    /// The value of the argument
+    /// </summary>
+    public T Value{get;}
+
+    /// <summary>
+    /// The value, but boxed
+    /// </summary>
+    /// <returns></returns>
+    public object? AsObject();
+
+    /// <summary>
+    /// The .net type representing the argument
+    /// </summary>
+    public Type Type();
+}
+
 [JsonPolymorphic]
 [JsonDerivedType(typeof(BoolArgument), "Bool")]
 [JsonDerivedType(typeof(Int32Argument), "Int32")]
@@ -61,7 +90,7 @@ public abstract class Argument
 /// A argument that is based on an existing .NET type
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class Argument<T> : Argument
+public abstract class Argument<T> : Argument, IReadOnlyArgument<T>
 {
     private protected Argument(string name) : base(name)
     {
