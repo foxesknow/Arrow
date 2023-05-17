@@ -116,7 +116,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Messaging.Client
 
                 var response = await node.Execute(executeRequest);
                 Assert.That(response, Is.Not.Null);
-                Assert.That(response.Result, Is.EqualTo("20"));
+                Assert.That(response.Result, Is.EqualTo(Value.From(20m)));
             }
         }
 

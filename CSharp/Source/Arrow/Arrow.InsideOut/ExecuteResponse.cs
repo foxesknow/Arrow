@@ -25,7 +25,7 @@ public sealed class ExecuteResponse : ResponseBase
     /// An optional result returned from the command.
     /// The nature of the string is command specific
     /// </summary>
-    public string? Result{get; set;}
+    public Value? Result{get; set;}
 
     public override Type Type()
     {

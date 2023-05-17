@@ -46,6 +46,10 @@ public abstract partial class Value
 /// </summary>
 public abstract class BasicValue : Value
 {
+    /// <summary>
+    /// Returns the value as a boxed object
+    /// </summary>
+    /// <returns></returns>
     public abstract object? AsObject();
 }
 
@@ -53,25 +57,49 @@ public abstract class BasicValue : Value
 /// A basic value that is based on an existing .NET type
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class BasicValue<T> : BasicValue
+public abstract class BasicValue<T> : BasicValue, IEquatable<BasicValue<T>>
 {
+    /// <summary>
+    /// The actual value
+    /// </summary>
     [MaybeNull]
     public T Value{get; set;} = default!;
 
+    /// <inheritdoc/>
     public override object? AsObject()
     {
         return this.Value;
     }
 
+    /// <inheritdoc/>
     public override Type Type()
     {
         return typeof(T);
     }
 
+    /// <inheritdoc/>
+    public bool Equals(BasicValue<T>? other)
+    {
+        return other is not null && EqualityComparer<T>.Default.Equals(this.Value, other.Value);
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as BasicValue<T>);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return this.Value?.GetHashCode() ?? 0;
+    }
+
+    /// <inheritdoc/>
     public override string ToString()
     {
         return this.Value?.ToString() ?? "null";
-    }
+    }    
 }
 
 /// <summary>
@@ -86,10 +114,19 @@ public abstract class CompositeValue : Value
     }
 }
 
+/// <summary>
+/// Models a C structure
+/// </summary>
 public sealed class StructValue : CompositeValue
 {
     private Dictionary<string, Value>? m_Members;
 
+    /// <summary>
+    /// Adds a new member
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="value"></param>
+    /// <exception cref="ArgumentException"></exception>
     public void Add(string name, Value value)
     {
         ArgumentNullException.ThrowIfNull(name);
@@ -99,6 +136,7 @@ public sealed class StructValue : CompositeValue
         this.Members.Add(name, value);
     }
 
+    /// <inheritdoc/>
     public override Type Type()
     {
         return typeof(StructValue);

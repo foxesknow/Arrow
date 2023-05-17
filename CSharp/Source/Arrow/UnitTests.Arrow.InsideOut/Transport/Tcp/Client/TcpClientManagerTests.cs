@@ -138,7 +138,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Tcp.Client
                 {
                     Success = true,
                     Message = "updated",
-                    Result = "2"
+                    Result = Value.From("foo")
                 });
 
                 using(var r = InsideOutEncoder.Default.EncodeToPool(transportResponse))
@@ -154,7 +154,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Tcp.Client
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Success, Is.True);
                 Assert.That(response.Message, Is.EqualTo("updated"));
-                Assert.That(response.Result, Is.EqualTo("2"));
+                Assert.That(response.Result, Is.EqualTo(Value.From("foo")));
             }
         }
 

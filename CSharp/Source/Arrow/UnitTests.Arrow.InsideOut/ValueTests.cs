@@ -32,7 +32,7 @@ namespace UnitTests.Arrow.InsideOut
         [Test]
         public void Struct()
         {
-            Value initial = new StructValue()
+            StructValue initial = new StructValue()
             {
                 Members =
                 {
@@ -43,7 +43,7 @@ namespace UnitTests.Arrow.InsideOut
                                     Members = 
                                     {
                                         {"Latitude", Value.From(51.1781m)},
-                                        {"Longitude", Value.From(-4.65965)}
+                                        {"Longitude", Value.From(-4.65965m)}
                                     }
                                  }
                     }
@@ -51,6 +51,15 @@ namespace UnitTests.Arrow.InsideOut
             };
 
             var roundTrip = RoundTrip(initial);
+            
+            Assert.That(initial.Members.Count, Is.EqualTo(roundTrip.Members.Count));
+            Assert.That(((StringValue)(roundTrip.Members["Name"])).Value, Is.EqualTo("Jack"));
+            Assert.That(((Int32Value)(roundTrip.Members["Age"])).Value, Is.EqualTo(42));
+
+            var location = (StructValue)(roundTrip.Members["Location"]);
+            Assert.That(location.Members.Count, Is.EqualTo(2));
+            Assert.That(((DecimalValue)(location.Members["Latitude"])).Value, Is.EqualTo(51.1781m));
+            Assert.That(((DecimalValue)(location.Members["Longitude"])).Value, Is.EqualTo(-4.65965m));
         }
 
         private void Check<TBasic, T>(TBasic value) where TBasic : BasicValue<T>

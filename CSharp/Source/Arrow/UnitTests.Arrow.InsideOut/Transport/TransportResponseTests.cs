@@ -107,7 +107,7 @@ namespace UnitTests.Arrow.InsideOut.Transport
             {
                 Success = true,
                 Message = "finished",
-                Result = "p99"
+                Result = Value.From("p99")
             });
 
             var inResponse = (ExecuteResponse)response.Response;

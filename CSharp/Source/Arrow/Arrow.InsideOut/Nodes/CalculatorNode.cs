@@ -65,14 +65,21 @@ public sealed class CalculatorNode : IInsideOutNode
             "Abs"       => request.Let((decimal value) => Math.Abs(value)),
             _           => throw new InsideOutException($"unsupported operation: {command}")
         };
-
-        m_LastResult = result;
-
+        
         var response = new ExecuteResponse()
         {
             Success = true,
-            Result = result.ToString()
+            Result = new StructValue()
+            {
+                Members =
+                {
+                    {"Result", Value.From(result)},
+                    {"LastResult", Value.From(m_LastResult)},
+                }
+            }
         };
+
+        m_LastResult = result;
 
         return new(response);
     }
