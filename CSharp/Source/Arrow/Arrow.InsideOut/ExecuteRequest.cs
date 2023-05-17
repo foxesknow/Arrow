@@ -126,7 +126,7 @@ public sealed class ExecuteRequest : RequestBase
 
         level = levels.Dequeue();
         return true;
-    }
+    }    
 
     /// <summary>
     /// Breaks the command path up into its constituent parts
@@ -159,5 +159,81 @@ public sealed class ExecuteRequest : RequestBase
         if(commandPathParts is null) throw new ArgumentNullException(nameof(commandPathParts));
 
         return string.Join(PathDivider, commandPathParts);
+    }
+}
+
+public static class ExecuteRequestExtensions
+{
+    public static R Let<T, R>(this ExecuteRequest executeRequest, Func<T, R> function) 
+        where T : Argument
+    {
+        executeRequest.EnsureArgumentCount(1);
+
+        var arg1 = executeRequest.GetArgument<T>(0);
+        return function(arg1);
+    }
+
+    public static R LetX<T, R>(this ExecuteRequest executeRequest, Func<T, R> function) 
+    {
+        executeRequest.EnsureArgumentCount(1);
+
+        var arg1 = executeRequest.GetArgument<Argument<T>>(0).Value;
+        return function(arg1);
+    }
+
+    public static R Let<T1, T2, R>(this ExecuteRequest executeRequest, Func<T1, T2, R> function) 
+        where T1 : Argument
+        where T2 : Argument
+    {
+        executeRequest.EnsureArgumentCount(2);
+
+        var arg1 = executeRequest.GetArgument<T1>(0);
+        var arg2 = executeRequest.GetArgument<T2>(1);
+        return function(arg1, arg2);
+    }
+
+    public static R Let<T1, T2, T3, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, R> function) 
+        where T1 : Argument
+        where T2 : Argument
+        where T3 : Argument
+    {
+        executeRequest.EnsureArgumentCount(3);
+
+        var arg1 = executeRequest.GetArgument<T1>(0);
+        var arg2 = executeRequest.GetArgument<T2>(1);
+        var arg3 = executeRequest.GetArgument<T3>(2);
+        return function(arg1, arg2, arg3);
+    }
+
+    public static R Let<T1, T2, T3, T4, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, T4, R> function) 
+        where T1 : Argument
+        where T2 : Argument
+        where T3 : Argument
+        where T4 : Argument
+    {
+        executeRequest.EnsureArgumentCount(4);
+
+        var arg1 = executeRequest.GetArgument<T1>(0);
+        var arg2 = executeRequest.GetArgument<T2>(1);
+        var arg3 = executeRequest.GetArgument<T3>(2);
+        var arg4 = executeRequest.GetArgument<T4>(3);
+        return function(arg1, arg2, arg3, arg4);
+    }
+
+    public static R Let<T1, T2, T3, T4, T5, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, T4, T5, R> function) 
+        where T1 : Argument
+        where T2 : Argument
+        where T3 : Argument
+        where T4 : Argument
+        where T5 : Argument
+    {
+        executeRequest.EnsureArgumentCount(5);
+
+        var arg1 = executeRequest.GetArgument<T1>(0);
+        var arg2 = executeRequest.GetArgument<T2>(1);
+        var arg3 = executeRequest.GetArgument<T3>(2);
+        var arg4 = executeRequest.GetArgument<T4>(3);
+        var arg5 = executeRequest.GetArgument<T5>(4);
+        return function(arg1, arg2, arg3, arg4, arg5);
     }
 }

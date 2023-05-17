@@ -11,6 +11,7 @@ public sealed class CalculatorNode : IInsideOutNode
 {
     private static readonly DecimalParameter Lhs = new("lhs");
     private static readonly DecimalParameter Rhs = new("rhs");
+    private static readonly DecimalParameter TheValue = new("value");
 
     private decimal m_LastResult = 0;
 
@@ -38,20 +39,30 @@ public sealed class CalculatorNode : IInsideOutNode
         Description = "Multiplies 2 numbers"
     };
 
+    private static readonly Command Negate = new("Negate")
+    {
+        Parameters = {TheValue},
+        Description = "Negates a value"
+    };
+
+    private static readonly Command Abs = new("Abs")
+    {
+        Parameters = {TheValue},
+        Description = "Returns the absolute value"
+    };
+
     public ValueTask<ExecuteResponse> Execute(ExecuteRequest request, CancellationToken ct)
     {
-        request.EnsureArgumentCount(2);
-        var lhs = request.GetArgument<DecimalArgument>(0);
-        var rhs = request.GetArgument<DecimalArgument>(1);
-
         var command = request.PopLevel();
 
         decimal result = command switch
         {
-            "Add"       => lhs.Value + rhs.Value,
-            "Subtract"  => lhs.Value - rhs.Value,
-            "Divide"    => lhs.Value / rhs.Value,
-            "Multiply"  => lhs.Value * rhs.Value,
+            "Add"       => request.Let((DecimalArgument x, DecimalArgument y) => x.Value + y.Value),
+            "Subtract"  => request.Let((DecimalArgument x, DecimalArgument y) => x.Value - y.Value),
+            "Divide"    => request.Let((DecimalArgument x, DecimalArgument y) => x.Value / y.Value),
+            "Multiply"  => request.Let((DecimalArgument x, DecimalArgument y) => x.Value * y.Value),
+            "Negate"    => request.Let((DecimalArgument value) => -value.Value),
+            "Abs"       => request.Let((DecimalArgument value) => Math.Abs(value.Value)),
             _           => throw new InsideOutException($"unsupported operation: {command}")
         };
 
@@ -70,7 +81,7 @@ public sealed class CalculatorNode : IInsideOutNode
     {
         var details = new Details()
         {
-            Commands = {Add, Subtract, Divide, Multiply},
+            Commands = {Add, Subtract, Divide, Multiply, Negate, Abs},
             Values =
             {
                 {"LastResult", Value.From(m_LastResult)}
