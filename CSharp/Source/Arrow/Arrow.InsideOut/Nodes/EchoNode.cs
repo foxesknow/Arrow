@@ -33,9 +33,9 @@ public sealed class EchoNode : IInsideOutNode
         return new(result);
     }
 
-    public ValueTask<Details> GetDetails(CancellationToken ct)
+    public ValueTask<NodeDetails> GetDetails(CancellationToken ct)
     {
-        var details = new Details()
+        var details = new NodeDetails()
         {
             Commands = 
             {

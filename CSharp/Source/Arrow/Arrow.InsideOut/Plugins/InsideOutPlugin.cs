@@ -73,9 +73,9 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
     }
 
     /// <inheritdoc/>
-    public async ValueTask<Details> GetDetails(CancellationToken ct)
+    public async ValueTask<NodeDetails> GetDetails(CancellationToken ct)
     {
-        var details = new Details();
+        var details = new NodeDetails();
 
         foreach(var (name, proxy) in m_Nodes)
         {

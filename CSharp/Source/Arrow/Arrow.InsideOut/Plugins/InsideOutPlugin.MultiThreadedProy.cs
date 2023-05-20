@@ -34,7 +34,7 @@ public partial class InsideOutPlugin
             return m_Outer.Execute(request, ct);
         }
 
-        public ValueTask<Details> GetDetails(CancellationToken ct)
+        public ValueTask<NodeDetails> GetDetails(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
             return m_Outer.GetDetails(ct);

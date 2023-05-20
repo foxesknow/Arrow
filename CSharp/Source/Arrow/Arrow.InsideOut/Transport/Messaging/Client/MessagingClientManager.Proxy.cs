@@ -26,7 +26,7 @@ public partial class MessagingClientManager
             return m_ClientManager.Execute(m_PublisherID, request, ct);
         }
 
-        public ValueTask<Details> GetDetails(CancellationToken ct)
+        public ValueTask<NodeDetails> GetDetails(CancellationToken ct)
         {
             return m_ClientManager.GetDetails(m_PublisherID, ct);
         }

@@ -44,7 +44,7 @@ internal sealed class SingleThreadedNode : IInsideOutNode, IDisposable
         }
     }
 
-    public async ValueTask<Details> GetDetails(CancellationToken ct)
+    public async ValueTask<NodeDetails> GetDetails(CancellationToken ct)
     {
         using(await m_Lock)
         {

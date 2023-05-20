@@ -129,7 +129,7 @@ public sealed partial class HttpClientManager : ClientManagerBase, IClientManage
         return ReturnExpected<ExecuteResponse>(response);
     }
 
-    private async ValueTask<Details> GetDetails(PublisherID publisherID,  Uri endpoint, Guid applicationID, CancellationToken ct)
+    private async ValueTask<NodeDetails> GetDetails(PublisherID publisherID,  Uri endpoint, Guid applicationID, CancellationToken ct)
     {
         ThrowIfDisposed();
 
@@ -137,7 +137,7 @@ public sealed partial class HttpClientManager : ClientManagerBase, IClientManage
         var transportRequest = new TransportRequest(NodeFunction.GetDetails, publisherID, requestID);
 
         var response = await Send(transportRequest, publisherID, endpoint, ct).ContinueOnAnyContext();
-        return ReturnExpected<Details>(response);
+        return ReturnExpected<NodeDetails>(response);
     }
 
     private async ValueTask<object?> Send(TransportRequest transportRequest, PublisherID publisherID, Uri endpoint, CancellationToken ct)

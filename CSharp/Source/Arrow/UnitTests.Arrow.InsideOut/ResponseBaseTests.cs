@@ -39,7 +39,7 @@ namespace UnitTests.Arrow.InsideOut
         [Test]
         public void Details_RoundTrip()
         {
-            var response = new Details()
+            var response = new NodeDetails()
             {
                 Commands = 
                 {

@@ -71,7 +71,7 @@ public sealed class CalculatorNode : IInsideOutNode
             Success = true,
             Result = new StructValue()
             {
-                Members =
+                Values =
                 {
                     {"Result", Value.From(result)},
                     {"LastResult", Value.From(m_LastResult)},
@@ -84,9 +84,9 @@ public sealed class CalculatorNode : IInsideOutNode
         return new(response);
     }
 
-    public ValueTask<Details> GetDetails(CancellationToken ct)
+    public ValueTask<NodeDetails> GetDetails(CancellationToken ct)
     {
-        var details = new Details()
+        var details = new NodeDetails()
         {
             Commands = {Add, Subtract, Divide, Multiply, Negate, Abs},
             Values =

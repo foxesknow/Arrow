@@ -110,7 +110,7 @@ public sealed partial class TcpClientManager : ClientManagerBase, IClientManager
         }
     }
 
-    private async ValueTask<Details> GetDetails(PublisherID publisherID, string host, int port, CancellationToken ct)
+    private async ValueTask<NodeDetails> GetDetails(PublisherID publisherID, string host, int port, CancellationToken ct)
     {
         ThrowIfDisposed();
 
@@ -127,7 +127,7 @@ public sealed partial class TcpClientManager : ClientManagerBase, IClientManager
                 await Send(publisherID, transportRequest, stream, cancellationToken).ContinueOnAnyContext();
                 var response = await Receive(stream, cancellationToken);
 
-                return ReturnExpected<Details>(response);
+                return ReturnExpected<NodeDetails>(response);
             }
         }
     }

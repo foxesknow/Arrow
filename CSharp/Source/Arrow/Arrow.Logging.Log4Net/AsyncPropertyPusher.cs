@@ -15,16 +15,20 @@ namespace Arrow.Logging.Log4Net
     /// <summary>
     /// Pushes properties into a log4net context
     /// </summary>
-    internal class AsyncPropertyPusher : PropertyPusherBase
+    internal sealed class AsyncPropertyPusher : PropertyPusherBase
     {
-        private static readonly AsyncLocal<PropertyNode> s_Properties = new();
+        private static readonly AsyncLocal<PropertyNode?> s_Properties = new();
 
         protected override IDisposable PushProperty(string name, object value)
         {
-            throw new NotImplementedException();
+            var oldHead = s_Properties.Value;
+            var newHead = new PropertyNode(name, value, oldHead);
+            s_Properties.Value = newHead;
+
+            return newHead;
         }
 
-        public static void Combine(PropertiesDictionary target)
+        public static void Combine(PropertiesDictionary? target)
         {
             if(target is null) return;
 
@@ -70,9 +74,9 @@ namespace Arrow.Logging.Log4Net
             }
         }
 
-        private class PropertyNode : IDisposable
+        private sealed class PropertyNode : IDisposable
         {
-            public PropertyNode(string name, object value, PropertyNode next)
+            public PropertyNode(string name, object value, PropertyNode? next)
             {
                 this.Name = name;
                 this.Value = value;
@@ -81,7 +85,7 @@ namespace Arrow.Logging.Log4Net
 
             public string Name{get;}
             public object Value{get;}
-            public PropertyNode Next{get;}
+            public PropertyNode? Next{get;}
 
             public void Dispose()
             {

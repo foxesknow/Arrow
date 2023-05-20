@@ -34,13 +34,13 @@ namespace UnitTests.Arrow.InsideOut
         {
             StructValue initial = new StructValue()
             {
-                Members =
+                Values =
                 {
                     {"Name", Value.From("Jack")},
                     {"Age", Value.From(42)},
                     {"Location", new StructValue()
                                  {
-                                    Members = 
+                                    Values = 
                                     {
                                         {"Latitude", Value.From(51.1781m)},
                                         {"Longitude", Value.From(-4.65965m)}
@@ -52,14 +52,14 @@ namespace UnitTests.Arrow.InsideOut
 
             var roundTrip = RoundTrip(initial);
             
-            Assert.That(initial.Members.Count, Is.EqualTo(roundTrip.Members.Count) & Is.EqualTo(3));
-            Assert.That(((StringValue)(roundTrip.Members["Name"])).Value, Is.EqualTo("Jack"));
-            Assert.That(((Int32Value)(roundTrip.Members["Age"])).Value, Is.EqualTo(42));
+            Assert.That(initial.Values.Count, Is.EqualTo(roundTrip.Values.Count) & Is.EqualTo(3));
+            Assert.That(((StringValue)(roundTrip.Values["Name"])).Value, Is.EqualTo("Jack"));
+            Assert.That(((Int32Value)(roundTrip.Values["Age"])).Value, Is.EqualTo(42));
 
-            var location = (StructValue)(roundTrip.Members["Location"]);
-            Assert.That(location.Members.Count, Is.EqualTo(2));
-            Assert.That(((DecimalValue)(location.Members["Latitude"])).Value, Is.EqualTo(51.1781m));
-            Assert.That(((DecimalValue)(location.Members["Longitude"])).Value, Is.EqualTo(-4.65965m));
+            var location = (StructValue)(roundTrip.Values["Location"]);
+            Assert.That(location.Values.Count, Is.EqualTo(2));
+            Assert.That(((DecimalValue)(location.Values["Latitude"])).Value, Is.EqualTo(51.1781m));
+            Assert.That(((DecimalValue)(location.Values["Longitude"])).Value, Is.EqualTo(-4.65965m));
         }
 
         [Test]

@@ -11,7 +11,7 @@ namespace Arrow.InsideOut;
 /// Base class for all responses sent back from an InsideOut server
 /// </summary>
 [JsonPolymorphic]
-[JsonDerivedType(typeof(Details), "Details")]
+[JsonDerivedType(typeof(NodeDetails), "Details")]
 [JsonDerivedType(typeof(ExceptionResponse), "Exception")]
 [JsonDerivedType(typeof(ExecuteResponse), "Execute")]
 public abstract class ResponseBase : CompositeValue

@@ -91,7 +91,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Tcp.Client
             using(var manager = new TcpClientManager(() => new NetworkClient(network)))
             {
                 var requestID = new RequestID(Guid.NewGuid(), Guid.NewGuid());
-                var transportResponse = new TransportResponse(NodeResponse.GetDetails, requestID, new Details()
+                var transportResponse = new TransportResponse(NodeResponse.GetDetails, requestID, new NodeDetails()
                 {
                     Commands = 
                     {

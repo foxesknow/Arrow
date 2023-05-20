@@ -40,7 +40,7 @@ public partial class InsideOutPlugin
             }
         }
 
-        public async ValueTask<Details> GetDetails(CancellationToken ct)
+        public async ValueTask<NodeDetails> GetDetails(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 

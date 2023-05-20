@@ -26,7 +26,7 @@ public abstract class ClientManagerBase : IDisposable
 
         return transportResponse.NodeResponse switch
         {
-            NodeResponse.GetDetails => (Details)(transportResponse.Response),
+            NodeResponse.GetDetails => (NodeDetails)(transportResponse.Response),
             NodeResponse.Execute    => (ExecuteResponse)(transportResponse.Response),
             NodeResponse.Exception  => throw ((ExceptionResponse)(transportResponse.Response)).AsException(),
             _                       => throw new InsideOutException($"unsupported response type: {transportResponse.NodeResponse}")

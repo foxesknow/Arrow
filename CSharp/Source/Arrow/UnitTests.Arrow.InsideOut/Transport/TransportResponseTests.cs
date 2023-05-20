@@ -29,7 +29,7 @@ namespace UnitTests.Arrow.InsideOut.Transport
             };
             
             var now = DateTime.Now;
-            var response = new TransportResponse(NodeResponse.GetDetails, m_RequestID, new Details()
+            var response = new TransportResponse(NodeResponse.GetDetails, m_RequestID, new NodeDetails()
             {
                 Commands = {command},
                 Values =
@@ -49,8 +49,8 @@ namespace UnitTests.Arrow.InsideOut.Transport
             Assert.That(response.NodeResponse, Is.EqualTo(roundTrip.NodeResponse));
             Assert.That(response.RequestID, Is.EqualTo(roundTrip.RequestID));            
             
-            var inDetails = (Details)response.Response;
-            var outDetails = (Details)roundTrip.Response;
+            var inDetails = (NodeDetails)response.Response;
+            var outDetails = (NodeDetails)roundTrip.Response;
 
             Assert.That(inDetails.Values.Count, Is.EqualTo(outDetails.Values.Count));
             foreach(var (name, value) in inDetails.Values)

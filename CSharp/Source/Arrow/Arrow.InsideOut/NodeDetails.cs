@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Arrow.InsideOut;
 
-public sealed class Details : ResponseBase
+public sealed class NodeDetails : ResponseBase
 {
     private Dictionary<string, Value> ? m_Values;
     private List<Command>? m_Commands;
 
     public override Type Type()
     {
-        return typeof(Details);
+        return typeof(NodeDetails);
     }
 
     /// <summary>

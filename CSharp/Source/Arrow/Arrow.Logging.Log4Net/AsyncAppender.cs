@@ -39,6 +39,7 @@ namespace Arrow.Logging.Log4Net
                 // As we're doing the logging on a different thread
                 // we need to capture the thread information here
                 loggingEvent.Fix = FixFlags.ThreadName | FixFlags.Exception;
+                AsyncPropertyPusher.Combine(loggingEvent.Properties);
 
                 LogData data = new LogData(appender, loggingEvent);
                 AsyncLogWriter.Enqueue(data);

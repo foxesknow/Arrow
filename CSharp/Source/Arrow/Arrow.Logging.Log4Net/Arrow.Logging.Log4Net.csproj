@@ -3,21 +3,27 @@
 		<ProductVersion>8.0.30703</ProductVersion>
 		<AssemblyTitle>Arrow.Logging.Log4Net</AssemblyTitle>
 		<Product>Arrow.Logging.Log4Net</Product>
+		<Nullable>annotations</Nullable>
 	</PropertyGroup>
+	
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>full</DebugType>
 	</PropertyGroup>
+	
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>pdbonly</DebugType>
 	</PropertyGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="log4net" Version="2.0.15" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<Content Include="log4net.dll" />
 		<Content Include="SampleAsyncLogConfig.xml" />
 		<Content Include="SampleLogConfig.xml" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\Arrow\Arrow.csproj" />
 	</ItemGroup>

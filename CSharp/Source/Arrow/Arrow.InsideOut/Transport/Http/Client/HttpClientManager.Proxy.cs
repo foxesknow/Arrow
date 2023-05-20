@@ -33,7 +33,7 @@ public sealed partial class HttpClientManager
             return m_ClientManager.Execute(m_PublisherID, m_Endpoint, m_ApplicationID, ct, request);
         }
 
-        public ValueTask<Details> GetDetails(CancellationToken ct)
+        public ValueTask<NodeDetails> GetDetails(CancellationToken ct)
         {
             return m_ClientManager.GetDetails(m_PublisherID, m_Endpoint, m_ApplicationID, ct);
         }

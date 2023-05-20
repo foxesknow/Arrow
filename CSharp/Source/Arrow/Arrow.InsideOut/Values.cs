@@ -23,7 +23,8 @@ namespace Arrow.InsideOut;
 [JsonDerivedType(typeof(TimeSpanValue), "TimeSpan")]
 [JsonDerivedType(typeof(DateTimeValue), "DateTime")]
 [JsonDerivedType(typeof(StringValue), "String")]
-[JsonDerivedType(typeof(Details), "Details")]
+[JsonDerivedType(typeof(JsonValue), "Json")]
+[JsonDerivedType(typeof(NodeDetails), "Details")]
 [JsonDerivedType(typeof(ExceptionResponse), "ExceptionResponse")]
 [JsonDerivedType(typeof(ExecuteResponse), "ExecuteResponse")]
 public abstract partial class Value
@@ -143,7 +144,7 @@ public abstract class CompositeValue : Value
 /// </summary>
 public sealed class StructValue : CompositeValue
 {
-    private Dictionary<string, Value>? m_Members;
+    private Dictionary<string, Value>? m_Values;
     
     /// <inheritdoc/>
     public override Type Type()
@@ -154,10 +155,10 @@ public sealed class StructValue : CompositeValue
         /// <summary>
     /// The members of the struct
     /// </summary>
-    public Dictionary<string, Value> Members
+    public Dictionary<string, Value> Values
     {
-        get{return m_Members ??= new();}
-        set{m_Members = value;}
+        get{return m_Values ??= new();}
+        set{m_Values = value;}
     }
 }
 
@@ -189,19 +190,39 @@ public sealed class DoubleValue : BasicValue<double>
 {
 }
 
-//
+/// <summary>
+/// A decimal
+/// </summary>
 public sealed class DecimalValue : BasicValue<decimal>
 {
 }
 
+/// <summary>
+/// A timespan
+/// </summary>
 public sealed class TimeSpanValue : BasicValue<TimeSpan>
 {
 }
 
+/// <summary>
+/// A date and time
+/// </summary>
 public sealed class DateTimeValue : BasicValue<DateTime>
 {
 }
 
+/// <summary>
+/// A string, which may be null
+/// </summary>
 public sealed class StringValue : BasicValue<string?>
+{
+}
+
+/// <summary>
+/// Although this is a string it tells the user that the value
+/// within is a valid json that should be interpreted in some
+/// domain specific way.
+/// </summary>
+public sealed class JsonValue : BasicValue<string?>
 {
 }

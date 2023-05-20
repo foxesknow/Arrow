@@ -181,10 +181,10 @@ public sealed partial class MessagingClientManager : ClientManagerBase, IClientM
 
     private void GetDetailsResponse(TransportResponse transportResponse)
     {
-        var taskState = RemoveTaskState<Details>(transportResponse.RequestID);
+        var taskState = RemoveTaskState<NodeDetails>(transportResponse.RequestID);
         if(taskState is null) return;
 
-        if(transportResponse.Response is Details details)
+        if(transportResponse.Response is NodeDetails details)
         {
             taskState.Source.TrySetResult(details);
         }
@@ -242,12 +242,12 @@ public sealed partial class MessagingClientManager : ClientManagerBase, IClientM
         return new(taskState.Source.Task);
     }
 
-    private ValueTask<Details> GetDetails(PublisherID publisherID, CancellationToken ct)
+    private ValueTask<NodeDetails> GetDetails(PublisherID publisherID, CancellationToken ct)
     {
         ThrowIfDisposed();
 
         var requestID = this.RequestIDFactory.Make();
-        var taskState = MakeTaskState<Details>(requestID);
+        var taskState = MakeTaskState<NodeDetails>(requestID);
 
         var transportRequest = new TransportRequest(NodeFunction.GetDetails, publisherID, requestID);
         Send(publisherID, taskState, transportRequest, ct);

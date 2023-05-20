@@ -17,7 +17,7 @@ public interface IInsideOutNode
     /// </summary>
     /// <param name="ct"></param>
     /// <returns></returns>
-    public ValueTask<Details> GetDetails(CancellationToken ct = default);
+    public ValueTask<NodeDetails> GetDetails(CancellationToken ct = default);
     
     /// <summary>
     /// Executes a command against the node
