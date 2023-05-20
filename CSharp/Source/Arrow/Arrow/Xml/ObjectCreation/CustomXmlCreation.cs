@@ -53,11 +53,11 @@ namespace Arrow.Xml.ObjectCreation
 
         private static readonly Type DefaultNodeType = typeof(string);
 
-        private Dictionary<string, Converter<Uri, object>> m_ReferenceResolvers = new Dictionary<string, Converter<Uri, object>>();
+        private readonly Dictionary<string, Converter<Uri, object>> m_ReferenceResolvers = new Dictionary<string, Converter<Uri, object>>();
 
-        private Stack<Uri> m_Contexts = new Stack<Uri>();
+        private readonly Stack<Uri> m_Contexts = new Stack<Uri>();
 
-        private Func<string, object?>? m_UnknownVariableLookup;
+        private readonly Func<string, object?>? m_UnknownVariableLookup;
 
         private Func<Type, object?[]?, object> m_MakeInstance = DefaultMakeInstance;
 
@@ -568,7 +568,8 @@ namespace Arrow.Xml.ObjectCreation
         /// <returns>An object of the specified type</returns>
         private object? CreateFromString(XmlNode node, Type type, string value)
         {
-            return QuickInitialize(TypeResolver.CoerceToType(type, value));
+            var fromString = TypeResolver.CoerceToType(type, value);
+            return QuickInitialize(fromString);
         }
 
         /// <summary>

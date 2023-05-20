@@ -27,6 +27,9 @@ namespace UnitTests.Arrow.InsideOut
             Check<StringValue, string>(new(){Value = ""});
             Check<StringValue, string>(new(){Value = "A"});
             Check<StringValue, string>(new(){Value = "Jack and Sawyer"});
+            Check<DateOnlyValue, DateOnly>(new(){Value = DateOnly.FromDateTime(DateTime.Now)});
+            Check<TimeOnlyValue, TimeOnly>(new(){Value = TimeOnly.FromDateTime(DateTime.Now)});
+            Check<JsonValue, String>(new(){Value = "[1, 2, 3]"});
         }
 
         [Test]
@@ -82,6 +85,15 @@ namespace UnitTests.Arrow.InsideOut
             Assert.That(initial.Values[2], Is.EqualTo(roundTrip.Values[2]));
         }
 
+        [Test]
+        public void StructurallyIdenticalTypesAreNotEqual()
+        {
+            var stringValue = new StringValue(){Value = "[1]"};
+            var jsonValue = new JsonValue(){Value = "[1]"};
+
+            Assert.That(stringValue, Is.Not.EqualTo(jsonValue));
+        }
+
         private void Check<TBasic, T>(TBasic value) where TBasic : BasicValue<T>
         {
             var roundTrip = RoundTrip(value);
@@ -93,6 +105,16 @@ namespace UnitTests.Arrow.InsideOut
             Value asValue = value;
             var roundTripAsValue = RoundTrip(asValue);
             Assert.That(value.GetType(), Is.EqualTo(roundTripAsValue.GetType()));
+
+            // We'll also put it into a struct to make sure it's time information is encoded correctly.
+            var @struct = new StructValue()
+            {
+                Values = {{"TestValue", value}}
+            };
+
+            var structRoundTrip = RoundTrip(@struct);
+            var structValue = (TBasic)structRoundTrip.Values["TestValue"];
+            Assert.That(value, Is.EqualTo(structValue));
         }
     }
 }

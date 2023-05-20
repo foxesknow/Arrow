@@ -22,6 +22,8 @@ namespace Arrow.InsideOut;
 [JsonDerivedType(typeof(DecimalValue), "Decimal")]
 [JsonDerivedType(typeof(TimeSpanValue), "TimeSpan")]
 [JsonDerivedType(typeof(DateTimeValue), "DateTime")]
+[JsonDerivedType(typeof(DateOnlyValue), "DateOnly")]
+[JsonDerivedType(typeof(TimeOnlyValue), "TimeOnly")]
 [JsonDerivedType(typeof(StringValue), "String")]
 [JsonDerivedType(typeof(JsonValue), "Json")]
 [JsonDerivedType(typeof(NodeDetails), "Details")]
@@ -82,7 +84,12 @@ public abstract class BasicValue<T> : BasicValue, IEquatable<BasicValue<T>>
     /// <inheritdoc/>
     public bool Equals(BasicValue<T>? other)
     {
-        return other is not null && EqualityComparer<T>.Default.Equals(this.Value, other.Value);
+        // NOTE: The reason we compare the type is so that a
+        // StringValue can't be compared with a JsonValue, for example.
+        // We prevent this as they're semantically different
+        return  other is not null 
+                && this.GetType() == other.GetType() 
+                && EqualityComparer<T>.Default.Equals(this.Value, other.Value);
     }
 
     /// <inheritdoc/>
@@ -201,6 +208,20 @@ public sealed class DecimalValue : BasicValue<decimal>
 /// A timespan
 /// </summary>
 public sealed class TimeSpanValue : BasicValue<TimeSpan>
+{
+}
+
+/// <summary>
+/// Just a date
+/// </summary>
+public sealed class DateOnlyValue : BasicValue<DateOnly>
+{
+}
+
+/// <summary>
+/// Just a time
+/// </summary>
+public sealed class TimeOnlyValue : BasicValue<TimeOnly>
 {
 }
 

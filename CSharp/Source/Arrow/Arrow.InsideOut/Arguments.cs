@@ -45,6 +45,8 @@ public interface IReadOnlyArgument<out T>
 [JsonDerivedType(typeof(DecimalArgument), "Decimal")]
 [JsonDerivedType(typeof(TimeSpanArgument), "TimeSpan")]
 [JsonDerivedType(typeof(DateTimeArgument), "DateTime")]
+[JsonDerivedType(typeof(DateOnlyArgument), "DateOnly")]
+[JsonDerivedType(typeof(TimeOnlyArgument), "TimeOnly")]
 [JsonDerivedType(typeof(StringArgument), "String")]
 [JsonDerivedType(typeof(SingleItemArgument), "SingleItem")]
 [JsonDerivedType(typeof(MultipleItemsArgument), "MultipleItems")]
@@ -175,6 +177,26 @@ public sealed class TimeSpanArgument : Argument<TimeSpan>
 public sealed class DateTimeArgument : Argument<DateTime>
 {
     public DateTimeArgument(string name) : base(name)
+    {
+    }
+}
+
+/// <summary>
+/// A time only argument
+/// </summary>
+public sealed class TimeOnlyArgument : Argument<TimeOnly>
+{
+    public TimeOnlyArgument(string name) : base(name)
+    {
+    }
+}
+
+/// <summary>
+/// A date only argument
+/// </summary>
+public sealed class DateOnlyArgument : Argument<DateOnly>
+{
+    public DateOnlyArgument(string name) : base(name)
     {
     }
 }

@@ -21,6 +21,8 @@ namespace Arrow.InsideOut;
 [JsonDerivedType(typeof(DecimalParameter), "Decimal")]
 [JsonDerivedType(typeof(TimeSpanParameter), "TimeSpan")]
 [JsonDerivedType(typeof(DateTimeParameter), "DateTime")]
+[JsonDerivedType(typeof(TimeOnlyParameter), "TimeOnly")]
+[JsonDerivedType(typeof(DateOnlyParameter), "DateOnly")]
 [JsonDerivedType(typeof(StringParameter), "String")]
 [JsonDerivedType(typeof(SuggestionParameter), "Suggest")]
 [JsonDerivedType(typeof(SingleItemParameter), "SingleItem")]
@@ -130,7 +132,7 @@ public sealed class BoolParameter : Parameter<bool>
 
     public override BoolArgument MakeArgument(bool value)
     {
-        return new BoolArgument(this.Name){Value = value};
+        return new(this.Name){Value = value};
     }
 
     public override BoolArgument MakeArgumentFromObject(object? value)
@@ -150,7 +152,7 @@ public sealed class Int32Parameter : Parameter<int>
 
     public override Int32Argument MakeArgument(int value)
     {
-        return new Int32Argument(this.Name){Value = value};
+        return new(this.Name){Value = value};
     }
 
     public override Int32Argument MakeArgumentFromObject(object? value)
@@ -170,7 +172,7 @@ public sealed class Int64Parameter : Parameter<long>
 
     public override Int64Argument MakeArgument(long value)
     {
-        return new Int64Argument(this.Name){Value = value};
+        return new(this.Name){Value = value};
     }
 
     public override Int64Argument MakeArgumentFromObject(object? value)
@@ -190,7 +192,7 @@ public sealed class DoubleParameter : Parameter<double>
 
     public override DoubleArgument MakeArgument(double value)
     {
-        return new DoubleArgument(this.Name){Value = value};
+        return new(this.Name){Value = value};
     }
 
     public override DoubleArgument MakeArgumentFromObject(object? value)
@@ -210,7 +212,7 @@ public sealed class DecimalParameter : Parameter<decimal>
 
     public override DecimalArgument MakeArgument(decimal value)
     {
-        return new DecimalArgument(this.Name){Value = value};
+        return new(this.Name){Value = value};
     }
 
     public override DecimalArgument MakeArgumentFromObject(object? value)
@@ -230,7 +232,7 @@ public sealed class TimeSpanParameter : Parameter<TimeSpan>
 
     public override TimeSpanArgument MakeArgument(TimeSpan value)
     {
-        return new TimeSpanArgument(this.Name){Value = value};
+        return new(this.Name){Value = value};
     }
 
     public override TimeSpanArgument MakeArgumentFromObject(object? value)
@@ -250,10 +252,50 @@ public sealed class DateTimeParameter : Parameter<DateTime>
 
     public override DateTimeArgument MakeArgument(DateTime value)
     {
-        return new DateTimeArgument(this.Name){Value = value};
+        return new(this.Name){Value = value};
     }
 
     public override DateTimeArgument MakeArgumentFromObject(object? value)
+    {
+        return MakeArgument(CoerceToType(value));
+    }
+}
+
+/// <summary>
+/// A time only parameter
+/// </summary>
+public sealed class TimeOnlyParameter : Parameter<TimeOnly>
+{
+    public TimeOnlyParameter(string name) : base(name)
+    {
+    }
+
+    public override TimeOnlyArgument MakeArgument(TimeOnly value)
+    {
+        return new (this.Name){Value = value};
+    }
+
+    public override TimeOnlyArgument MakeArgumentFromObject(object? value)
+    {
+        return MakeArgument(CoerceToType(value));
+    }
+}
+
+/// <summary>
+/// A time only parameter
+/// </summary>
+public sealed class DateOnlyParameter : Parameter<DateOnly>
+{
+    public DateOnlyParameter(string name) : base(name)
+    {
+    }
+
+    public override DateOnlyArgument MakeArgument(DateOnly value)
+    {
+        return new (this.Name){Value = value};
+    }
+
+    public override DateOnlyArgument MakeArgumentFromObject(object? value)
     {
         return MakeArgument(CoerceToType(value));
     }

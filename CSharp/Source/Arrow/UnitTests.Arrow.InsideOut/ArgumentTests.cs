@@ -21,9 +21,13 @@ namespace UnitTests.Arrow.InsideOut
             Check(new Int64Argument("foo"){Value = 40});
             Check(new DoubleArgument("foo"){Value = 80d});
             Check(new DecimalArgument("foo"){Value = 160m});
+            
             Check(new TimeSpanArgument("foo"){Value = DateTime.Now.TimeOfDay});
             Check(new DateTimeArgument("foo"){Value = DateTime.Now});
             Check(new DateTimeArgument("foo"){Value = DateTime.UtcNow});
+            Check(new TimeOnlyArgument("foo"){Value = TimeOnly.FromDateTime(DateTime.Now)});
+            Check(new DateOnlyArgument("foo"){Value = DateOnly.FromDateTime(DateTime.Now)});
+            
             Check(new StringArgument("foo"){Value = null});
             Check(new StringArgument("foo"){Value = "Jack"});
             
