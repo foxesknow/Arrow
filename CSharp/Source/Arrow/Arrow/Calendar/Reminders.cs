@@ -31,7 +31,7 @@ namespace Arrow.Calendar
         
         private readonly Action<object?> m_CallViaState;
 
-        private int m_Disposed = ObjectDispose.NotDisposed;
+        private int m_Disposed = ObjectDispose.MultiThreadedNotDisposed;
 
 
         /// <summary>

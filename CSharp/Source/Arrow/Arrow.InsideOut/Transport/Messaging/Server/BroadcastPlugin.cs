@@ -35,7 +35,7 @@ public sealed class BroadcastPlugin : Plugin, IPluginPostStart, IPluginInitializ
 
     private readonly Reminders m_Reminders = new();
 
-    private int m_Disposed = ObjectDispose.NotDisposed;
+    private int m_Disposed = ObjectDispose.MultiThreadedNotDisposed;
 
     private long m_SequenceNumber = 0;
 
