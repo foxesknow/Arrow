@@ -96,11 +96,36 @@ public sealed class ExecuteRequest : RequestBase
         return GetLevels().Count;
     }
 
+    /// <summary>
+    /// Returns the next level in the path
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="InsideOutException"></exception>
     public string PopLevel()
     {
         if(TryPeekLevel(out var level)) return level;
 
         throw new InsideOutException("no more levels available");
+    }
+
+    /// <summary>
+    /// Returns the next level in the path and expects there to be no more levels.
+    /// This is typically used when you're executing a command and you don't have
+    /// any child nodes to potentially pass down to
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="InsideOutException"></exception>
+    public string PopLeafLevel()
+    {
+        var levels = GetLevels();
+        if(levels.Count != 1)
+        {
+            var remaining = string.Join(PathDivider, levels);
+            throw new InsideOutException($"not at a leaf, still have {remaining}");
+        }
+
+        var leaf = levels.Dequeue();
+        return leaf;
     }
 
     /// <summary>

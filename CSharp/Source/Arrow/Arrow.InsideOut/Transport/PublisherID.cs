@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace Arrow.InsideOut.Transport
 {
     /// <summary>
-    /// Identifies a process that published InsideOut data
+    /// Identifies a process that published InsideOut data.
+    /// The case of the server and instance name are retained.
+    /// However, they are treated as case insenstive when being compared
     /// </summary>
     public sealed class PublisherID : IEquatable<PublisherID>
     {
@@ -28,17 +30,17 @@ namespace Arrow.InsideOut.Transport
             if(instanceName is null) throw new ArgumentNullException(nameof(instanceName));
             if(string.IsNullOrWhiteSpace(instanceName)) throw new ArgumentException("invalid instance name", nameof(instanceName));
 
-            this.ServerName = serverName.ToLower();
-            this.InstanceName = instanceName.ToLower();
+            this.ServerName = serverName;
+            this.InstanceName = instanceName;
         }
 
         /// <summary>
-        /// The name of the server (always in lowercase)
+        /// The name of the server
         /// </summary>
         public string ServerName{get;}
         
         /// <summary>
-        /// The name of the instance (always in lower case(
+        /// The name of the instance
         /// </summary>
         public string InstanceName{get;}
 
@@ -55,8 +57,8 @@ namespace Arrow.InsideOut.Transport
         public bool Equals(PublisherID? other)
         {
             return other is not null &&
-                   this.ServerName == other.ServerName &&
-                   this.InstanceName == other.InstanceName;
+                   StringComparer.OrdinalIgnoreCase.Equals(this.ServerName, other.ServerName) &&
+                   StringComparer.OrdinalIgnoreCase.Equals(this.InstanceName, other.InstanceName);
         }
 
         /// <inheritdoc/>
@@ -68,7 +70,11 @@ namespace Arrow.InsideOut.Transport
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.ServerName.GetHashCode(), this.InstanceName.GetHashCode());
+            return HashCode.Combine
+            (
+                StringComparer.OrdinalIgnoreCase.GetHashCode(this.ServerName),
+                StringComparer.OrdinalIgnoreCase.GetHashCode(this.InstanceName)
+            );
         }
 
         /// <inheritdoc/>

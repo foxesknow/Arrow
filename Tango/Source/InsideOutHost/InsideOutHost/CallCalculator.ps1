@@ -1,3 +1,16 @@
+param
+(
+    [Parameter(Mandatory = $true)]
+    [ValidateSet("Add", "Subtract", "Divide", "Multiply")]
+    [string] $operation,
+
+    [Parameter(Mandatory = $true)]
+    [int] $x,
+    
+    [Parameter(Mandatory = $true)]
+    [int] $y
+)
+
 $endpoint = "http://localhost:8080/InsideOut/Process"
 
 $json = @"
@@ -13,16 +26,16 @@ $json = @"
     "NodeFunction" : "Execute",
     "Request" : {
         "`$type" : "Execute",
-        "CommandPath" : "Calculator/Divide",
+        "CommandPath" : "Calculator/$operation",
         "Arguments" : [
             {
                 "`$type" : "Decimal",
-                "Value" : 1,
+                "Value" : $x,
                 "Name": "lhs"
             },
             {
                 "`$type" : "Decimal",
-                "Value" : 0.3333333333333333333333333333,
+                "Value" : $y,
                 "Name": "rhs"
             }
         ]

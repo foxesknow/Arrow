@@ -53,7 +53,7 @@ public sealed class CalculatorNode : IInsideOutNode
 
     public ValueTask<ExecuteResponse> Execute(ExecuteRequest request, CancellationToken ct)
     {
-        var command = request.PopLevel();
+        var command = request.PopLeafLevel();
 
         decimal result = command switch
         {

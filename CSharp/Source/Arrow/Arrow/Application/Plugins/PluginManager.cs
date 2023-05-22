@@ -38,6 +38,16 @@ namespace Arrow.Application.Plugins
 		public PluginManager(IEnumerable<Plugin> plugins)
 		{
 			m_Plugins = new(plugins);
+
+			// Check for plugins with the same name - this isn't allowed
+			var duplicateNames = new HashSet<string>();
+			foreach(var plugin in m_Plugins)
+			{
+				if(duplicateNames.Add(plugin.Name) == false)
+				{
+					throw new ArgumentException($"more than one plugin has the name {plugin.Name}", nameof(plugins));
+				}
+			}
 		}
 		
 		/// <summary>

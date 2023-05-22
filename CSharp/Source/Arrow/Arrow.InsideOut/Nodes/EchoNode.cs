@@ -21,8 +21,13 @@ public sealed class EchoNode : IInsideOutNode
 
     public ValueTask<ExecuteResponse> Execute(ExecuteRequest request, CancellationToken ct)
     {
-        request.EnsureArgumentCount(1);
-        var message = request.GetArgumentValue<string>(0);
+        var command = request.PopLeafLevel();
+        
+        var message = command switch
+        {
+            "Echo" => request.Let((string incoming) => incoming),
+            _      => throw new InsideOutException($"unsupported operation: {command}")
+        };
 
         var result = new ExecuteResponse()
         {

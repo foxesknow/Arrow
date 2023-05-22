@@ -9,7 +9,6 @@ using Arrow.InsideOut.Transport;
 
 using NUnit.Framework;
 
-
 namespace UnitTests.Arrow.InsideOut.Transport
 {
     [TestFixture]

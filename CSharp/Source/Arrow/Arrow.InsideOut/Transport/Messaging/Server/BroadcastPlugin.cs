@@ -21,7 +21,7 @@ namespace Arrow.InsideOut.Transport.Messaging.Server;
 /// </summary>
 public sealed class BroadcastPlugin : Plugin, IPluginPostStart, IPluginInitialize, IInsideOutNode, IAsyncDisposable, IBroadcastPlugin
 {
-    private const string BroadcastName = "InsideOut.Messaging.BroadcastPlugin";
+    internal const string BroadcastName = "InsideOut.Messaging.BroadcastPlugin";
 
     private static readonly ILog Log = new PrefixLog(LogManager.GetDefaultLog(), $"[{BroadcastName}]");
 
@@ -38,6 +38,8 @@ public sealed class BroadcastPlugin : Plugin, IPluginPostStart, IPluginInitializ
     private int m_Disposed = ObjectDispose.MultiThreadedNotDisposed;
 
     private long m_SequenceNumber = 0;
+    private Value? m_CachedFrequency = null;
+    private Value? m_CachedAllowSchedulePush = null;
 
     public override string Name
     {
@@ -127,14 +129,17 @@ public sealed class BroadcastPlugin : Plugin, IPluginPostStart, IPluginInitializ
     {
         var sequenceNumber = Interlocked.Increment(ref m_SequenceNumber);
 
+        var frequency = (m_CachedFrequency ??= Value.From(this.Frequency));
+        var allowSchedulePush = (m_CachedAllowSchedulePush ??= Value.From(this.AllowSchedulePush));
+
         var details = new NodeDetails()
         {
             Values = 
             {
                 {BroadcastState.SequenceNumber, Value.From(sequenceNumber)},
                 {BroadcastState.LastPublished, Value.From(Clock.UtcNow)},
-                {BroadcastState.Frequency, Value.From(this.Frequency)},
-                {BroadcastState.AllowSchedulePush, Value.From(this.AllowSchedulePush)},
+                {BroadcastState.Frequency, frequency},
+                {BroadcastState.AllowSchedulePush, allowSchedulePush},
             }
         };
 
@@ -214,7 +219,7 @@ public sealed class BroadcastPlugin : Plugin, IPluginPostStart, IPluginInitializ
         }
         catch(Exception e)
         {
-            Log.Error("faile to create sender", e);
+            Log.Error("failed to create sender", e);
         }
 
         messageSender = m_MessageSender;
