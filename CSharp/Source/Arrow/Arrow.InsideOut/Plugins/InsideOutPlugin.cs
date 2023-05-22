@@ -26,8 +26,8 @@ namespace Arrow.InsideOut.Plugins;
 /// By default all nodes that are registered will not support concurrent calls to GetDetails and Execute.
 /// This will make it easier for applications to update state without having to deals with concurrency issues.
 /// 
-/// If a node wishes to allow concurrent calls to GetDetails and Execute then it should add the "AllowConcurrentCalls"
-/// to its class declaration.
+/// If a node wishes to allow concurrent calls to GetDetails and Execute then it should add the "AllowConcurrentCalls" 
+/// attribute to its class declaration.
 /// </summary>
 public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomXmlInitialization, IPluginPostStart
 {
@@ -67,18 +67,14 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
     public async ValueTask<ExecuteResponse> Execute(ExecuteRequest request, CancellationToken ct)
     {
         if(request.TryPopLevel(out var name) == false) throw new InsideOutException("could not get a node name");
-
         if(m_Nodes.TryGetValue(name, out var proxy) == false) throw new InsideOutException($"could not find {name}");
 
         var result = await proxy.Execute(request, ct).ContinueOnAnyContext();
 
-        if(m_BroadcastPlugins.Count != 0)
+        for(var i = 0; i < m_BroadcastPlugins.Count; i++)
         {
-            for(var i = 0; i < m_BroadcastPlugins.Count; i++)
-            {
-                var broadcaster = m_BroadcastPlugins[i];
-                await broadcaster.SchedulePush().ContinueOnAnyContext();
-            }
+            var broadcaster = m_BroadcastPlugins[i];
+            await broadcaster.SchedulePush().ContinueOnAnyContext();
         }
 
         return result;

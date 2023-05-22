@@ -26,11 +26,23 @@ namespace Arrow.InsideOut.Transport.Tcp
         /// <returns></returns>
         public static async ValueTask Write(Stream stream, byte[] buffer, int offset, int count, CancellationToken ct)
         {
-            await stream.WriteAsync(Versions.VersionAsBuffer, 0, Versions.VersionAsBuffer.Length, ct).ContinueOnAnyContext();
-            await stream.WriteAsync(BitConverter.GetBytes(count), 0, sizeof(int), ct).ContinueOnAnyContext();
-            await stream.WriteAsync(buffer, offset, count, ct).ContinueOnAnyContext();
+            var pool = ArrayPool<byte>.Shared;
+            var countBuffer = pool.Rent(sizeof(int));
 
-            await stream.FlushAsync().ContinueOnAnyContext();
+            try
+            {
+                BitConverter.TryWriteBytes(countBuffer, count);
+
+                await stream.WriteAsync(Versions.VersionAsBuffer, 0, Versions.VersionAsBuffer.Length, ct).ContinueOnAnyContext();
+                await stream.WriteAsync(countBuffer, 0, sizeof(int), ct).ContinueOnAnyContext();
+                await stream.WriteAsync(buffer, offset, count, ct).ContinueOnAnyContext();
+
+                await stream.FlushAsync().ContinueOnAnyContext();
+            }
+            finally
+            {
+                pool.Return(countBuffer);
+            }
         }
 
         /// <summary>
@@ -47,52 +59,54 @@ namespace Arrow.InsideOut.Transport.Tcp
             var pool = ArrayPool<byte>.Shared;
 
             // We'll grab a buffer up front, any hopefully it'll be big enough
-            var initialSize = Math.Max(256, headerSize);
+            var initialSize = Math.Max(512, headerSize);
             var buffer = pool.Rent(initialSize);
 
-            var headerByteOffset = 0;
-            var headersBytesToRead = headerSize;
-
-            while(headersBytesToRead != 0)
+            try
             {
-                var read = await stream.ReadAsync(buffer, headerByteOffset, headersBytesToRead, ct).ContinueOnAnyContext();
-                if(read == 0) ReturnAndThrow(pool, buffer, "not enough data");
+                var headerByteOffset = 0;
+                var headersBytesToRead = headerSize;
 
-                headerByteOffset += read;
-                headersBytesToRead -= read;
-            }
+                while(headersBytesToRead != 0)
+                {
+                    var read = await stream.ReadAsync(buffer, headerByteOffset, headersBytesToRead, ct).ContinueOnAnyContext();
+                    if(read == 0) throw new IOException("not enough data");
 
-            var version = BitConverter.ToInt32(buffer, 0);
-            if(version != Versions.Version) ReturnAndThrow(pool, buffer, "incorrect version");
+                    headerByteOffset += read;
+                    headersBytesToRead -= read;
+                }
 
-            var bufferLength = BitConverter.ToInt32(buffer, sizeof(int));
+                var version = BitConverter.ToInt32(buffer, 0);
+                if(version != Versions.Version) throw new IOException("incorrect version");
+
+                var bufferLength = BitConverter.ToInt32(buffer, sizeof(int));
             
-            // It the buffer isn't big enough we'll need to get a new one
-            if(bufferLength > buffer.Length)
-            {
-                pool.Return(buffer);
-                buffer = pool.Rent(bufferLength);
+                // It the buffer isn't big enough we'll need to get a new one
+                if(bufferLength > buffer.Length)
+                {
+                    pool.Return(buffer);
+                    buffer = pool.Rent(bufferLength);
+                }
+
+                var bytesOffset = 0;
+                var bytesToRead = bufferLength;
+
+                while(bytesToRead != 0)
+                {
+                    var read = await stream.ReadAsync(buffer, bytesOffset, bytesToRead, ct).ContinueOnAnyContext();
+                    if(read == 0) throw new IOException("not enough data");
+
+                    bytesOffset += read;
+                    bytesToRead -= read;
+                }
+
+                return new(pool, buffer, 0, bufferLength);
             }
-
-            var bytesOffset = 0;
-            var bytesToRead = bufferLength;
-
-            while(bytesToRead != 0)
+            catch
             {
-                var read = await stream.ReadAsync(buffer, bytesOffset, bytesToRead, ct).ContinueOnAnyContext();
-                if(read == 0) ReturnAndThrow(pool, buffer, "not enough data");
-
-                bytesOffset += read;
-                bytesToRead -= read;
-            }
-
-            return new(pool, buffer, 0, bufferLength);
-
-            [DoesNotReturn]
-            static void ReturnAndThrow(ArrayPool<byte> pool, byte[] buffer, string message)
-            {
+                // NOTE: We MUST return the buffer, otherwise we'll leak
                 pool.Return(buffer);
-                throw new IOException(message);
+                throw;
             }
         }
     }
