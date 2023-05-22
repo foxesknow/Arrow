@@ -51,6 +51,12 @@ public sealed class InsideOutEncoder
         }
     }
 
+    /// <summary>
+    /// Encodes the object to a byte array
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="object"></param>
+    /// <returns></returns>
     public Memory<byte> EncodeToMemory<T>(T @object) where T : class
     {
         using(var stream = new MemoryStream(256))
@@ -71,7 +77,7 @@ public sealed class InsideOutEncoder
     /// <returns></returns>
     public T? Decode<T>(Stream stream) where T : class
     {
-        using(var zip = new GZipStream(stream, CompressionMode.Decompress, true))
+        using(var zip = new GZipStream(stream, CompressionMode.Decompress, LeaveOpen))
         {
             return m_Serializer.Deserialize<T>(zip);
         }

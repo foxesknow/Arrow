@@ -24,7 +24,7 @@ public static class BroadcastState
     /// <summary>
     /// The time the data was published, in UTC
     /// </summary>
-    public const string LastPublished = nameof(LastPublished);
+    public const string LastPublishedUtc = nameof(LastPublishedUtc);
 
     /// <summary>
     /// Indicates if the broadcast plugin allows other plugins to schedule a push

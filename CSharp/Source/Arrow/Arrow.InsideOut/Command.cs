@@ -22,7 +22,7 @@ public sealed class Command
     public Command(string name)
     {
         if(name is null) throw new ArgumentNullException(nameof(name));
-        if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("command name if blank", nameof(name));
+        if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("command name is blank", nameof(name));
 
         this.Name = name;
     }

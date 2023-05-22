@@ -137,7 +137,7 @@ public sealed class BroadcastPlugin : Plugin, IPluginPostStart, IPluginInitializ
             Values = 
             {
                 {BroadcastState.SequenceNumber, Value.From(sequenceNumber)},
-                {BroadcastState.LastPublished, Value.From(Clock.UtcNow)},
+                {BroadcastState.LastPublishedUtc, Value.From(Clock.UtcNow)},
                 {BroadcastState.Frequency, frequency},
                 {BroadcastState.AllowSchedulePush, allowSchedulePush},
             }

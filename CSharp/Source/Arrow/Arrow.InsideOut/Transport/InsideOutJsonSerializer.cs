@@ -9,7 +9,9 @@ using System.Text.Json.Serialization;
 namespace Arrow.InsideOut.Transport;
 
 /// <summary>
-/// Converts object to and from json
+/// Converts object to and from json.
+/// NOTE: Enums are serialized with their textual name, not as a number.
+/// For a Flags enum then values are serializes as a csv list
 /// </summary>
 public sealed class InsideOutJsonSerializer
 {
