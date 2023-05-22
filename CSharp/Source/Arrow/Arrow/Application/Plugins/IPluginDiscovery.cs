@@ -31,5 +31,12 @@ namespace Arrow.Application.Plugins
 		/// <param name="pluginName">The name of the plugin to find</param>
 		/// <returns>The first plugin that matches the name, otherwise null</returns>
 		Plugin? FindByName(string pluginName);
+
+		/// <summary>
+		/// Returns all interfaces that implement T
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns>All matching instance, or an empty list if none do</returns>
+		List<T> FindAll<T>();
 	}
 }

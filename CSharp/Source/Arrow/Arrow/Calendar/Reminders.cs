@@ -31,6 +31,8 @@ namespace Arrow.Calendar
         
         private readonly Action<object?> m_CallViaState;
 
+        private int m_Disposed = ObjectDispose.NotDisposed;
+
 
         /// <summary>
         /// Raised after the timer has fired
@@ -51,11 +53,14 @@ namespace Arrow.Calendar
         {
             lock(m_SyncRoot)
             {
-                if(m_Timer is not null)
+                if(ObjectDispose.TryDispose(ref m_Disposed))
                 {
-                    m_Timer.Dispose();
-                    m_Jobs.Clear();
-                    m_Timer = null; 
+                    if(m_Timer is not null)
+                    {
+                        m_Timer.Dispose();
+                        m_Jobs.Clear();
+                        m_Timer = null; 
+                    }
                 }
             }
         }
@@ -89,6 +94,7 @@ namespace Arrow.Calendar
         public ReminderID Add(DateTime when, Action reminder)
         {
             if(reminder is null) throw new ArgumentNullException(nameof(reminder));
+            ThrowIfDisposed();
 
             return Add(when, reminder, CallViaState);
         }
@@ -97,6 +103,7 @@ namespace Arrow.Calendar
         public ReminderID Add(DateTime when, object? state, Action<object?> reminder)
         {
             if(reminder is null) throw new ArgumentNullException(nameof(reminder));
+            ThrowIfDisposed();
 
             var id = ReminderID.Allocate();
             when = Normalize(when);
@@ -309,6 +316,11 @@ namespace Arrow.Calendar
         {
             var action = (Action)state!;
             action();
+        }
+
+        private void ThrowIfDisposed()
+        {
+            ObjectDispose.ThrowIfDisposed(ref m_Disposed, nameof(Reminders));
         }
 
         private sealed class JobComparer : IComparer<Job>

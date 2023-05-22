@@ -33,6 +33,8 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
 {
     private readonly ConcurrentDictionary<string, IInsideOutNodeProxy> m_Nodes = new();
 
+    private IReadOnlyList<IBroadcastPlugin> m_BroadcastPlugins = Array.Empty<IBroadcastPlugin>();
+
     /// <inheritdoc/>
     public override string Name
     {
@@ -69,6 +71,16 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
         if(m_Nodes.TryGetValue(name, out var proxy) == false) throw new InsideOutException($"could not find {name}");
 
         var result = await proxy.Execute(request, ct).ContinueOnAnyContext();
+
+        if(m_BroadcastPlugins.Count != 0)
+        {
+            for(var i = 0; i < m_BroadcastPlugins.Count; i++)
+            {
+                var broadcaster = m_BroadcastPlugins[i];
+                await broadcaster.SchedulePush().ContinueOnAnyContext();
+            }
+        }
+
         return result;
     }
 
@@ -162,7 +174,7 @@ public sealed partial class InsideOutPlugin : Plugin, IInsideOutPlugin, ICustomX
 
     ValueTask IPluginPostStart.AllPluginsStarted(IPluginDiscovery discovery)
     {
-        // TODO: Look for a broadcaster
+        m_BroadcastPlugins = discovery.FindAll<IBroadcastPlugin>();
         return default;
     }
 }

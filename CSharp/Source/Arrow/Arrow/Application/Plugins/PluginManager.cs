@@ -131,6 +131,14 @@ namespace Arrow.Application.Plugins
 			
 			return Find(service => service.Name == name);
 		}
+
+		/// <inheritdoc/>
+		public List<T> FindAll<T>()
+		{
+			return m_Plugins.Where(plugin => typeof(T).IsAssignableFrom(plugin.GetType()))
+							.Cast<T>()
+							.ToList();
+		}
 		
 		/// <summary>
 		/// Returns the number of plugins in the controller

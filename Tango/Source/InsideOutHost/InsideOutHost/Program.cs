@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 using Arrow.Application;
 using Arrow.Application.DaemonHosting;
+using Arrow.Reflection;
+
+[assembly: ForceAssemblyReference(typeof(Arrow.Messaging.Memory.MemoryMessagingSystem))]
 
 namespace InsideOutHost
 {

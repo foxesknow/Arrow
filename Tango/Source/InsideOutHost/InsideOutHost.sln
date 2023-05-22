@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InsideOutClient", "InsideOu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Messaging", "..\..\..\CSharp\Source\Arrow\Arrow.Messaging\Arrow.Messaging.csproj", "{3C259BDB-170C-4F54-BCAB-C4BA07C9FA24}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Messaging.Memory", "..\..\..\CSharp\Source\Arrow\Arrow.Messaging.Memory\Arrow.Messaging.Memory.csproj", "{EC21CE31-A44D-4CC2-BE31-8C89E20482AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{3C259BDB-170C-4F54-BCAB-C4BA07C9FA24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C259BDB-170C-4F54-BCAB-C4BA07C9FA24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C259BDB-170C-4F54-BCAB-C4BA07C9FA24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC21CE31-A44D-4CC2-BE31-8C89E20482AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC21CE31-A44D-4CC2-BE31-8C89E20482AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC21CE31-A44D-4CC2-BE31-8C89E20482AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC21CE31-A44D-4CC2-BE31-8C89E20482AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
