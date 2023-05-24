@@ -11,7 +11,7 @@ namespace Tango.Workbench.Filters
     /// <summary>
     /// Base class for a filter expression compiler
     /// </summary>
-    public abstract class ExpressionCompiler
+    public abstract class StaticExpressionCompiler
     {
         public static readonly Func<object, long, object?> AlwaysNull = static (_, _) => null;
 

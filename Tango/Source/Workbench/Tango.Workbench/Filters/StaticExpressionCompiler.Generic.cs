@@ -14,18 +14,18 @@ namespace Tango.Workbench.Filters
     /// Compiles and manages scripts used by filter.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public class ExpressionCompiler<TResult> : ExpressionCompiler
+    public class StaticExpressionCompiler<TResult> : StaticExpressionCompiler
     {
         private readonly Dictionary<(Type Type, string Script), Func<object, long, TResult>> m_Cache = new();
 
         private readonly Func<object, long, TResult>? m_Default;
 
 
-        public ExpressionCompiler() : this(null)
+        public StaticExpressionCompiler() : this(null)
         {
         }
 
-        public ExpressionCompiler(Func<object, long, TResult>? defaultOnCompilationError)
+        public StaticExpressionCompiler(Func<object, long, TResult>? defaultOnCompilationError)
         {
             m_Default = defaultOnCompilationError;
         }
