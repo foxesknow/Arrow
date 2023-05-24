@@ -10,6 +10,7 @@ using Arrow;
 using Arrow.Calendar;
 using Arrow.Execution;
 using Arrow.IO;
+using Arrow.Functional;
 
 namespace Tango.Workbench.Filters
 {

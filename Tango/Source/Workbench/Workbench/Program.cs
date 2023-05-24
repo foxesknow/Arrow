@@ -14,7 +14,7 @@ namespace Workbench
     {
         static async Task Main(string[] args)
         {
-            await ApplicationRunner.RunAsync(() => Run(args));
+            await ApplicationRunner.Run(() => Run(args));
 
             #if DEBUG
                 if(System.Diagnostics.Debugger.IsAttached)
