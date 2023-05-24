@@ -37,6 +37,8 @@ public sealed class BroadcastPlugin : Plugin, IPluginPostStart, IPluginInitializ
 
     private int m_Disposed = ObjectDispose.MultiThreadedNotDisposed;
 
+    private readonly InsideOutEncoder m_Encoder = new();
+
     private long m_SequenceNumber = 0;
     private Value? m_CachedFrequency = null;
     private Value? m_CachedAllowSchedulePush = null;
@@ -272,7 +274,7 @@ public sealed class BroadcastPlugin : Plugin, IPluginPostStart, IPluginInitializ
         if(plugin is null) return null;
 
         var nodeDetails = await plugin.GetDetails().ContinueOnAnyContext();
-        return InsideOutEncoder.Default.EncodeToMemory(nodeDetails);
+        return m_Encoder.EncodeToMemory(nodeDetails);
     }
 
     /// <summary>

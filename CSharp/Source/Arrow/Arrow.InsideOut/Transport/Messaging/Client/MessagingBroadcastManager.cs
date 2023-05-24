@@ -27,6 +27,8 @@ public sealed partial class MessagingBroadcastManager : IDisposable
 
     private readonly SequentialWorkQueue m_WorkQueue = new();
 
+    private readonly InsideOutEncoder m_Encoder = new();
+
     /// <inheritdoc/>
     public void Dispose()
     {
@@ -111,7 +113,7 @@ public sealed partial class MessagingBroadcastManager : IDisposable
     {
         try
         {
-            var details = InsideOutEncoder.Default.Decode<NodeDetails>(buffer, 0, buffer.Length);
+            var details = m_Encoder.Decode<NodeDetails>(buffer, 0, buffer.Length);
             if(details is not null)
             {
                 var broadcastData = new BroadcastData(publisherID, BroadcastName, details);

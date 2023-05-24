@@ -15,9 +15,7 @@ namespace Arrow.InsideOut.Transport.Messaging.Client;
 
 public sealed partial class MessagingClientManager : ClientManagerBase, IClientManager
 {
-    private readonly string m_ApplicationID;
-
-    private readonly InsideOutEncoder m_Encoder = new();
+    private readonly string m_ApplicationID;    
 
     private readonly ActionWorkQueue m_WorkQueue = new();
 
@@ -34,31 +32,28 @@ public sealed partial class MessagingClientManager : ClientManagerBase, IClientM
         m_ApplicationID = this.RequestIDFactory.ApplicationID.ToString();
     }
 
-    public override void Dispose()
+    protected override void DisposeManager()
     {
-        if(this.IsDisposed == false)
+            base.DisposeManager();
+
+        lock(m_MessagingSyncRoot)
         {
-            base.Dispose();
-
-            lock(m_MessagingSyncRoot)
+            foreach(var sender in m_Requests.Values)
             {
-                foreach(var sender in m_Requests.Values)
-                {
-                    MethodCall.AllowFail(sender, static sender => sender.Dispose());
-                }
-
-                m_Requests.Clear();
-
-                foreach(var receiver in m_Responses.Values)
-                {
-                    MethodCall.AllowFail(receiver, static receiver => receiver.Dispose());
-                }
-
-                m_Responses.Clear();
+                MethodCall.AllowFail(sender, static sender => sender.Dispose());
             }
 
-            CancelOutstandingTasks();
+            m_Requests.Clear();
+
+            foreach(var receiver in m_Responses.Values)
+            {
+                MethodCall.AllowFail(receiver, static receiver => receiver.Dispose());
+            }
+
+            m_Responses.Clear();
         }
+
+        CancelOutstandingTasks();
     }
 
     public IInsideOutNode Register(PublisherID publisherID, Uri baseEndpoint)
@@ -142,7 +137,7 @@ public sealed partial class MessagingClientManager : ClientManagerBase, IClientM
     {
         try
         {
-            var transportResponse = m_Encoder.Decode<TransportResponse>(buffer, 0, buffer.Length);
+            var transportResponse = this.Encoder.Decode<TransportResponse>(buffer, 0, buffer.Length);
             if(transportResponse is null) throw new InsideOutException("response from server is null");
 
             if(transportResponse.RequestID.ApplicationID != this.RequestIDFactory.ApplicationID)
@@ -274,7 +269,7 @@ public sealed partial class MessagingClientManager : ClientManagerBase, IClientM
 
         try
         {
-            var buffer = m_Encoder.EncodeToMemory(transportRequest);
+            var buffer = this.Encoder.EncodeToMemory(transportRequest);
             var message = sender.CreateByteMessage(buffer.ToArray());
             message.SetProperty(nameof(PublisherID), publisherID.Encode());
 

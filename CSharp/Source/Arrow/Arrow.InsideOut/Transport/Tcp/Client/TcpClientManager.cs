@@ -21,7 +21,7 @@ namespace Arrow.InsideOut.Transport.Tcp.Client;
 /// </summary>
 public sealed partial class TcpClientManager : ClientManagerBase, IClientManager, IDisposable
 {
-    private readonly InsideOutEncoder m_Encoder = InsideOutEncoder.Default;
+    private readonly InsideOutEncoder m_Encoder = new();
 
     private readonly Func<INetworkClient> m_NetworkClientFactory;
 
@@ -39,13 +39,12 @@ public sealed partial class TcpClientManager : ClientManagerBase, IClientManager
         m_NetworkClientFactory = networkClientFactory;
     }
 
-    public override void Dispose()
+    protected override void DisposeManager()
     {
-        if(this.IsDisposed == false)
-        {
-            m_CancelSource.Cancel();
-            base.Dispose();
-        }
+        base.DisposeManager();
+
+        m_CancelSource.Cancel();
+        base.Dispose();
     }
 
     public IInsideOutNode Register(PublisherID publisherID, Uri endpoint)
@@ -148,7 +147,7 @@ public sealed partial class TcpClientManager : ClientManagerBase, IClientManager
         {
             if(r.HasBuffer == false) throw new IOException("no buffer received");
 
-            var response = m_Encoder.Decode<TransportResponse>(r.Buffer, 0, r.Length);
+            var response = m_Encoder.Decode<TransportResponse>(r.Buffer, r.Start, r.Length);
             return ExtractResponseData(response);
         }
     }

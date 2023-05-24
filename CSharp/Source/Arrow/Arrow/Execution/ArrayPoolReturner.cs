@@ -62,7 +62,7 @@ namespace Arrow.Execution
         [MemberNotNullWhen(true, nameof(Buffer))]
         public bool HasBuffer
         {
-            get{return this.Buffer  is not null;}
+            get{return this.Buffer is not null;}
         }
 
         /// <summary>

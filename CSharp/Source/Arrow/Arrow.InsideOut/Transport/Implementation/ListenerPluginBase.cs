@@ -44,7 +44,7 @@ public abstract class ListenerPluginBase : Plugin, IListener, IPluginInitialize
     /// <summary>
     /// The encoder to use
     /// </summary>
-    protected InsideOutEncoder Encoder{get;} = InsideOutEncoder.Default;
+    protected InsideOutEncoder Encoder{get;} = new InsideOutEncoder();
 
     protected void Register(PublisherID publisherID)
     {

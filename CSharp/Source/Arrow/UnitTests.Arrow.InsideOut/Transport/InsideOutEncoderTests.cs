@@ -15,15 +15,9 @@ namespace UnitTests.Arrow.InsideOut.Transport
     public class InsideOutEncoderTests
     {
         [Test]
-        public void HasDefault()
-        {
-            Assert.That(InsideOutEncoder.Default, Is.Not.Null);
-        }
-
-        [Test]
         public void EncodeToPool()
         {
-            var encoder = InsideOutEncoder.Default;
+            var encoder = new InsideOutEncoder();
             using(var returner = encoder.EncodeToPool("Hello Jack"))
             {
                 Assert.That(returner.AsSpan().Length, Is.Not.Zero);
@@ -37,7 +31,7 @@ namespace UnitTests.Arrow.InsideOut.Transport
         [Test]
         public void EncodeToMemory()
         {
-            var encoder = InsideOutEncoder.Default;
+            var encoder = new InsideOutEncoder();
             var memory = encoder.EncodeToMemory("Hello Jack");
             Assert.That(memory.Length, Is.Not.Zero);
 
@@ -49,7 +43,7 @@ namespace UnitTests.Arrow.InsideOut.Transport
         [Test]
         public void Encode()
         {
-            var encoder = InsideOutEncoder.Default;
+            var encoder = new InsideOutEncoder();
 
             using(var stream = new MemoryStream())
             {

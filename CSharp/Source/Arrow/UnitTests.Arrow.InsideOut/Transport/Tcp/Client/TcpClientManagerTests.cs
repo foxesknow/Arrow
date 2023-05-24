@@ -104,7 +104,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Tcp.Client
                     }
                 });
 
-                using(var r = InsideOutEncoder.Default.EncodeToPool(transportResponse))
+                using(var r = new InsideOutEncoder().EncodeToPool(transportResponse))
                 {
                     await StreamSupport.Write(read, r.Buffer!, r.Start, r.Length, default);
                     read.Position = 0;
@@ -141,7 +141,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Tcp.Client
                     Result = Value.From("foo")
                 });
 
-                using(var r = InsideOutEncoder.Default.EncodeToPool(transportResponse))
+                using(var r = new InsideOutEncoder().EncodeToPool(transportResponse))
                 {
                     await StreamSupport.Write(read, r.Buffer!, r.Start, r.Length, default);
                     read.Position = 0;
@@ -172,7 +172,7 @@ namespace UnitTests.Arrow.InsideOut.Transport.Tcp.Client
                     ExceptionType = nameof(ArgumentException)
                 });
 
-                using(var r = InsideOutEncoder.Default.EncodeToPool(transportResponse))
+                using(var r = new InsideOutEncoder().EncodeToPool(transportResponse))
                 {
                     await StreamSupport.Write(read, r.Buffer!, r.Start, r.Length, default);
                     read.Position = 0;

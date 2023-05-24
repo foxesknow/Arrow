@@ -18,9 +18,7 @@ public sealed class InsideOutEncoder
 {
     private const bool LeaveOpen = true;
 
-    public static readonly InsideOutEncoder Default = new();
-
-    private readonly InsideOutJsonSerializer m_Serializer = new();
+    private static readonly InsideOutJsonSerializer s_Serializer = new();
 
     /// <summary>
     /// Encodes the object to an array pool
@@ -47,7 +45,7 @@ public sealed class InsideOutEncoder
     {
         using(var zip = new GZipStream(stream, CompressionMode.Compress, LeaveOpen))
         {
-            m_Serializer.Serialize(@object, zip);
+            s_Serializer.Serialize(@object, zip);
         }
     }
 
@@ -79,7 +77,7 @@ public sealed class InsideOutEncoder
     {
         using(var zip = new GZipStream(stream, CompressionMode.Decompress, LeaveOpen))
         {
-            return m_Serializer.Deserialize<T>(zip);
+            return s_Serializer.Deserialize<T>(zip);
         }
     }
 

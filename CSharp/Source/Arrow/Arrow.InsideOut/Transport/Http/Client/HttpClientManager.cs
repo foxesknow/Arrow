@@ -37,16 +37,13 @@ public sealed partial class HttpClientManager : ClientManagerBase, IClientManage
     }
     
     /// <inheritdoc/>
-    public override void Dispose()
+    protected override void DisposeManager()
     {
-        if(this.IsDisposed == false)
-        {
-            base.Dispose();
+        base.DisposeManager();
 
-            m_Cts.Cancel();
-            m_HttpClient.Dispose();
-            m_Cts.Dispose();
-        }
+        m_Cts.Cancel();
+        m_HttpClient.Dispose();
+        m_Cts.Dispose();
     }
 
     /// <summary>

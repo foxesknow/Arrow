@@ -1,15 +1,17 @@
-﻿using Arrow.InsideOut.Transport.Http.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+
+using Arrow.Execution;
 
 namespace Arrow.InsideOut.Transport.Implementation;
 
 public abstract class ClientManagerBase : IDisposable
 {
-    private bool m_Disposed;
+    private int m_Disposed = ObjectDispose.MultiThreadedNotDisposed;
 
     protected RequestIDFactory RequestIDFactory{get;} = new();
 
@@ -33,6 +35,8 @@ public abstract class ClientManagerBase : IDisposable
         };
     }
 
+    protected InsideOutEncoder Encoder{get;} = new();
+
     protected T ReturnExpected<T>(object? @object) where T : class
     {
         if(@object is T item) return item;
@@ -40,18 +44,35 @@ public abstract class ClientManagerBase : IDisposable
         throw new InsideOutException($"server did not return a {typeof(T).Name}");
     }
 
-    protected bool IsDisposed
+    /// <summary>
+    /// Called if the manager should dispose of its resources.
+    /// It is guaranteed that this methods will only be called once
+    /// </summary>
+    protected virtual void DisposeManager()
     {
-        get{return m_Disposed;}
     }
 
-    public virtual void Dispose()
+    /// <summary>
+    /// Disposes of the client manager
+    /// </summary>
+    public void Dispose()
     {
-        m_Disposed = true;
+        if(ObjectDispose.TryDispose(ref m_Disposed))
+        {
+        }
     }
 
-    protected void ThrowIfDisposed()
+    /// <summary>
+    /// Throws an exception if the manager has been disposed
+    /// </summary>
+    /// <param name="reason"></param>
+    /// <exception cref="ObjectDisposedException"></exception>
+    protected void ThrowIfDisposed([CallerMemberName] string? reason = null)
     {
-        if(m_Disposed) throw new ObjectDisposedException(nameof(HttpClientManager));
+        if(ObjectDispose.IsDisposed(ref m_Disposed)) 
+        {
+            var typeName = this.GetType().Name;
+            throw new ObjectDisposedException(typeName, reason);
+        }
     }
 }
