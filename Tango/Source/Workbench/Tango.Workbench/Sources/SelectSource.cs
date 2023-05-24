@@ -8,15 +8,18 @@ using Tango.Workbench.Data;
 
 namespace Tango.Workbench.Sources
 {
+    /// <summary>
+    /// Runs sql and yields the rows as a structured object
+    /// </summary>
     [Source("Select")]
     public sealed class SelectSource : Source
     {        
         public override IAsyncEnumerable<object> Run()
         {
             if(this.Database is null) throw new ArgumentNullException(nameof(Database));
-            if(this.Query is null) throw new ArgumentNullException(nameof(Query));
+            if(this.Sql is null) throw new ArgumentNullException(nameof(Sql));
 
-            return Execute(this.Database, this.Query);
+            return Execute(this.Database, this.Sql);
 
             async IAsyncEnumerable<object> Execute(string database, string query)
             {
@@ -68,11 +71,19 @@ namespace Tango.Workbench.Sources
             return structuredObject;
         }
 
+        /// <summary>
+        /// The database to connect to
+        /// </summary>
         public string? Database{get; set;}
         
-        
-        public string? Query{get; set;}
+        /// <summary>
+        /// The sql query to run
+        /// </summary>
+        public string? Sql{get; set;}
 
+        /// <summary>
+        /// How many items to process before writing progress information to the verbose log
+        /// </summary>
         public long PageSize{get; set;} = 1000;
     }
 }

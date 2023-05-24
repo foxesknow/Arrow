@@ -105,7 +105,7 @@ public abstract class Parameter<T> : Parameter
     }
 
     /// <inheritdoc/>
-    public override Type Type()
+    public override sealed Type Type()
     {
         return typeof(T);
     }
@@ -115,7 +115,7 @@ public abstract class Parameter<T> : Parameter
     /// </summary>
     public T? DefaultValue{get; set;}
 
-    public override object? DefaultAsObject()
+    public override sealed object? DefaultAsObject()
     {
         return this.DefaultValue;
     }

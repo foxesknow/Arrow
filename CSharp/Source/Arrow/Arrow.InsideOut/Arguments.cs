@@ -100,12 +100,12 @@ public abstract class Argument<T> : Argument, IReadOnlyArgument<T>
 
     public T Value{get; set;} = default!;
 
-    public override object? AsObject()
+    public override sealed object? AsObject()
     {
         return this.Value;
     }
 
-    public override Type Type()
+    public override sealed Type Type()
     {
         return typeof(T);
     }

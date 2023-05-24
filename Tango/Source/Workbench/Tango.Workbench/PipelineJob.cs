@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Arrow.Threading.Tasks;
+
 namespace Tango.Workbench
 {
     /// <summary>
@@ -22,7 +24,7 @@ namespace Tango.Workbench
 
                 var ct = this.Context.CancellationToken;
 
-                await foreach(var item in sequence.WithCancellation(this.Context.CancellationToken))
+                await foreach(var item in sequence.WithCancellation(this.Context.CancellationToken).ContinueOnAnyContext())
                 {
                     ct.ThrowIfCancellationRequested();
                     count++;

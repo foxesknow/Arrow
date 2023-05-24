@@ -58,6 +58,17 @@ namespace Arrow.Threading.Tasks
         }
 
         /// <summary>
+        /// Configures the async enumerable to continue on any context
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="asyncEnumerable"></param>
+        /// <returns></returns>
+        public static ConfiguredCancelableAsyncEnumerable<T> ContinueOnAnyContext<T>(this ConfiguredCancelableAsyncEnumerable<T> asyncEnumerable)
+        {
+            return asyncEnumerable.ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Returns a task that will timeout after a period of time.
         /// </summary>
         /// <param name="task"></param>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Tango.Workbench.Filters
 {
     /// <summary>
-    /// Causes the pipleine to cancel after a period of time
+    /// Causes the filter sequence to be cancel after a period of time
     /// </summary>
     [Filter("CancelAfter")]
     public sealed class CancelAfterFilter : Filter
@@ -24,8 +24,9 @@ namespace Tango.Workbench.Filters
         }
 
         /// <summary>
-        /// The window of time over which the quantity can be returned.
-        /// Once that quantity has been returned the throttle will pause for the remaining time.
+        /// Cancels the filter.
+        /// If the tee filter is part of a "tee" then the cancel may cancel either the tee
+        /// sequence or the overall group, depending on how the Tee is configured.
         /// </summary>
         public TimeSpan Delay{get; set;}
     }

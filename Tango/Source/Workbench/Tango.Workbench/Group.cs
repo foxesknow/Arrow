@@ -85,6 +85,9 @@ namespace Tango.Workbench
                             job.RegisterRuntimeDependencies(dependencies);
 
                             await job.Run().ContinueOnAnyContext();
+
+                            // It's valid for a job to request cancellation of the group
+                            context.CancellationToken.ThrowIfCancellationRequested();
                         }
                         catch(Exception e)
                         {

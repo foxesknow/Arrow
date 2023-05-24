@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Channels;
 
+using Arrow.Threading.Tasks;
+
 namespace Tango.Workbench
 {
     /// <summary>
@@ -26,7 +28,7 @@ namespace Tango.Workbench
 
             try
             {
-                await foreach (var item in items.WithCancellation(this.Context.CancellationToken))
+                await foreach(var item in items.WithCancellation(this.Context.CancellationToken))
                 {
                     ct.ThrowIfCancellationRequested();
 
@@ -34,7 +36,7 @@ namespace Tango.Workbench
                     yield return item;
 
                     // ...as well as pass it into the tee bit of our filter
-                    if (teeTask.IsCompleted == false) await writer.WriteAsync(item, ct);
+                    if(teeTask.IsCompleted == false) await writer.WriteAsync(item, ct);
                 }
             }
             finally
@@ -58,15 +60,19 @@ namespace Tango.Workbench
             {
                 var ct = this.Context.CancellationToken;
 
-                await foreach (var item in sequence.WithCancellation(ct))
+                await foreach(var item in sequence.WithCancellation(ct).ContinueOnAnyContext())
                 {
                     count++;
                     ct.ThrowIfCancellationRequested();
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                if (AllowFail)
+                // Once reason to end up here is that the one of the filters requested a cancel after
+                // a period of time. The AllowFail setting will allow us to decide if this should ripple
+                // up the run stack to ultimately cancel the entire group
+
+                if(AllowFail)
                 {
                     Log.Warn("Tee failed, but this is allowed", e);
                     Score.ReportWarning($"Tee failed, but this is allowed. Message = {e.Message}");
@@ -89,7 +95,7 @@ namespace Tango.Workbench
         {
             base.RegisterRuntimeDependencies(dependencies);
 
-            foreach (var component in Filters)
+            foreach(var component in Filters)
             {
                 component.RegisterRuntimeDependencies(dependencies);
             }
@@ -97,7 +103,7 @@ namespace Tango.Workbench
 
         internal override void UnregisterRuntimeDependencies()
         {            
-            foreach (var component in Filters)
+            foreach(var component in Filters)
             {
                 component.UnregisterRuntimeDependencies();
             }
@@ -109,7 +115,7 @@ namespace Tango.Workbench
         {
             Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> function = input => Filters[0].Run(input);
 
-            foreach (var filter in Filters.Skip(1))
+            foreach(var filter in Filters.Skip(1))
             {
                 var first = function;
                 Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> next = input => filter.Run(first(input));
@@ -122,11 +128,11 @@ namespace Tango.Workbench
         /// <summary>
         /// Filters to apply to the data flowing through the pipeline
         /// </summary>
-        internal List<Filter> Filters { get; set; } = new();
+        internal List<Filter> Filters{get; set;} = new();
 
         /// <summary>
         /// True if a tee is allowed to fail. 
         /// </summary>
-        public bool AllowFail { get; set; }
+        public bool AllowFail{get; set;}
     }
 }

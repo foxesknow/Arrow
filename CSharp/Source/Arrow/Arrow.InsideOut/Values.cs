@@ -70,13 +70,13 @@ public abstract class BasicValue<T> : BasicValue, IEquatable<BasicValue<T>>
     public T Value{get; set;} = default!;
 
     /// <inheritdoc/>
-    public override object? AsObject()
+    public override sealed object? AsObject()
     {
         return this.Value;
     }
 
     /// <inheritdoc/>
-    public override Type Type()
+    public override sealed Type Type()
     {
         return typeof(T);
     }

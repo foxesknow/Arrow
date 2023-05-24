@@ -15,10 +15,6 @@ namespace Arrow.InsideOut.Transport;
 /// </summary>
 public sealed class InsideOutJsonSerializer
 {
-    private const int BufferSize = 1024;
-    private const bool LeaveStreamOpen = true;
-    private const bool DetectEncoding = true;
-
 #if DEBUG
     private const bool Indent = true;
 #else

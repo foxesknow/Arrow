@@ -17,7 +17,10 @@ namespace Tango.Workbench.Sources
     {
         public override IAsyncEnumerable<object> Run()
         {
-            return this.Items.ToAsyncEnumerable();
+            var expander = new Expander();
+            var expandedItems = this.Items.Select(item => expander.Expand(item)).ToList();
+
+            return expandedItems.ToAsyncEnumerable();
         }
 
         /// <summary>
