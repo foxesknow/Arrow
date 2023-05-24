@@ -528,7 +528,7 @@ namespace Arrow.Compiler
 
             if(char.IsLetter(typeQualifier))
             {
-                if(typeQualifier == 'L')
+                if(typeQualifier == 'L' || typeQualifier == 'l')
                 {
                     NextChar();
                     convertedNumber = long.Parse(number);
@@ -553,6 +553,12 @@ namespace Arrow.Compiler
                     // This isn't a C# suffix, but it does allow us to explicitly create a byte
                     NextChar();
                     convertedNumber = byte.Parse(number);
+                }
+                else if(typeQualifier == 's' || typeQualifier == 'S')
+                {
+                    // This isn't a C# suffix, but it does allow us to explicitly create a short
+                    NextChar();
+                    convertedNumber = short.Parse(number);
                 }
             }
             else
