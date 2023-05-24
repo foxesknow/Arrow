@@ -46,7 +46,7 @@ public abstract class ClientManagerBase : IDisposable
 
     /// <summary>
     /// Called if the manager should dispose of its resources.
-    /// It is guaranteed that this methods will only be called once
+    /// It is guaranteed that this method will only be called once
     /// </summary>
     protected virtual void DisposeManager()
     {
@@ -59,6 +59,7 @@ public abstract class ClientManagerBase : IDisposable
     {
         if(ObjectDispose.TryDispose(ref m_Disposed))
         {
+            DisposeManager();
         }
     }
 
