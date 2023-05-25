@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Scripting.Wire", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arrow.Scripting", "..\..\..\CSharp\Source\Arrow\Arrow.Scripting\Arrow.Scripting.csproj", "{D6AF3077-0924-4EE3-B903-2606E159EA7A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Tango.Workbench", "UnitTests.Tango.Workbench\UnitTests.Tango.Workbench.csproj", "{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,14 @@ Global
 		{D6AF3077-0924-4EE3-B903-2606E159EA7A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D6AF3077-0924-4EE3-B903-2606E159EA7A}.Release|x64.ActiveCfg = Release|Any CPU
 		{D6AF3077-0924-4EE3-B903-2606E159EA7A}.Release|x64.Build.0 = Release|Any CPU
+		{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}.Debug|x64.Build.0 = Debug|Any CPU
+		{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}.Release|x64.ActiveCfg = Release|Any CPU
+		{FE1C72F5-758B-4687-8FFB-6D41C1D570E4}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

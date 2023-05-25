@@ -58,7 +58,7 @@ namespace Tango.Workbench.Filters
                     forceDynamic = true;
                 }
 
-                if(forceDynamic || itemType == typeof(ExpandoObject))
+                if(forceDynamic || itemType == typeof(ExpandoObject) || typeof(ISupportDynamic).IsAssignableFrom(itemType))
                 {
                     function = CompileDynamic(script, itemType, log);
                 }

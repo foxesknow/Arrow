@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Arrow.Scripting.Wire.StaticExpression;
-using Arrow.Scripting.Wire.DynamicExpression;
 using Arrow.Scripting.Wire;
 
 namespace Tango.Workbench.Filters
