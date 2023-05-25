@@ -27,6 +27,10 @@
     "Random": {
       "commandName": "Project",
       "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\RandomNumbers.xml"
+    },
+    "SourceAndFilter": {
+      "commandName": "Project",
+      "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\SourceAndFilter.xml"
     }
   }
 }

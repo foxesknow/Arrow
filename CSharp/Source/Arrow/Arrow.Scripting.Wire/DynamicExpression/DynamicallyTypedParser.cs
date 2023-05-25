@@ -67,7 +67,12 @@ namespace Arrow.Scripting.Wire.DynamicExpression
             }
             else
             {
-                var type = ResolveType(symbolName);
+                Type? type = null;
+
+                if(m_DynamicParseContext.AlwaysTreatAsSymbol.Contains(symbolName) == false)
+                {                
+                    type = ResolveType(symbolName);
+                }
 
                 if(type != null)
                 {

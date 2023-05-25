@@ -17,7 +17,7 @@ namespace Arrow.Scripting
 		/// <returns>The value of the variable</returns>
 		/// <exception cref="System.ArgumentNullException">if variableName is null</exception>
 		/// <exception cref="Arrow.Scripting.VariableNotFoundException">if the variable is not defined</exception>
-		object GetVariable(string variableName);
+		object? GetVariable(string variableName);
 		
 		/// <summary>
 		/// Attempts to get the value of a variable

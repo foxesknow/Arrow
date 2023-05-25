@@ -22,11 +22,11 @@ namespace Arrow.Scripting
 	{
 		private static readonly BindingFlags BindFlags=BindingFlags.Public|BindingFlags.Instance;
 
-		private readonly static Dictionary<string,Func<T,object>> s_LookupCache=new Dictionary<string,Func<T,object>>();
-		private readonly static Dictionary<string,Func<T,object>> s_InsensitveLookupCache=new Dictionary<string,Func<T,object>>(StringComparer.OrdinalIgnoreCase);
+        private readonly static Dictionary<string, Func<T, object?>> s_LookupCache = new();
+        private readonly static Dictionary<string, Func<T, object?>> s_InsensitveLookupCache = new(StringComparer.OrdinalIgnoreCase);
 
-		private readonly Dictionary<string,Func<T,object>> m_Lookup;
-		private readonly T m_Instance;
+        private readonly Dictionary<string, Func<T, object?>> m_Lookup;
+        private readonly T m_Instance;
 
 		static InstanceScope()
 		{
@@ -60,7 +60,7 @@ namespace Arrow.Scripting
         /// <returns>The value of the variable</returns>
         /// <exception cref="System.ArgumentNullException">if variableName is null</exception>
         /// <exception cref="Arrow.Scripting.VariableNotFoundException">if the variable is not defined</exception>
-        public object GetVariable(string variableName)
+        public object? GetVariable(string variableName)
 		{
             if(variableName == null) throw new ArgumentNullException("variableName");
 

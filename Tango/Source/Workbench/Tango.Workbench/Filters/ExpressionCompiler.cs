@@ -5,13 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Arrow.Scripting.Wire.StaticExpression;
+using Arrow.Scripting.Wire.DynamicExpression;
+using Arrow.Scripting.Wire;
 
 namespace Tango.Workbench.Filters
 {
     /// <summary>
     /// Base class for a filter expression compiler
     /// </summary>
-    public abstract class StaticExpressionCompiler
+    public abstract class ExpressionCompiler
     {
         public static readonly FilterScriptFunction<object?> AlwaysNull = static (_, _) => null;
 
@@ -23,9 +25,8 @@ namespace Tango.Workbench.Filters
         /// Creates a default context containing useful references
         /// </summary>
         /// <returns></returns>
-        protected virtual StaticParseContext MakeParseContext()
+        protected virtual void PopulateParseContext(ParseContext parseContext)
         {
-            var parseContext = new StaticParseContext();
             parseContext.References.Add(typeof(string).Assembly);
             parseContext.Usings.Add("System");
 
@@ -37,8 +38,6 @@ namespace Tango.Workbench.Filters
 
             parseContext.References.Add(typeof(Tango.Workbench.Filters.ScriptSupport.Wire).Assembly);
             parseContext.Usings.Add("Tango.Workbench.Filters.ScriptSupport");
-
-            return parseContext;
         }
     }
 }

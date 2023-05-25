@@ -5,14 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Dynamic;
 
 namespace Tango.Workbench.Data
 {
-    public sealed class StructuredObject : IReadOnlyStructuredObject
+    /// <summary>
+    /// A dictionary type class that can be used to bundle related data together.
+    /// For example, an instance may represent a row in a database
+    /// </summary>
+    public sealed class StructuredObject : IReadOnlyStructuredObject, ISupportDynamic
     {
         private readonly List<(string Name, object? Value)> m_Properties = new();
         private readonly Dictionary<string, int> m_NameIndex = new(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// Adds a new value to the structured object object
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public void Add(string name, object? value)
         {
             if(name is null) throw new ArgumentNullException(nameof(name));
@@ -24,6 +36,7 @@ namespace Tango.Workbench.Data
             m_NameIndex.Add(name, m_Properties.Count - 1);
         }
 
+        /// <inheritdoc/>
         public object? this[string name]
         {
             get
@@ -37,6 +50,22 @@ namespace Tango.Workbench.Data
             }
         }
 
+        /// <inheritdoc/>
+        public object? this[int index]
+        {
+            get
+            {
+                return m_Properties[index].Value;
+            }
+        }
+
+        /// <inheritdoc/>
+        public int Count
+        {
+            get{return m_Properties.Count;}
+        }
+
+        /// <inheritdoc/>
         public bool TryGetValue(string name, out object? value)
         {
             if(name is null) throw new ArgumentNullException(nameof(name));
@@ -51,11 +80,27 @@ namespace Tango.Workbench.Data
             return false;
         }
 
+        /// <inheritdoc/>
+        public ExpandoObject MakeExpandoObject()
+        {
+            var expando = new ExpandoObject();
+
+            IDictionary<string, object?> dictionary = expando;
+            foreach(var (key, value) in m_Properties)
+            {
+                dictionary.Add(key, value);
+            }
+
+            return expando;
+        }
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             return string.Join(", ", m_Properties.Select(pair => $"{pair.Name} = {pair.Value}"));
         }
 
+        /// <inheritdoc/>
         public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
         {
             foreach(var (key, value) in m_Properties)
@@ -64,11 +109,19 @@ namespace Tango.Workbench.Data
             }
         }
 
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
+        /// <summary>
+        /// Examines the incoming object and works out how best to create
+        /// an instance that models the object
+        /// </summary>
+        /// <param name="object"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static StructuredObject From(object @object)
         {
             if(@object is null) throw new ArgumentNullException(nameof(@object));
@@ -81,6 +134,12 @@ namespace Tango.Workbench.Data
             };
         }        
 
+        /// <summary>
+        /// Creates a structures object from a sequence
+        /// </summary>
+        /// <param name="pairs"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static StructuredObject FromSequence(IEnumerable<KeyValuePair<string, object?>> pairs)
         {
             if(pairs is null) throw new ArgumentNullException(nameof(pairs));
@@ -96,7 +155,7 @@ namespace Tango.Workbench.Data
         }
 
         /// <summary>
-        /// Creates a structures object from any object
+        /// Creates a structures object from any object via reflection
         /// </summary>
         /// <param name="object"></param>
         /// <returns></returns>

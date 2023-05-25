@@ -17,7 +17,7 @@ namespace Arrow.Scripting
 		/// <param name="value">The value to initially assign to the variable</param>
 		/// <exception cref="System.ArgumentNullException">if variableName is null</exception>
 		/// <exception cref="Arrow.Scripting.DeclarationException">if a variable with the name is already declared</exception>
-		void Declare(string variableName, object value);
+		void Declare(string variableName, object? value);
 
 		/// <summary>
 		/// Removes a declaration
@@ -34,7 +34,7 @@ namespace Arrow.Scripting
 		/// <param name="value">The value for the variable</param>
 		/// <exception cref="System.ArgumentNullException">if variableName is null</exception>
 		/// <exception cref="Arrow.Scripting.DeclarationException">if a variable has not been declared</exception>
-		void Assign(string variableName, object value);
+		void Assign(string variableName, object? value);
 
 		/// <summary>
 		/// Assigns a value to a variable. If it's not already declared it will be
@@ -42,6 +42,6 @@ namespace Arrow.Scripting
 		/// <param name="variableName">The name of the variable</param>
 		/// <param name="value">The value to assign</param>
 		/// <exception cref="System.ArgumentNullException">if variableName is null</exception>
-		void AssignOrDeclare(string variableName, object value);
+		void AssignOrDeclare(string variableName, object? value);
 	}
 }

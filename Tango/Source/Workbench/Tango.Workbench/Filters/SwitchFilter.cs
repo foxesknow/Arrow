@@ -18,8 +18,8 @@ namespace Tango.Workbench.Filters
     [Filter("Switch")]
     public sealed class SwitchFilter : Filter
     {
-        private readonly StaticExpressionCompiler<bool> m_IfConditions = new();
-        private readonly StaticExpressionCompiler<object?> m_Thens = new();
+        private readonly ExpressionCompiler<bool> m_IfConditions = new();
+        private readonly ExpressionCompiler<object?> m_Thens = new();
 
         public override async IAsyncEnumerable<object> Run(IAsyncEnumerable<object> items)
         {

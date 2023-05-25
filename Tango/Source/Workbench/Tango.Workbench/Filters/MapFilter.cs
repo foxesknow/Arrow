@@ -17,7 +17,7 @@ namespace Tango.Workbench.Filters
     [Filter("Map")]
     public sealed class MapFilter : Filter, ISupportInitialize
     {
-        private readonly StaticExpressionCompiler<object?> m_Expressions = new(StaticExpressionCompiler.AlwaysNull);
+        private readonly ExpressionCompiler<object?> m_Expressions = new(ExpressionCompiler.AlwaysNull);
 
         public override async IAsyncEnumerable<object> Run(IAsyncEnumerable<object> items)
         {

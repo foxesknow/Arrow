@@ -19,7 +19,7 @@ namespace Tango.Workbench.Filters
     /// </summary>
     public abstract class PredicateFilterBase : Filter, ISupportInitialize
     {
-        private readonly StaticExpressionCompiler<bool> m_Predicates = new(StaticExpressionCompiler.AlwaysFalse);
+        private readonly ExpressionCompiler<bool> m_Predicates = new(ExpressionCompiler.AlwaysFalse);
 
         protected FilterScriptFunction<bool> GetFunction(Type itemType)
         {

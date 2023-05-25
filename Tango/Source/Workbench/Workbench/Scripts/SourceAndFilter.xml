@@ -1,0 +1,18 @@
+﻿<Script>
+	<Group name="Pipe">
+		<Pipeline name="Sql stuff">
+			<Select database="tango">
+				<Sql>select * from locations</Sql>
+			</Select>
+
+			<Where>
+				<Predicate>
+					<!-- The @ makes this a dynamic expression -->
+					<![CDATA[ @ item.Age >= 60 and item.age <= 70 ]]>
+				</Predicate>
+			</Where>
+			<Log/>
+		</Pipeline>
+	</Group>
+</Script>
+

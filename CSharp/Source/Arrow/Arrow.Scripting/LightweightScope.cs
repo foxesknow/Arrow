@@ -9,12 +9,11 @@ namespace Arrow.Scripting
 {
 	/// <summary>
 	/// Provides a lightweight implementation of a read/write variable scope.
-	/// There is no nesting of scopes and the class in not thread safe.
+	/// The class supports multiple readers, as long as scope is not modified.
 	/// </summary>
-	[Serializable]
-    public class LightweightScope : IVariableManager
+    public sealed class LightweightScope : IVariableManager
     {
-        private readonly Dictionary<string, object> m_Variables;
+        private readonly Dictionary<string, object?> m_Variables;
 
         /// <summary>
         /// Initializes the instance in case insensitive mode
@@ -33,7 +32,7 @@ namespace Arrow.Scripting
             IEqualityComparer<string>? comparer = null;
             if(caseMode == CaseMode.Insensitive) comparer = StringComparer.OrdinalIgnoreCase;
 
-            m_Variables = new Dictionary<string, object>(comparer);
+            m_Variables = new(comparer);
         }
 
         /// <summary>
@@ -43,12 +42,11 @@ namespace Arrow.Scripting
         /// <returns>The value of the variable</returns>
         /// <exception cref="System.ArgumentNullException">if variableName is null</exception>
         /// <exception cref="Arrow.Scripting.VariableNotFoundException">if the variable is not defined</exception>
-        public object GetVariable(string variableName)
+        public object? GetVariable(string variableName)
         {
             if(variableName == null) throw new ArgumentNullException("variableName");
 
-            object? value;
-            if(m_Variables.TryGetValue(variableName, out value) == false)
+            if(m_Variables.TryGetValue(variableName, out var value) == false)
             {
                 throw new VariableNotFoundException(variableName);
             }
@@ -89,7 +87,7 @@ namespace Arrow.Scripting
         /// <param name="value">The value to initially assign to the variable</param>
         /// <exception cref="System.ArgumentNullException">if variableName is null</exception>
         /// <exception cref="Arrow.Scripting.DeclarationException">if a variable with the name is already declared</exception>
-        public void Declare(string variableName, object value)
+        public void Declare(string variableName, object? value)
         {
             if(variableName == null) throw new ArgumentNullException("variableName");
             if(m_Variables.ContainsKey(variableName)) throw new DeclarationException("already declared: " + variableName);
@@ -117,11 +115,11 @@ namespace Arrow.Scripting
         /// <param name="value">The value for the variable</param>
         /// <exception cref="System.ArgumentNullException">if variableName is null</exception>
         /// <exception cref="Arrow.Scripting.DeclarationException">if a variable has not been declared</exception>
-        public void Assign(string variableName, object value)
+        public void Assign(string variableName, object? value)
         {
             if(variableName == null) throw new ArgumentNullException("variableName");
+            
             if(m_Variables.ContainsKey(variableName) == false) throw new DeclarationException("not declared: " + variableName);
-
             m_Variables[variableName] = value;
         }
 
@@ -131,7 +129,7 @@ namespace Arrow.Scripting
         /// <param name="variableName">The name of the variable</param>
         /// <param name="value">The value to assign</param>
         /// <exception cref="System.ArgumentNullException">if variableName is null</exception>
-        public void AssignOrDeclare(string variableName, object value)
+        public void AssignOrDeclare(string variableName, object? value)
         {
             if(variableName == null) throw new ArgumentNullException("variableName");
 
