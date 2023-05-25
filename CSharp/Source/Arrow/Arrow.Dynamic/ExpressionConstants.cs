@@ -6,21 +6,21 @@ using System.Text;
 
 namespace Arrow.Dynamic
 {
-	public static class ExpressionConstants
-	{
-		/// <summary>
-		/// A constant representing true
-		/// </summary>
-		public static readonly ConstantExpression True=Expression.Constant(true);
-		
-		/// <summary>
-		/// A constant representing false
-		/// </summary>
-		public static readonly ConstantExpression False=Expression.Constant(false);
+    public static class ExpressionConstants
+    {
+        /// <summary>
+        /// A constant representing true
+        /// </summary>
+        public static readonly ConstantExpression True = Expression.Constant(true);
 
-		/// <summary>
-		/// Integer zero
-		/// </summary>
-		public static readonly ConstantExpression IntegerZero=Expression.Constant(0);
-	}
+        /// <summary>
+        /// A constant representing false
+        /// </summary>
+        public static readonly ConstantExpression False = Expression.Constant(false);
+
+        /// <summary>
+        /// Integer zero
+        /// </summary>
+        public static readonly ConstantExpression IntegerZero = Expression.Constant(0);
+    }
 }
