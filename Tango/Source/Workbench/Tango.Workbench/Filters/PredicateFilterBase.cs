@@ -21,7 +21,7 @@ namespace Tango.Workbench.Filters
     {
         private readonly StaticExpressionCompiler<bool> m_Predicates = new(StaticExpressionCompiler.AlwaysFalse);
 
-        protected Func<object, long, bool> GetFunction(Type itemType)
+        protected FilterScriptFunction<bool> GetFunction(Type itemType)
         {
             return m_Predicates.GetFunction(this.Predicate!, itemType, this.Log);
         }

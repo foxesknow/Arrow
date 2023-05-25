@@ -13,11 +13,11 @@ namespace Tango.Workbench.Filters
     /// </summary>
     public abstract class StaticExpressionCompiler
     {
-        public static readonly Func<object, long, object?> AlwaysNull = static (_, _) => null;
+        public static readonly FilterScriptFunction<object?> AlwaysNull = static (_, _) => null;
 
-        public static readonly Func<object, long, bool> AlwaysFalse = static (_, _) => false;
+        public static readonly FilterScriptFunction<bool> AlwaysFalse = static (_, _) => false;
 
-        public static readonly Func<object, long, bool> AlwaysTrue = static (_, _) => true;
+        public static readonly FilterScriptFunction<bool> AlwaysTrue = static (_, _) => true;
         
         /// <summary>
         /// Creates a default context containing useful references

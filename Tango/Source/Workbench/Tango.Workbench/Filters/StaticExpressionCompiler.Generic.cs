@@ -16,16 +16,16 @@ namespace Tango.Workbench.Filters
     /// <typeparam name="TResult"></typeparam>
     public class StaticExpressionCompiler<TResult> : StaticExpressionCompiler
     {
-        private readonly Dictionary<(Type Type, string Script), Func<object, long, TResult>> m_Cache = new();
+        private readonly Dictionary<(Type Type, string Script), FilterScriptFunction<TResult>> m_Cache = new();
 
-        private readonly Func<object, long, TResult>? m_Default;
+        private readonly FilterScriptFunction<TResult>? m_Default;
 
 
         public StaticExpressionCompiler() : this(null)
         {
         }
 
-        public StaticExpressionCompiler(Func<object, long, TResult>? defaultOnCompilationError)
+        public StaticExpressionCompiler(FilterScriptFunction<TResult>? defaultOnCompilationError)
         {
             m_Default = defaultOnCompilationError;
         }
@@ -36,7 +36,7 @@ namespace Tango.Workbench.Filters
         /// <param name="script"></param>
         /// <param name="itemType"></param>
         /// <returns></returns>
-        public Func<object, long, TResult> GetFunction(string script, Type itemType, ILog log)
+        public FilterScriptFunction<TResult> GetFunction(string script, Type itemType, ILog log)
         {
             var key = (itemType, script);
             if(m_Cache.TryGetValue(key, out var function) == false)
@@ -48,7 +48,7 @@ namespace Tango.Workbench.Filters
             return function;
         }        
 
-        private Func<object, long, TResult> Compile(string script, Type itemType, ILog log)
+        private FilterScriptFunction<TResult> Compile(string script, Type itemType, ILog log)
         {
             /*
              * The filter will receive items as objects, so we'll need to cast then
@@ -82,7 +82,7 @@ namespace Tango.Workbench.Filters
                     invokeInnerLambda = Expression.Convert(invokeInnerLambda, typeof(TResult));
                 }
                 
-                var outerLambda = Expression.Lambda<Func<object, long, TResult>>
+                var outerLambda = Expression.Lambda<FilterScriptFunction<TResult>>
                 (
                     invokeInnerLambda,
                     itemParameter,
