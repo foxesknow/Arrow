@@ -1,4 +1,5 @@
 ﻿using Arrow.Configuration;
+using Arrow.Text;
 using Arrow.Xml;
 using System;
 using System.Collections.Generic;
@@ -107,7 +108,7 @@ namespace Arrow.Data.DatabaseManagers
                 if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("invalid database name");
                 if(m_ConnectionInfo.ContainsKey(name!)) throw new DataException($"duplicate argument name: {name}");
 
-                var connectionString = node.Attributes!.GetValueOrDefault("connectionString", "");
+                var connectionString = TokenExpander.ExpandText(node.Attributes!.GetValueOrDefault("connectionString", ""));
                 var providerName = node.Attributes!.GetValueOrDefault("providerName", "");
 
                 var connectionSettings = new ConnectionStringSettings()
