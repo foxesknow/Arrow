@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
-using Arrow.Collections;
+using Arrow.Configuration;
+using Arrow.Xml;
+using Arrow.Xml.ObjectCreation;
 
 namespace Arrow.Settings
 {
@@ -54,8 +57,7 @@ namespace Arrow.Settings
             DoRegister("aesdecrypt", new AesEncryptionSettings(), false);
 
 
-            // Load any registered setting providers
-            Arrow.Settings.Config.SettingProvidersProcessAppConfig.Process();
+            RegisterFromAppConfig();
         }
 
         /// <summary>
@@ -310,5 +312,36 @@ namespace Arrow.Settings
 
             return success;
         }
+
+        private static void RegisterFromAppConfig()
+        {
+            var settingsNode = AppConfig.GetSectionXml(ArrowSystem.Name,"Arrow.Settings");
+            if(settingsNode is null) return;
+
+            var factory = InstanceFactory.New();
+
+            foreach(XmlNode? node in settingsNode.SelectNodesOrEmpty("*"))
+            {
+                if(node is null) continue;
+
+                var provider = factory.Create<ProviderInfo>(node);
+                if(provider.Namespace is null || provider.Settings is null) continue;
+
+                Register(provider.Namespace, provider.Settings);
+            }
+        }
+
+        sealed class ProviderInfo
+	    {
+		    /// <summary>
+		    /// The namespace to register the setting provider under
+		    /// </summary>
+		    public string? Namespace{get; set;}
+		
+		    /// <summary>
+		    /// The settings provider to register
+		    /// </summary>
+		    public ISettings? Settings{get; set;}
+	    }
     }
 }
