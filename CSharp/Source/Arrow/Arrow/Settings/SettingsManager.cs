@@ -52,7 +52,7 @@ namespace Arrow.Settings
             DoRegister("appsettings", new AppConfigSettings(), false);
             DoRegister("first-of", new FirstOfSettings(), false);
             DoRegister("string", new StringSettings(), false);
-            DoRegister("slurp", new SlurpSettings(), false);
+            DoRegister("file", new FileSettings(), false);
             DoRegister("literal", new LiteralSettings(), false);
             DoRegister("aesdecrypt", new AesEncryptionSettings(), false);
 

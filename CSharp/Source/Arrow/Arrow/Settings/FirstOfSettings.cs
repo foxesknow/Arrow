@@ -26,13 +26,15 @@ namespace Arrow.Settings
         {
             var allSettings = ExtractSettings(name);
 
-            foreach(var setting in allSettings)
+            foreach(var settingString in allSettings)
             {
-                SettingsManager.CrackQualifiedName(setting, out var @namespace, out var _);
-                if(SettingsManager.IsRegistered(@namespace))
+                SettingsManager.CrackQualifiedName(settingString, out var @namespace, out var settingName);
+                if(SettingsManager.GetSettings(@namespace) is ISettings settings)
                 {
-                    value = TokenExpander.ExpandToken(setting);
-                    if(value is not null) return true;
+                    if(settings.TryGetSetting(settingName, out value))
+                    {
+                        return true;
+                    }
                 }
             }
 

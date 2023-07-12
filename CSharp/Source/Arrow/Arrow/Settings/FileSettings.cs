@@ -13,7 +13,7 @@ namespace Arrow.Settings
     /// If the filename ends with a ? then it is allowed to be missing, and the value will be set to null.
     /// Otherwise an IOException is thrown
     /// </summary>
-    public sealed class SlurpSettings : ISettings
+    public sealed class FileSettings : ISettings
     {
         /// <inheritdoc/>
         public bool TryGetSetting(string name, [NotNullWhen(true)] out object? value)
