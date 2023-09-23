@@ -2,7 +2,7 @@
 	<Group name="Pipe">
 		<Pipeline name="Export">
 			<Select database="tango">
-				<Query>
+				<Sql>
 					select * from Locations
 					union all
 					select * from Locations
@@ -24,7 +24,7 @@
 					select * from Locations
 					union all
 					select * from Locations
-				</Query>
+				</Sql>
 			</Select>
 			
 			<Tee name="CsvBranch">

@@ -48,16 +48,17 @@ namespace Tango.Workbench
 
         private async Task RunTee(IAsyncEnumerable<object> input, Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> function)
         {
-            // We need to tell the context that we've entered a new async scope.
-            // Some things, like database connections can't be shared amongst threads
-            // so this gives the framework change to make any adjustments
-            this.Context.EnterNewAsyncScope();
-
-            var sequence = function(input);
-
             long count = 0;
+
             try
             {
+                // We need to tell the context that we've entered a new async scope.
+                // Some things, like database connections can't be shared amongst threads
+                // so this gives the framework chance to make any adjustments
+                this.Context.EnterNewAsyncScope();
+
+                var sequence = function(input);
+
                 var ct = this.Context.CancellationToken;
 
                 await foreach(var item in sequence.WithCancellation(ct).ContinueOnAnyContext())
