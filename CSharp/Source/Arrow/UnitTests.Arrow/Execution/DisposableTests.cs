@@ -169,5 +169,38 @@ namespace UnitTests.Arrow.Execution
             Assert.That(success, Is.False);
             Assert.That(called, Is.False);
         }
+
+        [Test]
+        public void ToAsyncDisposable_Null()
+        {
+            Assert.Catch(() => Disposable.ToAsyncDisposable(null));
+
+        }
+
+        [Test]
+        public async Task ToAsyncDisposable_Called()
+        {
+            bool called = false;
+            
+            var d = Disposer.Make(() => called = true);
+            var asyncDisposer = Disposable.ToAsyncDisposable(d);
+            await asyncDisposer.DisposeAsync();
+            Assert.That(called, Is.True);
+        }
+
+        [Test]
+        public async Task ToAsyncDisposable_OnlyCalled()
+        {
+            var callCount = 0;
+            
+            var d = Disposer.Make(() => callCount++);
+            var asyncDisposer = Disposable.ToAsyncDisposable(d);
+            
+            await asyncDisposer.DisposeAsync();
+            Assert.That(callCount, Is.EqualTo(1));
+
+            await asyncDisposer.DisposeAsync();
+            Assert.That(callCount, Is.EqualTo(1));
+        }
     }
 }

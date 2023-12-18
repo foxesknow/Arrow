@@ -51,6 +51,19 @@ namespace Arrow.Execution
             }
         }
 
+        /// <summary>
+        /// Converts a synchronous disposable to an asynchronous disposable
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IAsyncDisposable ToAsyncDisposable(IDisposable disposable)
+        {
+            if(disposable is null) throw new ArgumentNullException(nameof(disposable));
+
+            return new AsAsyncDisposable(disposable);
+        }
+
         private sealed class NullDisposable : IDisposable
         {
             public void Dispose()
@@ -62,6 +75,27 @@ namespace Arrow.Execution
         {
             public ValueTask DisposeAsync()
             {
+                return default;
+            }
+        }
+
+        private sealed class AsAsyncDisposable : IAsyncDisposable
+        {
+            private IDisposable? m_Disposable;
+
+            public AsAsyncDisposable(IDisposable disposable)
+            {
+                m_Disposable = disposable;
+            }
+
+            public ValueTask DisposeAsync()
+            {
+                if(m_Disposable is not null)
+                {
+                    m_Disposable.Dispose();
+                    m_Disposable = null;
+                }
+
                 return default;
             }
         }
