@@ -20,6 +20,7 @@ namespace Tango.Workbench.Filters
     /// NOTE: Expression that start with a @ are treated as dynamic expressions.
     /// The @ will be removed and the expression compiled. 
     /// At runtime if the "item" in a StructuredObject it is converted to an ExpandoObject
+    /// The resulting script will have two named parameters, "item" and "index". index is zero-based.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
     public sealed class ExpressionCompiler<TResult> : ExpressionCompiler

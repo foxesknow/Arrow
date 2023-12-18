@@ -1,6 +1,9 @@
 ﻿<Script>
 	<Group name="Greetings">
-		<WriteLine message="Hello, world" />
-		<Log name="foo" message="Hello, world" />
+		<Pipeline name="Print numbers">
+			<Numbers start="100" count="10" />
+			<Reverse/>
+			<Log/>
+		</Pipeline>
 	</Group>
 </Script>

@@ -30,7 +30,7 @@
     },
     "SourceAndFilter": {
       "commandName": "Project",
-      "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\Tee.xml"
+      "commandLineArgs": "-live -v C:\\Code\\git\\Arrow\\Tango\\Source\\Workbench\\Workbench\\Scripts\\HelloWorld.xml"
     }
   }
 }

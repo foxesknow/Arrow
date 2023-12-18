@@ -23,7 +23,7 @@ namespace Tango.Workbench
             var reader = channel.Reader;
             var writer = channel.Writer;
 
-            var factory = BuildPipelineFactory();
+            var factory = BuildTeeFactory();
             var teeTask = Task.Run(() => RunTee(reader.ReadAllAsync(ct), factory));
 
             try
@@ -112,7 +112,7 @@ namespace Tango.Workbench
             base.UnregisterRuntimeDependencies();
         }
 
-        private Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> BuildPipelineFactory()
+        private Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> BuildTeeFactory()
         {
             Func<IAsyncEnumerable<object>, IAsyncEnumerable<object>> function = input => Filters[0].Run(input);
 

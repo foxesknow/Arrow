@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace Tango.Workbench
 {
     /// <summary>
-    /// Defines a pipeline source
+    /// Defines a pipeline source.
+    /// A source generates the data that will flow through the pipeline
     /// </summary>
     public abstract class Source : Runnable
     {
