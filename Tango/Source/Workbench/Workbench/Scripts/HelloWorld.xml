@@ -3,7 +3,7 @@
 		<Pipeline name="Print numbers">
 			<Numbers start="100" count="10" />
 			<Reverse/>
-			<Log/>
+			<WriteLine prefix="numbers: "/>
 		</Pipeline>
 	</Group>
 </Script>
