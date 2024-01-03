@@ -25,6 +25,7 @@ namespace Tango.Workbench.Filters
         {
             var pushed = 0;
             var start = ExecutionTimer.Now;
+
             await foreach(var item in items)
             {
                 yield return item;
@@ -33,16 +34,16 @@ namespace Tango.Workbench.Filters
                 if(pushed == quantity)
                 {
                     var stop = ExecutionTimer.Now;
-                    var elapsedMS = ExecutionTimer.ElapsedMilliseconds(start, stop);
+                    var elapsedMs = ExecutionTimer.ElapsedMilliseconds(start, stop);
 
-                    if(elapsedMS < intervalMs)
+                    if(elapsedMs < intervalMs)
                     {
-                        var delayMs = intervalMs - elapsedMS;
+                        var delayMs = intervalMs - elapsedMs;
                         await Task.Delay(TimeSpan.FromMilliseconds(delayMs), this.Context.CancellationToken);
-
-                        pushed = 0;
-                        start = ExecutionTimer.Now;
                     }
+
+                    pushed = 0;
+                    start = ExecutionTimer.Now;
                 }
             }
         }

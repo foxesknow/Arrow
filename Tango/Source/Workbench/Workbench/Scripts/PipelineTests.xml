@@ -2,11 +2,13 @@
 	<Group name="Pipe">
 		<Pipeline name="Numbers">
 			<Numbers start="10" count="20" />
+			<!--
 			<Tee name="Branch" allowFail="true">
 				<CancelAfter delay="00:00:06" />
 				<Throttle quantity="2" interval="00:00:05" />
 				<Log/>
 			</Tee>
+			-->
 			<Throttle quantity="2" interval="00:00:05" />
 			<Log/>
 		</Pipeline>
