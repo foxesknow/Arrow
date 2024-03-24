@@ -30,16 +30,6 @@ namespace Arrow.Compiler
 		public TokenizationException(string message, Exception inner) : base(message, inner) { }
 		
 		/// <summary>
-		/// Initializes the instance
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="context"></param>
-		protected TokenizationException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context)
-			: base(info, context) { }
-
-		/// <summary>
 		/// The line that the error occurred on
 		/// </summary>
 		public int LineNumber{get;set;}

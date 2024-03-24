@@ -27,16 +27,6 @@ namespace Arrow.Scripting
 		/// </summary>
 		/// <param name="message"></param>
 		/// <param name="inner"></param>
-		public VariableNotFoundException(string message, Exception inner) : base(message, inner) { }
-		
-		/// <summary>
-		/// Initializes the instance
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="context"></param>
-		protected VariableNotFoundException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context)
-			: base(info, context) { }
+		public VariableNotFoundException(string message, Exception inner) : base(message, inner) { }		
 	}
 }

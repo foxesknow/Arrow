@@ -26,16 +26,6 @@ namespace Arrow.GraphTheory.Build
 		/// </summary>
 		/// <param name="message"></param>
 		/// <param name="inner"></param>
-		public BuildException(string message, Exception inner) : base(message, inner) { }
-		
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="context"></param>
-		protected BuildException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context)
-			: base(info, context) { }
+		public BuildException(string message, Exception inner) : base(message, inner) { }		
 	}
 }

@@ -30,16 +30,6 @@ namespace Arrow.Compiler
 		public ParserException(string message, Exception inner) : base(message, inner) { }
 		
 		/// <summary>
-		/// Initializes the instance
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="context"></param>
-		protected ParserException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context)
-			: base(info, context) { }
-	
-		/// <summary>
 		/// The line that the error occurred on
 		/// </summary>
 		public int LineNumber{get;set;}

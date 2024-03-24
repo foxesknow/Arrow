@@ -28,15 +28,5 @@ namespace Arrow.Scripting
 		/// <param name="message"></param>
 		/// <param name="inner"></param>
 		public ScriptingException(string message, Exception inner) : base(message, inner) { }
-		
-		/// <summary>
-		/// Initializes the instance
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="context"></param>
-		protected ScriptingException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context)
-			: base(info, context) { }
 	}
 }

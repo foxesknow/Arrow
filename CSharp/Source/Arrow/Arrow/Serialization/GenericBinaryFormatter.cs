@@ -5,6 +5,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 
+#pragma warning disable SYSLIB0011
+
 namespace Arrow.Serialization
 {
 	/// <summary>
@@ -127,3 +129,5 @@ namespace Arrow.Serialization
 		}
 	}
 }
+
+#pragma warning restore SYSLIB0011

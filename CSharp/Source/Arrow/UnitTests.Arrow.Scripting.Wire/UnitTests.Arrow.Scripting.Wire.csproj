@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<ProductVersion>8.0.30703</ProductVersion>
-		<TargetFrameworks>net6.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<AssemblyTitle>UnitTests.Arrow.Scripting.Wire</AssemblyTitle>
 		<Product>UnitTests.Scripting.Wire</Product>
 	</PropertyGroup>

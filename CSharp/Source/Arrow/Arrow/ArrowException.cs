@@ -29,15 +29,5 @@ namespace Arrow
 		/// <param name="message"></param>
 		/// <param name="inner"></param>
 		public ArrowException(string message, Exception inner) : base(message, inner) { }
-		
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="context"></param>
-		protected ArrowException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context)
-			: base(info, context) { }
 	}
 }
