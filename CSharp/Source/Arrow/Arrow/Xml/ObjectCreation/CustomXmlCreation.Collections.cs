@@ -5,11 +5,14 @@ using System.Xml;
 using System.Reflection;
 
 using Arrow.Reflection;
+using System.Collections.Frozen;
 
 namespace Arrow.Xml.ObjectCreation
 {
     public partial class CustomXmlCreation
     {
+        private static readonly MethodInfo ToFrozenDictionaryGeneric = MemberLookup.GetMethod((Dictionary<int, int> dict) => FrozenDictionary.ToFrozenDictionary(dict, null)).GetGenericMethodDefinition();
+
         /// <summary>
         /// Handles populating a generic collection property
         /// </summary>
@@ -116,6 +119,23 @@ namespace Arrow.Xml.ObjectCreation
             }
         }
 
+        private void ProcessSetProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
+        {
+            // We need to get the collection
+            var getter = propertyInfo.GetGetMethod();
+            if(getter == null) throw new XmlCreationException("could not find property getter: " + propertyInfo.Name);
+
+            var list = getter.Invoke(theObject, null);
+            if(list == null) throw new XmlCreationException("property returned a null set: " + propertyInfo.Name);
+
+            foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
+            {
+                if(item is null) continue;
+
+                ProcessSet(list, item);
+            }
+        }
+
         /// <summary>
         /// Handles populating a readonly list property.
         /// To do this we need the property to have a setter which we will set to a 
@@ -160,6 +180,43 @@ namespace Arrow.Xml.ObjectCreation
             var obj = CreateObject(item, containedType);
             obj = TypeResolver.CoerceToType(containedType, obj);
             addMethod.Invoke(list, new object?[] { obj });
+        }
+
+        private void ProcessSet(object list, XmlNode item)
+        {
+            Type listType = list.GetType();
+            Type containedType = typeof(object);
+
+            if(listType.IsGenericType)
+            {
+                Type[] genericTypes = listType.GetGenericArguments();
+                containedType = genericTypes[0];
+            }
+
+            var addMethod = listType.GetMethod("Add", new Type[] { containedType });
+            if(addMethod == null) throw new XmlCreationException("could not find Add method");
+
+            var obj = CreateObject(item, containedType);
+            obj = TypeResolver.CoerceToType(containedType, obj);
+            addMethod.Invoke(list, new object?[] { obj });
+        }
+
+        private void ProcessReadOnlySetProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
+        {
+            var setter = propertyInfo.GetSetMethod();
+            if(setter == null) throw new XmlCreationException("could not find property setter: " + propertyInfo.Name);
+
+            var readonlyType = propertyInfo.PropertyType;
+            var genericArguments = readonlyType.GetGenericArguments();
+            var concreteType = typeof(HashSet<>).MakeGenericType(genericArguments);
+
+            var hashset = CreateInstance(concreteType, null);
+            foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
+            {
+                ProcessSet(hashset, item!);
+            }
+
+            setter.Invoke(theObject, new[]{hashset});
         }
 
         /// <summary>
@@ -210,6 +267,27 @@ namespace Arrow.Xml.ObjectCreation
             }
 
             setter.Invoke(theObject, new[] { dictionary });
+        }
+
+        private void ProcessFrozenDictionaryProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
+        {
+            var setter = propertyInfo.GetSetMethod();
+            if(setter == null) throw new XmlCreationException("could not find property setter: " + propertyInfo.Name);
+
+            var readonlyType = propertyInfo.PropertyType;
+            var genericArguments = readonlyType.GetGenericArguments();
+            var concreteType = typeof(Dictionary<,>).MakeGenericType(genericArguments);
+
+            var dictionary = CreateInstance(concreteType, null);
+            foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
+            {
+                ProcessDictionary(dictionary, item!);
+            }
+
+            // We've got a dictionary, now we just need to freeze it
+            var toFrozenDictionaryMethod = ToFrozenDictionaryGeneric.MakeGenericMethod(genericArguments);
+            var frozenDictionary = toFrozenDictionaryMethod.Invoke(null, new[]{dictionary, null});
+            setter.Invoke(theObject, new[]{frozenDictionary});
         }
 
         private void ProcessDictionary(object dictionary, XmlNode pairNode)
@@ -269,6 +347,16 @@ namespace Arrow.Xml.ObjectCreation
             return typeof(System.Collections.IList).IsAssignableFrom(type) || IsGenericTypeImplemented(type, typeof(IList<>));
         }
 
+        private bool IsSet(Type type)
+        {
+            return IsGenericTypeImplemented(type, typeof(ISet<>));
+        }
+
+        private bool IsReadOnlySet(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IReadOnlySet<>);
+        }
+
         private bool IsDictionary(Type type)
         {
             return typeof(System.Collections.IDictionary).IsAssignableFrom(type) || IsGenericTypeImplemented(type, typeof(IDictionary<,>));
@@ -287,6 +375,11 @@ namespace Arrow.Xml.ObjectCreation
         private bool IsReadOnlyDictionary(Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>);
+        }
+
+        private bool IsFrozenDictionary(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(FrozenDictionary<,>);
         }
     }
 }

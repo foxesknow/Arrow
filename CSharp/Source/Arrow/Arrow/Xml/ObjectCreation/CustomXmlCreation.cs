@@ -872,6 +872,18 @@ namespace Arrow.Xml.ObjectCreation
             {
                 ProcessReadOnlyListProperty(theObject, propertyNode, propertyInfo);
             }
+            else if(IsSet(propertyType))
+            {
+                ProcessSetProperty(theObject, propertyNode, propertyInfo);
+            }
+            else if(IsReadOnlySet(propertyType))
+            {
+                ProcessReadOnlySetProperty(theObject, propertyNode, propertyInfo);
+            }
+            else if(IsFrozenDictionary(propertyType))
+            {
+                ProcessFrozenDictionaryProperty(theObject, propertyNode, propertyInfo);
+            }
             else if(IsDictionary(propertyType))
             {
                 ProcessDictionaryProperty(theObject, propertyNode, propertyInfo);
