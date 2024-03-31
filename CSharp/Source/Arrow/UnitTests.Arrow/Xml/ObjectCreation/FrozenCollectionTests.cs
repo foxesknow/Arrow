@@ -27,16 +27,44 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
             """);
 
             var factory = InstanceFactory.New();
-            var details = factory.Create<Details>(doc.DocumentElement);
+            var details = factory.Create<DetailsDictionary>(doc.DocumentElement);
 
             Assert.That(details.Ages.Count, Is.EqualTo(2));
             Assert.That(details.Ages["Jack"], Is.EqualTo(34));
             Assert.That(details.Ages["Kate"], Is.EqualTo(31));
         }
 
-        class Details
+        [Test]
+        public void FrozenSet()
+        {
+            var doc = XmlFromString("""
+                          <Details>
+                            <Numbers>
+                                <Number>10</Number>
+                                <Number>1</Number>
+                                <Number>99</Number>
+                                <Number>10</Number>
+                            </Numbers>            
+                          </Details>
+            """);
+
+            var factory = InstanceFactory.New();
+            var details = factory.Create<DetailsSet>(doc.DocumentElement);
+
+            Assert.That(details.Numbers.Count, Is.EqualTo(3));
+            Assert.That(details.Numbers.Contains(10), Is.True);
+            Assert.That(details.Numbers.Contains(1), Is.True);
+            Assert.That(details.Numbers.Contains(99), Is.True);
+        }
+
+        class DetailsDictionary
         {
             public FrozenDictionary<string, int> Ages{get; init;}
+        }
+
+        class DetailsSet
+        {
+            public FrozenSet<int> Numbers{get; init;}
         }
     }
 }

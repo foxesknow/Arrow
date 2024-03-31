@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 using Arrow.Xml.ObjectCreation;
 
 using UnitTests.Arrow.Support;
 
 using NUnit.Framework;
-using System.Xml;
+
 
 namespace UnitTests.Arrow.Xml.ObjectCreation
 {
     [TestFixture]
-    public class ReadOnlyCollectionTests
+    public class ReadOnlyCollectionTests : TestBase
     {
         [Test]
-        public void MakeLocations()
+        public void List()
         {
             var doc = XmlFromString(
             @"
@@ -38,7 +39,7 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
         }
 
         [Test]
-        public void MakeIsland()
+        public void Dictionary()
         {
             var doc = XmlFromString(
             @"
@@ -60,12 +61,30 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
             Assert.That(island.Ages["Kate"], Is.EqualTo(31));
         }
 
-        private XmlDocument XmlFromString(string xml)
+        [Test]
+        public void Set()
         {
-            var doc = new XmlDocument();
-            doc.LoadXml(xml);
+            var doc = XmlFromString(
+            @"
+                <Data>
+                    <Numbers>
+                        <Number>10</Number>
+                        <Number>2</Number>
+                        <Number>9</Number>
+                        <Number>7</Number>
+                        <Number>9</Number>
+                    </Numbers>
+                </Data>
+            ");
 
-            return doc;
+            var factory = InstanceFactory.New();
+            var data = factory.Create<Data>(doc.DocumentElement);
+
+            Assert.That(data.Numbers.Count, Is.EqualTo(4));
+            Assert.That(data.Numbers.Contains(10), Is.True);
+            Assert.That(data.Numbers.Contains(2), Is.True);
+            Assert.That(data.Numbers.Contains(9), Is.True);
+            Assert.That(data.Numbers.Contains(7), Is.True);
         }
 
         class Locations
@@ -77,6 +96,11 @@ namespace UnitTests.Arrow.Xml.ObjectCreation
         {
             public string Name { get; init; }
             public IReadOnlyDictionary<string, int> Ages { get; init; }
+        }
+
+        class Data
+        {
+            public IReadOnlySet<int> Numbers{get; init;}
         }
     }
 }

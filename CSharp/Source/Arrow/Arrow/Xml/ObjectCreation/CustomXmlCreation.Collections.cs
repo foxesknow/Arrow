@@ -12,6 +12,7 @@ namespace Arrow.Xml.ObjectCreation
     public partial class CustomXmlCreation
     {
         private static readonly MethodInfo ToFrozenDictionaryGeneric = MemberLookup.GetMethod((Dictionary<int, int> dict) => FrozenDictionary.ToFrozenDictionary(dict, null)).GetGenericMethodDefinition();
+        private static readonly MethodInfo ToFrozenSetGeneric = MemberLookup.GetMethod((HashSet<int> hashSet) => FrozenSet.ToFrozenSet(hashSet, null)).GetGenericMethodDefinition();
 
         /// <summary>
         /// Handles populating a generic collection property
@@ -201,6 +202,27 @@ namespace Arrow.Xml.ObjectCreation
             addMethod.Invoke(list, new object?[] { obj });
         }
 
+        private void ProcessFrozenSetProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
+        {
+            var setter = propertyInfo.GetSetMethod();
+            if(setter == null) throw new XmlCreationException("could not find property setter: " + propertyInfo.Name);
+
+            var readonlyType = propertyInfo.PropertyType;
+            var genericArguments = readonlyType.GetGenericArguments();
+            var concreteType = typeof(HashSet<>).MakeGenericType(genericArguments);
+
+            var hashSet = CreateInstance(concreteType, null);
+            foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
+            {
+                ProcessSet(hashSet, item!);
+            }
+
+            // We've got a hashset, now we just need to freeze it
+            var toFrozenSetMethod = ToFrozenSetGeneric.MakeGenericMethod(genericArguments);
+            var frozenSet = toFrozenSetMethod.Invoke(null, new[]{hashSet, null});
+            setter.Invoke(theObject, new[]{frozenSet});
+        }
+
         private void ProcessReadOnlySetProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
         {
             var setter = propertyInfo.GetSetMethod();
@@ -380,6 +402,11 @@ namespace Arrow.Xml.ObjectCreation
         private bool IsFrozenDictionary(Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(FrozenDictionary<,>);
+        }
+
+        private bool IsFrozenSet(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(FrozenSet<>);
         }
     }
 }

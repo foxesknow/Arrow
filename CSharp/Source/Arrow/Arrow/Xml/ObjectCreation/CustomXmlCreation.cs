@@ -872,13 +872,18 @@ namespace Arrow.Xml.ObjectCreation
             {
                 ProcessReadOnlyListProperty(theObject, propertyNode, propertyInfo);
             }
+            else if(IsFrozenSet(propertyType))
+            {
+                ProcessFrozenSetProperty(theObject, propertyNode, propertyInfo);
+            }
             else if(IsSet(propertyType))
             {
                 ProcessSetProperty(theObject, propertyNode, propertyInfo);
             }
             else if(IsReadOnlySet(propertyType))
             {
-                ProcessReadOnlySetProperty(theObject, propertyNode, propertyInfo);
+                //ProcessReadOnlySetProperty(theObject, propertyNode, propertyInfo);
+                ProcessFrozenSetProperty(theObject, propertyNode, propertyInfo);
             }
             else if(IsFrozenDictionary(propertyType))
             {
@@ -890,7 +895,8 @@ namespace Arrow.Xml.ObjectCreation
             }
             else if(IsReadOnlyDictionary(propertyType))
             {
-                ProcessReadOnlyDictionaryProperty(theObject, propertyNode, propertyInfo);
+                //ProcessReadOnlyDictionaryProperty(theObject, propertyNode, propertyInfo);
+                ProcessFrozenDictionaryProperty(theObject, propertyNode, propertyInfo);
             }
             else if(IsGenericCollection(propertyType))
             {
