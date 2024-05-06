@@ -6,6 +6,7 @@ using System.Reflection;
 
 using Arrow.Reflection;
 using System.Collections.Frozen;
+using System.Collections.Immutable;
 
 namespace Arrow.Xml.ObjectCreation
 {
@@ -13,6 +14,8 @@ namespace Arrow.Xml.ObjectCreation
     {
         private static readonly MethodInfo ToFrozenDictionaryGeneric = MemberLookup.GetMethod((Dictionary<int, int> dict) => FrozenDictionary.ToFrozenDictionary(dict, null)).GetGenericMethodDefinition();
         private static readonly MethodInfo ToFrozenSetGeneric = MemberLookup.GetMethod((HashSet<int> hashSet) => FrozenSet.ToFrozenSet(hashSet, null)).GetGenericMethodDefinition();
+        
+        private static readonly MethodInfo ImmutableArrayCreateRange = MemberLookup.GetMethod((IEnumerable<int> items) => ImmutableArray.CreateRange(items)).GetGenericMethodDefinition();
 
         /// <summary>
         /// Handles populating a generic collection property
@@ -183,6 +186,35 @@ namespace Arrow.Xml.ObjectCreation
             addMethod.Invoke(list, new object?[] { obj });
         }
 
+        /// <summary>
+        /// Creates an immutable array.
+        /// This is the equivilant of a FrozenXXX type
+        /// </summary>
+        /// <param name="theObject"></param>
+        /// <param name="node"></param>
+        /// <param name="propertyInfo"></param>
+        /// <exception cref="XmlCreationException"></exception>
+        private void ProcessImmutableArray(object theObject, XmlNode node, PropertyInfo propertyInfo)
+        {
+            var setter = propertyInfo.GetSetMethod();
+            if(setter == null) throw new XmlCreationException("could not find property setter: " + propertyInfo.Name);
+
+            // First up, read the items into a list
+            var immutableType = propertyInfo.PropertyType;
+            var genericArguments = immutableType.GetGenericArguments();
+            var concreteType = typeof(List<>).MakeGenericType(genericArguments);
+
+            var list = CreateInstance(concreteType, null);
+            foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
+            {
+                ProcessList(list, item!);
+            }
+
+            var createRange = ImmutableArrayCreateRange.MakeGenericMethod(genericArguments);
+            var array = createRange.Invoke(null, new[]{list});
+            setter.Invoke(theObject, new[]{array});
+        }
+
         private void ProcessSet(object list, XmlNode item)
         {
             Type listType = list.GetType();
@@ -222,25 +254,7 @@ namespace Arrow.Xml.ObjectCreation
             var frozenSet = toFrozenSetMethod.Invoke(null, new[]{hashSet, null});
             setter.Invoke(theObject, new[]{frozenSet});
         }
-
-        private void ProcessReadOnlySetProperty(object theObject, XmlNode node, PropertyInfo propertyInfo)
-        {
-            var setter = propertyInfo.GetSetMethod();
-            if(setter == null) throw new XmlCreationException("could not find property setter: " + propertyInfo.Name);
-
-            var readonlyType = propertyInfo.PropertyType;
-            var genericArguments = readonlyType.GetGenericArguments();
-            var concreteType = typeof(HashSet<>).MakeGenericType(genericArguments);
-
-            var hashset = CreateInstance(concreteType, null);
-            foreach(XmlNode? item in node.SelectNodesOrEmpty("*"))
-            {
-                ProcessSet(hashset, item!);
-            }
-
-            setter.Invoke(theObject, new[]{hashset});
-        }
-
+        
         /// <summary>
         /// Populates a dictionary
         /// </summary>
@@ -407,6 +421,11 @@ namespace Arrow.Xml.ObjectCreation
         private bool IsFrozenSet(Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(FrozenSet<>);
+        }
+
+        private bool IsImmutableArray(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ImmutableArray<>);
         }
     }
 }

@@ -864,7 +864,11 @@ namespace Arrow.Xml.ObjectCreation
             PropertyInfo propertyInfo = theObject.GetType().GetProperty(propertyName, PropertyBindings)!;
             Type propertyType = propertyInfo.PropertyType;
 
-            if(IsList(propertyType))
+            if(IsImmutableArray(propertyType))
+            {
+                ProcessImmutableArray(theObject, propertyNode, propertyInfo);
+            }
+            else if(IsList(propertyType))
             {
                 ProcessListProperty(theObject, propertyNode, propertyInfo);
             }
