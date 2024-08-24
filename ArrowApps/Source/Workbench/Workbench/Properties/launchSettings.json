@@ -2,7 +2,7 @@
   "profiles": {
     "ScriptRunner": {
       "commandName": "Project",
-      "commandLineArgs": "-live -v Scripts\\ExecuteSql.xml"
+      "commandLineArgs": "-live -v Scripts\\HelloWorld.xml"
     },
     "PID Test": {
       "commandName": "Project",
