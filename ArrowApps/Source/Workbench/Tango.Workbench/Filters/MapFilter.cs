@@ -15,6 +15,7 @@ namespace Tango.Workbench.Filters
     /// If the new item is null then it is not passed through the stream.
     /// </summary>
     [Filter("Map")]
+    [Filter("Select")]
     public sealed class MapFilter : Filter, ISupportInitialize
     {
         private readonly ExpressionCompiler<object?> m_Expressions = new(ExpressionCompiler.AlwaysNull);
