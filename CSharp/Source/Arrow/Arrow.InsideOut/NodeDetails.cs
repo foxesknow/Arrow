@@ -47,6 +47,12 @@ public sealed class NodeDetails : ResponseBase
     {
         if(name is null) throw new ArgumentNullException(nameof(name));
 
+        if(m_Commands is null)
+        {
+            command = null;
+            return false;
+        }
+
         command = this.Commands.FirstOrDefault(c => c.Name == name);
         return command is not null;
     }
@@ -73,6 +79,12 @@ public sealed class NodeDetails : ResponseBase
     /// <returns></returns>
     public bool TryGetValue<T>(string name, [NotNullWhen(true)] out T? value) where T : Value
     {
+        if(m_Values is null)
+        {
+            value = null;
+            return false;
+        }
+
         if(this.Values.TryGetValue(name, out var item) && item is T asType)
         {
             value = asType;

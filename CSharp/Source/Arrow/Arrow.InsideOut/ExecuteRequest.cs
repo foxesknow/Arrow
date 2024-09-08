@@ -200,8 +200,19 @@ public sealed class ExecuteRequest : RequestBase
     }
 }
 
+/// <summary>
+/// Useful methods for working with request data
+/// </summary>
 public static class ExecuteRequestExtensions
 {
+    /// <summary>
+    /// Executes a 1-arity function against an incoming request and returns the result
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="R"></typeparam>
+    /// <param name="executeRequest"></param>
+    /// <param name="function"></param>
+    /// <returns></returns>
     public static R Let<T, R>(this ExecuteRequest executeRequest, Func<T, R> function) 
     {
         executeRequest.EnsureArgumentCount(1);
@@ -210,6 +221,15 @@ public static class ExecuteRequestExtensions
         return function(arg1);
     }
 
+    /// <summary>
+    /// Executes a 2-arity function against an incoming request and returns the result
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="T2"></typeparam>
+    /// <typeparam name="R"></typeparam>
+    /// <param name="executeRequest"></param>
+    /// <param name="function"></param>
+    /// <returns></returns>
     public static R Let<T1, T2, R>(this ExecuteRequest executeRequest, Func<T1, T2, R> function) 
     {
         executeRequest.EnsureArgumentCount(2);
@@ -219,6 +239,16 @@ public static class ExecuteRequestExtensions
         return function(arg1, arg2);
     }
 
+    /// <summary>
+    /// Executes a 3-arity function against an incoming request and returns the result
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="T2"></typeparam>
+    /// <typeparam name="T3"></typeparam>
+    /// <typeparam name="R"></typeparam>
+    /// <param name="executeRequest"></param>
+    /// <param name="function"></param>
+    /// <returns></returns>
     public static R Let<T1, T2, T3, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, R> function) 
     {
         executeRequest.EnsureArgumentCount(3);
@@ -229,6 +259,17 @@ public static class ExecuteRequestExtensions
         return function(arg1, arg2, arg3);
     }
 
+    /// <summary>
+    /// Executes a 4-arity function against an incoming request and returns the result
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="T2"></typeparam>
+    /// <typeparam name="T3"></typeparam>
+    /// <typeparam name="T4"></typeparam>
+    /// <typeparam name="R"></typeparam>
+    /// <param name="executeRequest"></param>
+    /// <param name="function"></param>
+    /// <returns></returns>
     public static R Let<T1, T2, T3, T4, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, T4, R> function) 
     {
         executeRequest.EnsureArgumentCount(4);
@@ -240,6 +281,18 @@ public static class ExecuteRequestExtensions
         return function(arg1, arg2, arg3, arg4);
     }
 
+    /// <summary>
+    /// Executes a 5-arity function against an incoming request and returns the result
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="T2"></typeparam>
+    /// <typeparam name="T3"></typeparam>
+    /// <typeparam name="T4"></typeparam>
+    /// <typeparam name="T5"></typeparam>
+    /// <typeparam name="R"></typeparam>
+    /// <param name="executeRequest"></param>
+    /// <param name="function"></param>
+    /// <returns></returns>
     public static R Let<T1, T2, T3, T4, T5, R>(this ExecuteRequest executeRequest, Func<T1, T2, T3, T4, T5, R> function) 
     {
         executeRequest.EnsureArgumentCount(5);
