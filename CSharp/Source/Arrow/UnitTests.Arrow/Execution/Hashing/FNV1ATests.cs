@@ -93,5 +93,17 @@ namespace UnitTests.Arrow.Execution.Hashing
                 Assert.That(hasher1.HashValue, Is.EqualTo(hasher2.HashValue));
             }
         }
+
+        [Test]
+        public void SmallValues()
+        {
+            var x = FNV1A.Make().Apply((byte)0);
+            var y = FNV1A.Make().Apply((byte)1);
+            var z = FNV1A.Make().Apply((byte)2);
+
+            Assert.That(x, Is.Not.EqualTo(y));
+            Assert.That(x, Is.Not.EqualTo(z));
+            Assert.That(y, Is.Not.EqualTo(z));
+        }
     }
 }
