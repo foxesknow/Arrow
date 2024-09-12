@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Runtime.InteropServices;
 
 namespace Arrow.Execution
 {
@@ -19,15 +19,14 @@ namespace Arrow.Execution
 		
 		static ExecutionTimer()
 		{
-			long frequency;
-			QueryPerformanceFrequency(out frequency);
+			var frequency = Stopwatch.Frequency;
 			s_Frequency=frequency;
 			
 			// QueryPerformanceFrequency gives the number of counts per second.
 			// We need to scale it down for higher resolutions.
-			s_MillisecondFrequency=s_Frequency/1000;
-			s_MicrosecondFrequency=s_Frequency/1000000;
-			s_NanosecondFrequency=s_Frequency/1000000000;
+			s_MillisecondFrequency = s_Frequency / 1000;
+			s_MicrosecondFrequency = s_Frequency / 1000000;
+			s_NanosecondFrequency = s_Frequency / 1000000000;
 		}
 		
 		/// <summary>
@@ -38,23 +37,52 @@ namespace Arrow.Execution
 		/// <returns>The time it took to run block in whatever time units were requested</returns>
 		public static double Measure(TimerMode mode, Action block)
 		{
-			long start=Now;
+			long start = Now;
 			block();
-			long stop=Now;
+			long stop = Now;
 			
 			switch(mode)
 			{
 				case TimerMode.Milliseconds:
-					return ElapsedMilliseconds(start,stop);
+					return ElapsedMilliseconds(start, stop);
 					
 				case TimerMode.Microseconds:
-					return ElapsedMicroseconds(start,stop);
+					return ElapsedMicroseconds(start, stop);
 					
 				case TimerMode.Nanoseconds:
-					return ElapsedNanoseconds(start,stop);
+					return ElapsedNanoseconds(start, stop);
 					
 				default:
-					throw new ArgumentException("Invalid mode: "+mode.ToString());
+					throw new ArgumentException("Invalid mode: " + mode.ToString());
+			}
+		}
+
+		/// <summary>
+		/// Measures the time it takes to run a block
+		/// </summary>
+		/// <param name="mode">How to measure the time taken</param>
+		/// <param name="state">State data to pass to the block</param>
+		/// <param name="block">The block to run</param>
+		/// <returns>The time it took to run block in whatever time units were requested</returns>
+		public static double Measure<TState>(TimerMode mode, TState state, Action<TState> block)
+		{
+			long start = Now;
+			block(state);
+			long stop = Now;
+			
+			switch(mode)
+			{
+				case TimerMode.Milliseconds:
+					return ElapsedMilliseconds(start, stop);
+					
+				case TimerMode.Microseconds:
+					return ElapsedMicroseconds(start, stop);
+					
+				case TimerMode.Nanoseconds:
+					return ElapsedNanoseconds(start, stop);
+					
+				default:
+					throw new ArgumentException("Invalid mode: " + mode.ToString());
 			}
 		}
 		
@@ -68,8 +96,7 @@ namespace Arrow.Execution
 		{
 			get
 			{
-				long start;
-				QueryPerformanceCounter(out start);
+				long start = Stopwatch.GetTimestamp();
 				return start;
 			}
 		}
@@ -82,7 +109,7 @@ namespace Arrow.Execution
 		/// <returns>The number of seconds between the times</returns>
 		public static double ElapsedSeconds(long startTime, long stopTime)
 		{
-			double elapsed=(stopTime-startTime)/s_Frequency;
+			double elapsed = (stopTime - startTime) / s_Frequency;
 			return elapsed;
 		}
 		
@@ -93,7 +120,7 @@ namespace Arrow.Execution
 		/// <returns>The number of seconds represented by the elapsed time</returns>
 		public static double ElapsedSeconds(long totalElapsedTime)
 		{
-			return totalElapsedTime/s_Frequency;
+			return totalElapsedTime / s_Frequency;
 		}
 		
 		/// <summary>
@@ -104,7 +131,7 @@ namespace Arrow.Execution
 		/// <returns>The number of milliseconds between the times</returns>
 		public static double ElapsedMilliseconds(long startTime, long stopTime)
 		{
-			double elapsed=(stopTime-startTime)/s_MillisecondFrequency;
+			double elapsed = (stopTime - startTime) / s_MillisecondFrequency;
 			return elapsed;
 		}
 		
@@ -115,7 +142,7 @@ namespace Arrow.Execution
 		/// <returns>The number of milliseconds represented by the elapsed time</returns>
 		public static double ElapsedMilliseconds(long totalElapsedTime)
 		{
-			return totalElapsedTime/s_MillisecondFrequency;
+			return totalElapsedTime / s_MillisecondFrequency;
 		}
 		
 		/// <summary>
@@ -126,7 +153,7 @@ namespace Arrow.Execution
 		/// <returns>The number of microseconds between the times</returns>
 		public static double ElapsedMicroseconds(long startTime, long stopTime)
 		{
-			double elapsed=(stopTime-startTime)/s_MicrosecondFrequency;
+			double elapsed = (stopTime - startTime) / s_MicrosecondFrequency;
 			return elapsed;
 		}
 		
@@ -137,7 +164,7 @@ namespace Arrow.Execution
 		/// <returns>The number of microseconds represented by the elapsed time</returns>
 		public static double ElapsedMicroseconds(long totalElapsedTime)
 		{
-			return totalElapsedTime/s_MicrosecondFrequency;
+			return totalElapsedTime / s_MicrosecondFrequency;
 		}
 		
 		/// <summary>
@@ -148,7 +175,7 @@ namespace Arrow.Execution
 		/// <returns>The number of nanoseconds between the times</returns>
 		public static double ElapsedNanoseconds(long startTime, long stopTime)
 		{
-			double elapsed=(stopTime-startTime)/s_NanosecondFrequency;
+			double elapsed = (stopTime - startTime) / s_NanosecondFrequency;
 			return elapsed;
 		}
 		
@@ -159,14 +186,7 @@ namespace Arrow.Execution
 		/// <returns>The number of nanoseconds represented by the elapsed time</returns>
 		public static double ElapsedNanoseconds(long totalElapsedTime)
 		{
-			return totalElapsedTime/s_NanosecondFrequency;
+			return totalElapsedTime / s_NanosecondFrequency;
 		}
-		
-		[DllImport("Kernel32.dll")]
-        private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
-
-        [DllImport("Kernel32.dll")]
-        private static extern bool QueryPerformanceFrequency(out long lpFrequency);
-
 	}
 }
