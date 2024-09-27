@@ -50,6 +50,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Arrow.Messaging.M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Arrow.Scripting.Wire", "UnitTests.Arrow.Scripting.Wire\UnitTests.Arrow.Scripting.Wire.csproj", "{9493855D-A217-4096-A712-CEE109CC4B8C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arrow.FastLog", "Arrow.FastLog\Arrow.FastLog.csproj", "{F0895D8D-0AE7-4347-929A-A029B863BE43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Arrow.FastLog", "UnitTests.Arrow.FastLog\UnitTests.Arrow.FastLog.csproj", "{3C0A55DE-7E80-4A5B-B7C5-C0E0C2AC65A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -140,6 +144,14 @@ Global
 		{9493855D-A217-4096-A712-CEE109CC4B8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9493855D-A217-4096-A712-CEE109CC4B8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9493855D-A217-4096-A712-CEE109CC4B8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0895D8D-0AE7-4347-929A-A029B863BE43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0895D8D-0AE7-4347-929A-A029B863BE43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0895D8D-0AE7-4347-929A-A029B863BE43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0895D8D-0AE7-4347-929A-A029B863BE43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C0A55DE-7E80-4A5B-B7C5-C0E0C2AC65A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C0A55DE-7E80-4A5B-B7C5-C0E0C2AC65A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C0A55DE-7E80-4A5B-B7C5-C0E0C2AC65A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C0A55DE-7E80-4A5B-B7C5-C0E0C2AC65A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
