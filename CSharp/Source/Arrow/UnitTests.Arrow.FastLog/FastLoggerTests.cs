@@ -39,5 +39,14 @@ namespace UnitTests.Arrow.FastLog
             logger.Write(value);
             Assert.That(logger.LineSoFar(), Is.EqualTo(expected));
         }
+
+        [Test]
+        [TestCase(42)]
+        public void WriteBool(int age)
+        {
+            var logger = new FastLogger();
+            logger.Write($"You are {age}");
+            Assert.That(logger.LineSoFar(), Is.EqualTo("You are 42"));
+        }
     }
 }

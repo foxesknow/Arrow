@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,10 +10,15 @@ namespace Arrow.FastLog
 {
     public sealed class FastLogger : IFastLogger
     {
+        private const int InitialBufferSize = 64;
+        private const int MaxFormatAttemts = 6;
+
         private static readonly ArrayPool<char> s_LogLinePool = ArrayPool<char>.Create(1024, Environment.ProcessorCount);
 
         private char[] m_Line = Array.Empty<char>();
         private int m_Offset = 0;
+
+        public bool Enabled{get;} = true;
 
         public void Send()
         {
@@ -42,8 +48,15 @@ namespace Arrow.FastLog
 
         public IFastLogger Write<T>(T data, ReadOnlySpan<char> format) where T : ISpanFormattable
         {
-            var lengthGuess = 64;
-            while(true)
+            if(StackAllocWrite(data, format, InitialBufferSize))
+            {
+                return this;
+            }
+
+            var lengthGuess = InitialBufferSize * 2;
+            var formatted = false;
+
+            for(var i = 0; i < MaxFormatAttemts; i++)
             {
                 var buffer = s_LogLinePool.Rent(lengthGuess);
                 try
@@ -52,6 +65,7 @@ namespace Arrow.FastLog
                     {
                         Span<char> slice = new(buffer, 0, charsWritten);
                         Append(slice);
+                        formatted = true;
                         break;
                     }
                     else
@@ -65,7 +79,35 @@ namespace Arrow.FastLog
                 }
             }
 
+            if(formatted == false)
+            {
+                Append("failed to format data of type");
+                Append(typeof(T).Name);
+            }
+
             return this;
+        }
+
+        public IFastLogger Write(ref DefaultInterpolatedStringHandler handler)
+        {
+            var data = handler.ToStringAndClear();
+            return Write(data);
+        }
+
+        private bool StackAllocWrite<T>(T data, ReadOnlySpan<char> format, int bufferSize) where T : ISpanFormattable
+        {
+            // Rather that take memory from the pool, which is shared across threads
+            // and therefore locks in some way, we'll try to grab a chunk from the
+            // stack on the pretext that most bits of data don't render to huge strings.
+            Span<char> buffer = stackalloc char[bufferSize];
+
+            if(data.TryFormat(buffer, out var charsWritten, format, null))
+            {
+                Append(buffer.Slice(0, charsWritten));
+                return true;
+            }
+
+            return false;
         }
 
         private void Append(ReadOnlySpan<char> data)
