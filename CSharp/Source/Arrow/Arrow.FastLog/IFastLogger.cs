@@ -1,19 +1,17 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Arrow.FastLog
 {
     public interface IFastLogger
     {
-        public bool Enabled{get;}
-
-        public IFastLogger Write(string data);
-        public IFastLogger Write<T>(T data) where T : ISpanFormattable;
-        public IFastLogger Write<T>(T data, ReadOnlySpan<char> format) where T : ISpanFormattable;
-        public IFastLogger Write(bool data);
-
-        public IFastLogger Write(ref DefaultInterpolatedStringHandler handler);
-
-        public void Send();
-        
+        public IFastLogLevel Debug{get;}
+        public IFastLogLevel Info{get;}
+        public IFastLogLevel Warn{get;}
+        public IFastLogLevel Error{get;}
+        public IFastLogLevel Fatal{get;}
     }
 }

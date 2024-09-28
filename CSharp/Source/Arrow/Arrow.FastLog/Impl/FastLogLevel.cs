@@ -6,9 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arrow.FastLog
+namespace Arrow.FastLog.Impl
 {
-    public sealed class FastLogger : IFastLogger
+    public sealed class FastLogLevel : IFastLogLevel
     {
         private const int InitialBufferSize = 64;
         private const int MaxFormatAttemts = 6;
@@ -17,37 +17,54 @@ namespace Arrow.FastLog
 
         private char[] m_Line = Array.Empty<char>();
         private int m_Offset = 0;
+        private int m_StartOfWrite;
 
-        public bool Enabled{get;} = true;
+        private readonly FastLogger m_Owner;
+        private readonly string m_Level;
+
+        public FastLogLevel(FastLogger owner, LogLevel level)
+        {
+            m_Owner = owner;
+            m_Level = $"[{level.ToString().ToUpper()}]";
+        }
+
+        public bool Enabled { get; } = true;
 
         public void Send()
         {
             throw new NotImplementedException();
         }
 
-        public string LineSoFar()
+        public string LineAndClear()
         {
-            return new string(m_Line, 0, m_Offset);
+            var line = new string(m_Line, m_StartOfWrite, m_Offset - m_StartOfWrite);
+
+            m_Offset = 0;
+            m_StartOfWrite = 0;
+
+            return line;
         }
 
-        public IFastLogger Write(string data)
+        public IFastLogLevel Write(string data)
         {
-            Append(data);
+            if(this.Enabled) Append(data);
             return this;
         }
 
-        public IFastLogger Write(bool data)
+        public IFastLogLevel Write(bool data)
         {
             return Write(data ? "true" : "false");
         }
 
-        public IFastLogger Write<T>(T data) where T : ISpanFormattable
+        public IFastLogLevel Write<T>(T data) where T : ISpanFormattable
         {
             return Write(data, default);
         }
 
-        public IFastLogger Write<T>(T data, ReadOnlySpan<char> format) where T : ISpanFormattable
+        public IFastLogLevel Write<T>(T data, ReadOnlySpan<char> format) where T : ISpanFormattable
         {
+            if(this.Enabled == false) return this;
+
             if(StackAllocWrite(data, format, InitialBufferSize))
             {
                 return this;
@@ -88,10 +105,16 @@ namespace Arrow.FastLog
             return this;
         }
 
-        public IFastLogger Write(ref DefaultInterpolatedStringHandler handler)
+        public IFastLogLevel Write([InterpolatedStringHandlerArgument("")] ref FastLogInterpolatedStringHandler handler)
         {
-            var data = handler.ToStringAndClear();
-            return Write(data);
+            if(this.Enabled && handler.Enabled)
+            {
+                var data = handler.ToStringAndClear();
+                Write(data);
+            }
+
+
+            return this;
         }
 
         private bool StackAllocWrite<T>(T data, ReadOnlySpan<char> format, int bufferSize) where T : ISpanFormattable
@@ -112,6 +135,12 @@ namespace Arrow.FastLog
 
         private void Append(ReadOnlySpan<char> data)
         {
+            if(m_Offset == 0)
+            {
+                // It's the beginning of a new log line, so write the preable
+                WriteBeginLine();
+            }
+
             EnsureSpaceFor(data.Length);
             var target = new Span<char>(m_Line, m_Offset, data.Length);
             data.CopyTo(target);
@@ -124,11 +153,59 @@ namespace Arrow.FastLog
             if(m_Offset + length < m_Line.Length) return;
 
             var newLength = (m_Line.Length + length) * 2;
-            
+
             var newLine = s_LogLinePool.Rent(newLength);
             Array.Copy(m_Line, newLine, m_Offset);
             s_LogLinePool.Return(m_Line);
             m_Line = newLine;
+        }
+
+        private void WriteBeginLine()
+        {
+            EnsureSpaceFor(64);
+
+            Span<char> buffer = stackalloc char[32];
+            
+            // The time...
+            DateTime.Now.TryFormat(buffer, out var bytesWritten, "yyyyMMdd-HH:mm:ss.fff");
+            buffer.Slice(0, bytesWritten).CopyTo(m_Line);
+            m_Offset += bytesWritten;
+
+            EnsureSpaceFor(1);
+            m_Line[m_Offset++] = ' ';
+
+            // The level...
+            EnsureSpaceFor(m_Level.Length);
+            m_Level.AsSpan().CopyTo(new Span<char>(m_Line, m_Offset, m_Level.Length));
+            m_Offset += m_Level.Length;
+
+            EnsureSpaceFor(1);
+            m_Line[m_Offset++] = ' ';
+
+            // Thread info..
+            var threadName = Thread.CurrentThread.Name;
+            if(threadName is not null)
+            {
+                EnsureSpaceFor(threadName.Length + 3);
+                m_Line[m_Offset++] = '[';
+                threadName.AsSpan().CopyTo(new Span<char>(m_Line, m_Offset, threadName.Length));
+                m_Offset += threadName.Length;
+                m_Line[m_Offset++] = ']';
+                m_Line[m_Offset++] = ' ';
+            }
+            else
+            {
+                // We'll use the thread id
+                Environment.CurrentManagedThreadId.TryFormat(buffer, out bytesWritten);
+                EnsureSpaceFor(bytesWritten + 3);
+                m_Line[m_Offset++] = '[';
+                buffer.Slice(0, bytesWritten).CopyTo(new Span<char>(m_Line, m_Offset, bytesWritten));
+                m_Offset += bytesWritten;
+                m_Line[m_Offset++] = ']';
+                m_Line[m_Offset++] = ' ';
+            }
+
+            m_StartOfWrite = m_Offset;
         }
     }
 }
